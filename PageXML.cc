@@ -17,8 +17,18 @@
 
 using namespace std;
 using namespace Magick;
+using namespace libconfig;
+
+const char* PageXML::settingNames[] = {
+  "indent",
+  "pagens",
+  //"loadimg",
+  "grayimg",
+  "extended_name"
+};
 
 char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
+
 Color transparent("rgba(0,0,0,0)");
 Color opaque("rgba(0,0,0,100%)");
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
@@ -33,6 +43,8 @@ regex reXheight(".*x-height: *([0-9.]+) *px;.*");
 void PageXML::release() {
   if( xml == NULL )
     return;
+
+  pageimg = Image();
   if( xml != NULL )
     xmlFreeDoc(xml);
   xml = NULL;
@@ -48,6 +60,9 @@ void PageXML::release() {
   if( imgbase != NULL )
     free(imgbase);
   imgbase = NULL;
+  if( pagens != NULL && pagens != default_pagens )
+    free(pagens);
+  pagens = NULL;
 }
 
 /**
@@ -62,23 +77,30 @@ PageXML::~PageXML() {
 ////////////////////
 
 /**
- * PageXML instance constructor that receives an input configuration.
+ * PageXML constructor that receives a libconfig Config object.
  *
- * @param config  An std::vector containing parameter-value configuration pairs.
+ * @param config  A libconfig Config object.
  */
-PageXML::PageXML( const vector<ConfigProps>& config ) {
-  loadConf( config );
+PageXML::PageXML( const Config& config ) {
+  loadConf(config);
+  if( pagens == NULL )
+    pagens = default_pagens;
 }
 
-//PageXML::PageXML( int fnum, const vector<ConfigProps>& config ) {
-//  loadConf( config );
-//  loadXml( fnum );
-//}
-
-//PageXML::PageXML( const char* fname, const vector<ConfigProps>& config ) {
-//  loadConf( config );
-//  loadXml( fname );
-//}
+/**
+ * PageXML constructor that receives a configuration file name.
+ *
+ * @param cfgfile  Configuration file to use.
+ */
+PageXML::PageXML( const char* cfgfile ) {
+  if( cfgfile != NULL ) {
+    Config config;
+    config.readFile(cfgfile);
+    loadConf(config);
+  }
+  if( pagens == NULL )
+    pagens = default_pagens;
+}
 
 //////////////
 /// Output ///
@@ -103,29 +125,79 @@ char* PageXML::getBase() {
   return imgbase;
 }
 
-///////////////
-/// Loaders ///
-///////////////
+/////////////////////
+/// Configuration ///
+/////////////////////
+
+/**
+ * Gets the enum value for a configuration setting name, or -1 if unknown.
+ *
+ * @param format  String containing setting name.
+ * @return        Enum format value.
+ */
+inline static int parsePageSetting( const char* setting ) {
+  int settings = sizeof(PageXML::settingNames) / sizeof(PageXML::settingNames[0]);
+  for( int n=0; n<settings; n++ )
+    if( ! strcmp(PageXML::settingNames[n],setting) )
+      return n;
+  return -1;
+}
 
 /**
  * Applies configuration options to the PageXML instance.
  *
- * @param config  An std::vector containing parameter-value configuration pairs.
+ * @param config  A libconfig Config object.
  */
-void PageXML::loadConf( const vector<ConfigProps>& config ) {
-  for( int n=0; n<int(config.size()); n++ )
-    if( ! strcmp("loadimage",config[n].prop) )
-      loadimg = config[n].bval;
-    else if( ! strcmp("grayimage",config[n].prop) )
-      grayimg = config[n].bval;
-    else if( ! strcmp("pagens",config[n].prop) )
-      pagens = config[n].sval;
-    else
-      throw invalid_argument( string("PageXML: loadConf: unexpected configuration property: ") + config[n].prop );
+void PageXML::loadConf( const Config& config ) {
+  if( ! config.exists("PageXML") )
+    return;
 
-  if( pagens == NULL )
-    pagens = default_pagens;
+  const Setting& pagecfg = config.getRoot()["PageXML"];
+
+  int numsettings = pagecfg.getLength();
+  for( int i = 0; i < numsettings; i++ ) {
+    const Setting& setting = pagecfg[i];
+    //printf("PageXML: setting=%s enum=%d\n",setting.getName(),parsePageSetting(setting.getName()));
+    switch( parsePageSetting(setting.getName()) ) {
+      case PAGEXML_SETTING_INDENT:
+        indent = (bool)setting;
+        break;
+      case PAGEXML_SETTING_PAGENS:
+        pagens = strdup(setting.c_str());
+        break;
+      //case PAGEXML_SETTING_LOADIMG:
+      //  loadimg = (bool)setting;
+      //  break;
+      case PAGEXML_SETTING_GRAYIMG:
+        grayimg = (bool)setting;
+        break;
+      case PAGEXML_SETTING_EXTENDED_NAME:
+        extended_name = (bool)setting;
+        break;
+      default:
+        throw invalid_argument( string("PageXML: unexpected configuration property: ") + setting.getName() );
+    }
+  }
 }
+
+/**
+ * Prints the current configuration.
+ *
+ * @param file  File to print to.
+ */
+void PageXML::printConf( FILE* file ) {
+  fprintf( file, "PageXML: {\n" );
+  fprintf( file, "  indent = %s;\n", indent ? "true" : "false" );
+  fprintf( file, "  pagens = \"%s\";\n", pagens );
+  //fprintf( file, "  loadimg = %s;\n", loadimg ? "true" : "false" );
+  fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
+  fprintf( file, "  extended_name = %s;\n", extended_name ? "true" : "false" );
+  fprintf( file, "}\n" );
+}
+
+///////////////
+/// Loaders ///
+///////////////
 
 /**
  * Loads a Page XML from a file.
@@ -190,8 +262,8 @@ void PageXML::loadXml( int fnum ) {
   if( xmldir == NULL )
     xmldir = strdup(".");
 
-  if( loadimg )
-    loadImage();
+  //if( loadimg )
+  //  loadImage();
 }
 
 /**
@@ -303,6 +375,9 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
 vector<NamedImage> PageXML::crop( const char* xpath ) {
   xmlXPathObjectPtr elems_coords = xmlXPathEvalExpression( (xmlChar*)xpath, context );
 
+  if( pageimg.columns() == 0 )
+    loadImage();
+
   vector<NamedImage> images;
   for( int n=0; n<elems_coords->nodesetval->nodeNr; n++ ) {
     xmlNodePtr node = elems_coords->nodesetval->nodeTab[n];
@@ -327,17 +402,18 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     string sampid(id1);
     string sampname = string(".") + id1;
     free(id1);
-    if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
-        ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-      char* id2 = (char*)xmlGetProp( node->parent->parent, (xmlChar*)"id" );
-      sampname = string(".") + id2 + sampname;
-      free(id2);
-      if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-        char* id3 = (char*)xmlGetProp( node->parent->parent->parent, (xmlChar*)"id" );
-        sampname = string(".") + id3 + sampname;
-        free(id3);
+    if( extended_name )
+      if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
+          ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
+        char* id2 = (char*)xmlGetProp( node->parent->parent, (xmlChar*)"id" );
+        sampname = string(".") + id2 + sampname;
+        free(id2);
+        if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
+          char* id3 = (char*)xmlGetProp( node->parent->parent->parent, (xmlChar*)"id" );
+          sampname = string(".") + id3 + sampname;
+          free(id3);
+        }
       }
-    }
     sampname = string(imgbase) + sampname;
 
     //char* line_id = (char*)xmlGetProp( elems_coords->nodesetval->nodeTab[n]->parent, (xmlChar*)"id" );
