@@ -60,90 +60,6 @@ const Color colorBlack("black");
 ////////////////////
 
 /**
- * TextFeatExtractor instance constructor that receives an input configuration.
- *
- * @param config  An std::vector containing parameter-value configuration pairs.
- */
-/*TextFeatExtractor::TextFeatExtractor( const vector<ConfigProps>& config ) {
-  for( int n=0; n<int(config.size()); n++ )
-    if( ! strcmp("type",config[n].prop) ) {
-      featype = parseFeatType(config[n].sval);
-      if( featype < 0 )
-        throw invalid_argument( string("TextFeatExtractor: unknown features type: ") + config[n].sval );
-    }
-    else if( ! strcmp("format",config[n].prop) ) {
-      format = parseFeatFormat(config[n].sval);
-      if( format < 0 )
-        throw invalid_argument( string("TextFeatExtractor: unknown output features format: ") + config[n].sval );
-    }
-    else if( ! strcmp("verbose",config[n].prop) )
-      verbose = config[n].bval;
-    else if( ! strcmp("stretch",config[n].prop) )
-      stretch = config[n].bval;
-    else if( ! strcmp("enh_win",config[n].prop) ) {
-      enh_win = config[n].ival;
-      if( enh_win <= 0 )
-        throw invalid_argument( "TextFeatExtractor: enhancement window width must be > 0" );
-    }
-    else if( ! strcmp("enh_prm",config[n].prop) ) {
-      enh_prm = config[n].dval;
-      if( enh_prm < 0.0 )
-        throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
-    }
-    else if( ! strcmp("enh_prm_randmin",config[n].prop) ) {
-      enh_prm_randmin = config[n].dval;
-      if( enh_prm_randmin < 0.0 )
-        throw invalid_argument( "TextFeatExtractor: enhancement random minimum parameter must be >= 0.0" );
-    }
-    else if( ! strcmp("enh_prm_randmax",config[n].prop) ) {
-      enh_prm_randmax = config[n].dval;
-      if( enh_prm_randmax < 0.0 )
-        throw invalid_argument( "TextFeatExtractor: enhancement random maximum parameter must be >= 0.0" );
-    }
-    else if( ! strcmp("enh_slp",config[n].prop) ) {
-      enh_slp = config[n].dval;
-      if( enh_slp < 0.0 )
-        throw invalid_argument( "TextFeatExtractor: enhancement slope must be >= 0.0" );
-    }
-    else if( ! strcmp("slope",config[n].prop) )
-      slope = config[n].bval;
-    else if( ! strcmp("slant",config[n].prop) )
-      slant = config[n].bval;
-    else if( ! strcmp("normxheight",config[n].prop) )
-      normxheight = config[n].ival;
-    else if( ! strcmp("fpgram",config[n].prop) )
-      compute_fpgram = config[n].bval;
-    else if( ! strcmp("fcontour",config[n].prop) )
-      compute_fcontour = config[n].bval;
-    else if( ! strcmp("slide_shift",config[n].prop) ) {
-      slide_shift = config[n].dval;
-      if( slide_shift <= 0.0 )
-        throw invalid_argument( "TextFeatExtractor: slide_shift must be > 0.0" );
-    }
-    else if( ! strcmp("slide_span",config[n].prop) ) {
-      slide_span = config[n].dval;
-      if( slide_span < 1.0 )
-        throw invalid_argument( "TextFeatExtractor: slide_span must be >= 1.0" );
-    }
-    else if( ! strcmp("sample_width",config[n].prop) ) {
-      sample_width = config[n].ival;
-      if( sample_width < 1 )
-        throw invalid_argument( "TextFeatExtractor: sample_width must be >= 1" );
-    }
-    else if( ! strcmp("sample_height",config[n].prop) ) {
-      sample_height = config[n].ival;
-      if( sample_height < 1 )
-        throw invalid_argument( "TextFeatExtractor: sample_height must be >= 1" );
-    }
-    else if( ! strcmp("projfile",config[n].prop) ) {
-      if( config[n].sval != NULL && config[n].sval[0] != '\0' )
-        loadProjection( config[n].sval );
-    }
-    else
-      throw invalid_argument( string("TextFeatExtractor: unexpected configuration property: ") + config[n].prop );
-}*/
-
-/**
  * TextFeatExtractor constructor that receives a libconfig Config object.
  *
  * @param config  A libconfig Config object.
@@ -165,14 +81,59 @@ TextFeatExtractor::TextFeatExtractor( const char* cfgfile ) {
   }
 }
 
-///////////////
-/// Loaders ///
-///////////////
+/////////////////////
+/// Configuration ///
+/////////////////////
 
-inline double settingNumber( const Setting& setting ) {
+/**
+ * Gets a config setting as a double even if it is an int.
+ */
+inline static double settingNumber( const Setting& setting ) {
   return setting.getType() == Setting::Type::TypeInt ?
     (double)((int)setting) :
     (double)setting ;
+}
+
+/**
+ * Gets the enum value for a feature type, or -1 if unknown.
+ *
+ * @param format  String containing feature type name.
+ * @return        Enum feature type value.
+ */
+inline static int parseFeatType( const char* featype ) {
+  int featypes = sizeof(TextFeatExtractor::featTypes) / sizeof(TextFeatExtractor::featTypes[0]);
+  for( int n=0; n<featypes; n++ )
+    if( ! strcmp(TextFeatExtractor::featTypes[n],featype) )
+      return n;
+  return -1;
+}
+
+/**
+ * Gets the enum value for an output format name, or -1 if unknown.
+ *
+ * @param format  String containing format name.
+ * @return        Enum format value.
+ */
+inline static int parseFeatFormat( const char* format ) {
+  int formats = sizeof(TextFeatExtractor::formatNames) / sizeof(TextFeatExtractor::formatNames[0]);
+  for( int n=0; n<formats; n++ )
+    if( ! strcmp(TextFeatExtractor::formatNames[n],format) )
+      return n;
+  return -1;
+}
+
+/**
+ * Gets the enum value for a configuration setting name, or -1 if unknown.
+ *
+ * @param format  String containing setting name.
+ * @return        Enum format value.
+ */
+inline static int parseFeatSetting( const char* setting ) {
+  int settings = sizeof(TextFeatExtractor::settingNames) / sizeof(TextFeatExtractor::settingNames[0]);
+  for( int n=0; n<settings; n++ )
+    if( ! strcmp(TextFeatExtractor::settingNames[n],setting) )
+      return n;
+  return -1;
 }
 
 /**
@@ -181,106 +142,108 @@ inline double settingNumber( const Setting& setting ) {
  * @param config  A libconfig Config object.
  */
 void TextFeatExtractor::loadConf( const Config& config ) {
+  if( ! config.exists("TextFeatExtractor") )
+    return;
+
   const Setting& featcfg = config.getRoot()["TextFeatExtractor"];
 
-  //for( Setting const& setting: featcfg ) {
   int numsettings = featcfg.getLength();
   for( int i = 0; i < numsettings; i++ ) {
     const Setting& setting = featcfg[i];
-    //printf("setting=%s enum=%d\n",setting.getName(),parseFeatSetting(setting.getName()));
+    //printf("TextFeatExtractor: setting=%s enum=%d\n",setting.getName(),parseFeatSetting(setting.getName()));
     switch( parseFeatSetting(setting.getName()) ) {
-      case FEAT_SETTING_TYPE:
+      case TEXTFEAT_SETTING_TYPE:
         featype = parseFeatType(setting.c_str());
         if( featype < 0 )
           throw invalid_argument( string("TextFeatExtractor: unknown features type: ") + setting.c_str() );
         break;
-      case FEAT_SETTING_FORMAT:
+      case TEXTFEAT_SETTING_FORMAT:
         format = parseFeatFormat(setting.c_str());
         if( format < 0 )
           throw invalid_argument( string("TextFeatExtractor: unknown output features format: ") + setting.c_str() );
         break;
-      case FEAT_SETTING_VERBOSE:
+      case TEXTFEAT_SETTING_VERBOSE:
         verbose = (bool)setting;
         break;
-      case FEAT_SETTING_PROCIMGS:
+      case TEXTFEAT_SETTING_PROCIMGS:
         procimgs = (bool)setting;
         break;
-      case FEAT_SETTING_STRETCH:
+      case TEXTFEAT_SETTING_STRETCH:
         stretch = (bool)setting;
         break;
-      case FEAT_SETTING_STRETCH_SATU:
+      case TEXTFEAT_SETTING_STRETCH_SATU:
         stretch_satu = settingNumber(setting);
         break;
-      case FEAT_SETTING_ENH:
+      case TEXTFEAT_SETTING_ENH:
         enh = settingNumber(setting);
         break;
-      case FEAT_SETTING_ENH_WIN:
+      case TEXTFEAT_SETTING_ENH_WIN:
         enh_win = (int)setting;
         if( enh_win <= 0 )
           throw invalid_argument( "TextFeatExtractor: enhancement window width must be > 0" );
         break;
-      case FEAT_SETTING_ENH_PRM:
+      case TEXTFEAT_SETTING_ENH_PRM:
         enh_prm = settingNumber(setting);
         if( enh_prm < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
         break;
-      case FEAT_SETTING_ENH_PRM_RANDMIN:
+      case TEXTFEAT_SETTING_ENH_PRM_RANDMIN:
         enh_prm_randmin = settingNumber(setting);
         if( enh_prm_randmin < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement random minimum parameter must be >= 0.0" );
         break;
-      case FEAT_SETTING_ENH_PRM_RANDMAX:
+      case TEXTFEAT_SETTING_ENH_PRM_RANDMAX:
         enh_prm_randmax = settingNumber(setting);
         if( enh_prm_randmax < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement random maximum parameter must be >= 0.0" );
         break;
-      case FEAT_SETTING_ENH_SLP:
+      case TEXTFEAT_SETTING_ENH_SLP:
         enh_slp = settingNumber(setting);
         if( enh_slp < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement slope must be >= 0.0" );
         break;
-      case FEAT_SETTING_SLOPE:
+      case TEXTFEAT_SETTING_SLOPE:
         slope = (bool)setting;
         break;
-      case FEAT_SETTING_SLANT:
+      case TEXTFEAT_SETTING_SLANT:
         slant = (bool)setting;
         break;
-      case FEAT_SETTING_NORMXHEIGHT:
+      case TEXTFEAT_SETTING_NORMXHEIGHT:
         normxheight = (int)setting;
         break;
-      case FEAT_SETTING_NORMHEIGHT:
+      case TEXTFEAT_SETTING_NORMHEIGHT:
         normheight = (int)setting;
         break;
-      case FEAT_SETTING_FPGRAM:
+      case TEXTFEAT_SETTING_FPGRAM:
         compute_fpgram = (bool)setting;
         break;
-      case FEAT_SETTING_FCONTOUR:
+      case TEXTFEAT_SETTING_FCONTOUR:
         compute_fcontour = (bool)setting;
         break;
-      case FEAT_SETTING_PADDING:
+      case TEXTFEAT_SETTING_PADDING:
         padding = (int)setting;
         break;
-      case FEAT_SETTING_SLIDE_SHIFT:
+      case TEXTFEAT_SETTING_SLIDE_SHIFT:
         slide_shift = settingNumber(setting);
         if( slide_shift <= 0.0 )
           throw invalid_argument( "TextFeatExtractor: slide_shift must be > 0.0" );
         break;
-      case FEAT_SETTING_SLIDE_SPAN:
+      case TEXTFEAT_SETTING_SLIDE_SPAN:
         slide_span = settingNumber(setting);
         if( slide_span < 1.0 )
           throw invalid_argument( "TextFeatExtractor: slide_span must be >= 1.0" );
         break;
-      case FEAT_SETTING_SAMPLE_WIDTH:
+      case TEXTFEAT_SETTING_SAMPLE_WIDTH:
         sample_width = (int)setting;
         if( sample_width < 1 )
           throw invalid_argument( "TextFeatExtractor: sample_width must be >= 1" );
         break;
-      case FEAT_SETTING_SAMPLE_HEIGHT:
+      case TEXTFEAT_SETTING_SAMPLE_HEIGHT:
         sample_height = (int)setting;
         if( sample_height < 1 )
           throw invalid_argument( "TextFeatExtractor: sample_height must be >= 1" );
         break;
-      case FEAT_SETTING_PROJFILE:
+      case TEXTFEAT_SETTING_PROJFILE:
         //if( setting.c_str() != NULL && setting.c_str() != '\0' )
           loadProjection( setting.c_str() );
         break;
@@ -290,6 +253,11 @@ void TextFeatExtractor::loadConf( const Config& config ) {
   }
 }
 
+/**
+ * Prints the current configuration.
+ *
+ * @param file  File to print to.
+ */
 void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "TextFeatExtractor: {\n" );
   fprintf( file, "  type = \"%s\";\n", featTypes[featype] );
@@ -318,16 +286,20 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "}\n" );
 }
 
+///////////////
+/// Loaders ///
+///////////////
+
 /**
  * Loads the projecton matrix from an hdf5 file.
  *
  * @param projfile  File from which to read the projection.
  */
 void TextFeatExtractor::loadProjection( const char* projfile ) {
-  // Open HDF5 file handle, read only
+  /// Open HDF5 file handle, read only ///
   H5File fp(projfile,H5F_ACC_RDONLY);
 
-  // Access projection base
+  /// Access projection base ///
   DataSet dset = fp.openDataSet("/B/value");
   DataSpace dspace = dset.getSpace();
   H5T_class_t type_class = dset.getTypeClass();
@@ -336,13 +308,13 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
   if( type_class != H5T_FLOAT || rank != 2 )
     throw invalid_argument( "TextFeatExtractor: expected projection base (B) to be a matrix of type H5T_IEEE_F64LE" );
 
-  // Create opencv matrix with projection matrix
+  /// Create opencv matrix with projection matrix ///
   float Bmat[dims[0]*dims[1]];
   dset.read(Bmat, PredType::NATIVE_FLOAT, dspace);
   projbase = cv::Mat(dims[0], dims[1], CV_32F, &Bmat);
   projbase = projbase.t();
 
-  // Access mean vector
+  /// Access mean vector ///
   dset = fp.openDataSet("/mu/value");
   dspace = dset.getSpace();
   type_class = dset.getTypeClass();
@@ -350,7 +322,7 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
   if( type_class != H5T_FLOAT || dims[1] != 1 )
     throw invalid_argument( "TextFeatExtractor: expected mean (mu) to be a vectir of type H5T_IEEE_F64LE" );
 
-  // Create opencv matrix with mean
+  /// Create opencv matrix with mean ///
   float mumat[dims[0]];
   dset.read(mumat, PredType::NATIVE_FLOAT, dspace);
   projmu = cv::Mat(dims[0], dims[1], CV_32F, &mumat);
@@ -364,48 +336,6 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
 ///////////////////////
 /// Features output ///
 ///////////////////////
-
-/**
- * Gets the enum value for a feature type, or -1 if unknown.
- *
- * @param format  String containing feature type name.
- * @return        Enum feature type value.
- */
-int TextFeatExtractor::parseFeatType( const char* featype ) {
-  int featypes = sizeof(TextFeatExtractor::featTypes) / sizeof(TextFeatExtractor::featTypes[0]);
-  for( int n=0; n<featypes; n++ )
-    if( ! strcmp(TextFeatExtractor::featTypes[n],featype) )
-      return n;
-  return -1;
-}
-
-/**
- * Gets the enum value for an output format name, or -1 if unknown.
- *
- * @param format  String containing format name.
- * @return        Enum format value.
- */
-int TextFeatExtractor::parseFeatFormat( const char* format ) {
-  int formats = sizeof(TextFeatExtractor::formatNames) / sizeof(TextFeatExtractor::formatNames[0]);
-  for( int n=0; n<formats; n++ )
-    if( ! strcmp(TextFeatExtractor::formatNames[n],format) )
-      return n;
-  return -1;
-}
-
-/**
- * Gets the enum value for a configuration setting name, or -1 if unknown.
- *
- * @param format  String containing setting name.
- * @return        Enum format value.
- */
-int TextFeatExtractor::parseFeatSetting( const char* setting ) {
-  int settings = sizeof(TextFeatExtractor::settingNames) / sizeof(TextFeatExtractor::settingNames[0]);
-  for( int n=0; n<settings; n++ )
-    if( ! strcmp(TextFeatExtractor::settingNames[n],setting) )
-      return n;
-  return -1;
-}
 
 /**
  * Prints a long in binary.
@@ -476,6 +406,13 @@ static void print_features_ascii( const Mat& feats, FILE* file ) {
 }
 
 /**
+ * Whether the configured output format is image.
+ */
+bool TextFeatExtractor::isImageFormat() {
+  return format == TEXTFEAT_FORMAT_IMAGE ? true : false ;
+}
+
+/**
  * Prints features to a file stream using the configured output format.
  *
  * @param feats  OpenCV matrix containing the features.
@@ -485,14 +422,14 @@ void TextFeatExtractor::print( const Mat& feats, FILE* file ) {
   if( feats.cols == 0 )
     throw runtime_error( "TextFeatExtractor::print: empty features matrix" );
   switch( format ) {
-    case FEAT_FORMAT_ASCII:
+    case TEXTFEAT_FORMAT_ASCII:
       print_features_ascii( feats, file );
       break;
-    case FEAT_FORMAT_HTK:
+    case TEXTFEAT_FORMAT_HTK:
       print_features_htk( feats, file );
       break;
-    case FEAT_FORMAT_IMAGE:
-      throw runtime_error( "TextFeatExtractor::print: for image format print is unsupported" );
+    case TEXTFEAT_FORMAT_IMAGE:
+      throw runtime_error( "TextFeatExtractor::print: print is unsupported for image format" );
     default:
       throw runtime_error( "TextFeatExtractor::print: unknown output features format" );
   }
@@ -507,7 +444,7 @@ void TextFeatExtractor::print( const Mat& feats, FILE* file ) {
 void TextFeatExtractor::write( const Mat& feats, const char* fname ) {
   if( feats.cols == 0 )
     throw runtime_error( "TextFeatExtractor::write: empty features matrix" );
-  if( format == FEAT_FORMAT_IMAGE )
+  if( format == TEXTFEAT_FORMAT_IMAGE )
     imwrite( fname, feats );
   else {
     FILE *file;
@@ -633,8 +570,6 @@ static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
   }
   view.sync();
 }
-
-
 
 /**
  * Copies image data from an OpenCV Mat to Magick::Image.
@@ -1541,14 +1476,14 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   bool window = true;
   //bool window = false;
   switch( featype ) {
-    case FEAT_TYPE_DOTMATRIX:
+    case TEXTFEAT_TYPE_DOTMATRIX:
       tm = high_resolution_clock::now();
       cv::Mat dotmatrix( Image image, double win_size, double shift, int sample_width, int sample_height, double moment_weight, bool window, cv::Mat projbase, cv::Mat projmu );
       feats = dotmatrix( feaimg, slide_span, slide_shift, sample_width, sample_height, moment_weight, window, projbase, projmu );
       if( verbose )
         fprintf(stderr,"dotmatrix time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
       break;
-    case FEAT_TYPE_RAW:
+    case TEXTFEAT_TYPE_RAW:
       feats = Mat( feaimg.rows(), feaimg.columns(), CV_8U );
       magick2cvmat8u( feaimg, feats );
       break;
