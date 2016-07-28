@@ -24,7 +24,7 @@ const char* PageXML::settingNames[] = {
   "pagens",
   //"loadimg",
   "grayimg",
-  "extended_name"
+  "extended_names"
 };
 
 char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
@@ -60,9 +60,6 @@ void PageXML::release() {
   if( imgbase != NULL )
     free(imgbase);
   imgbase = NULL;
-  if( pagens != NULL && pagens != default_pagens )
-    free(pagens);
-  pagens = NULL;
 }
 
 /**
@@ -163,6 +160,8 @@ void PageXML::loadConf( const Config& config ) {
         indent = (bool)setting;
         break;
       case PAGEXML_SETTING_PAGENS:
+        if( pagens != NULL && pagens != default_pagens )
+          free(pagens);
         pagens = strdup(setting.c_str());
         break;
       //case PAGEXML_SETTING_LOADIMG:
@@ -171,8 +170,8 @@ void PageXML::loadConf( const Config& config ) {
       case PAGEXML_SETTING_GRAYIMG:
         grayimg = (bool)setting;
         break;
-      case PAGEXML_SETTING_EXTENDED_NAME:
-        extended_name = (bool)setting;
+      case PAGEXML_SETTING_EXTENDED_NAMES:
+        extended_names = (bool)setting;
         break;
       default:
         throw invalid_argument( string("PageXML: unexpected configuration property: ") + setting.getName() );
@@ -191,7 +190,7 @@ void PageXML::printConf( FILE* file ) {
   fprintf( file, "  pagens = \"%s\";\n", pagens );
   //fprintf( file, "  loadimg = %s;\n", loadimg ? "true" : "false" );
   fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
-  fprintf( file, "  extended_name = %s;\n", extended_name ? "true" : "false" );
+  fprintf( file, "  extended_names = %s;\n", extended_names ? "true" : "false" );
   fprintf( file, "}\n" );
 }
 
@@ -402,7 +401,7 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     string sampid(id1);
     string sampname = string(".") + id1;
     free(id1);
-    if( extended_name )
+    if( extended_names )
       if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
           ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
         char* id2 = (char*)xmlGetProp( node->parent->parent, (xmlChar*)"id" );

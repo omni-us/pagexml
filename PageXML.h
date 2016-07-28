@@ -22,7 +22,7 @@ enum PAGEXML_SETTING {
   PAGEXML_SETTING_PAGENS,          // "pagens"
   //PAGEXML_SETTING_LOADIMG,         // "loadimg"
   PAGEXML_SETTING_GRAYIMG,         // "grayimg"
-  PAGEXML_SETTING_EXTENDED_NAME    // "extended_name"
+  PAGEXML_SETTING_EXTENDED_NAMES   // "extended_names"
 };
 
 struct NamedImage {
@@ -53,7 +53,7 @@ class PageXML {
     bool indent = true;
     //bool loadimg = false;
     bool grayimg = false;
-    bool extended_name = true;
+    bool extended_names = true;
     char* pagens = NULL;
     char* xmldir = NULL;
     char* imgpath = NULL;
