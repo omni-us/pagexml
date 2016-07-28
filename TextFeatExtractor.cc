@@ -38,8 +38,8 @@ const char* TextFeatExtractor::settingNames[] = {
   "enh_prm_randmin",
   "enh_prm_randmax",
   "enh_slp",
-  "slope",
-  "slant",
+  "deslope",
+  "deslant",
   "normxheight",
   "normheight",
   "fpgram",
@@ -92,6 +92,19 @@ inline static double settingNumber( const Setting& setting ) {
   return setting.getType() == Setting::Type::TypeInt ?
     (double)((int)setting) :
     (double)setting ;
+}
+
+/**
+ * Gets a config setting as a bool even if it is a yes/no or true/false string.
+ */
+inline static bool settingBoolean( const Setting& setting ) {
+  if( setting.getType() == Setting::Type::TypeString ) {
+    if( !strcasecmp("true",setting.c_str()) || !strcasecmp("yes",setting.c_str()) )
+      return true;
+    else if( !strcasecmp("false",setting.c_str()) || !strcasecmp("no",setting.c_str()) )
+      return false;
+  }
+  return (bool)setting;
 }
 
 /**
@@ -163,13 +176,13 @@ void TextFeatExtractor::loadConf( const Config& config ) {
           throw invalid_argument( string("TextFeatExtractor: unknown output features format: ") + setting.c_str() );
         break;
       case TEXTFEAT_SETTING_VERBOSE:
-        verbose = (bool)setting;
+        verbose = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_PROCIMGS:
-        procimgs = (bool)setting;
+        procimgs = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_STRETCH:
-        stretch = (bool)setting;
+        stretch = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_STRETCH_SATU:
         stretch_satu = settingNumber(setting);
@@ -202,11 +215,11 @@ void TextFeatExtractor::loadConf( const Config& config ) {
         if( enh_slp < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement slope must be >= 0.0" );
         break;
-      case TEXTFEAT_SETTING_SLOPE:
-        slope = (bool)setting;
+      case TEXTFEAT_SETTING_DESLOPE:
+        deslope = settingBoolean(setting);
         break;
-      case TEXTFEAT_SETTING_SLANT:
-        slant = (bool)setting;
+      case TEXTFEAT_SETTING_DESLANT:
+        deslant = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_NORMXHEIGHT:
         normxheight = (int)setting;
@@ -215,13 +228,13 @@ void TextFeatExtractor::loadConf( const Config& config ) {
         normheight = (int)setting;
         break;
       case TEXTFEAT_SETTING_FPGRAM:
-        compute_fpgram = (bool)setting;
+        compute_fpgram = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_FCONTOUR:
-        compute_fcontour = (bool)setting;
+        compute_fcontour = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_PADDING:
-        padding = (int)setting;
+        padding = (int)settingNumber(setting);
         break;
       case TEXTFEAT_SETTING_SLIDE_SHIFT:
         slide_shift = settingNumber(setting);
@@ -270,8 +283,8 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  enh_prm_randmin = %g;\n", enh_prm_randmin );
   fprintf( file, "  enh_prm_randmax = %g;\n", enh_prm_randmax );
   fprintf( file, "  enh_slp = %g;\n", enh_slp );
-  fprintf( file, "  slope = %s;\n", slope ? "true" : "false" );
-  fprintf( file, "  slant = %s;\n", slant ? "true" : "false" );
+  fprintf( file, "  deslope = %s;\n", deslope ? "true" : "false" );
+  fprintf( file, "  deslant = %s;\n", deslant ? "true" : "false" );
   fprintf( file, "  normxheight = %d;\n", normxheight );
   fprintf( file, "  normheight = %d;\n", normheight );
   fprintf( file, "  fpgram = %s;\n", compute_fpgram ? "true" : "false" );
@@ -340,7 +353,7 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
 /**
  * Prints a long in binary.
  */
-inline static void print_long( long data, FILE* file ) {
+inline static void print_int( long data, FILE* file ) {
   fwrite( ((char*) &data) + 3, sizeof(char), 1, file );
   fwrite( ((char*) &data) + 2, sizeof(char), 1, file );
   fwrite( ((char*) &data) + 1, sizeof(char), 1, file );
@@ -350,7 +363,7 @@ inline static void print_long( long data, FILE* file ) {
 /**
  * Prints an int in binary.
  */
-inline static void print_int( int data, FILE* file ) {
+inline static void print_short( int data, FILE* file ) {
   fwrite( ((char*) &data) + 1, sizeof(char), 1, file );
   fwrite( ((char*) &data)    , sizeof(char), 1, file );
 }
@@ -372,15 +385,15 @@ inline static void print_float( float data, FILE* file ) {
  * @param file   File stream to print the features.
  */
 static void print_features_htk( const Mat& feats, FILE* file ) {
-  long nSamples = feats.rows;
-  long sampPeriod=100000; /* 10000000 = 1seg */
+  int nSamples = feats.rows;
+  int sampPeriod=100000; /* 10000000 = 1seg */
   int sampSize = 4*feats.cols;
   int parmKind = 9; /* PARMKIND=USER */
 
-  print_long( nSamples, file );
-  print_long( sampPeriod, file );
-  print_int( sampSize, file );
-  print_int( parmKind, file );
+  print_int( nSamples, file );
+  print_int( sampPeriod, file );
+  print_short( sampSize, file );
+  print_short( parmKind, file );
 
   for( int i=0; i < feats.rows; i++ ) {
     const float* data = feats.ptr<float>(i);
@@ -542,7 +555,9 @@ inline static int to16bits( int val ) {
 static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
   Geometry page = image.page();
   Geometry density = image.density();
-  ResolutionType units = image.resolutionUnits();
+  //ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  ResolutionType units = image.image()->units;
+
   image = Image( Geometry(image.columns(), image.rows()), colorBlack );
   image.depth(8);
   image.page(page);
@@ -585,7 +600,8 @@ static void cvmat8u2magick( Image& image, Mat& cvimg ) {
 
   Geometry page = image.page();
   Geometry density = image.density();
-  ResolutionType units = image.resolutionUnits();
+  //ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  ResolutionType units = image.image()->units;
   image = Image( Geometry(image.columns(), image.rows()), colorBlack );
   image.depth(8);
   image.page(page);
@@ -1170,7 +1186,8 @@ bool flattenImage( Image& image, const Color* color = NULL ) {
   clone.depth(image.depth());
   clone.page(image.page());
   clone.density(image.density());
-  clone.resolutionUnits(image.resolutionUnits());
+  //clone.resolutionUnits(image.resolutionUnits()); // Magick++ bug
+  clone.resolutionUnits(image.image()->units);
   clone.type( GrayscaleType );
 
   Pixels view_image(image);
@@ -1308,20 +1325,20 @@ void TextFeatExtractor::estimateAngles( Image& image, float* _slope, float* _sla
 
   /// Estimate line slope angle ///
   float vslope = 0.0;
-  Image deslope = image;
+  Image desloped = image;
   //#pragma omp critical
-  if( slope ) {
+  if( deslope ) {
     tm = high_resolution_clock::now();
-    deslope.deskew( 0.4*QuantumRange );
+    desloped.deskew( 0.4*QuantumRange );
     if( verbose )
-      fprintf(stderr,"slope time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
-    vslope = stof( deslope.artifact("deskew:angle") );
+      fprintf(stderr,"deslope time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
+    vslope = stof( desloped.artifact("deskew:angle") );
   }
   if( _slope != NULL )
     *_slope = vslope;
 
   //if( procimgs )
-  //  deslope.write("procimg_4_deslope.png");
+  //  desloped.write("procimg_4_deslope.png");
 
   /*Image tmp = image;
   tm = high_resolution_clock::now();
@@ -1337,11 +1354,11 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
 
   /// Estimate writing slant angle ///
   float vslant = 0.0;
-  if( slant ) {
+  if( deslant ) {
     tm = high_resolution_clock::now();
-    vslant = estimateSlant( deslope, slant_min, slant_max, slant_step, slant_hsteps );
+    vslant = estimateSlant( desloped, deslant_min, deslant_max, deslant_step, deslant_hsteps );
     if( verbose )
-      fprintf(stderr,"slant time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
+      fprintf(stderr,"deslant time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
   }
   if( _slant != NULL )
     *_slant = vslant;
@@ -1366,13 +1383,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   if( flattenImage(feaimg,&colorWhite) && verbose )
     fprintf(stderr,"flatten time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
 
-  /// Random perturbations ///
-  if( randomize && scale_rand ) {
-    float rnd = 100 + 2*scale_rand*((rand()/(float)RAND_MAX)-0.5);
-    if( verbose )
-      fprintf(stderr,"random scale: %g%%\n",rnd);
-    feaimg.resize( Geometry( (to_string(rnd)+"%").c_str() ) );
-  }
+  /// Random slant ///
   if( randomize && slant_rand ) {
     float rnd = 2*slant_rand*((rand()/(float)RAND_MAX)-0.5);
     if( verbose )
@@ -1396,9 +1407,10 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   Matx33d A0 = R0*S0;
   Matx33d A1 = S1*R1;
 
+  feaimg.page( Geometry(0,0,0,0) );
+
   if( slope != 0.0 || slant != 0.0 ) {
     tm = high_resolution_clock::now();
-    feaimg.page( Geometry(0,0,0,0) );
     feaimg.virtualPixelMethod( WhiteVirtualPixelMethod );
     //feaimg.interpolate( BilinearInterpolatePixel );
     //feaimg.interpolate( SplineInterpolatePixel );
@@ -1408,7 +1420,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     feaimg.shave( Geometry(1,1) );
     offx = feaimg.page().xNegative() ? -feaimg.page().xOff() : feaimg.page().xOff();
     offy = feaimg.page().yNegative() ? -feaimg.page().yOff() : feaimg.page().yOff();
-    //printf( "page_off: %d %d\n", offx, offy );
+    //fprintf( stderr, "page_off: %d %d\n", offx, offy );
     feaimg.page( Geometry(0,0,0,0) );
     if( verbose )
       fprintf(stderr,"affine time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
@@ -1423,16 +1435,33 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     feaimg = trimmed;
     offx += feaimg.page().xOff();
     offy += feaimg.page().yOff();
+    //fprintf( stderr, "trim_page_off: %d %d\n", offx, offy );
   }
+
+  double scaling = 1.0;
+  //int orig_height = feaimg.rows();
 
   /// Normalize x-height ///
   if( normxheight > 0 && xheight > 0 ) {
     float fact = 100.0*(float)normxheight/(float)xheight;
+    scaling *= 0.01*fact;
     feaimg.resize( Geometry( (to_string(fact)+"%").c_str() ) );
   }
 
-  if( normheight && ! normxheight )
+// @todo BUG: When there is an image resize (height normalization) fpgram is wrong
+  if( normheight && ! normxheight ) {
+    scaling *= (float)normheight/(float)feaimg.rows();
     feaimg.resize( Geometry( ("x"+to_string(normheight)).c_str() ) );
+  }
+
+  /// Random scaling ///
+  if( randomize && scale_rand ) {
+    float rnd = 100 + 2*scale_rand*((rand()/(float)RAND_MAX)-0.5);
+    if( verbose )
+      fprintf(stderr,"random scale: %g%%\n",rnd);
+    feaimg.resize( Geometry( (to_string(rnd)+"%").c_str() ) );
+    scaling *= 0.01*rnd;
+  }
 
   /// Add left and right padding ///
   if( padding ) {
@@ -1445,21 +1474,31 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
 
   /// Compute features parallelogram ///
   if( compute_fpgram && _fpgram != NULL && ! randomize ) {
-    int numFea = 0;
-    for( double x=-slide_span; x<=feaimg.columns()+1; x+=slide_shift )
-      numFea++;
-    double xmin = -0.5*slide_span-padding;
-    double xmax = xmin+(numFea-1)*slide_shift;
+    double xmin = -padding;
+    double xmax = feaimg.columns()-1+padding;
+    if( featype == TEXTFEAT_TYPE_DOTMATRIX ) {
+      int numFea = 0;
+      for( double x=-slide_span; x<=feaimg.columns()+1; x+=slide_shift )
+        numFea++;
+      xmin = -0.5*slide_span-padding;
+      xmax = xmin+(numFea-1)*slide_shift;
+    }
     //fprintf(stderr,"numFea=%d xmin=%g xmax=%g\n",numFea,xmin,xmax);
 
-    Matx43d pts( offx+xmin, offy, 1,
+    /*Matx43d pts( offx+xmin, offy, 1,
                  offx+xmax, offy, 1,
                  offx+xmax, offy+feaimg.rows()-1, 1,
-                 offx+xmin, offy+feaimg.rows()-1, 1 );
+                 offx+xmin, offy+feaimg.rows()-1, 1 );*/
+    Matx43d pts( offx+(1.0/scaling)*xmin, offy, 1,
+                 offx+(1.0/scaling)*xmax, offy, 1,
+                 offx+(1.0/scaling)*xmax, offy+(1.0/scaling)*(feaimg.rows()-1), 1,
+                 offx+(1.0/scaling)*xmin, offy+(1.0/scaling)*(feaimg.rows()-1), 1 );
     pts = pts * A1 + Matx43d( bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0 );
+
+    //fprintf(stderr,"bboxoff=%d,%d off=%d,%d xlim=%g,%g pts=%g,%g\n",bboxoffx,bboxoffy,offx,offy,xmin,xmax,pts(0,0),pts(0,1));
 
     vector<Point2f> fpgram = { Point2f(pts(0,0),pts(0,1)),
                                Point2f(pts(1,0),pts(1,1)),

@@ -39,8 +39,8 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_ENH_PRM_RANDMIN, // "enh_prm_randmin"
   TEXTFEAT_SETTING_ENH_PRM_RANDMAX, // "enh_prm_randmax"
   TEXTFEAT_SETTING_ENH_SLP,         // "enh_slp"
-  TEXTFEAT_SETTING_SLOPE,           // "slope"
-  TEXTFEAT_SETTING_SLANT,           // "slant"
+  TEXTFEAT_SETTING_DESLOPE,         // "slope"
+  TEXTFEAT_SETTING_DESLANT,         // "slant"
   TEXTFEAT_SETTING_NORMXHEIGHT,     // "normxheight"
   TEXTFEAT_SETTING_NORMHEIGHT,      // "normheight"
   TEXTFEAT_SETTING_FPGRAM,          // "fpgram"
@@ -85,12 +85,12 @@ class TextFeatExtractor {
     float enh_prm = 0.1;
     float enh_prm_randmin = 0.05;
     float enh_prm_randmax = 0.3;
-    bool slope = true;
-    bool slant = true;
-    float slant_min = -6.0; // degrees
-    float slant_max = 48.0; // degrees
-    float slant_step = 1.0; // degrees
-    int slant_hsteps = 4;
+    bool deslope = true;
+    bool deslant = true;
+    float deslant_min = -6.0; // degrees
+    float deslant_max = 48.0; // degrees
+    float deslant_step = 1.0; // degrees
+    int deslant_hsteps = 4;
     float slant_rand = 4.0; // degrees in both directions
     float scale_rand = 0.0; // percent smaller or larger
     int normxheight = 0;
