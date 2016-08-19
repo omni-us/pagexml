@@ -38,6 +38,7 @@ const char* TextFeatExtractor::settingNames[] = {
   "enh_prm_randmin",
   "enh_prm_randmax",
   "enh_slp",
+  "enh3_prm",
   "deslope",
   "deslant",
   "normxheight",
@@ -214,6 +215,13 @@ void TextFeatExtractor::loadConf( const Config& config ) {
         enh_slp = settingNumber(setting);
         if( enh_slp < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement slope must be >= 0.0" );
+        break;
+      case TEXTFEAT_SETTING_ENH3_PRM:
+        enh3_prm0 = settingNumber(setting[0]);
+        enh_prm = settingNumber(setting[1]);
+        enh3_prm2 = settingNumber(setting[2]);
+        if( enh3_prm0 < 0.0 || enh_prm < 0.0 || enh3_prm2 < 0.0 )
+          throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
         break;
       case TEXTFEAT_SETTING_DESLOPE:
         deslope = settingBoolean(setting);
@@ -499,6 +507,32 @@ static void magick2cvmat8u( Image& image, Mat& cvimg ) {
   }
 }
 
+static void magick2cvmat8uc3( Image& image, Mat& cvimg ) {
+  CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
+  CV_Assert( cvimg.channels() == 3 ); // accept only three channel matrices
+  CV_Assert( image.type() == TrueColorMatteType || image.type() == TrueColorType );
+  CV_Assert( (int)image.columns() == cvimg.cols );
+  CV_Assert( (int)image.rows() == cvimg.rows );
+
+  Pixels view(image);
+  const PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
+
+  for( int y=0, n=0; y<cvimg.rows; y++ ) {
+    Vec3b *ptr = cvimg.ptr<Vec3b>(y);
+    for( int x=0; x<cvimg.cols; x++, n++ ) {
+#if MAGICKCORE_QUANTUM_DEPTH == 16
+      ptr[x][2] = pixs[n].red >> 8;
+      ptr[x][1] = pixs[n].green >> 8;
+      ptr[x][0] = pixs[n].blue >> 8;
+#elif MAGICKCORE_QUANTUM_DEPTH == 8
+      ptr[x][2] = pixs[n].red;
+      ptr[x][1] = pixs[n].green;
+      ptr[x][0] = pixs[n].blue;
+#endif
+    }
+  }
+}
+
 /**
  * Copies image data from Magick::Image to an unsigned char matrix.
  *
@@ -587,6 +621,49 @@ static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
 }
 
 /**
+ * Copies image data from unsigned char matrix to Magick::Image.
+ *
+ * @param image  Magick++ Image object.
+ * @param gimg   Unsigned char matrix.
+ * @param alpha  Unsigned char matrix for alpha channel.
+ */
+static void grayms2magick( Image& image, gray** rimg, gray** gimg, gray** bimg, gray** alpha = NULL ) {
+  Geometry page = image.page();
+  Geometry density = image.density();
+  ResolutionType units = image.image()->units;
+
+  image = Image( Geometry(image.columns(), image.rows()), colorBlack );
+  image.depth(8);
+  image.page(page);
+  image.density(density);
+  image.resolutionUnits(units);
+
+  if( alpha != NULL && image.type() != TrueColorMatteType )
+    image.type( TrueColorMatteType );
+  else if( alpha == NULL && image.type() != TrueColorType )
+    image.type( TrueColorType );
+  Pixels view(image);
+  PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  for( int n=image.columns()*image.rows()-1; n>=0; n-- ) {
+#if MAGICKCORE_QUANTUM_DEPTH == 16
+    pixs[n].red = to16bits(rimg[0][n]);
+    pixs[n].green = to16bits(gimg[0][n]);
+    pixs[n].blue = to16bits(bimg[0][n]);
+    if( alpha != NULL )
+      pixs[n].opacity = to16bits(alpha[0][n]);
+#elif MAGICKCORE_QUANTUM_DEPTH == 8
+    pixs[n].red = rimg[0][n];
+    pixs[n].green = gimg[0][n];
+    pixs[n].blue = bimg[0][n];
+    if( alpha != NULL )
+      pixs[n].opacity = alpha[0][n];
+#endif
+  }
+  view.sync();
+}
+
+
+/**
  * Copies image data from an OpenCV Mat to Magick::Image.
  *
  * @param image   Magick++ Image object.
@@ -636,21 +713,38 @@ static void cvmat8u2magick( Image& image, Mat& cvimg ) {
  * @param slp    Gray slope parameter.
  * @param type   Enhancement algorithm.
  */
-static void enhance( Image& image, int winW, double prm, double slp, int type ) {
+static void enhance( Image& image, int winW, double prm1, double slp, int type, double prm0 = 0.0, double prm2 = 0.0 ) {
   gray** gimg = NULL;
   gray** msk = NULL;
+  II1** ii1 = NULL;
+  II2** ii2 = NULL;
+  II1** cnt = NULL;
 
   magick2graym(image,gimg,&msk);
   if( msk != NULL )
     for( int n=image.columns()*image.rows()-1; n>=0; n-- )
       msk[0][n] = 255-msk[0][n];
 
-  II1** ii1 = NULL;
-  II2** ii2 = NULL;
-  II1** cnt = NULL;
-  enhLocal_graym( gimg, msk, image.columns(), image.rows(), &ii1, &ii2, &cnt, winW, prm, slp, type );
+  if( prm0 == 0.0 && prm2 == 0.0 ) {
+    enhLocal_graym( gimg, msk, image.columns(), image.rows(), &ii1, &ii2, &cnt, winW, prm1, slp, type );
+    graym2magick(image,gimg);
+  }
+  else {
+    gray** rimg = NULL;
+    gray** bimg = NULL;
+    malloc_graym(image.columns(),image.rows(),&rimg,false);
+    malloc_graym(image.columns(),image.rows(),&bimg,false);
+    for( int n=image.columns()*image.rows()-1; n>=0; n-- )
+      rimg[0][n] = bimg[0][n] = gimg[0][n];
 
-  graym2magick(image,gimg);
+    enhLocal_graym( rimg, msk, image.columns(), image.rows(), &ii1, &ii2, &cnt, winW, prm0, slp, type );
+    enhLocal_graym( gimg, msk, image.columns(), image.rows(), &ii1, &ii2, &cnt, winW, prm1, slp, type );
+    enhLocal_graym( bimg, msk, image.columns(), image.rows(), &ii1, &ii2, &cnt, winW, prm2, slp, type );
+    grayms2magick(image,rimg,gimg,bimg);
+
+    free(rimg);
+    free(bimg);
+  }
 
   free(gimg);
   free(ii1);
@@ -939,15 +1033,15 @@ static double estimateSlant( Image& image, double amin, double amax, double aste
 #ifdef __SLANT_WEIGHTED_SHEAR__
         if( floorxx == xx ) {
 #endif
-          proj[floorxx] += pixs[xy].red;
+          proj[floorxx] += pixs[xy].green;
           cnt[floorxx]++;
 #ifdef __SLANT_WEIGHTED_SHEAR__
         }
         else {
           float fact = xx-floorxx;
-          float val = fact*pixs[xy].red;
+          float val = fact*pixs[xy].green;
           //double fact = xx-floorxx;
-          //double val = fact*pixs[xy].red;
+          //double val = fact*pixs[xy].green;
           proj[floorxx] += pixs[xy].red-val;
           proj[floorxx+1] += val;
           cnt[floorxx] += 1.0-fact;
@@ -1244,7 +1338,6 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
   }
 
   /// Text image enhancement ///
-  // @todo For 0<enh<1 randomly do or do not enhance
   if( enh ) {
     float prm = enh_prm;
 
@@ -1256,7 +1349,8 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     }
 
     tm = high_resolution_clock::now();
-    enhance( image, enh_win, prm, enh_slp, enh_type );
+    //enhance( image, enh_win, prm, enh_slp, enh_type );
+    enhance( image, enh_win, prm, enh_slp, enh_type, enh3_prm0, enh3_prm2 );
     if( verbose )
       fprintf(stderr,"enhance time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
     if( procimgs )
@@ -1475,7 +1569,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   /// Compute features parallelogram ///
   if( compute_fpgram && _fpgram != NULL && ! randomize ) {
     double xmin = -padding;
-    double xmax = feaimg.columns()-1+padding;
+    double xmax = feaimg.columns()-1-padding;
     if( featype == TEXTFEAT_TYPE_DOTMATRIX ) {
       int numFea = 0;
       for( double x=-slide_span; x<=feaimg.columns()+1; x+=slide_shift )
@@ -1523,8 +1617,14 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
         fprintf(stderr,"dotmatrix time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
       break;
     case TEXTFEAT_TYPE_RAW:
-      feats = Mat( feaimg.rows(), feaimg.columns(), CV_8U );
-      magick2cvmat8u( feaimg, feats );
+      if( feaimg.type() == GrayscaleMatteType || feaimg.type() == GrayscaleType ) {
+        feats = Mat( feaimg.rows(), feaimg.columns(), CV_8U );
+        magick2cvmat8u( feaimg, feats );
+      }
+      else {
+        feats = Mat( feaimg.rows(), feaimg.columns(), CV_8UC3 );
+        magick2cvmat8uc3( feaimg, feats );
+      }
       break;
   }
 
