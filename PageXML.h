@@ -53,7 +53,7 @@ class PageXML {
     bool indent = true;
     //bool loadimg = false;
     bool grayimg = false;
-    bool extended_names = true;
+    bool extended_names = false;
     char* pagens = NULL;
     char* xmldir = NULL;
     char* imgpath = NULL;
