@@ -46,6 +46,7 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_NORMHEIGHT,      // "normheight"
   TEXTFEAT_SETTING_FPGRAM,          // "fpgram"
   TEXTFEAT_SETTING_FCONTOUR,        // "fcontour"
+  TEXTFEAT_SETTING_FCONTOUR_DILATE, // "fcontour_dilate"
   TEXTFEAT_SETTING_PADDING,         // "padding"
   TEXTFEAT_SETTING_SLIDE_SHIFT,     // "slide_shift"
   TEXTFEAT_SETTING_SLIDE_SPAN,      // "slide_span"
@@ -100,6 +101,7 @@ class TextFeatExtractor {
     int normheight = 0;
     bool compute_fpgram = true;
     bool compute_fcontour = true;
+    float fcontour_dilate = 4.0;
     int padding = 12;
     float slide_shift = 2.0;
     float slide_span = 20.0;

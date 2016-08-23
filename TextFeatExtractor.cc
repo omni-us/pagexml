@@ -45,6 +45,7 @@ const char* TextFeatExtractor::settingNames[] = {
   "normheight",
   "fpgram",
   "fcontour",
+  "fcontour_dilate",
   "padding",
   "slide_shift",
   "slide_span",
@@ -240,6 +241,9 @@ void TextFeatExtractor::loadConf( const Config& config ) {
         break;
       case TEXTFEAT_SETTING_FCONTOUR:
         compute_fcontour = settingBoolean(setting);
+        break;
+      case TEXTFEAT_SETTING_FCONTOUR_DILATE:
+        fcontour_dilate = settingNumber(setting);
         break;
       case TEXTFEAT_SETTING_PADDING:
         padding = (int)settingNumber(setting);
@@ -1363,8 +1367,8 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
   if( compute_fcontour && _fcontour != NULL && ! randomize ) {
     tm = high_resolution_clock::now();
 
-    float dilate = 4;
-    int border = dilate+1;
+    //float fcontour_dilate = 4;
+    int border = fcontour_dilate+1;
 
     /// Binalize image ///
     Image tmp = image;
@@ -1390,12 +1394,12 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
 
     /// Dilate using disk structural element ///
     char kern[32];
-    sprintf( kern, "Disk:%.2g", dilate );
+    sprintf( kern, "Disk:%.2g", fcontour_dilate );
     tmp.morphology( DilateMorphology, string(kern) );
 
     /// Get contour coordinates ///
     vector<vector<Point> > fcontour;
-    double eps = dilate/2;
+    double eps = fcontour_dilate/2.0;
     //int method = CV_CHAIN_APPROX_TC89_KCOS;
     int method = CV_CHAIN_APPROX_SIMPLE;
     findOuterContours( tmp, fcontour, method, eps );
