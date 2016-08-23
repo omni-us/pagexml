@@ -378,6 +378,7 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     loadImage();
 
   vector<NamedImage> images;
+  if( ! xmlXPathNodeSetIsEmpty(elems_coords->nodesetval) )
   for( int n=0; n<elems_coords->nodesetval->nodeNr; n++ ) {
     xmlNodePtr node = elems_coords->nodesetval->nodeTab[n];
 
