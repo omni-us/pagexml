@@ -42,6 +42,7 @@ class PageXML {
     void loadXml( const char* fname );
     void loadXml( int fnum );
     void loadImage( const char* fname = NULL );
+    int simplifyIDs();
     std::vector<NamedImage> crop( const char* xpath );
     static std::string pointsToString( std::vector<cv::Point2f> points );
     static std::string pointsToString( std::vector<cv::Point> points );

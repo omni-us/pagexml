@@ -510,3 +510,43 @@ float PageXML::getXheight( const char* id ) {
 
   return xheight;
 }
+
+/**
+ * Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
+ *
+ * @return       Number of IDs simplified.
+ */
+int PageXML::simplifyIDs() {
+  int simplified = 0;
+
+  regex reTrim("^[^a-zA-Z]*");
+  regex reInvalid("[^a-zA-Z0-9_-]");
+  string sampbase(imgbase);
+  //xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)"//*[@id]", context );
+  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)"//*[@id][local-name()='TextLine' or local-name()='TextRegion']", context );
+
+  if( elem != NULL && elem->nodesetval )
+    for( int n=0; n<elem->nodesetval->nodeNr; n++ ) {
+      xmlChar* id = xmlGetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"id" );
+      string sampid((char*)id);
+      if( sampid.size() > sampbase.size() &&
+          ! sampid.compare(0,sampbase.size(),sampbase) ) {
+        sampid.erase( 0, sampbase.size() );
+        sampid = regex_replace(sampid,reTrim,"");
+        if( sampid.size() > 0 ) {
+          sampid = regex_replace(sampid,reInvalid,"_");
+          xmlHasProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id" ) ?
+            xmlSetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id", id ) :
+            xmlNewProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id", id ) ;
+          xmlSetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"id", (xmlChar*)sampid.c_str() );
+          simplified++;
+        }
+      }
+      free(id);
+    }
+
+  if( elem != NULL )
+    xmlXPathFreeObject(elem);
+
+  return simplified;
+}
