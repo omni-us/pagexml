@@ -400,7 +400,11 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
 
     /// Construct sample name ///
     string sampid(id1);
-    string sampname = string(".") + id1;
+    /*string sampbase(imgbase);
+    if( sampid.size() > sampbase.size() &&
+        ! sampid.compare(0,sampbase.size(),sampbase) )
+      sampid.erase( 0, sampbase.size() );*/
+    string sampname = string(".") + sampid;
     free(id1);
     if( extended_names )
       if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
