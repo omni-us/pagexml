@@ -255,6 +255,9 @@ void PageXML::loadXml( int fnum ) {
   if( strrchr(p,'.') == NULL )
     throw runtime_error( string("PageXML: loadXml: expected image file name to have an extension: ")+p );
   imgbase = strndup(p,strrchr(p,'.')-p);
+  for( char *p=imgbase; *p!='\0'; p++ )
+    if( *p == ' ' /*|| *p == '[' || *p == ']' || *p == '(' || *p == ')'*/ )
+      *p = '_';
 
   xmlXPathFreeObject(elem_page);
 
