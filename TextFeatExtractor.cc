@@ -35,10 +35,8 @@ const char* TextFeatExtractor::settingNames[] = {
   "enh",
   "enh_win",
   "enh_prm",
-  "enh_prm_randmin",
-  "enh_prm_randmax",
+  "enh_prm_rand",
   "enh_slp",
-  "enh3_prm",
   "deslope",
   "deslant",
   "normxheight",
@@ -198,31 +196,32 @@ void TextFeatExtractor::loadConf( const Config& config ) {
           throw invalid_argument( "TextFeatExtractor: enhancement window width must be > 0" );
         break;
       case TEXTFEAT_SETTING_ENH_PRM:
-        enh_prm = settingNumber(setting);
-        if( enh_prm < 0.0 )
+        if( setting.getType() == Setting::Type::TypeArray || setting.getLength() == 3 ) {
+          enh3_prm0 = settingNumber(setting[0]);
+          enh_prm = settingNumber(setting[1]);
+          enh3_prm2 = settingNumber(setting[2]);
+        }
+        else if( setting.getType() == Setting::Type::TypeFloat || setting.getType() == Setting::Type::TypeInt ) {
+          enh_prm = settingNumber(setting);
+          enh3_prm0 = enh3_prm2 = 0.0;
+        }
+        else
+          throw invalid_argument( "TextFeatExtractor: enhancement parameter must be a single value or an array of 3 values" );
+        if( enh3_prm0 < 0.0 || enh_prm < 0.0 || enh3_prm2 < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
         break;
-      case TEXTFEAT_SETTING_ENH_PRM_RANDMIN:
-        enh_prm_randmin = settingNumber(setting);
-        if( enh_prm_randmin < 0.0 )
-          throw invalid_argument( "TextFeatExtractor: enhancement random minimum parameter must be >= 0.0" );
-        break;
-      case TEXTFEAT_SETTING_ENH_PRM_RANDMAX:
-        enh_prm_randmax = settingNumber(setting);
-        if( enh_prm_randmax < 0.0 )
-          throw invalid_argument( "TextFeatExtractor: enhancement random maximum parameter must be >= 0.0" );
+      case TEXTFEAT_SETTING_ENH_PRM_RAND:
+        if( setting.getType() != Setting::Type::TypeArray || setting.getLength() != 2 )
+          throw invalid_argument( "TextFeatExtractor: enhancement parameter random must be an array with 2 numbers" );
+        enh_prm_randmin = settingNumber(setting[0]);
+        enh_prm_randmax = settingNumber(setting[1]);
+        if( enh_prm_randmin < 0.0 || enh_prm_randmax < 0.0 || enh_prm_randmin >= enh_prm_randmax )
+          throw invalid_argument( "TextFeatExtractor: enhancement parameter random to be 2 increasing values >= 0.0" );
         break;
       case TEXTFEAT_SETTING_ENH_SLP:
         enh_slp = settingNumber(setting);
         if( enh_slp < 0.0 )
           throw invalid_argument( "TextFeatExtractor: enhancement slope must be >= 0.0" );
-        break;
-      case TEXTFEAT_SETTING_ENH3_PRM:
-        enh3_prm0 = settingNumber(setting[0]);
-        enh_prm = settingNumber(setting[1]);
-        enh3_prm2 = settingNumber(setting[2]);
-        if( enh3_prm0 < 0.0 || enh_prm < 0.0 || enh3_prm2 < 0.0 )
-          throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
         break;
       case TEXTFEAT_SETTING_DESLOPE:
         deslope = settingBoolean(setting);
@@ -398,7 +397,7 @@ inline static void print_float( float data, FILE* file ) {
  */
 static void print_features_htk( const Mat& feats, FILE* file ) {
   int nSamples = feats.rows;
-  int sampPeriod=100000; /* 10000000 = 1seg */
+  int sampPeriod = 100000; /* 10000000 = 1seg */
   int sampSize = 4*feats.cols;
   int parmKind = 9; /* PARMKIND=USER */
 
@@ -1418,12 +1417,16 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
  * @param _slope  Estimated slope angle in degrees.
  * @param _slant  Estimated slant angle in degrees.
  */
-void TextFeatExtractor::estimateAngles( Image& image, float* _slope, float* _slant ) {
+void TextFeatExtractor::estimateAngles( Image& image, float* _slope, float* _slant, float rotate ) {
   high_resolution_clock::time_point tm;
 
   /// Estimate line slope angle ///
   float vslope = 0.0;
   Image desloped = image;
+
+  if( rotate != 0.0 )
+    desloped.rotate(rotate);
+
   //#pragma omp critical
   if( deslope ) {
     tm = high_resolution_clock::now();
@@ -1474,7 +1477,7 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
  * @param randomize  Whether to do a random perturbation of extraction parameters.
  * @return           Features matrix.
  */
-Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, int xheight, vector<Point2f>* _fpgram, bool randomize ) {
+Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, int xheight, vector<Point2f>* _fpgram, bool randomize, float rotate ) {
   high_resolution_clock::time_point tm = high_resolution_clock::now();
 
   /// Set image transparent zones to white ///
@@ -1494,9 +1497,10 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   int bboxoffy = feaimg.page().yOff();
   int offx = 0;
   int offy = 0;
-  double co = cos( slope*M_PI/180 );
-  double si = sin( slope*M_PI/180 );
-  double s = tan( slant*M_PI/180 );
+  const double deg_to_rad = M_PI/180;
+  double co = cos( slope*deg_to_rad );
+  double si = sin( slope*deg_to_rad );
+  double s = tan( slant*deg_to_rad );
 
   Matx33d R0( co,  si, 0, -si, co, 0, 0, 0, 1 );
   Matx33d R1( co, -si, 0,  si, co, 0, 0, 0, 1 );
@@ -1504,6 +1508,16 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   Matx33d S1( 1, 0, 0, -s, 1, 0, 0, 0, 1 );
   Matx33d A0 = R0*S0;
   Matx33d A1 = S1*R1;
+
+  if( rotate != 0.0 ) {
+    feaimg.rotate(rotate);
+    // @todo The following is incorrect, need to fix it
+    //fprintf("warning: fpgrams for rotated lines not yet implemented\n");
+    co = cos( -rotate*deg_to_rad );
+    si = sin( -rotate*deg_to_rad );
+    Matx33d R3( co, -si, 0,  si, co, 0, 0, 0, 1 );
+    A1 = A1*R3;
+  }
 
   feaimg.page( Geometry(0,0,0,0) );
 
@@ -1603,7 +1617,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
                                Point2f(pts(2,0),pts(2,1)),
                                Point2f(pts(3,0),pts(3,1)) };
 
-    //*_fpgram = pts;
+    if( rotate == 0.0 ) // @todo
     *_fpgram = fpgram;
   }
 

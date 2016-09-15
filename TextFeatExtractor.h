@@ -36,10 +36,8 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_ENH,             // "enh"
   TEXTFEAT_SETTING_ENH_WIN,         // "enh_win"
   TEXTFEAT_SETTING_ENH_PRM,         // "enh_prm"
-  TEXTFEAT_SETTING_ENH_PRM_RANDMIN, // "enh_prm_randmin"
-  TEXTFEAT_SETTING_ENH_PRM_RANDMAX, // "enh_prm_randmax"
+  TEXTFEAT_SETTING_ENH_PRM_RAND,    // "enh_prm_rand"
   TEXTFEAT_SETTING_ENH_SLP,         // "enh_slp"
-  TEXTFEAT_SETTING_ENH3_PRM,        // "enh3_prm"
   TEXTFEAT_SETTING_DESLOPE,         // "slope"
   TEXTFEAT_SETTING_DESLANT,         // "slant"
   TEXTFEAT_SETTING_NORMXHEIGHT,     // "normxheight"
@@ -66,8 +64,8 @@ class TextFeatExtractor {
     void printConf( FILE* file );
     void loadProjection( const char* projfile );
     void preprocess( Magick::Image& image, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
-    void estimateAngles( Magick::Image& image, float* _slope, float* _slant );
-    cv::Mat extractFeats( Magick::Image& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false );
+    void estimateAngles( Magick::Image& image, float* _slope, float* _slant, float rotate = 0.0 );
+    cv::Mat extractFeats( Magick::Image& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false, float rotate = 0.0 );
     cv::Mat preprocessAndExtract( Magick::Image& image, float* _slope = NULL, float* _slant = NULL, std::vector<cv::Point2f>* _fpgram = NULL, std::vector<cv::Point>* _fcontour = NULL );
     bool isImageFormat();
     void print( const cv::Mat& feats, FILE* file = stdout );
