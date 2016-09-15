@@ -32,6 +32,7 @@ char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/20
 Color transparent("rgba(0,0,0,0)");
 Color opaque("rgba(0,0,0,100%)");
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
+regex reRotation(".*transform: *rotate\\(*([0-9.]+) *deg\\);.*");
 
 /////////////////////////
 /// Resources release ///
@@ -453,7 +454,10 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     mask.draw(drawList);
     cropimg.draw( DrawableCompositeImage(0,0,0,0,mask,CopyOpacityCompositeOp) );
 
-    NamedImage namedimage = { sampid, sampname, cropimg };
+    /// Get line rotation ///
+    float rotation = getRotation(sampid.c_str());
+
+    NamedImage namedimage = { sampid, sampname, rotation, cropimg };
 
     images.push_back(namedimage);
   }
@@ -486,6 +490,32 @@ int PageXML::setAttr( const char* xpath, const char* name, const char* value ) {
     xmlXPathFreeObject(elem);
 
   return numSet;
+}
+
+/**
+ * Retrieves the rotation angle for a given TextLine id.
+ *
+ * @param id     Identifier of the TextLine.
+ * @return       x-height>0 on success, -1 if unset for line.
+ */
+float PageXML::getRotation( const char* id ) {
+  float rotation = 0;
+  string xpath = string("//*[@id='")+id+"']";
+  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
+
+  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 &&
+      xmlHasProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" ) ) {
+    xmlChar* custom = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
+    cmatch base_match;
+    if( regex_match((char*)custom,base_match,reRotation) )
+      rotation = stof(base_match[1].str());
+    xmlFree(custom);
+  }
+
+  if( elem != NULL )
+    xmlXPathFreeObject(elem);
+
+  return rotation;
 }
 
 /**
