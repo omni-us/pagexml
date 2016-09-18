@@ -42,6 +42,7 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_DESLANT,         // "slant"
   TEXTFEAT_SETTING_NORMXHEIGHT,     // "normxheight"
   TEXTFEAT_SETTING_NORMHEIGHT,      // "normheight"
+  TEXTFEAT_SETTING_MOMENTNORM,      // "momentnorm"
   TEXTFEAT_SETTING_FPGRAM,          // "fpgram"
   TEXTFEAT_SETTING_FCONTOUR,        // "fcontour"
   TEXTFEAT_SETTING_FCONTOUR_DILATE, // "fcontour_dilate"
@@ -97,6 +98,7 @@ class TextFeatExtractor {
     float scale_rand = 0.0; // percent smaller or larger
     int normxheight = 0;
     int normheight = 0;
+    bool momentnorm = false;
     bool compute_fpgram = true;
     bool compute_fcontour = true;
     float fcontour_dilate = 4.0;
