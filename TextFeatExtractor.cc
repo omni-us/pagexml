@@ -41,6 +41,7 @@ const char* TextFeatExtractor::settingNames[] = {
   "deslant",
   "normxheight",
   "normheight",
+  "momentnorm",
   "fpgram",
   "fcontour",
   "fcontour_dilate",
@@ -235,6 +236,9 @@ void TextFeatExtractor::loadConf( const Config& config ) {
       case TEXTFEAT_SETTING_NORMHEIGHT:
         normheight = (int)setting;
         break;
+      case TEXTFEAT_SETTING_MOMENTNORM:
+        momentnorm = settingBoolean(setting);
+        break;
       case TEXTFEAT_SETTING_FPGRAM:
         compute_fpgram = settingBoolean(setting);
         break;
@@ -291,15 +295,16 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  enh = %g;\n", enh );
   fprintf( file, "  enh_win = %d;\n", enh_win );
   fprintf( file, "  enh_prm = %g;\n", enh_prm );
-  fprintf( file, "  enh_prm_randmin = %g;\n", enh_prm_randmin );
-  fprintf( file, "  enh_prm_randmax = %g;\n", enh_prm_randmax );
+  fprintf( file, "  enh_prm_rand = [ %g, %g ];\n", enh_prm_randmin, enh_prm_randmax );
   fprintf( file, "  enh_slp = %g;\n", enh_slp );
   fprintf( file, "  deslope = %s;\n", deslope ? "true" : "false" );
   fprintf( file, "  deslant = %s;\n", deslant ? "true" : "false" );
   fprintf( file, "  normxheight = %d;\n", normxheight );
   fprintf( file, "  normheight = %d;\n", normheight );
+  fprintf( file, "  momentnorm = %s;\n", momentnorm ? "true" : "false" );
   fprintf( file, "  fpgram = %s;\n", compute_fpgram ? "true" : "false" );
   fprintf( file, "  fcontour = %s;\n", compute_fcontour ? "true" : "false" );
+  fprintf( file, "  fcontour_dilate = %g;\n", fcontour_dilate );
   fprintf( file, "  padding = %d;\n", padding );
   fprintf( file, "  slide_shift = %g;\n", slide_shift );
   fprintf( file, "  slide_span = %g;\n", slide_span );
@@ -309,6 +314,7 @@ void TextFeatExtractor::printConf( FILE* file ) {
     fprintf( file, "  projfile = \"%s\";\n", projfile.c_str() );
   fprintf( file, "}\n" );
 }
+
 
 ///////////////
 /// Loaders ///
@@ -1548,6 +1554,28 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     offx += feaimg.page().xOff();
     offy += feaimg.page().yOff();
     //fprintf( stderr, "trim_page_off: %d %d\n", offx, offy );
+  }
+
+  /// Momentum normalization ///
+  if( momentnorm ) {
+    cv::Mat line_img( feaimg.rows(), feaimg.columns(), CV_8UC1, cv::Scalar(0) );
+    magick2cvmat8u( feaimg, line_img );
+    line_img = line_img ^ 0xFF;
+
+    cv::Mat sob_x, sob_y;
+    cv::Sobel(cv::InputArray(line_img), cv::OutputArray(sob_x), CV_32FC1, 1, 0);
+    cv::Sobel(cv::InputArray(line_img), cv::OutputArray(sob_y), CV_32FC1, 0, 1);
+    cv::magnitude(sob_x, sob_y, line_img);
+
+    cv::Moments line_mnt = cv::moments(line_img);
+
+    if( line_mnt.m00 != 0.0 ) {
+      int mom_height = round( 4*sqrt(line_mnt.mu02/line_mnt.m00) );
+      int mom_yoff = round( line_mnt.m01/line_mnt.m00 - 0.5*mom_height );
+      feaimg.extent( Geometry(feaimg.columns(),mom_height,0,mom_yoff), colorWhite );
+      offy += mom_yoff; // @todo Is ths correct?
+      //fprintf(stderr,"mom_norm: yoff=%d height=%d\n",mom_yoff,mom_height);
+    }
   }
 
   double scaling = 1.0;
