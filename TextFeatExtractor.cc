@@ -1483,7 +1483,7 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
  * @param randomize  Whether to do a random perturbation of extraction parameters.
  * @return           Features matrix.
  */
-Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, int xheight, vector<Point2f>* _fpgram, bool randomize, float rotate ) {
+Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, int xheight, vector<Point2f>* _fpgram, bool randomize, float rotate, int direction ) {
   high_resolution_clock::time_point tm = high_resolution_clock::now();
 
   /// Set image transparent zones to white ///
@@ -1559,7 +1559,16 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   /// Momentum normalization ///
   if( momentnorm ) {
     cv::Mat line_img( feaimg.rows(), feaimg.columns(), CV_8UC1, cv::Scalar(0) );
-    magick2cvmat8u( feaimg, line_img );
+
+    Image momimg = feaimg;
+    if( momimg.type() != GrayscaleType ) {
+      momimg.type( GrayscaleType );
+      //momimg.quantizeColorSpace( GRAYColorspace ); 
+      //momimg.quantizeColors( 256 ); 
+      //momimg.quantize( );
+    }
+
+    magick2cvmat8u( momimg, line_img );
     line_img = line_img ^ 0xFF;
 
     cv::Mat sob_x, sob_y;
@@ -1608,6 +1617,12 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     feaimg.borderColor( colorWhite );
     feaimg.border( Geometry(padding,0) );
   }
+
+  /// Account for reading direction ///
+  if( direction == DIRECTION_RTL )
+    feaimg.flop();
+  else if( direction == DIRECTION_TTB || direction == DIRECTION_BTT )
+    fprintf(stderr,"warning: vertical reading directions not supported\n");
 
   if( procimgs )
     feaimg.write("procimg_6_fea.png");
