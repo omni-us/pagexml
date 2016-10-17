@@ -32,7 +32,8 @@ char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/20
 Color transparent("rgba(0,0,0,0)");
 Color opaque("rgba(0,0,0,100%)");
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
-regex reRotation(".*transform: *rotate\\(*([0-9.]+) *deg\\);.*");
+regex reRotation(".*transform: *rotate\\( *([0-9.]+) *deg *\\);.*");
+regex reDirection(".*direction: *([rtlb]+) *;.*");
 
 /////////////////////////
 /// Resources release ///
@@ -457,7 +458,10 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     /// Get line rotation ///
     float rotation = getRotation(sampid.c_str());
 
-    NamedImage namedimage = { sampid, sampname, rotation, cropimg };
+    /// Get reading direction ///
+    int direction = getReadingDirection(sampid.c_str());
+
+    NamedImage namedimage = { sampid, sampname, rotation, direction, cropimg };
 
     images.push_back(namedimage);
   }
@@ -493,29 +497,96 @@ int PageXML::setAttr( const char* xpath, const char* name, const char* value ) {
 }
 
 /**
- * Retrieves the rotation angle for a given TextLine id.
+ * Retrieves the rotation angle for a given TextLine or Text Region id.
  *
- * @param id     Identifier of the TextLine.
- * @return       x-height>0 on success, -1 if unset for line.
+ * @param id     Identifier of the TextLine or TextRegion.
+ * @return       The rotation angle in degrees, 0 if unset.
  */
 float PageXML::getRotation( const char* id ) {
   float rotation = 0;
   string xpath = string("//*[@id='")+id+"']";
   xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
 
-  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 &&
-      xmlHasProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" ) ) {
-    xmlChar* custom = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
-    cmatch base_match;
-    if( regex_match((char*)custom,base_match,reRotation) )
-      rotation = stof(base_match[1].str());
-    xmlFree(custom);
+  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 ) {
+    xmlNodePtr node = elem->nodesetval->nodeTab[0];
+    if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
+      if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
+        node = node->parent;
+      else {
+        xmlChar* attr = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
+        cmatch base_match;
+        if( regex_match((char*)attr,base_match,reRotation) )
+          rotation = stof(base_match[1].str());
+        else
+          node = node->parent;
+        xmlFree(attr);
+      }
+    }
+    if( xmlHasProp( node, (xmlChar*)"readingOrientation" ) ) {
+      xmlChar* attr = xmlGetProp( node, (xmlChar*)"readingOrientation" );
+      rotation = stof((char*)attr);
+      xmlFree(attr);
+    }
   }
 
   if( elem != NULL )
     xmlXPathFreeObject(elem);
 
   return rotation;
+}
+
+/**
+ * Retrieves the reading direction for a given TextLine or Text Region id.
+ *
+ * @param id     Identifier of the TextLine or TextRegion.
+ * @return       The reading direction, DIRECTION_LTR if unset.
+ */
+int PageXML::getReadingDirection( const char* id ) {
+  int direction = DIRECTION_LTR;
+  string xpath = string("//*[@id='")+id+"']";
+  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
+
+  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 ) {
+    xmlNodePtr node = elem->nodesetval->nodeTab[0];
+    if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
+      if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
+        node = node->parent;
+      else {
+        xmlChar* attr = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
+        cmatch base_match;
+        if( regex_match((char*)attr,base_match,reDirection) ) {
+          if( ! strcmp(base_match[1].str().c_str(),"ltr") )
+            direction = DIRECTION_LTR;
+          else if( ! strcmp(base_match[1].str().c_str(),"rtl") )
+            direction = DIRECTION_RTL;
+          else if( ! strcmp(base_match[1].str().c_str(),"ttb") )
+            direction = DIRECTION_TTB;
+          else if( ! strcmp(base_match[1].str().c_str(),"btt") )
+            direction = DIRECTION_BTT;
+        }
+        else
+          node = node->parent;
+        xmlFree(attr);
+      }
+    }
+    if( xmlHasProp( node, (xmlChar*)"readingDirection" ) ) {
+      char* attr = (char*)xmlGetProp( node, (xmlChar*)"readingDirection" );
+      if( ! strcmp(attr,"left-to-right") )
+        direction = DIRECTION_LTR;
+      else if( ! strcmp(attr,"right-to-left") )
+        direction = DIRECTION_RTL;
+      else if( ! strcmp(attr,"top-to-bottom") )
+        direction = DIRECTION_TTB;
+      else if( ! strcmp(attr,"bottom-to-top") )
+        direction = DIRECTION_BTT;
+      xmlFree(attr);
+    }
+  }
+
+  if( elem != NULL )
+    xmlXPathFreeObject(elem);
+
+  return direction;
 }
 
 /**

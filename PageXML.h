@@ -29,6 +29,7 @@ struct NamedImage {
   std::string id;
   std::string name;
   float rotation;
+  int direction;
   Magick::Image image;
 };
 
@@ -49,6 +50,7 @@ class PageXML {
     static std::string pointsToString( std::vector<cv::Point> points );
     int setAttr( const char* xpath, const char* name, const char* value );
     float getRotation( const char* id );
+    int getReadingDirection( const char* id );
     float getXheight( const char* id );
     char* getBase();
     int write( const char* fname = "-" );
