@@ -32,8 +32,9 @@ char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/20
 Color transparent("rgba(0,0,0,0)");
 Color opaque("rgba(0,0,0,100%)");
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
-regex reRotation(".*transform: *rotate\\( *([0-9.]+) *deg *\\);.*");
-regex reDirection(".*direction: *([rtlb]+) *;.*");
+regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
+regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
+
 
 /////////////////////////
 /// Resources release ///
