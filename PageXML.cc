@@ -22,7 +22,6 @@ using namespace libconfig;
 const char* PageXML::settingNames[] = {
   "indent",
   "pagens",
-  //"loadimg",
   "grayimg",
   "extended_names"
 };
@@ -167,9 +166,6 @@ void PageXML::loadConf( const Config& config ) {
           free(pagens);
         pagens = strdup(setting.c_str());
         break;
-      //case PAGEXML_SETTING_LOADIMG:
-      //  loadimg = (bool)setting;
-      //  break;
       case PAGEXML_SETTING_GRAYIMG:
         grayimg = (bool)setting;
         break;
@@ -191,7 +187,6 @@ void PageXML::printConf( FILE* file ) {
   fprintf( file, "PageXML: {\n" );
   fprintf( file, "  indent = %s;\n", indent ? "true" : "false" );
   fprintf( file, "  pagens = \"%s\";\n", pagens );
-  //fprintf( file, "  loadimg = %s;\n", loadimg ? "true" : "false" );
   fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
   fprintf( file, "  extended_names = %s;\n", extended_names ? "true" : "false" );
   fprintf( file, "}\n" );
@@ -234,23 +229,24 @@ void PageXML::loadXml( int fnum ) {
     throw runtime_error( "PageXML: loadXml: unable create xpath context" );
   if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens ) != 0 )
     throw runtime_error( "PageXML: loadXml: unable to register namespace" );
+  rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
 
-  xmlXPathObjectPtr elem_page = xmlXPathEvalExpression( (xmlChar*)"//_:Page", context );
-  if( xmlXPathNodeSetIsEmpty(elem_page->nodesetval) )
+  vector<xmlNodePtr> elem_page = select( "//_:Page" );
+  if( elem_page.size() == 0 )
     throw runtime_error( "PageXML: loadXml: unable to find page element" );
 
   /// Get page size ///
-  xmlChar* uwidth = xmlGetProp( elem_page->nodesetval->nodeTab[0], (xmlChar*)"imageWidth" );
-  xmlChar* uheight = xmlGetProp( elem_page->nodesetval->nodeTab[0], (xmlChar*)"imageHeight" );
+  char* uwidth = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageWidth" );
+  char* uheight = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageHeight" );
   if( uwidth == NULL || uheight == NULL )
     throw runtime_error( "PageXML: loadXml: problems retrieving page size from xml" );
-  width = atoi((char*)uwidth);
-  height = atoi((char*)uheight);
-  xmlFree(uwidth);
-  xmlFree(uheight);
+  width = atoi(uwidth);
+  height = atoi(uheight);
+  free(uwidth);
+  free(uheight);
 
   /// Get image path ///
-  imgpath = (char*)xmlGetProp( elem_page->nodesetval->nodeTab[0], (xmlChar*)"imageFilename" );
+  imgpath = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageFilename" );
   if( imgpath ==NULL )
     throw runtime_error( "PageXML: loadXml: problems retrieving image file from xml" );
 
@@ -262,13 +258,8 @@ void PageXML::loadXml( int fnum ) {
     if( *p == ' ' /*|| *p == '[' || *p == ']' || *p == '(' || *p == ')'*/ )
       *p = '_';
 
-  xmlXPathFreeObject(elem_page);
-
   if( xmldir == NULL )
     xmldir = strdup(".");
-
-  //if( loadimg )
-  //  loadImage();
 }
 
 /**
@@ -313,7 +304,8 @@ void PageXML::loadImage( const char* fname ) {
  * @param _ymax       Maximum y value.
  * @return            List of (x,y) coordinates.
  */
-static list<Coordinate> parsePoints( xmlChar* str_coords, double* _xmin = NULL, double* _xmax = NULL, double* _ymin = NULL, double* _ymax = NULL ) {
+list<Coordinate> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax ) {
+//static list<Coordinate> parsePoints( xmlChar* str_coords, double* _xmin = NULL, double* _xmax = NULL, double* _ymin = NULL, double* _ymax = NULL ) {
   list<Coordinate> points;
 
   double xmin = NAN;
@@ -347,16 +339,105 @@ static list<Coordinate> parsePoints( xmlChar* str_coords, double* _xmin = NULL, 
 }
 
 /**
+ * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into a Point2f vector.
+ *
+ * @param str_coords  String containing coordinate pairs.
+ * @param _xmin       Minimum x value.
+ * @param _xmax       Maximum x value.
+ * @param _ymin       Minimum y value.
+ * @param _ymax       Maximum y value.
+ * @return            Vector of (x,y) coordinates.
+ */
+vector<cv::Point2f> PageXML::parsePoints2f( const char* str_coords/*, double* _xmin, double* _xmax, double* _ymin, double* _ymax*/ ) {
+  vector<cv::Point2f> points;
+
+  /*double xmin = NAN;
+  double xmax = NAN;
+  double ymin = NAN;
+  double ymax = NAN;*/
+
+  int n = 0;
+  char *p = (char*)str_coords-1;
+  while( true ) {
+    p++;
+    double x, y;
+    if( sscanf( p, "%lf,%lf", &x, &y ) != 2 )
+      break;
+    points.push_back(cv::Point2f(x,y));
+    /*if( n == 0 || xmin > x ) xmin = x;
+    if( n == 0 || xmax < x ) xmax = x;
+    if( n == 0 || ymin > y ) ymin = y;
+    if( n == 0 || ymax < y ) ymax = y;*/
+    n++;
+    if( (p = strchr(p,' ')) == NULL )
+      break;
+  }
+
+  /*if( _xmin != NULL ) *_xmin = xmin;
+  if( _xmax != NULL ) *_xmax = xmax;
+  if( _ymin != NULL ) *_ymin = ymin;
+  if( _ymax != NULL ) *_ymax = ymax;*/
+
+  return points;
+}
+
+/**
+ * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
+ *
+ * @param str_coords  String containing coordinate pairs.
+ * @param _xmin       Minimum x value.
+ * @param _xmax       Maximum x value.
+ * @param _ymin       Minimum y value.
+ * @param _ymax       Maximum y value.
+ * @return            Array of (x,y) coordinates.
+ */
+// @todo Merge parsePoints2f and parsePoints2f into a template
+/*template <class T, template <class T> class A>
+A<T> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax ) {
+  A<T> points;
+
+  double xmin = NAN;
+  double xmax = NAN;
+  double ymin = NAN;
+  double ymax = NAN;
+
+  int n = 0;
+  char *p = (char*)str_coords-1;
+  while( true ) {
+    p++;
+    double x, y;
+    if( sscanf( p, "%lf,%lf", &x, &y ) != 2 )
+      break;
+    points.push_back(T(x,y));
+    if( n == 0 || xmin > x ) xmin = x;
+    if( n == 0 || xmax < x ) xmax = x;
+    if( n == 0 || ymin > y ) ymin = y;
+    if( n == 0 || ymax < y ) ymax = y;
+    n++;
+    if( (p = strchr(p,' ')) == NULL )
+      break;
+  }
+
+  if( _xmin != NULL ) *_xmin = xmin;
+  if( _xmax != NULL ) *_xmax = xmax;
+  if( _ymin != NULL ) *_ymin = ymin;
+  if( _ymax != NULL ) *_ymax = ymax;
+
+  return points;
+}
+//template list<Coordinate> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax );*/
+
+/**
  * Cronvers a vector of points to a string in format "x1,y1 x2,y2 ...".
  *
  * @param points  Vector of points.
  * @return        String representation of the points.
  */
-string PageXML::pointsToString( vector<cv::Point2f> points ) {
-  char val[32];
+string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
+  char val[64];
   string str("");
   for( size_t n=0; n<points.size(); n++ ) {
-    sprintf( val, "%g,%g", points[n].x, points[n].y );
+    sprintf( val, rounded ? "%.0f,%.0f" : "%g,%g", points[n].x, points[n].y );
     str += ( n == 0 ? "" : " " ) + string(val);
   }
   return str;
@@ -372,21 +453,84 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
 }
 
 /**
+ * Selects nodes given an xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Vector of matched nodes.
+ */
+vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
+  vector<xmlNodePtr> matched;
+
+#define __REUSE_CONTEXT__
+
+#ifdef __REUSE_CONTEXT__
+  xmlNodePtr orignode = NULL;
+#endif
+  xmlXPathContextPtr ncontext = context;
+  if( basenode != NULL ) {
+#ifdef __REUSE_CONTEXT__
+    orignode = ncontext->node;
+#else
+    ncontext = xmlXPathNewContext(basenode->doc);
+    if( ncontext == NULL )
+      throw runtime_error( "PageXML: select: unable create xpath context" );
+    if( xmlXPathRegisterNs( ncontext, (xmlChar*)"_", (xmlChar*)pagens ) != 0 )
+      throw runtime_error( "PageXML: select: unable to register namespace" );
+#endif
+    ncontext->node = basenode;
+  }
+
+  xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
+#ifdef __REUSE_CONTEXT__
+  if( basenode != NULL )
+    ncontext->node = orignode;
+#else
+  if( ncontext != context )
+    xmlXPathFreeContext(ncontext);
+#endif
+
+  if( xsel == NULL )
+    throw runtime_error( string("PageXML: xpath expression failed: ") + xpath );
+  else {
+    if( ! xmlXPathNodeSetIsEmpty(xsel->nodesetval) )
+      for( int n=0; n<xsel->nodesetval->nodeNr; n++ )
+        matched.push_back( xsel->nodesetval->nodeTab[n] );
+    xmlXPathFreeObject(xsel);
+  }
+
+  return matched;
+}
+
+/**
+ * Selects nodes given an xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Vector of matched nodes.
+ */
+vector<xmlNodePtr> PageXML::select( string xpath, xmlNodePtr node ) {
+  return select( xpath.c_str(), node );
+}
+
+/**
  * Crops images using its Coords polygon, regions outside the polygon are set to transparent.
  *
  * @param xpath  Selector for polygons to crop.
  * @return       An std::vector containing (id,name,image) triplets of the cropped images.
  */
 vector<NamedImage> PageXML::crop( const char* xpath ) {
-  xmlXPathObjectPtr elems_coords = xmlXPathEvalExpression( (xmlChar*)xpath, context );
+  vector<NamedImage> images;
+
+  vector<xmlNodePtr> elems_coords = select( xpath );
+  if( elems_coords.size() == 0 )
+    return images;
 
   if( pageimg.columns() == 0 )
     loadImage();
 
-  vector<NamedImage> images;
-  if( ! xmlXPathNodeSetIsEmpty(elems_coords->nodesetval) )
-  for( int n=0; n<elems_coords->nodesetval->nodeNr; n++ ) {
-    xmlNodePtr node = elems_coords->nodesetval->nodeTab[n];
+  for( int n=0; n<(int)elems_coords.size(); n++ ) {
+    xmlNodePtr node = elems_coords[n];
 
     if( xmlStrcmp( node->name, (const xmlChar*)"Coords") )
       throw runtime_error( string("PageXML: expected xpath to match only Coords elements: match=") + to_string(n+1) + " xpath=" + xpath );
@@ -406,10 +550,6 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
 
     /// Construct sample name ///
     string sampid(id1);
-    /*string sampbase(imgbase);
-    if( sampid.size() > sampbase.size() &&
-        ! sampid.compare(0,sampbase.size(),sampbase) )
-      sampid.erase( 0, sampbase.size() );*/
     string sampname = string(".") + sampid;
     free(id1);
     if( extended_names )
@@ -426,26 +566,23 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
       }
     sampname = string(imgbase) + sampname;
 
-    //char* line_id = (char*)xmlGetProp( elems_coords->nodesetval->nodeTab[n]->parent, (xmlChar*)"id" );
-    //char* reg_id = (char*)xmlGetProp( elems_coords->nodesetval->nodeTab[n]->parent->parent, (xmlChar*)"id" );
-    //string sampid(line_id);
-    //string sampname = string(imgbase)+"."+reg_id+"."+line_id;
-    //free(line_id);
-    //free(reg_id);
-
+    /// Get crop window parameters ///
     size_t cropW = (size_t)(ceil(xmax)-floor(xmin)+1);
     size_t cropH = (size_t)(ceil(ymax)-floor(ymin)+1);
     int cropX = (int)floor(xmin);
     int cropY = (int)floor(ymin);
 
+    /// Subtract crop window offset ///
     for( list<Coordinate>::iterator coord = coords.begin(), end = coords.end(); coord != end; coord++ ) {
       coord->x( coord->x()-cropX );
       coord->y( coord->y()-cropY );
     }
 
+    /// Crop image ///
     Image cropimg = pageimg;
     cropimg.crop( Geometry(cropW,cropH,cropX,cropY) );
 
+    /// Add transparency layer ///
     // @todo Skip transparent if polygon is bounding box
     list<Drawable> drawList;
     drawList.push_back(DrawableStrokeColor(opaque));
@@ -467,34 +604,222 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     images.push_back(namedimage);
   }
 
-  xmlXPathFreeObject(elems_coords);
-
   return images;
 }
 
 /**
- * Adds or modifies (if already exists) attributes in the XML.
+ * Gets an attribute value from an xml node.
+ *
+ * @param node   XML node.
+ * @param name   Name of the attribute.
+ * @param value  String to set the value.
+ * @return       Pointer to attribute value string, or NULL if attribute unset.
+*/
+string* PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) {
+  if( node == NULL )
+    return NULL;
+ 
+  xmlChar* attr = xmlGetProp( node, (xmlChar*)name );
+  value = string((char*)attr);
+  xmlFree(attr);
+
+  return &value;
+}
+
+/**
+ * Gets an attribute value for a given xpath.
+ *
+ * @param xpath  Selector for the element to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  String to set the value.
+ * @return       Pointer to attribute value string, or NULL if attribute unset.
+*/
+string* PageXML::getAttr( const char* xpath, const char* name, string& value ) {
+  vector<xmlNodePtr> xsel = select( xpath );
+  if( xsel.size() == 0 )
+    return NULL;
+ 
+  return getAttr( xsel[0], name, value );
+}
+
+/**
+ * Gets an attribute value for a given xpath.
+ *
+ * @param xpath  Selector for the element to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  String to set the value.
+ * @return       Pointer to attribute value string, or NULL if attribute unset.
+*/
+string* PageXML::getAttr( const string xpath, const string name, string& value ) {
+  vector<xmlNodePtr> xsel = select( xpath.c_str() );
+  if( xsel.size() == 0 )
+    return NULL;
+ 
+  return getAttr( xsel[0], name.c_str(), value );
+}
+
+/**
+ * Adds or modifies (if already exists) an attribute for a given list of nodes.
+ *
+ * @param nodes  Vector of nodes to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  Value of the attribute.
+ * @return       Number of elements modified.
+ */
+int PageXML::setAttr( vector<xmlNodePtr> nodes, const char* name, const char* value ) {
+  for( int n=(int)nodes.size()-1; n>=0; n-- ) {
+    xmlAttrPtr attr = xmlHasProp( nodes[n], (xmlChar*)name ) ?
+      xmlSetProp( nodes[n], (xmlChar*)name, (xmlChar*)value ) :
+      xmlNewProp( nodes[n], (xmlChar*)name, (xmlChar*)value ) ;
+    if( ! attr )
+      throw runtime_error( string("PageXML: setAttr: problems setting attribute: name=") + name );
+  }
+
+  return (int)nodes.size();
+}
+
+/**
+ * Adds or modifies (if already exists) an attribute for a given node.
+ *
+ * @param node   Node to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  Value of the attribute.
+ * @return       Number of elements modified.
+ */
+int PageXML::setAttr( xmlNodePtr node, const char* name, const char* value ) {
+  return setAttr( vector<xmlNodePtr>{node}, name, value );
+}
+
+/**
+ * Adds or modifies (if already exists) an attribute for a given xpath.
  *
  * @param xpath  Selector for the element(s) to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  Value of the attribute.
  * @return       Number of elements modified.
  */
 int PageXML::setAttr( const char* xpath, const char* name, const char* value ) {
-  int numSet = 0;
-  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath, context );
+  return setAttr( select(xpath), name, value );
+}
 
-  if( elem != NULL && elem->nodesetval )
-    for( int n=0; n<elem->nodesetval->nodeNr; n++ ) {
-      xmlAttrPtr attr = xmlHasProp( elem->nodesetval->nodeTab[n], (xmlChar*)name ) ?
-        xmlSetProp( elem->nodesetval->nodeTab[n], (xmlChar*)name, (xmlChar*)value ) :
-        xmlNewProp( elem->nodesetval->nodeTab[n], (xmlChar*)name, (xmlChar*)value ) ;
-      if( ! attr )
-        throw runtime_error( string("PageXML: problems setting attribute: xpath=") + xpath + " name=" + name );
+/**
+ * Adds or modifies (if already exists) an attribute for a given xpath.
+ *
+ * @param xpath  Selector for the element(s) to set the attribute.
+ * @param name   Name of the attribute.
+ * @param value  Value of the attribute.
+ * @return       Number of elements modified.
+ */
+int PageXML::setAttr( const string xpath, const string name, const string value ) {
+  return setAttr( select(xpath.c_str()), name.c_str(), value.c_str() );
+}
+
+/**
+ * Creates a new element and adds it relative to a given node.
+ *
+ * @param name   Name of element to create.
+ * @param id     ID attribute for element.
+ * @param node   Reference element for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::addElem( const char* name, const char* id, const xmlNodePtr node, PAGEXML_INSERT itype, bool checkid ) {
+  xmlNodePtr elem = xmlNewNode( rpagens, (xmlChar*)name );
+  if( ! elem )
+    throw runtime_error( string("PageXML: addElem: problems creating new element: name=") + name );
+  if( id != NULL ) {
+    if( checkid ) {
+      vector<xmlNodePtr> idsel = select( (string("//*[@id='")+id+"']").c_str() );
+      if( idsel.size() > 0 )
+        throw runtime_error( string("PageXML: addElem: id already exists: id=") + id );
     }
+    xmlNewProp( elem, (xmlChar*)"id", (xmlChar*)id );
+  }
 
-  if( elem != NULL )
-    xmlXPathFreeObject(elem);
+  switch( itype ) {
+    case PAGEXML_INSERT_CHILD:
+      elem = xmlAddChild(node,elem);
+      break;
+    case PAGEXML_INSERT_NEXTSIB:
+      elem = xmlAddNextSibling(node,elem);
+      break;
+    case PAGEXML_INSERT_PREVSIB:
+      elem = xmlAddPrevSibling(node,elem);
+      break;
+  }
 
-  return numSet;
+  return elem;
+}
+
+/**
+ * Creates a new element and adds it relative to a given xpath.
+ *
+ * @param name   Name of element to create.
+ * @param id     ID attribute for element.
+ * @param xpath  Selector for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::addElem( const char* name, const char* id, const char* xpath, PAGEXML_INSERT itype, bool checkid ) {
+  vector<xmlNodePtr> target = select( xpath );
+  if( target.size() == 0 )
+    throw runtime_error( string("PageXML: addElem: unmatched target: xpath=") + xpath );
+
+  return addElem( name, id, target[0], itype, checkid );
+}
+
+/**
+ * Creates a new element and adds it relative to a given xpath.
+ *
+ * @param name   Name of element to create.
+ * @param id     ID attribute for element.
+ * @param xpath  Selector for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::addElem( const string name, const string id, const string xpath, PAGEXML_INSERT itype, bool checkid ) {
+  vector<xmlNodePtr> target = select( xpath );
+  if( target.size() == 0 )
+    throw runtime_error( string("PageXML: addElem: unmatched target: xpath=") + xpath );
+
+  return addElem( name.c_str(), id.c_str(), target[0], itype, checkid );
+}
+
+/**
+ * Removes the elements given in a vector.
+ *
+ * @param nodes  Vector of elements.
+ * @return       Number of elements removed.
+ */
+int PageXML::rmElems( const vector<xmlNodePtr>& nodes ) {
+  for( int n=(int)nodes.size()-1; n>=0; n-- ) {
+    xmlUnlinkNode(nodes[n]);
+    xmlFreeNode(nodes[n]);
+  }
+
+  return (int)nodes.size();
+}
+
+/**
+ * Remove the elements that match a given xpath.
+ *
+ * @param xpath  Selector for elements to remove.
+ * @param node   Base node for element selection.
+ * @return       Number of elements removed.
+ */
+int PageXML::rmElems( const char* xpath, xmlNodePtr basenode ) {
+  return rmElems( select( xpath, basenode ) );
+}
+
+/**
+ * Remove the elements that match a given xpath.
+ *
+ * @param xpath    Selector for elements to remove.
+ * @param basenode Base node for element selection.
+ * @return         Number of elements removed.
+ */
+int PageXML::rmElems( const string xpath, xmlNodePtr basenode ) {
+  return rmElems( select( xpath.c_str(), basenode ) );
 }
 
 /**
@@ -617,6 +942,175 @@ float PageXML::getXheight( const char* id ) {
 }
 
 /**
+ * Retrieves the features parallelogram for a given TextLine id.
+ *
+ * @param id     Identifier of the TextLine.
+ * @return       Parallelogram, empty list if unset.
+ */
+vector<cv::Point2f>* PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point2f>& fpgram ) {
+  if( node == NULL )
+    return NULL;
+
+  vector<xmlNodePtr> coords = select( "_:Coords[@fpgram]", node );
+  if( coords.size() == 0 )
+    return NULL;
+
+  string sfpgram;
+  if( ! getAttr( coords[0], "fpgram", sfpgram ) )
+    return NULL;
+
+  fpgram = parsePoints2f( sfpgram.c_str() );
+
+  return &fpgram;
+}
+
+/**
+ * Retrieves and parses the Coords/@points for a given base node.
+ *
+ * @param node   Base node.
+ * @return       Pointer to the points vector, NULL if unset.
+ */
+vector<cv::Point2f>* PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
+  if( node == NULL )
+    return NULL;
+
+  vector<xmlNodePtr> coords = select( "_:Coords[@points]", node );
+  if( coords.size() == 0 )
+    return NULL;
+
+  string spoints;
+  if( ! getAttr( coords[0], "points", spoints ) )
+    return NULL;
+
+  points = parsePoints2f( spoints.c_str() );
+
+  return &points;
+}
+
+/**
+ * Gets the minimum and maximum coordinate values for a vector of points.
+ *
+ * @param points     The vector of points to find the limits.
+ * @param xmin       Minimum x value.
+ * @param xmax       Maximum x value.
+ * @param ymin       Minimum y value.
+ * @param ymax       Maximum y value.
+ */
+void PageXML::pointsLimits( vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax, bool rounded ) {
+  if( points.size() == 0 )
+    return;
+
+  xmin = xmax = points[0].x;
+  ymin = ymax = points[0].y;
+
+  for( auto&& point : points ) {
+    if( xmin > point.x ) xmin = point.x;
+    if( xmax < point.x ) xmax = point.x;
+    if( ymin > point.y ) ymin = point.y;
+    if( ymax < point.y ) ymax = point.y;
+  }
+
+  if( rounded ) {
+    xmin = round(xmin);
+    xmax = round(xmax);
+    ymin = round(ymin);
+    ymax = round(ymax);
+  }
+
+  return;
+}
+
+/**
+ * Generates a vector of 4 points that define the bounding box for a given vector of points.
+ *
+ * @param points     The vector of points to find the limits.
+ * @param xmin       Minimum x value.
+ * @param xmax       Maximum x value.
+ * @param ymin       Minimum y value.
+ * @param ymax       Maximum y value.
+ */
+void PageXML::pointsBbox( vector<cv::Point2f>& points, vector<cv::Point2f>& bbox, bool rounded ) {
+  bbox.empty();
+  if( points.size() == 0 )
+    return;
+
+  double xmin;
+  double xmax;
+  double ymin;
+  double ymax;
+
+  pointsLimits( points, xmin, xmax, ymin, ymax, rounded );
+  bbox.push_back( cv::Point2f(xmin,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymax) );
+  bbox.push_back( cv::Point2f(xmin,ymax) );
+
+  return;
+}
+
+/**
+ * Adds or modifies (if already exists) the TextEquiv for a given node.
+ *
+ * @param node   The node of element to set the TextEquiv.
+ * @param text   The text string.
+ * @param conf   The confidence value, NULL for no confidence.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setTextEquiv( xmlNodePtr node, const char* text, const char* conf ) {
+  rmElems( select( "_:TextEquiv", node ) );
+
+  xmlNodePtr textequiv = addElem( "TextEquiv", NULL, node );
+
+  xmlNodePtr unicode = xmlNewTextChild( textequiv, NULL, (xmlChar*)"Unicode", (xmlChar*)text );
+  if( ! unicode )
+    throw runtime_error( "PageXML: setTextEquiv: problems setting TextEquiv" );
+
+  if( conf != NULL )
+    if( ! xmlNewProp( textequiv, (xmlChar*)"conf", (xmlChar*)conf ) )
+      throw runtime_error( "PageXML: setTextEquiv: problems setting conf attribute" );
+
+  return textequiv;
+}
+
+/**
+ * Adds or modifies (if already exists) the TextEquiv for a given xpath.
+ *
+ * @param node   The node of element to set the TextEquiv.
+ * @param text   The text string.
+ * @param conf   The confidence value, NULL for no confidence.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setTextEquiv( const char* xpath, const char* text, const char* conf ) {
+  vector<xmlNodePtr> target = select( xpath );
+  if( target.size() == 0 )
+    throw runtime_error( string("PageXML: setTextEquiv: unmatched target: xpath=") + xpath );
+
+  return setTextEquiv( target[0], text, conf );
+}
+
+/**
+ * Verifies that all IDs in page are unique.
+ */
+bool PageXML::uniqueIDs() {
+  string id;
+  bool unique = true;
+  map<string,bool> seen;
+
+  vector<xmlNodePtr> nodes = select( "//*[@id]" );
+  for( int n=(int)nodes.size()-1; n>=0; n-- ) {
+    getAttr( nodes[n], "id", id );
+    if( seen.find(id) != seen.end() && seen[id] ) {
+      fprintf( stderr, "PageXML: uniqueIDs: duplicate id: %s\n", id.c_str() );
+      seen[id] = unique = false;
+    }
+    else
+      seen[id] = true;
+  }
+
+  return unique;
+}
+
+/**
  * Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
  *
  * @return       Number of IDs simplified.
@@ -627,31 +1121,25 @@ int PageXML::simplifyIDs() {
   regex reTrim("^[^a-zA-Z]*");
   regex reInvalid("[^a-zA-Z0-9_-]");
   string sampbase(imgbase);
-  //xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)"//*[@id]", context );
-  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)"//*[@id][local-name()='TextLine' or local-name()='TextRegion']", context );
 
-  if( elem != NULL && elem->nodesetval )
-    for( int n=0; n<elem->nodesetval->nodeNr; n++ ) {
-      xmlChar* id = xmlGetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"id" );
-      string sampid((char*)id);
-      if( sampid.size() > sampbase.size() &&
-          ! sampid.compare(0,sampbase.size(),sampbase) ) {
-        sampid.erase( 0, sampbase.size() );
-        sampid = regex_replace(sampid,reTrim,"");
-        if( sampid.size() > 0 ) {
-          sampid = regex_replace(sampid,reInvalid,"_");
-          xmlHasProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id" ) ?
-            xmlSetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id", id ) :
-            xmlNewProp( elem->nodesetval->nodeTab[n], (xmlChar*)"orig-id", id ) ;
-          xmlSetProp( elem->nodesetval->nodeTab[n], (xmlChar*)"id", (xmlChar*)sampid.c_str() );
-          simplified++;
-        }
+  vector<xmlNodePtr> nodes = select( "//*[@id][local-name()='TextLine' or local-name()='TextRegion']" );
+
+  for( int n=(int)nodes.size()-1; n>=0; n-- ) {
+    char* id = (char*)xmlGetProp( nodes[n], (xmlChar*)"id" );
+    string sampid(id);
+    if( sampid.size() > sampbase.size() &&
+        ! sampid.compare(0,sampbase.size(),sampbase) ) {
+      sampid.erase( 0, sampbase.size() );
+      sampid = regex_replace(sampid,reTrim,"");
+      if( sampid.size() > 0 ) {
+        sampid = regex_replace(sampid,reInvalid,"_");
+        setAttr( nodes[n], "orig-id", id );
+        setAttr( nodes[n], "id", sampid.c_str() );
+        simplified++;
       }
-      free(id);
     }
-
-  if( elem != NULL )
-    xmlXPathFreeObject(elem);
+    free(id);
+  }
 
   return simplified;
 }
