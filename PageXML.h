@@ -53,18 +53,19 @@ class PageXML {
     int simplifyIDs();
     bool uniqueIDs();
     std::vector<NamedImage> crop( const char* xpath );
-    std::list<Magick::Coordinate> parsePoints( xmlChar* str_coords, double* _xmin = NULL, double* _xmax = NULL, double* _ymin = NULL, double* _ymax = NULL );
-    /*template <class T, template <class T> class A>
-    A<T> parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax );
-    std::list<Magick::Coordinate> parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax );*/
-    std::vector<cv::Point2f> parsePoints2f( const char* str_coords/*, double* _xmin = NULL, double* _xmax = NULL, double* _ymin = NULL, double* _ymax = NULL*/ );
+    static std::list<Magick::Coordinate> cvToMagick( const std::vector<cv::Point2f>& points );
+    static void stringToPoints( const char* spoints, std::vector<cv::Point2f>& points );
+    static void stringToPoints( std::string spoints, std::vector<cv::Point2f>& points );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
     static std::string pointsToString( std::vector<cv::Point> points );
+    static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
+    static void pointsBBox( std::vector<cv::Point2f>& points, std::vector<cv::Point2f>& bbox );
+    static bool isBBox( const std::vector<cv::Point2f>& points );
     std::vector<xmlNodePtr> select( const char* xpath, xmlNodePtr basenode = NULL );
     std::vector<xmlNodePtr> select( std::string xpath, xmlNodePtr basenode = NULL );
-    std::string* getAttr( const xmlNodePtr node,   const char* name,       std::string& value );
-    std::string* getAttr( const char* xpath,       const char* name,       std::string& value );
-    std::string* getAttr( const std::string xpath, const std::string name, std::string& value );
+    bool getAttr( const xmlNodePtr node,   const char* name,       std::string& value );
+    bool getAttr( const char* xpath,       const char* name,       std::string& value );
+    bool getAttr( const std::string xpath, const std::string name, std::string& value );
     int setAttr( std::vector<xmlNodePtr> nodes, const char* name,       const char* value );
     int setAttr( xmlNodePtr node,               const char* name,       const char* value );
     int setAttr( const char* xpath,             const char* name,       const char* value );
@@ -75,14 +76,12 @@ class PageXML {
     int rmElems( const std::vector<xmlNodePtr>& nodes );
     int rmElems( const char* xpath,       xmlNodePtr basenode = NULL );
     int rmElems( const std::string xpath, xmlNodePtr basenode = NULL );
-    float getRotation( const char* id );
-    int getReadingDirection( const char* id );
+    float getRotation( const xmlNodePtr elem );
+    int getReadingDirection( const xmlNodePtr elem );
+    float getXheight( const xmlNodePtr node );
     float getXheight( const char* id );
-    //std::vector<cv::Point2f> getFpgram( const char* id );
-    std::vector<cv::Point2f>* getFpgram( const xmlNodePtr node, std::vector<cv::Point2f>& fpgram );
-    std::vector<cv::Point2f>* getPoints( const xmlNodePtr node, std::vector<cv::Point2f>& points );
-    void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax, bool rounded = false );
-    void pointsBbox( std::vector<cv::Point2f>& points, std::vector<cv::Point2f>& bbox, bool rounded = false );
+    bool getFpgram( const xmlNodePtr node, std::vector<cv::Point2f>& fpgram );
+    bool getPoints( const xmlNodePtr node, std::vector<cv::Point2f>& points );
     xmlNodePtr setTextEquiv( xmlNodePtr node,   const char* text, const char* conf = NULL );
     xmlNodePtr setTextEquiv( const char* xpath, const char* text, const char* conf = NULL );
     char* getBase();
@@ -98,6 +97,7 @@ class PageXML {
     char* imgbase = NULL;
     xmlDocPtr xml = NULL;
     xmlXPathContextPtr context = NULL;
+    xmlNodePtr rootnode = NULL;
     Magick::Image pageimg;
     unsigned int width;
     unsigned int height;

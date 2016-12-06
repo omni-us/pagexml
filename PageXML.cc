@@ -229,6 +229,7 @@ void PageXML::loadXml( int fnum ) {
     throw runtime_error( "PageXML: loadXml: unable create xpath context" );
   if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens ) != 0 )
     throw runtime_error( "PageXML: loadXml: unable to register namespace" );
+  rootnode = context->node;
   rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
 
   vector<xmlNodePtr> elem_page = select( "//_:Page" );
@@ -295,143 +296,128 @@ void PageXML::loadImage( const char* fname ) {
 ///////////////////////
 
 /**
- * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into a list.
+ * Converts an cv vector of points to a Magick++ list of Coordinates.
  *
- * @param str_coords  String containing coordinate pairs.
- * @param _xmin       Minimum x value.
- * @param _xmax       Maximum x value.
- * @param _ymin       Minimum y value.
- * @param _ymax       Maximum y value.
- * @return            List of (x,y) coordinates.
+ * @param points   Vector of points.
+ * @return         List of coordinates.
  */
-list<Coordinate> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax ) {
-//static list<Coordinate> parsePoints( xmlChar* str_coords, double* _xmin = NULL, double* _xmax = NULL, double* _ymin = NULL, double* _ymax = NULL ) {
-  list<Coordinate> points;
-
-  double xmin = NAN;
-  double xmax = NAN;
-  double ymin = NAN;
-  double ymax = NAN;
-
-  int n = 0;
-  char *p = (char*)str_coords-1;
-  while( true ) {
-    p++;
-    double x, y;
-    if( sscanf( p, "%lf,%lf", &x, &y ) != 2 )
-      break;
-    points.push_back(Coordinate(x,y));
-    if( n == 0 || xmin > x ) xmin = x;
-    if( n == 0 || xmax < x ) xmax = x;
-    if( n == 0 || ymin > y ) ymin = y;
-    if( n == 0 || ymax < y ) ymax = y;
-    n++;
-    if( (p = strchr(p,' ')) == NULL )
-      break;
+list<Coordinate> PageXML::cvToMagick( const vector<cv::Point2f>& points ) {
+  list<Coordinate> mpoints;
+  for( int n=0; n<(int)points.size(); n++ ) {
+    mpoints.push_back( Coordinate( points[n].x, points[n].y ) );
   }
-
-  if( _xmin != NULL ) *_xmin = xmin;
-  if( _xmax != NULL ) *_xmax = xmax;
-  if( _ymin != NULL ) *_ymin = ymin;
-  if( _ymax != NULL ) *_ymax = ymax;
-
-  return points;
+  return mpoints;
 }
 
 /**
- * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into a Point2f vector.
+ * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
  *
- * @param str_coords  String containing coordinate pairs.
- * @param _xmin       Minimum x value.
- * @param _xmax       Maximum x value.
- * @param _ymin       Minimum y value.
- * @param _ymax       Maximum y value.
- * @return            Vector of (x,y) coordinates.
+ * @param spoints  String containing coordinate pairs.
+ * @param points   Array of (x,y) coordinates.
  */
-vector<cv::Point2f> PageXML::parsePoints2f( const char* str_coords/*, double* _xmin, double* _xmax, double* _ymin, double* _ymax*/ ) {
-  vector<cv::Point2f> points;
-
-  /*double xmin = NAN;
-  double xmax = NAN;
-  double ymin = NAN;
-  double ymax = NAN;*/
+void PageXML::stringToPoints( const char* spoints, vector<cv::Point2f>& points ) {
+  points.empty();
 
   int n = 0;
-  char *p = (char*)str_coords-1;
+  char *p = (char*)spoints-1;
   while( true ) {
     p++;
     double x, y;
     if( sscanf( p, "%lf,%lf", &x, &y ) != 2 )
       break;
     points.push_back(cv::Point2f(x,y));
-    /*if( n == 0 || xmin > x ) xmin = x;
-    if( n == 0 || xmax < x ) xmax = x;
-    if( n == 0 || ymin > y ) ymin = y;
-    if( n == 0 || ymax < y ) ymax = y;*/
     n++;
     if( (p = strchr(p,' ')) == NULL )
       break;
   }
-
-  /*if( _xmin != NULL ) *_xmin = xmin;
-  if( _xmax != NULL ) *_xmax = xmax;
-  if( _ymin != NULL ) *_ymin = ymin;
-  if( _ymax != NULL ) *_ymax = ymax;*/
-
-  return points;
 }
 
 /**
  * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
  *
- * @param str_coords  String containing coordinate pairs.
- * @param _xmin       Minimum x value.
- * @param _xmax       Maximum x value.
- * @param _ymin       Minimum y value.
- * @param _ymax       Maximum y value.
- * @return            Array of (x,y) coordinates.
+ * @param spoints  String containing coordinate pairs.
+ * @param points   Array of (x,y) coordinates.
  */
-// @todo Merge parsePoints2f and parsePoints2f into a template
-/*template <class T, template <class T> class A>
-A<T> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax ) {
-  A<T> points;
+void PageXML::stringToPoints( string spoints, vector<cv::Point2f>& points ) {
+  stringToPoints( spoints.c_str(), points );
+}
 
-  double xmin = NAN;
-  double xmax = NAN;
-  double ymin = NAN;
-  double ymax = NAN;
+/**
+ * Gets the minimum and maximum coordinate values for an array of points.
+ *
+ * @param points     The vector of points to find the limits.
+ * @param xmin       Minimum x value.
+ * @param xmax       Maximum x value.
+ * @param ymin       Minimum y value.
+ * @param ymax       Maximum y value.
+ */
+void PageXML::pointsLimits( vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax ) {
+  if( points.size() == 0 )
+    return;
 
-  int n = 0;
-  char *p = (char*)str_coords-1;
-  while( true ) {
-    p++;
-    double x, y;
-    if( sscanf( p, "%lf,%lf", &x, &y ) != 2 )
-      break;
-    points.push_back(T(x,y));
-    if( n == 0 || xmin > x ) xmin = x;
-    if( n == 0 || xmax < x ) xmax = x;
-    if( n == 0 || ymin > y ) ymin = y;
-    if( n == 0 || ymax < y ) ymax = y;
-    n++;
-    if( (p = strchr(p,' ')) == NULL )
-      break;
+  xmin = xmax = points[0].x;
+  ymin = ymax = points[0].y;
+
+  for( auto&& point : points ) {
+    if( xmin > point.x ) xmin = point.x;
+    if( xmax < point.x ) xmax = point.x;
+    if( ymin > point.y ) ymin = point.y;
+    if( ymax < point.y ) ymax = point.y;
   }
 
-  if( _xmin != NULL ) *_xmin = xmin;
-  if( _xmax != NULL ) *_xmax = xmax;
-  if( _ymin != NULL ) *_ymin = ymin;
-  if( _ymax != NULL ) *_ymax = ymax;
-
-  return points;
+  return;
 }
-//template list<Coordinate> PageXML::parsePoints( xmlChar* str_coords, double* _xmin, double* _xmax, double* _ymin, double* _ymax );*/
+
+/**
+ * Generates a vector of 4 points that define the bounding box for a given vector of points.
+ *
+ * @param points     The vector of points to find the limits.
+ * @param xmin       Minimum x value.
+ * @param xmax       Maximum x value.
+ * @param ymin       Minimum y value.
+ * @param ymax       Maximum y value.
+ */
+void PageXML::pointsBBox( vector<cv::Point2f>& points, vector<cv::Point2f>& bbox ) {
+  bbox.empty();
+  if( points.size() == 0 )
+    return;
+
+  double xmin;
+  double xmax;
+  double ymin;
+  double ymax;
+
+  pointsLimits( points, xmin, xmax, ymin, ymax );
+  bbox.push_back( cv::Point2f(xmin,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymax) );
+  bbox.push_back( cv::Point2f(xmin,ymax) );
+
+  return;
+}
+
+/**
+ * Determines whether a vector of points defines a bounding box.
+ *
+ * @param points   The vector of points to find the limits.
+ * @return         True if bounding box, otherwise false.
+ */
+bool PageXML::isBBox( const vector<cv::Point2f>& points ) {
+  if( points.size() == 4 &&
+      points[0].x == points[3].x &&
+      points[0].y == points[1].y &&
+      points[1].x == points[2].x &&
+      points[2].y == points[3].y )
+    return true;
+  return false;
+}
 
 /**
  * Cronvers a vector of points to a string in format "x1,y1 x2,y2 ...".
  *
- * @param points  Vector of points.
- * @return        String representation of the points.
+ * @param points   Vector of points.
+ * @param rounded  Whether to round values.
+ * @return         String representation of the points.
  */
 string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
   char val[64];
@@ -442,6 +428,13 @@ string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
   }
   return str;
 }
+
+/**
+ * Cronvers a vector of points to a string in format "x1,y1 x2,y2 ...".
+ *
+ * @param points  Vector of points.
+ * @return        String representation of the points.
+ */
 string PageXML::pointsToString( vector<cv::Point> points ) {
   char val[32];
   string str("");
@@ -464,14 +457,9 @@ vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
 
 #define __REUSE_CONTEXT__
 
-#ifdef __REUSE_CONTEXT__
-  xmlNodePtr orignode = NULL;
-#endif
   xmlXPathContextPtr ncontext = context;
   if( basenode != NULL ) {
-#ifdef __REUSE_CONTEXT__
-    orignode = ncontext->node;
-#else
+#ifndef __REUSE_CONTEXT__
     ncontext = xmlXPathNewContext(basenode->doc);
     if( ncontext == NULL )
       throw runtime_error( "PageXML: select: unable create xpath context" );
@@ -484,7 +472,7 @@ vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
   xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
 #ifdef __REUSE_CONTEXT__
   if( basenode != NULL )
-    ncontext->node = orignode;
+    ncontext->node = rootnode;
 #else
   if( ncontext != context )
     xmlXPathFreeContext(ncontext);
@@ -536,70 +524,70 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
       throw runtime_error( string("PageXML: expected xpath to match only Coords elements: match=") + to_string(n+1) + " xpath=" + xpath );
 
     /// Get parent node id ///
-    char* id1 = (char*)xmlGetProp( node->parent, (xmlChar*)"id" );
-    if( id1 == NULL )
+    string sampid;
+    if( ! getAttr( node->parent, "id", sampid ) )
       throw runtime_error( string("PageXML: expected parent element to include id attribute: match=") + to_string(n+1) + " xpath=" + xpath );
 
-    /// Get coords points ///
-    double xmin, xmax, ymin, ymax;
-    xmlChar* points = xmlGetProp( node, (xmlChar*)"points" );
-    if( points == NULL )
-      throw runtime_error( string("PageXML: expected a points attribute in Coords[@id=\"") + id1 + "\"]" );
-    list<Coordinate> coords = parsePoints( points, &xmin, &xmax, &ymin, &ymax );
-    xmlFree(points);
-
     /// Construct sample name ///
-    string sampid(id1);
     string sampname = string(".") + sampid;
-    free(id1);
     if( extended_names )
       if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
           ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-        char* id2 = (char*)xmlGetProp( node->parent->parent, (xmlChar*)"id" );
+        string id2;
+        getAttr( node->parent->parent, "id", id2 );
         sampname = string(".") + id2 + sampname;
-        free(id2);
         if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-          char* id3 = (char*)xmlGetProp( node->parent->parent->parent, (xmlChar*)"id" );
+          string id3;
+          getAttr( node->parent->parent->parent, "id", id3 );
           sampname = string(".") + id3 + sampname;
-          free(id3);
         }
       }
     sampname = string(imgbase) + sampname;
 
+    /// Get coords points ///
+    string spoints;
+    if( ! getAttr( node, "points", spoints ) )
+      throw runtime_error( string("PageXML: expected a points attribute in Coords element: id=") + sampid );
+    vector<cv::Point2f> coords;
+    stringToPoints( spoints, coords );
+
     /// Get crop window parameters ///
+    double xmin, xmax, ymin, ymax;
+    pointsLimits( coords, xmin, xmax, ymin, ymax );
     size_t cropW = (size_t)(ceil(xmax)-floor(xmin)+1);
     size_t cropH = (size_t)(ceil(ymax)-floor(ymin)+1);
     int cropX = (int)floor(xmin);
     int cropY = (int)floor(ymin);
 
-    /// Subtract crop window offset ///
-    for( list<Coordinate>::iterator coord = coords.begin(), end = coords.end(); coord != end; coord++ ) {
-      coord->x( coord->x()-cropX );
-      coord->y( coord->y()-cropY );
-    }
-
     /// Crop image ///
     Image cropimg = pageimg;
     cropimg.crop( Geometry(cropW,cropH,cropX,cropY) );
 
-    /// Add transparency layer ///
-    // @todo Skip transparent if polygon is bounding box
-    list<Drawable> drawList;
-    drawList.push_back(DrawableStrokeColor(opaque));
-    drawList.push_back(DrawableFillColor(opaque));
-    drawList.push_back(DrawableStrokeAntialias(false));
-    drawList.push_back(DrawablePolygon(coords));
-    Image mask( Geometry(cropW,cropH), transparent );
-    mask.draw(drawList);
-    cropimg.draw( DrawableCompositeImage(0,0,0,0,mask,CopyOpacityCompositeOp) );
+    if( ! isBBox( coords ) ) {
+      /// Subtract crop window offset ///
+      for( auto&& coord : coords ) {
+        coord.x -= cropX;
+        coord.y -= cropY;
+      }
 
-    /// Get line rotation ///
-    float rotation = getRotation(sampid.c_str());
+      /// Add transparency layer ///
+      list<Drawable> drawList;
+      drawList.push_back(DrawableStrokeColor(opaque));
+      drawList.push_back(DrawableFillColor(opaque));
+      drawList.push_back(DrawableStrokeAntialias(false));
+      drawList.push_back(DrawablePolygon(cvToMagick(coords)));
+      Image mask( Geometry(cropW,cropH), transparent );
+      mask.draw(drawList);
+      cropimg.draw( DrawableCompositeImage(0,0,0,0,mask,CopyOpacityCompositeOp) );
+    }
 
-    /// Get reading direction ///
-    int direction = getReadingDirection(sampid.c_str());
-
-    NamedImage namedimage = { sampid, sampname, rotation, direction, cropimg };
+    /// Append crop and related data to list ///
+    NamedImage namedimage = {
+      sampid,
+      sampname,
+      getRotation(node->parent),
+      getReadingDirection(node->parent),
+      cropimg };
 
     images.push_back(namedimage);
   }
@@ -611,33 +599,33 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
  * Gets an attribute value from an xml node.
  *
  * @param node   XML node.
- * @param name   Name of the attribute.
+ * @param name   Attribute name.
  * @param value  String to set the value.
- * @return       Pointer to attribute value string, or NULL if attribute unset.
+ * @return       True if attribute found, otherwise false.
 */
-string* PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) {
+bool PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) {
   if( node == NULL )
-    return NULL;
+    return false;
  
   xmlChar* attr = xmlGetProp( node, (xmlChar*)name );
   value = string((char*)attr);
   xmlFree(attr);
 
-  return &value;
+  return true;
 }
 
 /**
  * Gets an attribute value for a given xpath.
  *
- * @param xpath  Selector for the element to set the attribute.
- * @param name   Name of the attribute.
+ * @param xpath  Selector for the element to get the attribute.
+ * @param name   Attribute name.
  * @param value  String to set the value.
- * @return       Pointer to attribute value string, or NULL if attribute unset.
+ * @return       True if attribute found, otherwise false.
 */
-string* PageXML::getAttr( const char* xpath, const char* name, string& value ) {
+bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
   vector<xmlNodePtr> xsel = select( xpath );
   if( xsel.size() == 0 )
-    return NULL;
+    return false;
  
   return getAttr( xsel[0], name, value );
 }
@@ -645,15 +633,15 @@ string* PageXML::getAttr( const char* xpath, const char* name, string& value ) {
 /**
  * Gets an attribute value for a given xpath.
  *
- * @param xpath  Selector for the element to set the attribute.
- * @param name   Name of the attribute.
+ * @param xpath  Selector for the element to get the attribute.
+ * @param name   Attribute name.
  * @param value  String to set the value.
- * @return       Pointer to attribute value string, or NULL if attribute unset.
+ * @return       True if attribute found, otherwise false.
 */
-string* PageXML::getAttr( const string xpath, const string name, string& value ) {
+bool PageXML::getAttr( const string xpath, const string name, string& value ) {
   vector<xmlNodePtr> xsel = select( xpath.c_str() );
   if( xsel.size() == 0 )
-    return NULL;
+    return false;
  
   return getAttr( xsel[0], name.c_str(), value );
 }
@@ -662,8 +650,8 @@ string* PageXML::getAttr( const string xpath, const string name, string& value )
  * Adds or modifies (if already exists) an attribute for a given list of nodes.
  *
  * @param nodes  Vector of nodes to set the attribute.
- * @param name   Name of the attribute.
- * @param value  Value of the attribute.
+ * @param name   Attribute name.
+ * @param value  Attribute value.
  * @return       Number of elements modified.
  */
 int PageXML::setAttr( vector<xmlNodePtr> nodes, const char* name, const char* value ) {
@@ -682,8 +670,8 @@ int PageXML::setAttr( vector<xmlNodePtr> nodes, const char* name, const char* va
  * Adds or modifies (if already exists) an attribute for a given node.
  *
  * @param node   Node to set the attribute.
- * @param name   Name of the attribute.
- * @param value  Value of the attribute.
+ * @param name   Attribute name.
+ * @param value  Attribute value.
  * @return       Number of elements modified.
  */
 int PageXML::setAttr( xmlNodePtr node, const char* name, const char* value ) {
@@ -694,8 +682,8 @@ int PageXML::setAttr( xmlNodePtr node, const char* name, const char* value ) {
  * Adds or modifies (if already exists) an attribute for a given xpath.
  *
  * @param xpath  Selector for the element(s) to set the attribute.
- * @param name   Name of the attribute.
- * @param value  Value of the attribute.
+ * @param name   Attribute name.
+ * @param value  Attribute value.
  * @return       Number of elements modified.
  */
 int PageXML::setAttr( const char* xpath, const char* name, const char* value ) {
@@ -706,8 +694,8 @@ int PageXML::setAttr( const char* xpath, const char* name, const char* value ) {
  * Adds or modifies (if already exists) an attribute for a given xpath.
  *
  * @param xpath  Selector for the element(s) to set the attribute.
- * @param name   Name of the attribute.
- * @param value  Value of the attribute.
+ * @param name   Attribute name.
+ * @param value  Attribute value.
  * @return       Number of elements modified.
  */
 int PageXML::setAttr( const string xpath, const string name, const string value ) {
@@ -823,122 +811,124 @@ int PageXML::rmElems( const string xpath, xmlNodePtr basenode ) {
 }
 
 /**
- * Retrieves the rotation angle for a given TextLine or Text Region id.
+ * Retrieves the rotation angle for a given TextLine or TextRegion node.
  *
- * @param id     Identifier of the TextLine or TextRegion.
+ * @param elem   Node of the TextLine or TextRegion element.
  * @return       The rotation angle in degrees, 0 if unset.
  */
-float PageXML::getRotation( const char* id ) {
+float PageXML::getRotation( const xmlNodePtr elem ) {
   float rotation = 0;
-  string xpath = string("//*[@id='")+id+"']";
-  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
+  if( elem == NULL )
+    return rotation;
 
-  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 ) {
-    xmlNodePtr node = elem->nodesetval->nodeTab[0];
-    if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
-      if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
+  xmlNodePtr node = elem;
+
+  /// If TextLine try to get rotation from custom attribute ///
+  if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
+    if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
+      node = node->parent;
+    else {
+      xmlChar* attr = xmlGetProp( node, (xmlChar*)"custom" );
+      cmatch base_match;
+      if( regex_match((char*)attr,base_match,reRotation) )
+        rotation = stof(base_match[1].str());
+      else
         node = node->parent;
-      else {
-        xmlChar* attr = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
-        cmatch base_match;
-        if( regex_match((char*)attr,base_match,reRotation) )
-          rotation = stof(base_match[1].str());
-        else
-          node = node->parent;
-        xmlFree(attr);
-      }
-    }
-    if( xmlHasProp( node, (xmlChar*)"readingOrientation" ) ) {
-      xmlChar* attr = xmlGetProp( node, (xmlChar*)"readingOrientation" );
-      rotation = stof((char*)attr);
       xmlFree(attr);
     }
   }
-
-  if( elem != NULL )
-    xmlXPathFreeObject(elem);
+  /// Otherwise try to get rotation from readingOrientation attribute ///
+  if( xmlHasProp( node, (xmlChar*)"readingOrientation" ) ) {
+    xmlChar* attr = xmlGetProp( node, (xmlChar*)"readingOrientation" );
+    rotation = stof((char*)attr);
+    xmlFree(attr);
+  }
 
   return rotation;
 }
 
 /**
- * Retrieves the reading direction for a given TextLine or Text Region id.
+ * Retrieves the reading direction for a given TextLine or TextRegion node.
  *
- * @param id     Identifier of the TextLine or TextRegion.
+ * @param elem   Node of the TextLine or TextRegion element.
  * @return       The reading direction, DIRECTION_LTR if unset.
  */
-int PageXML::getReadingDirection( const char* id ) {
+int PageXML::getReadingDirection( const xmlNodePtr elem ) {
   int direction = DIRECTION_LTR;
-  string xpath = string("//*[@id='")+id+"']";
-  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
+  if( elem == NULL )
+    return direction;
 
-  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 ) {
-    xmlNodePtr node = elem->nodesetval->nodeTab[0];
-    if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
-      if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
-        node = node->parent;
-      else {
-        xmlChar* attr = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
-        cmatch base_match;
-        if( regex_match((char*)attr,base_match,reDirection) ) {
-          if( ! strcmp(base_match[1].str().c_str(),"ltr") )
-            direction = DIRECTION_LTR;
-          else if( ! strcmp(base_match[1].str().c_str(),"rtl") )
-            direction = DIRECTION_RTL;
-          else if( ! strcmp(base_match[1].str().c_str(),"ttb") )
-            direction = DIRECTION_TTB;
-          else if( ! strcmp(base_match[1].str().c_str(),"btt") )
-            direction = DIRECTION_BTT;
-        }
-        else
-          node = node->parent;
-        xmlFree(attr);
+  xmlNodePtr node = elem;
+
+  /// If TextLine try to get direction from custom attribute ///
+  if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
+    if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
+      node = node->parent;
+    else {
+      xmlChar* attr = xmlGetProp( node, (xmlChar*)"custom" );
+      cmatch base_match;
+      if( regex_match((char*)attr,base_match,reDirection) ) {
+        if( ! strcmp(base_match[1].str().c_str(),"ltr") )
+          direction = DIRECTION_LTR;
+        else if( ! strcmp(base_match[1].str().c_str(),"rtl") )
+          direction = DIRECTION_RTL;
+        else if( ! strcmp(base_match[1].str().c_str(),"ttb") )
+          direction = DIRECTION_TTB;
+        else if( ! strcmp(base_match[1].str().c_str(),"btt") )
+          direction = DIRECTION_BTT;
       }
-    }
-    if( xmlHasProp( node, (xmlChar*)"readingDirection" ) ) {
-      char* attr = (char*)xmlGetProp( node, (xmlChar*)"readingDirection" );
-      if( ! strcmp(attr,"left-to-right") )
-        direction = DIRECTION_LTR;
-      else if( ! strcmp(attr,"right-to-left") )
-        direction = DIRECTION_RTL;
-      else if( ! strcmp(attr,"top-to-bottom") )
-        direction = DIRECTION_TTB;
-      else if( ! strcmp(attr,"bottom-to-top") )
-        direction = DIRECTION_BTT;
+      else
+        node = node->parent;
       xmlFree(attr);
     }
   }
-
-  if( elem != NULL )
-    xmlXPathFreeObject(elem);
+  /// Otherwise try to get direction from readingDirection attribute ///
+  if( xmlHasProp( node, (xmlChar*)"readingDirection" ) ) {
+    char* attr = (char*)xmlGetProp( node, (xmlChar*)"readingDirection" );
+    if( ! strcmp(attr,"left-to-right") )
+      direction = DIRECTION_LTR;
+    else if( ! strcmp(attr,"right-to-left") )
+      direction = DIRECTION_RTL;
+    else if( ! strcmp(attr,"top-to-bottom") )
+      direction = DIRECTION_TTB;
+    else if( ! strcmp(attr,"bottom-to-top") )
+      direction = DIRECTION_BTT;
+    xmlFree(attr);
+  }
 
   return direction;
 }
 
 /**
- * Retrieves the x-height for a given TextLine id.
+ * Retrieves the x-height for a given TextLine node.
  *
- * @param id     Identifier of the TextLine.
- * @return       x-height>0 on success, -1 if unset for line.
+ * @param node   Node of the TextLine element.
+ * @return       x-height>0 on success, -1 if unset.
  */
-float PageXML::getXheight( const char* id ) {
+float PageXML::getXheight( const xmlNodePtr node ) {
   float xheight = -1;
-  string xpath = string("//*[@id='")+id+"']";
-  xmlXPathObjectPtr elem = xmlXPathEvalExpression( (xmlChar*)xpath.c_str(), context );
 
-  if( elem != NULL && elem->nodesetval && elem->nodesetval->nodeNr > 0 &&
-      xmlHasProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" ) ) {
-    xmlChar* custom = xmlGetProp( elem->nodesetval->nodeTab[0], (xmlChar*)"custom" );
+  if( node != NULL &&
+      xmlHasProp( node, (xmlChar*)"custom" ) ) {
+    xmlChar* custom = xmlGetProp( node, (xmlChar*)"custom" );
     cmatch base_match;
     if( regex_match((char*)custom,base_match,reXheight) )
       xheight = stof(base_match[1].str());
     xmlFree(custom);
   }
 
-  if( elem != NULL )
-    xmlXPathFreeObject(elem);
-
   return xheight;
+}
+
+/**
+ * Retrieves the x-height for a given TextLine id.
+ *
+ * @param id     Identifier of the TextLine.
+ * @return       x-height>0 on success, -1 if unset.
+ */
+float PageXML::getXheight( const char* id ) {
+  vector<xmlNodePtr> elem = select( string("//*[@id='")+id+"']" );
+  return getXheight( elem.size() == 0 ? NULL : elem[0] );
 }
 
 /**
@@ -947,21 +937,21 @@ float PageXML::getXheight( const char* id ) {
  * @param id     Identifier of the TextLine.
  * @return       Parallelogram, empty list if unset.
  */
-vector<cv::Point2f>* PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point2f>& fpgram ) {
+bool PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point2f>& fpgram ) {
   if( node == NULL )
-    return NULL;
+    return false;
 
   vector<xmlNodePtr> coords = select( "_:Coords[@fpgram]", node );
   if( coords.size() == 0 )
-    return NULL;
+    return false;
 
   string sfpgram;
   if( ! getAttr( coords[0], "fpgram", sfpgram ) )
-    return NULL;
+    return false;
 
-  fpgram = parsePoints2f( sfpgram.c_str() );
+  stringToPoints( sfpgram.c_str(), fpgram );
 
-  return &fpgram;
+  return true;
 }
 
 /**
@@ -970,82 +960,21 @@ vector<cv::Point2f>* PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point
  * @param node   Base node.
  * @return       Pointer to the points vector, NULL if unset.
  */
-vector<cv::Point2f>* PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
+bool PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
   if( node == NULL )
-    return NULL;
+    return false;
 
   vector<xmlNodePtr> coords = select( "_:Coords[@points]", node );
   if( coords.size() == 0 )
-    return NULL;
+    return false;
 
   string spoints;
   if( ! getAttr( coords[0], "points", spoints ) )
-    return NULL;
+    return false;
 
-  points = parsePoints2f( spoints.c_str() );
+  stringToPoints( spoints.c_str(), points );
 
-  return &points;
-}
-
-/**
- * Gets the minimum and maximum coordinate values for a vector of points.
- *
- * @param points     The vector of points to find the limits.
- * @param xmin       Minimum x value.
- * @param xmax       Maximum x value.
- * @param ymin       Minimum y value.
- * @param ymax       Maximum y value.
- */
-void PageXML::pointsLimits( vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax, bool rounded ) {
-  if( points.size() == 0 )
-    return;
-
-  xmin = xmax = points[0].x;
-  ymin = ymax = points[0].y;
-
-  for( auto&& point : points ) {
-    if( xmin > point.x ) xmin = point.x;
-    if( xmax < point.x ) xmax = point.x;
-    if( ymin > point.y ) ymin = point.y;
-    if( ymax < point.y ) ymax = point.y;
-  }
-
-  if( rounded ) {
-    xmin = round(xmin);
-    xmax = round(xmax);
-    ymin = round(ymin);
-    ymax = round(ymax);
-  }
-
-  return;
-}
-
-/**
- * Generates a vector of 4 points that define the bounding box for a given vector of points.
- *
- * @param points     The vector of points to find the limits.
- * @param xmin       Minimum x value.
- * @param xmax       Maximum x value.
- * @param ymin       Minimum y value.
- * @param ymax       Maximum y value.
- */
-void PageXML::pointsBbox( vector<cv::Point2f>& points, vector<cv::Point2f>& bbox, bool rounded ) {
-  bbox.empty();
-  if( points.size() == 0 )
-    return;
-
-  double xmin;
-  double xmax;
-  double ymin;
-  double ymax;
-
-  pointsLimits( points, xmin, xmax, ymin, ymax, rounded );
-  bbox.push_back( cv::Point2f(xmin,ymin) );
-  bbox.push_back( cv::Point2f(xmax,ymin) );
-  bbox.push_back( cv::Point2f(xmax,ymax) );
-  bbox.push_back( cv::Point2f(xmin,ymax) );
-
-  return;
+  return true;
 }
 
 /**
