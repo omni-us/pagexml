@@ -552,7 +552,7 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     stringToPoints( spoints, coords );
 
     /// Get crop window parameters ///
-    double xmin, xmax, ymin, ymax;
+    double xmin=0, xmax=0, ymin=0, ymax=0;
     pointsLimits( coords, xmin, xmax, ymin, ymax );
     size_t cropW = (size_t)(ceil(xmax)-floor(xmin)+1);
     size_t cropH = (size_t)(ceil(ymax)-floor(ymin)+1);
