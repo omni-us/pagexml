@@ -14,13 +14,7 @@
 #include <H5Cpp.h>
 
 #include "intimg.h"
-
-enum READ_DIRECTION {
-  DIRECTION_LTR = 0,
-  DIRECTION_RTL,
-  DIRECTION_TTB,
-  DIRECTION_BTT
-};
+#include "PageXML.h"
 
 enum TEXTFEAT_TYPE {
   TEXTFEAT_TYPE_DOTMATRIX = 0, // "dotm"
@@ -73,7 +67,7 @@ class TextFeatExtractor {
     void loadProjection( const char* projfile );
     void preprocess( Magick::Image& image, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
     void estimateAngles( Magick::Image& image, float* _slope, float* _slant, float rotate = 0.0 );
-    cv::Mat extractFeats( Magick::Image& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false, float rotate = 0.0, int direction = DIRECTION_LTR );
+    cv::Mat extractFeats( Magick::Image& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false, float rotate = 0.0, int direction = PAGEXML_READ_DIRECTION_LTR );
     cv::Mat preprocessAndExtract( Magick::Image& image, float* _slope = NULL, float* _slant = NULL, std::vector<cv::Point2f>* _fpgram = NULL, std::vector<cv::Point>* _fcontour = NULL );
     bool isImageFormat();
     void print( const cv::Mat& feats, FILE* file = stdout );

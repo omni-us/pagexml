@@ -1619,9 +1619,9 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   }
 
   /// Account for reading direction ///
-  if( direction == DIRECTION_RTL )
+  if( direction == PAGEXML_READ_DIRECTION_RTL )
     feaimg.flop();
-  else if( direction == DIRECTION_TTB || direction == DIRECTION_BTT )
+  else if( direction == PAGEXML_READ_DIRECTION_TTB || direction == PAGEXML_READ_DIRECTION_BTT )
     fprintf(stderr,"warning: vertical reading directions not supported\n");
 
   if( procimgs )
