@@ -9,6 +9,7 @@
 #include "PageXML.h"
 
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdexcept>
 #include <regex>
@@ -275,12 +276,17 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
 void PageXML::loadXml( const char* fname ) {
   release();
 
-  if( strrchr(fname,'/') != NULL )
+  if ( ! strcmp(fname,"-") ) {
+    loadXml( STDIN_FILENO, false );
+    return;
+  }
+
+  if ( strrchr(fname,'/') != NULL )
     xmldir = strndup(fname,strrchr(fname,'/')-fname);
   FILE *file;
-  if( (file=fopen(fname,"rb")) == NULL )
+  if ( (file=fopen(fname,"rb")) == NULL )
     throw runtime_error( string("PageXML.loadXml: unable to open file: ") + fname );
-  loadXml( fileno(file) );
+  loadXml( fileno(file), false );
   fclose(file);
 }
 
@@ -289,8 +295,9 @@ void PageXML::loadXml( const char* fname ) {
  *
  * @param fnum  File number from where to read the XML file.
  */
-void PageXML::loadXml( int fnum ) {
-  release();
+void PageXML::loadXml( int fnum, bool prevfree ) {
+  if ( prevfree )
+    release();
 
   xmlKeepBlanksDefault(0);
   xml = xmlReadFd( fnum, NULL, NULL, XML_PARSE_NONET );
@@ -355,18 +362,18 @@ void PageXML::loadImage( const char* fname, const bool check_size ) {
 #if defined (__PAGEXML_LEPT__)
   pageimg = pixRead(fname);
   if( pageimg == NULL )
-    throw runtime_error( "PageXML.loadImage: problems reading image" );
+    throw runtime_error( string("PageXML.loadImage: problems reading image: ") + fname );
 #elif defined (__PAGEXML_MAGICK__)
   try {
     pageimg.read(fname);
   }
   catch( exception& e ) {
-    throw runtime_error( string("PageXML.loadImage: ") + e.what() );
+    throw runtime_error( string("PageXML.loadImage: problems reading image: ") + e.what() );
   }
 #elif defined (__PAGEXML_CVIMG__)
   pageimg = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
   if ( ! pageimg.data )
-    throw runtime_error( "PageXML.loadImage: problems reading image" );
+    throw runtime_error( string("PageXML.loadImage: problems reading image: ") + fname );
 #endif
 
   if( grayimg ) {

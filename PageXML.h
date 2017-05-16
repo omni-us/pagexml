@@ -101,7 +101,7 @@ class PageXML {
     void printConf( FILE* file );
     void newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
     void loadXml( const char* fname );
-    void loadXml( int fnum );
+    void loadXml( int fnum, bool prevfree = true );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
     void loadImage( const char* fname = NULL, const bool check_size = true );
 #endif
