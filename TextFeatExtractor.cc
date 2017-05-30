@@ -1,8 +1,9 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Revision::       $$Date::             $
- * @copyright Copyright (c) 2016 to the present, Mauricio Villegas <mauvilsa@upv.es>
+ * @version $Version: 2017.05.30$
+ * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
+ * @license MIT License
  */
 
 #include "TextFeatExtractor.h"
@@ -1631,13 +1632,13 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   if( compute_fpgram && _fpgram != NULL && ! randomize ) {
     double xmin = -padding;
     double xmax = feaimg.columns()-1-padding;
-    if( featype == TEXTFEAT_TYPE_DOTMATRIX ) {
+    /*if( featype == TEXTFEAT_TYPE_DOTMATRIX ) {
       int numFea = 0;
       for( double x=-slide_span; x<=feaimg.columns()+1; x+=slide_shift )
         numFea++;
       xmin = -0.5*slide_span-padding;
       xmax = xmin+(numFea-1)*slide_shift;
-    }
+    }*/
     //fprintf(stderr,"numFea=%d xmin=%g xmax=%g\n",numFea,xmin,xmax);
 
     /*Matx43d pts( offx+xmin, offy, 1,
@@ -1666,17 +1667,17 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
 
   /// Compute features ///
   Mat feats;
-  double moment_weight = 1;
-  bool window = true;
+  //double moment_weight = 1;
+  //bool window = true;
   //bool window = false;
   switch( featype ) {
-    case TEXTFEAT_TYPE_DOTMATRIX:
+    /*case TEXTFEAT_TYPE_DOTMATRIX:
       tm = high_resolution_clock::now();
       cv::Mat dotmatrix( Image image, double win_size, double shift, int sample_width, int sample_height, double moment_weight, bool window, cv::Mat projbase, cv::Mat projmu );
       feats = dotmatrix( feaimg, slide_span, slide_shift, sample_width, sample_height, moment_weight, window, projbase, projmu );
       if( verbose )
         fprintf(stderr,"dotmatrix time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
-      break;
+      break;*/
     case TEXTFEAT_TYPE_RAW:
       if( feaimg.type() == GrayscaleMatteType || feaimg.type() == GrayscaleType ) {
         feats = Mat( feaimg.rows(), feaimg.columns(), CV_8U );
@@ -1709,8 +1710,3 @@ Mat TextFeatExtractor::preprocessAndExtract( Image& image, float* _slope, float*
 
   return feats;
 }
-
-
-
-
-/////////////////
