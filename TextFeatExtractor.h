@@ -1,8 +1,9 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Revision::       $$Date::             $
- * @copyright Copyright (c) 2016 to the present, Mauricio Villegas <mauvilsa@upv.es>
+ * @version $Version: 2017.05.30$
+ * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
+ * @license MIT License
  */
 
 #ifndef __TEXTFEATEXTRACTOR_H__
