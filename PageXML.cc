@@ -1,8 +1,8 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Revision::       $$Date::             $
- * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauvilsa@upv.es>
+ * @version $Version: 2017.05.30$
+ * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
 
