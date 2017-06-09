@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2017.05.30$
+ * @version $Version: 2017.06.09$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,6 +56,19 @@ const char* TextFeatExtractor::settingNames[] = {
 
 const Color colorWhite("white");
 const Color colorBlack("black");
+
+/////////////////////
+/// Class version ///
+/////////////////////
+
+static char class_version[] = "Version: 2017.06.09";
+
+/**
+ * Returns the class version.
+ */
+char* TextFeatExtractor::version() {
+  return class_version+9;
+}
 
 ////////////////////
 /// Constructors ///

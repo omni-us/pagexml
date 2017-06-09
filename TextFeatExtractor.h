@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2017.05.30$
+ * @version $Version: 2017.06.09$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,6 +61,7 @@ class TextFeatExtractor {
     static const char* featTypes[];
     static const char* formatNames[];
     static const char* settingNames[];
+    static char* version();
     TextFeatExtractor( const libconfig::Config& config );
     TextFeatExtractor( const char* cfgfile = NULL );
     void loadConf( const libconfig::Config& config );
@@ -74,8 +75,8 @@ class TextFeatExtractor {
     void print( const cv::Mat& feats, FILE* file = stdout );
     void write( const cv::Mat& feats, const char* fname );
   private:
-    int featype = TEXTFEAT_TYPE_DOTMATRIX;
-    int format = TEXTFEAT_FORMAT_ASCII;
+    int featype = TEXTFEAT_TYPE_RAW;
+    int format = TEXTFEAT_FORMAT_IMAGE;
     bool verbose = false;
     bool procimgs = false;
     bool stretch = true;
@@ -85,7 +86,7 @@ class TextFeatExtractor {
     int enh_type = ENH_SAUVOLA;
     int enh_win = 20;
     float enh_slp = 0.5;
-    float enh_prm = 0.1;
+    float enh_prm = 0.2;
     float enh_prm_randmin = 0.05;
     float enh_prm_randmax = 0.3;
     float enh3_prm0 = 0.0;
