@@ -246,7 +246,7 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
 
   string str = string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-      + "<PcGts xmlns=\"" + pagens + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
+      + "<PcGts xmlns=\"" + pagens + "\">\n"
       + "  <Metadata>\n"
       + "    <Creator>" + (creator == NULL ? "PageXML.cc" : creator) + "</Creator>\n"
       + "    <Created>" + tstamp + "</Created>\n"

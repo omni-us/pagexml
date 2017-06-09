@@ -27,9 +27,6 @@ fi
 FILES=( $(git status --porcelain | sed 's| .* | |' | grep '^[MRA]') );
 V=$(date -u +%Y.%m.%d);
 
-NEWVER="no";
-N="${#FILES[@]}";
-
 check_change_after_staged () {
   [ "${2:1:1}" = "M" ] &&
     echo "${0##*/}: error: unable to update version due to change after staged: $1" 1>&2 &&
