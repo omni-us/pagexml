@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.05.30$
+ * @version $Version: 2017.06.09$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -91,6 +91,7 @@ struct NamedImage {
 class PageXML {
   public:
     static const char* settingNames[];
+    static char* version();
     ~PageXML();
     PageXML();
 #if defined (__PAGEXML_LIBCONFIG__)

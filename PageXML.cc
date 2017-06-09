@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.05.30$
+ * @version $Version: 2017.06.09$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -36,6 +36,18 @@ regex reXheight(".*x-height: *([0-9.]+) *px;.*");
 regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
 regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 
+/////////////////////
+/// Class version ///
+/////////////////////
+
+static char class_version[] = "Version: 2017.06.09";
+
+/**
+ * Returns the class version.
+ */
+char* PageXML::version() {
+  return class_version+9;
+}
 
 /////////////////////////
 /// Resources release ///
@@ -710,8 +722,8 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
     cv::Mat cropimg = pageimg(roi);
 #endif
 
-#if defined (__PAGEXML_MAGICK__)
     if( ! isBBox( coords ) ) {
+#if defined (__PAGEXML_MAGICK__)
       /// Subtract crop window offset ///
       for( auto&& coord : coords ) {
         coord.x -= cropX;
@@ -728,13 +740,25 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
       Magick::Image mask( Magick::Geometry(cropW,cropH), transparent );
       mask.draw(drawList);
       cropimg.draw( Magick::DrawableCompositeImage(0,0,0,0,mask,Magick::CopyOpacityCompositeOp) );
-    }
+
 #elif defined (__PAGEXML_CVIMG__)
-  // @todo Add transparency layer for opencv
+      /// Subtract crop window offset and round points ///
+      std::vector<cv::Point> rcoods;
+      std::vector<std::vector<cv::Point> > polys;
+      for( auto&& coord : coords )
+        rcoods.push_back( cv::Point( round(coord.x-cropX), round(coord.y-cropY) ) );
+      polys.push_back(rcoods);
+
+      /// Add alpha channel to image ///
+      cv::Mat wmask( cropimg.size(), CV_MAKE_TYPE(cropimg.type(),cropimg.channels()+1), cv::Scalar(0,0,0,0) );
+      cv::fillPoly( wmask, polys, cv::Scalar(0,0,0,255) );
+      int from_to[] = { 0,0, 1,1, 2,2 };
+      cv::mixChannels( &cropimg, 1, &wmask, 1, from_to, cropimg.channels() );
+      cropimg = wmask;
 #endif
+    }
 
     /// Append crop and related data to list ///
-    //NamedImage namedimage = {
     NamedImage namedimage(
       sampid,
       sampname,
@@ -744,7 +768,6 @@ vector<NamedImage> PageXML::crop( const char* xpath ) {
       cropY,
       cropimg,
       node );
-    //  node };
 
     images.push_back(namedimage);
   }

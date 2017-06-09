@@ -24,7 +24,7 @@ fi
 
 
 ### Update versions on files ###
-FILES=( $(git status --porcelain | sed 's| .* | |' | grep '^[MR]') );
+FILES=( $(git status --porcelain | sed 's| .* | |' | grep '^[MRA]') );
 V=$(date -u +%Y.%m.%d);
 
 NEWVER="no";
@@ -36,22 +36,35 @@ check_change_after_staged () {
     exit 1;
 }
 
+VERSION_UPDATED=( - );
 update_file_version () {
   echo "${0##*/}: updating version of $1" 1>&2;
-  sed -i 's|$Version:[^$]*\$|$Version: '"$V"'$|' "$1";
+  sed -r -i 's|([$"])Version:[^$"]*([$"])|\1Version: '"$V"'\2|' "$1";
   git add "$1";
+  VERSION_UPDATED+=( "$1" );
+}
+
+already_updated () {
+  echo $(printf "%s\n" "${VERSION_UPDATED[@]}" | grep -c "^$1\$");
 }
 
 n=1;
 while [ "$n" -lt "${#FILES[@]}" ]; do
-  case "${FILES[$n]}" in
-    *.cc )
-      check_change_after_staged "${FILES[$n]}" "${FILES[$((n+1))]}";
-      update_file_version "${FILES[$n]}";
-      [ -e "${FILES[$n]/.cc/.h}" ] &&
-        update_file_version "${FILES[$n]/.cc/.h}";
-      ;;
-  esac
+  [ $(already_updated "${FILES[$n]}") = 0 ] &&
+    case "${FILES[$n]}" in
+      *.cc )
+        check_change_after_staged "${FILES[$n]}" "${FILES[$((n+1))]}";
+        update_file_version "${FILES[$n]}";
+        [ -e "${FILES[$n]/.cc/.h}" ] &&
+          update_file_version "${FILES[$n]/.cc/.h}";
+        ;;
+      *.h )
+        check_change_after_staged "${FILES[$n]}" "${FILES[$((n+1))]}";
+        update_file_version "${FILES[$n]}";
+        [ -e "${FILES[$n]/.h/.cc}" ] &&
+          update_file_version "${FILES[$n]/.h/.cc}";
+        ;;
+    esac
   n=$((n+2));
 done
 
