@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.06.09$
+ * @version $Version: 2017.06.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -16,6 +16,8 @@
 
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
+//#include <libxslt/xslt.h>
+//#include <libxslt/xsltconfig.h>
 
 using namespace std;
 
@@ -40,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.06.09";
+static char class_version[] = "Version: 2017.06.15";
 
 /**
  * Returns the class version.
@@ -48,6 +50,14 @@ static char class_version[] = "Version: 2017.06.09";
 char* PageXML::version() {
   return class_version+9;
 }
+
+void PageXML::printVersions( FILE* file ) {
+  fprintf( file, "compiled against PageXML %s\n", class_version+9 );
+  fprintf( file, "compiled against libxml2 %s, linked with %s\n", LIBXML_DOTTED_VERSION, xmlParserVersion );
+  //fprintf( file, "compiled against libxslt %s, linked with %s\n", LIBXSLT_DOTTED_VERSION, xsltEngineVersion );
+  fprintf( file, "compiled against opencv %s\n", CV_VERSION );
+}
+
 
 /////////////////////////
 /// Resources release ///
@@ -959,6 +969,16 @@ xmlNodePtr PageXML::addElem( const string name, const string id, const string xp
 }
 
 /**
+ * Removes the given element.
+ *
+ * @param node   Element.
+ */
+void PageXML::rmElem( const xmlNodePtr& node ) {
+  xmlUnlinkNode(node);
+  xmlFreeNode(node);
+}
+
+/**
  * Removes the elements given in a vector.
  *
  * @param nodes  Vector of elements.
@@ -1621,4 +1641,59 @@ int PageXML::simplifyIDs() {
   }
 
   return simplified;
+}
+
+#if defined (__PAGEXML_OGR__)
+
+/**
+ * Gets the element's Coors as an OGRMultiPolygon.
+ *
+ * @param node       The element from which to extract the Coords points.
+ * @return           Pointer to OGRMultiPolygon element.
+ */
+OGRMultiPolygon* PageXML::getOGRpolygon( xmlNodePtr node ) {
+  std::vector<xmlNodePtr> coords = select( "_:Coords", node );
+  if ( coords.size() == 0 )
+    return NULL;
+
+  // @todo THE FOLLOWING (BASED ON STRING) IS ONLY TEMPORAL !!!! Should get points and create a polygon point by point
+  std::string pts;
+  getAttr( coords[0], "points", pts );
+  std::replace( pts.begin(), pts.end(), ',', ';');
+  std::replace( pts.begin(), pts.end(), ' ', ',');
+  std::replace( pts.begin(), pts.end(), ';', ' ');
+  std::string::size_type pos = pts.find(',');
+  pts = std::string("POLYGON ((")+pts+","+pts.substr(0,pos)+"))";
+  //const char *wkt = pts.c_str();
+  char *wkt = &pts[0];
+
+  //fprintf(stderr,"%s\n",wkt);
+
+  OGRGeometry *geom;
+  OGRGeometryFactory::createFromWkt( &wkt, NULL, &geom );
+
+  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(geom);
+}
+
+#endif
+
+/**
+ * Returns the XML document pointer.
+ */
+xmlDocPtr PageXML::getDocPtr() {
+  return xml;
+}
+
+/**
+ * Returns the image width.
+ */
+unsigned int PageXML::getWidth() {
+  return width;
+}
+
+/**
+ * Returns the image height.
+ */
+unsigned int PageXML::getHeight() {
+  return height;
 }
