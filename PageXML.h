@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.06.15$
+ * @version $Version: 2017.07.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -113,7 +113,7 @@ class PageXML {
 #endif
     int simplifyIDs();
     bool uniqueIDs();
-    std::vector<NamedImage> crop( const char* xpath );
+    std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL );
     static void stringToPoints( const char* spoints, std::vector<cv::Point2f>& points );
     static void stringToPoints( std::string spoints, std::vector<cv::Point2f>& points );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
