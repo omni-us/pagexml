@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.07.12$
+ * @version $Version: 2017.07.17$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -42,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.07.12";
+static char class_version[] = "Version: 2017.07.17";
 
 /**
  * Returns the class version.
@@ -753,7 +753,12 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 #endif
 
     if( opaque_coords /*&& ! isBBox( coords )*/ ) {
-#if defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_LEPT__)
+      if( transp_xpath != NULL )
+        throw runtime_error( "PageXML.crop: transp_xpath not implemented for __PAGEXML_LEPT__" );
+      throw runtime_error( "PageXML.crop: opaque_coords not implemented for __PAGEXML_LEPT__" );
+
+#elif defined (__PAGEXML_MAGICK__)
       /// Subtract crop window offset ///
       for( auto&& coord : coords ) {
         coord.x -= cropX;
