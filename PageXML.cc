@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.07.17$
+ * @version $Version: 2017.09.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -42,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.07.17";
+static char class_version[] = "Version: 2017.09.05";
 
 /**
  * Returns the class version.
@@ -1257,7 +1257,7 @@ bool PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point2f>& fpgram ) {
  * Retrieves and parses the Coords/@points for a given base node.
  *
  * @param node   Base node.
- * @return       Pointer to the points vector, NULL if unset.
+ * @return       Reference to the points vector.
  */
 bool PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
   if( node == NULL )
@@ -1273,6 +1273,22 @@ bool PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
 
   stringToPoints( spoints.c_str(), points );
 
+  return true;
+}
+
+/**
+ * Retrieves and parses the Coords/@points for a given list of base nodes.
+ *
+ * @param nodes  Base nodes.
+ * @return       Reference to the points vector.
+ */
+bool PageXML::getPoints( const std::vector<xmlNodePtr> nodes, std::vector<std::vector<cv::Point2f> >& points ) {
+  for ( int n=0; n<(int)nodes.size(); n++ ) {
+    std::vector<cv::Point2f> pts_n;
+    if ( ! getPoints( nodes[n], pts_n ) )
+      return false;
+    points.push_back(pts_n);
+  }
   return true;
 }
 
@@ -1625,7 +1641,7 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
 }
 
 /**
- * Adds a TextRegion to a given xpath.
+ * Appends a new TextRegion to the Page element.
  *
  * @param id         ID for TextRegion, if NULL it is selected automatically.
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
