@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.09.07$
+ * @version $Version: 2017.09.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -42,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.09.07";
+static char class_version[] = "Version: 2017.09.08";
 
 /**
  * Returns the class version.
@@ -1389,8 +1389,8 @@ xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* v
   std::vector<xmlNodePtr> props = select( "_:Property", node );
 
   xmlNodePtr prop = props.size() > 0 ?
-    prop = addElem( "Property", NULL, props[props.size()-1], PAGEXML_INSERT_NEXTSIB ):
-    prop = addElem( "Property", NULL, node->xmlChildrenNode, PAGEXML_INSERT_PREVSIB );
+    addElem( "Property", NULL, props[props.size()-1], PAGEXML_INSERT_NEXTSIB ):
+    addElem( "Property", NULL, node->xmlChildrenNode, PAGEXML_INSERT_PREVSIB );
   if ( ! prop )
     throw runtime_error( "PageXML.setProperty: problems creating element" );
 
