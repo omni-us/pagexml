@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.10.11$
+ * @version $Version: 2017.11.01$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -42,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.10.11";
+static char class_version[] = "Version: 2017.11.01";
 
 /**
  * Returns the class version.
@@ -452,10 +452,10 @@ list<Magick::Coordinate> cvToMagick( const vector<cv::Point2f>& points ) {
  * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
  *
  * @param spoints  String containing coordinate pairs.
- * @param points   Array of (x,y) coordinates.
+ * @return         Array of (x,y) coordinates.
  */
-void PageXML::stringToPoints( const char* spoints, vector<cv::Point2f>& points ) {
-  points.clear();
+vector<cv::Point2f> PageXML::stringToPoints( const char* spoints ) {
+  vector<cv::Point2f> points;
 
   int n = 0;
   char *p = (char*)spoints-1;
@@ -469,16 +469,18 @@ void PageXML::stringToPoints( const char* spoints, vector<cv::Point2f>& points )
     if( (p = strchr(p,' ')) == NULL )
       break;
   }
+
+  return points;
 }
 
 /**
  * Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
  *
  * @param spoints  String containing coordinate pairs.
- * @param points   Array of (x,y) coordinates.
+ * @return         Array of (x,y) coordinates.
  */
-void PageXML::stringToPoints( string spoints, vector<cv::Point2f>& points ) {
-  stringToPoints( spoints.c_str(), points );
+vector<cv::Point2f> PageXML::stringToPoints( string spoints ) {
+  return stringToPoints( spoints.c_str() );
 }
 
 /**
@@ -583,6 +585,28 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
 }
 
 /**
+ * Returns number of matched nodes for a given xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Number of matched nodes.
+ */
+int PageXML::count( const char* xpath, xmlNodePtr basenode ) {
+  return select( xpath, basenode ).size();
+}
+
+/**
+ * Returns number of matched nodes for a given xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Number of matched nodes.
+ */
+int PageXML::count( string xpath, xmlNodePtr basenode ) {
+  return select( xpath.c_str(), basenode ).size();
+}
+
+/**
  * Selects nodes given an xpath.
  *
  * @param xpath  Selector expression.
@@ -636,6 +660,31 @@ vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
  */
 vector<xmlNodePtr> PageXML::select( string xpath, xmlNodePtr node ) {
   return select( xpath.c_str(), node );
+}
+
+/**
+ * Selects the n-th node that matches an xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param xpath  Element number (0-indexed).
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Matched node.
+ */
+xmlNodePtr PageXML::selectNth( const char* xpath, unsigned num, xmlNodePtr node ) {
+  vector<xmlNodePtr> matches = select( xpath, node );
+  return matches.size() > num ? select( xpath, node )[num] : NULL;
+}
+
+/**
+ * Selects the n-th node that matches an xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param xpath  Element number (0-indexed).
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Matched node.
+ */
+xmlNodePtr PageXML::selectNth( string xpath, unsigned num, xmlNodePtr node ) {
+  return selectNth( xpath.c_str(), num, node );
 }
 
 /**
@@ -707,8 +756,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     string spoints;
     if( ! getAttr( node, "points", spoints ) )
       throw runtime_error( string("PageXML.crop: expected a points attribute in Coords element: id=") + sampid );
-    vector<cv::Point2f> coords;
-    stringToPoints( spoints, coords );
+    vector<cv::Point2f> coords = stringToPoints( spoints );
 
     /// Get crop window parameters ///
     double xmin=0, xmax=0, ymin=0, ymax=0;
@@ -804,7 +852,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 
           if( ! getAttr( childnode, "points", spoints ) )
             throw runtime_error( string("PageXML.crop: expected a points attribute in Coords element: id=") + childid );
-          stringToPoints( spoints, coords );
+          coords = stringToPoints( spoints );
 
           std::vector<cv::Point> rcoods;
           for( auto&& coord : coords )
@@ -852,7 +900,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 bool PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) {
   if( node == NULL )
     return false;
- 
+
   xmlChar* attr = xmlGetProp( node, (xmlChar*)name );
   if( attr == NULL )
     return false;
@@ -874,7 +922,7 @@ bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
   vector<xmlNodePtr> xsel = select( xpath );
   if( xsel.size() == 0 )
     return false;
- 
+
   return getAttr( xsel[0], name, value );
 }
 
@@ -890,7 +938,7 @@ bool PageXML::getAttr( const string xpath, const string name, string& value ) {
   vector<xmlNodePtr> xsel = select( xpath.c_str() );
   if( xsel.size() == 0 )
     return false;
- 
+
   return getAttr( xsel[0], name.c_str(), value );
 }
 
@@ -1231,49 +1279,25 @@ float PageXML::getXheight( const char* id ) {
 }
 
 /**
- * Retrieves the features parallelogram for a given TextLine id.
- *
- * @param id     Identifier of the TextLine.
- * @return       Parallelogram, empty list if unset.
- */
-bool PageXML::getFpgram( const xmlNodePtr node, vector<cv::Point2f>& fpgram ) {
-  if( node == NULL )
-    return false;
-
-  vector<xmlNodePtr> coords = select( "_:Coords[@fpgram]", node );
-  if( coords.size() == 0 )
-    return false;
-
-  string sfpgram;
-  if( ! getAttr( coords[0], "fpgram", sfpgram ) )
-    return false;
-
-  stringToPoints( sfpgram.c_str(), fpgram );
-
-  return true;
-}
-
-/**
  * Retrieves and parses the Coords/@points for a given base node.
  *
  * @param node   Base node.
  * @return       Reference to the points vector.
  */
-bool PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
+vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node ) {
+  vector<cv::Point2f> points;
   if( node == NULL )
-    return false;
+    return points;
 
   vector<xmlNodePtr> coords = select( "_:Coords[@points]", node );
   if( coords.size() == 0 )
-    return false;
+    return points;
 
   string spoints;
   if( ! getAttr( coords[0], "points", spoints ) )
-    return false;
+    return points;
 
-  stringToPoints( spoints.c_str(), points );
-
-  return true;
+  return stringToPoints( spoints.c_str() );
 }
 
 /**
@@ -1282,14 +1306,15 @@ bool PageXML::getPoints( const xmlNodePtr node, vector<cv::Point2f>& points ) {
  * @param nodes  Base nodes.
  * @return       Reference to the points vector.
  */
-bool PageXML::getPoints( const std::vector<xmlNodePtr> nodes, std::vector<std::vector<cv::Point2f> >& points ) {
+std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePtr> nodes ) {
+  std::vector<std::vector<cv::Point2f> > points;
   for ( int n=0; n<(int)nodes.size(); n++ ) {
-    std::vector<cv::Point2f> pts_n;
-    if ( ! getPoints( nodes[n], pts_n ) )
-      return false;
+    std::vector<cv::Point2f> pts_n = getPoints( nodes[n] );
+    if ( pts_n.size() == 0 )
+      return std::vector<std::vector<cv::Point2f> >();
     points.push_back(pts_n);
   }
-  return true;
+  return points;
 }
 
 /**
@@ -1312,9 +1337,15 @@ std::string PageXML::getTextEquiv( xmlNodePtr node, const char* xpath, const cha
 }
 
 /**
- * Sets the LastChange node to the current time.
+ * Registers a change in the Page XML.
  */
-void PageXML::setLastChange() {
+void PageXML::registerChange( const char* tool, const char* ref ) {
+  if( tool == NULL || tool[0] == '\0' )
+    throw runtime_error( "PageXML.registerChange: tool string is required" );
+
+  if( ref != NULL && ref[0] == '\0' )
+    throw runtime_error( "PageXML.registerChange: ref if provided cannot be empty" );
+
   time_t now;
   time(&now);
   char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
@@ -1322,13 +1353,49 @@ void PageXML::setLastChange() {
 
   vector<xmlNodePtr> lastchange = select( "//_:LastChange" );
   if( lastchange.size() != 1 )
-    throw runtime_error( "PageXML.setLastChange: unable to select node" );
+    throw runtime_error( "PageXML.registerChange: unable to select node" );
 
   rmElems( select( "text()", lastchange[0] ) );
 
   xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
   if( ! text || ! xmlAddChild(lastchange[0],text) )
-    throw runtime_error( "PageXML.setLastChange: problems updating time stamp" );
+    throw runtime_error( "PageXML.registerChange: problems updating time stamp" );
+}
+
+/**
+ * Sets a Property for a given xpath.
+ *
+ * @param node  The node of element to set the Property.
+ * @param key   The key for the Property.
+ * @param val   The optional value for the Property.
+ * @return      Pointer to created element.
+ */
+xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* val ) {
+  rmElems( select( std::string("_:Property[@key=\"")+key+"\"]", node ) );
+
+  std::vector<xmlNodePtr> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata']", node );
+  std::vector<xmlNodePtr> props = select( "_:Property", node );
+
+  xmlNodePtr prop = NULL;
+  if ( props.size() > 0 )
+    prop = addElem( "Property", NULL, props[props.size()-1], PAGEXML_INSERT_NEXTSIB );
+  else if ( siblafter.size() > 0 )
+    prop = addElem( "Property", NULL, siblafter[0], PAGEXML_INSERT_PREVSIB );
+  else
+    prop = addElem( "Property", NULL, node );
+  if ( ! prop )
+    throw runtime_error( "PageXML.setProperty: problems creating element" );
+
+  if ( ! setAttr( prop, "key", key ) ) {
+    rmElem( prop );
+    throw runtime_error( "PageXML.setProperty: problems setting key attribute" );
+  }
+  if ( val != NULL && ! setAttr( prop, "value", val ) ) {
+    rmElem( prop );
+    throw runtime_error( "PageXML.setProperty: problems setting value attribute" );
+  }
+
+  return prop;
 }
 
 /**
@@ -1366,44 +1433,12 @@ xmlNodePtr PageXML::setTextEquiv( xmlNodePtr node, const char* text, const doubl
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setTextEquiv( const char* xpath, const char* text, const double* conf ) {
+xmlNodePtr PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf ) {
   vector<xmlNodePtr> target = select( xpath );
   if( target.size() == 0 )
     throw runtime_error( string("PageXML.setTextEquiv: unmatched target: xpath=") + xpath );
 
-  return setTextEquiv( target[0], text, conf );
-}
-
-/**
- * Sets a Property for a given xpath.
- *
- * @param node  The node of element to set the Property.
- * @param key   The key for the Property.
- * @param val   The optional value for the Property.
- * @return      Pointer to created element.
- */
-xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* val, bool uniq ) {
-  if ( uniq )
-    rmElems( select( std::string("_:Property[@key=\"")+key+"\"]", node ) );
-
-  std::vector<xmlNodePtr> props = select( "_:Property", node );
-
-  xmlNodePtr prop = props.size() > 0 ?
-    addElem( "Property", NULL, props[props.size()-1], PAGEXML_INSERT_NEXTSIB ):
-    addElem( "Property", NULL, node->xmlChildrenNode, PAGEXML_INSERT_PREVSIB );
-  if ( ! prop )
-    throw runtime_error( "PageXML.setProperty: problems creating element" );
-
-  if ( ! setAttr( prop, "key", key ) ) {
-    rmElem( prop );
-    throw runtime_error( "PageXML.setProperty: problems setting key attribute" );
-  }
-  if ( val != NULL && ! setAttr( prop, "value", val ) ) {
-    rmElem( prop );
-    throw runtime_error( "PageXML.setProperty: problems setting value attribute" );
-  }
-
-  return prop;
+  return setTextEquiv( target[0], text, _conf );
 }
 
 /**
@@ -1411,9 +1446,10 @@ xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* v
  *
  * @param node   The node of element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& points ) {
+xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& points, const double* _conf ) {
   rmElems( select( "_:Coords", node ) );
 
   xmlNodePtr coords;
@@ -1426,6 +1462,13 @@ xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& point
   if( ! xmlNewProp( coords, (xmlChar*)"points", (xmlChar*)pointsToString(points).c_str() ) )
     throw runtime_error( "PageXML.setCoords: problems setting points attribute" );
 
+  if( _conf != NULL ) {
+    char conf[64];
+    snprintf( conf, sizeof conf, "%g", *_conf );
+    if( ! xmlNewProp( coords, (xmlChar*)"conf", (xmlChar*)conf ) )
+      throw runtime_error( "PageXML.setCoords: problems setting conf attribute" );
+  }
+
   return coords;
 }
 
@@ -1434,14 +1477,15 @@ xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& point
  *
  * @param node   Selector for element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points ) {
+xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
   vector<xmlNodePtr> target = select( xpath );
   if( target.size() == 0 )
     throw runtime_error( string("PageXML.setCoords: unmatched target: xpath=") + xpath );
 
-  return setCoords( target[0], points );
+  return setCoords( target[0], points, _conf );
 }
 
 /**
@@ -1449,9 +1493,13 @@ xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poi
  *
  * @param node   The node of element to set the Baseline.
  * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& points ) {
+xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& points, const double* _conf ) {
+  if( ! nodeIs( node, "TextLine" ) )
+    throw runtime_error( "PageXML.setBaseline: node is required to be a TextLine" );
+
   rmElems( select( "_:Baseline", node ) );
 
   xmlNodePtr baseline;
@@ -1464,6 +1512,13 @@ xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& poi
   if( ! xmlNewProp( baseline, (xmlChar*)"points", (xmlChar*)pointsToString(points).c_str() ) )
     throw runtime_error( "PageXML.setBaseline: problems setting points attribute" );
 
+  if( _conf != NULL ) {
+    char conf[64];
+    snprintf( conf, sizeof conf, "%g", *_conf );
+    if( ! xmlNewProp( baseline, (xmlChar*)"conf", (xmlChar*)conf ) )
+      throw runtime_error( "PageXML.setBaseline: problems setting conf attribute" );
+  }
+
   return baseline;
 }
 
@@ -1472,14 +1527,15 @@ xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& poi
  *
  * @param xpath  Selector for element to set the Baseline.
  * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points ) {
+xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
   vector<xmlNodePtr> target = select( xpath );
   if( target.size() == 0 )
     throw runtime_error( string("PageXML.setBaseline: unmatched target: xpath=") + xpath );
 
-  return setBaseline( target[0], points );
+  return setBaseline( target[0], points, _conf );
 }
 
 /**
@@ -1491,6 +1547,9 @@ xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& p
  * @return           Pointer to created element.
  */
 xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* before_id ) {
+  if( ! nodeIs( node, "Word" ) )
+    throw runtime_error( "PageXML.addGlyph: node is required to be a Word" );
+
   xmlNodePtr glyph;
 
   string gid;
@@ -1517,8 +1576,13 @@ xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* befor
       throw runtime_error( string("PageXML.addGlyph: unable to find id=")+before_id );
     glyph = addElem( "Glyph", gid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
-  else
-    glyph = addElem( "Glyph", gid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  else {
+    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    if( sel.size() > 0 )
+      glyph = addElem( "Glyph", gid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    else
+      glyph = addElem( "Glyph", gid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  }
 
   return glyph;
 }
@@ -1548,6 +1612,9 @@ xmlNodePtr PageXML::addGlyph( const char* xpath, const char* id, const char* bef
  * @return           Pointer to created element.
  */
 xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before_id ) {
+  if( ! nodeIs( node, "TextLine" ) )
+    throw runtime_error( "PageXML.addWord: node is required to be a TextLine" );
+
   xmlNodePtr word;
 
   string wid;
@@ -1574,8 +1641,13 @@ xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before
       throw runtime_error( string("PageXML.addWord: unable to find id=")+before_id );
     word = addElem( "Word", wid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
-  else
-    word = addElem( "Word", wid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  else {
+    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    if( sel.size() > 0 )
+      word = addElem( "Word", wid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    else
+      word = addElem( "Word", wid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  }
 
   return word;
 }
@@ -1605,6 +1677,9 @@ xmlNodePtr PageXML::addWord( const char* xpath, const char* id, const char* befo
  * @return           Pointer to created element.
  */
 xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* before_id ) {
+  if( ! nodeIs( node, "TextRegion" ) )
+    throw runtime_error( "PageXML.addTextLine: node is required to be a TextRegion" );
+
   xmlNodePtr textline;
 
   string lid;
@@ -1631,8 +1706,13 @@ xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* be
       throw runtime_error( string("PageXML.addTextLine: unable to find id=")+before_id );
     textline = addElem( "TextLine", lid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
-  else
-    textline = addElem( "TextLine", lid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  else {
+    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    if( sel.size() > 0 )
+      textline = addElem( "TextLine", lid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    else
+      textline = addElem( "TextLine", lid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  }
 
   return textline;
 }
@@ -1640,7 +1720,7 @@ xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* be
 /**
  * Adds a TextLine to a given xpath.
  *
- * @param xpath      Selector for element to set the TextLine.
+ * @param xpath      Selector for element to add the TextLine.
  * @param id         ID for TextLine, if NULL it is selected automatically.
  * @param before_id  If !=NULL inserts it before the TextLine with this ID.
  * @return           Pointer to created element.
@@ -1662,6 +1742,9 @@ xmlNodePtr PageXML::addTextLine( const char* xpath, const char* id, const char* 
  * @return           Pointer to created element.
  */
 xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* before_id ) {
+  if( ! nodeIs( node, "Page" ) )
+    throw runtime_error( "PageXML.addTextRegion: node is required to be a Page" );
+
   xmlNodePtr textreg;
 
   string rid;
@@ -1685,21 +1768,28 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
       throw runtime_error( string("PageXML.addTextRegion: unable to find id=")+before_id );
     textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
-  else
-    textreg = addElem( "TextRegion", rid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  else {
+    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    if( sel.size() > 0 )
+      textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    else
+      textreg = addElem( "TextRegion", rid.c_str(), node, PAGEXML_INSERT_CHILD, true );
+  }
 
   return textreg;
 }
 
 /**
- * Appends a new TextRegion to the Page element.
+ * Adds new TextRegion to a given xpath.
  *
+ * @param xpath      Selector for element to add the TextRegion.
  * @param id         ID for TextRegion, if NULL it is selected automatically.
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addTextRegion( const char* id, const char* before_id ) {
-  char xpath[] = "//_:Page";
+xmlNodePtr PageXML::addTextRegion( const char* xpath, const char* id, const char* before_id ) {
+  if( xpath == NULL )
+    xpath = "//_:Page";
   vector<xmlNodePtr> target = select( xpath );
   if( target.size() == 0 )
     throw runtime_error( string("PageXML.addTextRegion: unmatched target: xpath=") + xpath );
@@ -1710,7 +1800,7 @@ xmlNodePtr PageXML::addTextRegion( const char* id, const char* before_id ) {
 /**
  * Verifies that all IDs in page are unique.
  */
-bool PageXML::uniqueIDs() {
+bool PageXML::areIDsUnique() {
   string id;
   bool unique = true;
   map<string,bool> seen;
@@ -1719,7 +1809,7 @@ bool PageXML::uniqueIDs() {
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
     getAttr( nodes[n], "id", id );
     if( seen.find(id) != seen.end() && seen[id] ) {
-      fprintf( stderr, "PageXML.uniqueIDs: duplicate id: %s\n", id.c_str() );
+      fprintf( stderr, "PageXML.areIDsUnique: duplicate ID: %s\n", id.c_str() );
       seen[id] = unique = false;
     }
     else
@@ -1764,9 +1854,9 @@ int PageXML::simplifyIDs() {
 }
 
 /**
- * Modifies imageFilename to be a relative path w.r.t. xml path. Currently just checks prefix directories and removes it.
+ * Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
  */
-void PageXML::relativeImageFilename( const char* xml_path ) {
+void PageXML::relativizeImageFilename( const char* xml_path ) {
   string xml_base = regex_replace(xml_path,regex("/[^/]+$"),"/");
 
   vector<xmlNodePtr> pages = select( "//_:Page" );

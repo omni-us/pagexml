@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.10.11$
+ * @version $Version: 2017.11.01$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -27,6 +27,14 @@
 
 #if defined (__PAGEXML_OGR__)
 #include <ogrsf_frmts.h>
+#endif
+
+#if defined (__PAGEXML_LEPT__)
+typedef Pix * PageImage;
+#elif defined (__PAGEXML_MAGICK__)
+typedef Magick::Image PageImage;
+#elif defined (__PAGEXML_CVIMG__)
+typedef cv::Mat PageImage;
 #endif
 
 enum PAGEXML_SETTING {
@@ -56,13 +64,7 @@ struct NamedImage {
   int direction = 0;
   int x = 0;
   int y = 0;
-#if defined (__PAGEXML_LEPT__)
-  Pix *image = NULL;
-#elif defined (__PAGEXML_MAGICK__)
-  Magick::Image image;
-#elif defined (__PAGEXML_CVIMG__)
-  cv::Mat image;
-#endif
+  PageImage image;
   xmlNodePtr node = NULL;
 
   NamedImage() {};
@@ -72,13 +74,7 @@ struct NamedImage {
               int _direction,
               int _x,
               int _y,
-#if defined (__PAGEXML_LEPT__)
-              Pix *_image,
-#elif defined (__PAGEXML_MAGICK__)
-              Magick::Image _image,
-#elif defined (__PAGEXML_CVIMG__)
-              cv::Mat _image,
-#endif
+              PageImage _image,
               xmlNodePtr _node
             ) {
     id = _id;
@@ -96,7 +92,7 @@ class PageXML {
   public:
     static const char* settingNames[];
     static char* version();
-    static void printVersions( FILE* file );
+    static void printVersions( FILE* file = stdout );
     ~PageXML();
     PageXML();
 #if defined (__PAGEXML_LIBCONFIG__)
@@ -104,7 +100,7 @@ class PageXML {
     PageXML( const char* cfgfile );
     void loadConf( const libconfig::Config& config );
 #endif
-    void printConf( FILE* file );
+    void printConf( FILE* file = stdout );
     void newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
     void loadXml( const char* fname );
     void loadXml( int fnum, bool prevfree = true );
@@ -112,18 +108,22 @@ class PageXML {
     void loadImage( const char* fname = NULL, const bool check_size = true );
 #endif
     int simplifyIDs();
-    void relativeImageFilename( const char* xml_path );
-    bool uniqueIDs();
+    void relativizeImageFilename( const char* xml_path );
+    bool areIDsUnique();
     std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL );
-    static void stringToPoints( const char* spoints, std::vector<cv::Point2f>& points );
-    static void stringToPoints( std::string spoints, std::vector<cv::Point2f>& points );
+    static std::vector<cv::Point2f> stringToPoints( const char* spoints );
+    static std::vector<cv::Point2f> stringToPoints( std::string spoints );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
     static std::string pointsToString( std::vector<cv::Point> points );
     static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
     static void pointsBBox( std::vector<cv::Point2f>& points, std::vector<cv::Point2f>& bbox );
     static bool isBBox( const std::vector<cv::Point2f>& points );
+    int count( const char* xpath, xmlNodePtr basenode );
+    int count( std::string xpath, xmlNodePtr basenode );
     std::vector<xmlNodePtr> select( const char* xpath, xmlNodePtr basenode = NULL );
     std::vector<xmlNodePtr> select( std::string xpath, xmlNodePtr basenode = NULL );
+    xmlNodePtr selectNth( const char* xpath, unsigned num, xmlNodePtr basenode = NULL );
+    xmlNodePtr selectNth( std::string xpath, unsigned num, xmlNodePtr basenode = NULL );
     static bool nodeIs( xmlNodePtr node, const char* name );
     bool getAttr( const xmlNodePtr node,   const char* name,       std::string& value );
     bool getAttr( const char* xpath,       const char* name,       std::string& value );
@@ -145,18 +145,17 @@ class PageXML {
     int getReadingDirection( const xmlNodePtr elem );
     float getXheight( const xmlNodePtr node );
     float getXheight( const char* id );
-    bool getFpgram( const xmlNodePtr node, std::vector<cv::Point2f>& fpgram );
-    bool getPoints( const xmlNodePtr node, std::vector<cv::Point2f>& points );
-    bool getPoints( const std::vector<xmlNodePtr> nodes, std::vector<std::vector<cv::Point2f> >& points );
+    std::vector<cv::Point2f> getPoints( const xmlNodePtr node );
+    std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePtr> nodes );
     std::string getTextEquiv( xmlNodePtr node, const char* xpath = ".", const char* separator = " " );
-    void setLastChange();
+    void registerChange( const char* tool, const char* ref = NULL );
+    xmlNodePtr setProperty( xmlNodePtr node, const char* key, const char* val = NULL );
     xmlNodePtr setTextEquiv( xmlNodePtr node,   const char* text, const double* _conf = NULL );
     xmlNodePtr setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
-    xmlNodePtr setProperty( xmlNodePtr node, const char* key, const char* val = NULL, bool uniq = true );
-    xmlNodePtr setCoords( xmlNodePtr node, const std::vector<cv::Point2f>& points );
-    xmlNodePtr setCoords( const char* xpath, const std::vector<cv::Point2f>& points );
-    xmlNodePtr setBaseline( xmlNodePtr node, const std::vector<cv::Point2f>& points );
-    xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points );
+    xmlNodePtr setCoords( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setBaseline( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr addGlyph( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addGlyph( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addWord( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
@@ -164,7 +163,7 @@ class PageXML {
     xmlNodePtr addTextLine( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addTextLine( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addTextRegion( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
-    xmlNodePtr addTextRegion( const char* id = NULL, const char* before_id = NULL );
+    xmlNodePtr addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     char* getBase();
     int write( const char* fname = "-" );
 #if defined (__PAGEXML_OGR__)
@@ -185,13 +184,7 @@ class PageXML {
     xmlDocPtr xml = NULL;
     xmlXPathContextPtr context = NULL;
     xmlNodePtr rootnode = NULL;
-#if defined (__PAGEXML_LEPT__)
-    Pix *pageimg = NULL;
-#elif defined (__PAGEXML_MAGICK__)
-    Magick::Image pageimg;
-#elif defined (__PAGEXML_CVIMG__)
-    cv::Mat pageimg;
-#endif
+    PageImage pageimg;
     unsigned int width;
     unsigned int height;
     void release();
