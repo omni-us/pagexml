@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.11.01$
+ * @version $Version: 2017.11.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -118,12 +118,12 @@ class PageXML {
     static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
     static void pointsBBox( std::vector<cv::Point2f>& points, std::vector<cv::Point2f>& bbox );
     static bool isBBox( const std::vector<cv::Point2f>& points );
-    int count( const char* xpath, xmlNodePtr basenode );
-    int count( std::string xpath, xmlNodePtr basenode );
+    int count( const char* xpath, xmlNodePtr basenode = NULL );
+    int count( std::string xpath, xmlNodePtr basenode = NULL );
     std::vector<xmlNodePtr> select( const char* xpath, xmlNodePtr basenode = NULL );
     std::vector<xmlNodePtr> select( std::string xpath, xmlNodePtr basenode = NULL );
-    xmlNodePtr selectNth( const char* xpath, unsigned num, xmlNodePtr basenode = NULL );
-    xmlNodePtr selectNth( std::string xpath, unsigned num, xmlNodePtr basenode = NULL );
+    xmlNodePtr selectNth( const char* xpath, unsigned num = 0, xmlNodePtr basenode = NULL );
+    xmlNodePtr selectNth( std::string xpath, unsigned num = 0, xmlNodePtr basenode = NULL );
     static bool nodeIs( xmlNodePtr node, const char* name );
     bool getAttr( const xmlNodePtr node,   const char* name,       std::string& value );
     bool getAttr( const char* xpath,       const char* name,       std::string& value );
@@ -148,12 +148,13 @@ class PageXML {
     std::vector<cv::Point2f> getPoints( const xmlNodePtr node );
     std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePtr> nodes );
     std::string getTextEquiv( xmlNodePtr node, const char* xpath = ".", const char* separator = " " );
-    void registerChange( const char* tool, const char* ref = NULL );
+    void registerProcess( const char* tool, const char* ref = NULL );
     xmlNodePtr setProperty( xmlNodePtr node, const char* key, const char* val = NULL );
     xmlNodePtr setTextEquiv( xmlNodePtr node,   const char* text, const double* _conf = NULL );
     xmlNodePtr setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
     xmlNodePtr setCoords( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setCoordsBBox( xmlNodePtr node, double xmin, double ymin, double width, double height, const double* _conf = NULL );
     xmlNodePtr setBaseline( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr addGlyph( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );

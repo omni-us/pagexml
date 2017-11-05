@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.01$
+ * @version $Version: 2017.11.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -42,7 +42,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.01";
+static char class_version[] = "Version: 2017.11.05";
 
 /**
  * Returns the class version.
@@ -1337,29 +1337,55 @@ std::string PageXML::getTextEquiv( xmlNodePtr node, const char* xpath, const cha
 }
 
 /**
- * Registers a change in the Page XML.
+ * Registers a process in the Page XML.
  */
-void PageXML::registerChange( const char* tool, const char* ref ) {
+void PageXML::registerProcess( const char* tool, const char* ref ) {
   if( tool == NULL || tool[0] == '\0' )
-    throw runtime_error( "PageXML.registerChange: tool string is required" );
+    throw runtime_error( "PageXML.registerProcess: tool string is required" );
 
   if( ref != NULL && ref[0] == '\0' )
-    throw runtime_error( "PageXML.registerChange: ref if provided cannot be empty" );
+    throw runtime_error( "PageXML.registerProcess: ref if provided cannot be empty" );
 
   time_t now;
   time(&now);
   char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
 
+  /// Set Process element ///
+  xmlNodePtr proc = NULL;
+  std::vector<xmlNodePtr> procs = select("//_:Process");
+  if ( procs.size() > 0 && count( string("@tool[.=\"")+tool+"\"]", procs[procs.size()-1] ) > 0 ) {
+    string prevdate;
+    getAttr( procs[procs.size()-1], "date", prevdate );
+    std::istringstream ss(prevdate);
+    struct std::tm tm;
+    ss >> std::get_time( &tm, "%FT%TZ" );
+    std::time_t prevt = mktime(&tm) - timezone;
+    if ( now-prevt < 12*3600 )
+      proc = procs[procs.size()-1];
+  }
+  if ( ! proc ) {
+    string pid = string("pr")+to_string(procs.size()+1);
+    proc = addElem( "Process", pid.c_str(), "//_:Metadata" );
+  }
+  if ( ! proc )
+    throw runtime_error( "PageXML.registerProcess: problems creating or selecting element" );
+  if ( ! setAttr( proc, "date", tstamp ) )
+    throw runtime_error( "PageXML.registerProcess: problems setting date attribute" );
+  if ( ! setAttr( proc, "tool", tool ) )
+    throw runtime_error( "PageXML.registerProcess: problems setting tool attribute" );
+  if ( ref != NULL )
+    if ( ! setAttr( proc, "ref", ref ) )
+      throw runtime_error( "PageXML.registerProcess: problems setting ref attribute" );
+
+  /// Update last change ///
   vector<xmlNodePtr> lastchange = select( "//_:LastChange" );
   if( lastchange.size() != 1 )
-    throw runtime_error( "PageXML.registerChange: unable to select node" );
-
+    throw runtime_error( "PageXML.registerProcess: unable to select node" );
   rmElems( select( "text()", lastchange[0] ) );
-
   xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
   if( ! text || ! xmlAddChild(lastchange[0],text) )
-    throw runtime_error( "PageXML.registerChange: problems updating time stamp" );
+    throw runtime_error( "PageXML.registerProcess: problems updating time stamp" );
 }
 
 /**
@@ -1486,6 +1512,29 @@ xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poi
     throw runtime_error( string("PageXML.setCoords: unmatched target: xpath=") + xpath );
 
   return setCoords( target[0], points, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords as a bounding box given node.
+ *
+ * @param node   The node of element to set the Coords.
+ * @param xmin   Minimum x value of bounding box.
+ * @param ymin   Minimum y value of bounding box.
+ * @param width  Width of bounding box.
+ * @param height Height of bounding box.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setCoordsBBox( xmlNodePtr node, double xmin, double ymin, double width, double height, const double* _conf ) {
+  double xmax = xmin+width;
+  double ymax = ymin+height;
+  vector<cv::Point2f> bbox;
+  bbox.push_back( cv::Point2f(xmin,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymin) );
+  bbox.push_back( cv::Point2f(xmax,ymax) );
+  bbox.push_back( cv::Point2f(xmin,ymax) );
+
+  return setCoords( node, bbox, _conf );
 }
 
 /**
