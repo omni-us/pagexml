@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.05$
+ * @version $Version: 2017.11.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdexcept>
 #include <regex>
+#include <iomanip>
 
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
@@ -42,7 +43,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.05";
+static char class_version[] = "Version: 2017.11.06";
 
 /**
  * Returns the class version.
