@@ -1,0 +1,5 @@
+build
+dist
+pagexml/PageXML_wrap.cpp
+pagexml/pagexml.py
+pagexml/pagexml.egg-info
