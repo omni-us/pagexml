@@ -27,30 +27,36 @@
 ## Usage of the module in python
 
     import pagexml
-    page = pagexml.PageXML()
+    pxml = pagexml.PageXML()
 
     # Create a new page xml
     file = "example_image.jpg"
     width = 400
     height = 200
-    page.newXml("name-and-version-of-tool", file, width, height)
+    pxml.newXml("name-and-version-of-tool", file, width, height)
 
     # Initialize object for setting confidence values
     conf = pagexml.ptr_double()
 
     # Add a text region to the Page
-    reg = page.addTextRegion("//_:Page")
+    page = pxml.selectNth("//_:Page",0)
+    reg = pxml.addTextRegion(page)
 
     # Set text region bounding box with a confidence
     conf.assign(0.8)
-    page.setCoordsBBox( reg, 10, 20, 80, 60, conf )
+    pxml.setCoordsBBox( reg, 10, 20, 80, 60, conf )
 
     # Set the text for the text region
     conf.assign(0.9)
-    page.setTextEquiv( reg, "lorem ipsum", conf )
+    pxml.setTextEquiv( reg, "lorem ipsum", conf )
 
     # Add property to text region
-    page.setProperty( reg, "key", "value" )
+    pxml.setProperty( reg, "key", "value" )
+
+    # Add a second page with a text region
+    page = pxml.addPage("example_image_2.jpg", 300, 300)
+    reg = pxml.addTextRegion(page)
+    pxml.setCoordsBBox( reg, 15, 12, 76, 128 )
 
     # Write XML to file
-    page.write("example_image.xml")
+    pxml.write("example_image.xml")
