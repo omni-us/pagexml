@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.06$
+ * @version $Version: 2017.11.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -43,7 +43,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.06";
+static char class_version[] = "Version: 2017.11.13";
 
 /**
  * Returns the class version.
@@ -246,7 +246,10 @@ void PageXML::printConf( FILE* file ) {
 /**
  * Creates a new Page XML.
  *
- * @param fname  File name of the XML file to read.
+ * @param creator  Info about tool creating the XML.
+ * @param image    Path to the image file.
+ * @param imgW     Width of image.
+ * @param imgH     Height of image.
  */
 void PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
   release();
@@ -1801,9 +1804,9 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
   if( id != NULL )
     rid = string(id);
   else {
-    int n = select( "_:TextRegion", node ).size();
+    int n = select( "*/_:TextRegion", node->parent ).size();
     while( true ) {
-      if( select( string("*[@id='t")+to_string(++n)+"']", node ).size() == 0 ) {
+      if( select( string("*/*[@id='t")+to_string(++n)+"']", node->parent ).size() == 0 ) {
         rid = string("t")+to_string(n);
         break;
       }
@@ -1845,6 +1848,54 @@ xmlNodePtr PageXML::addTextRegion( const char* xpath, const char* id, const char
     throw runtime_error( string("PageXML.addTextRegion: unmatched target: xpath=") + xpath );
 
   return addTextRegion( target[0], id, before_id );
+}
+
+/**
+ * Adds a Page to the PcGts node.
+ *
+ * @param image        Path to the image file.
+ * @param imgW         Width of image.
+ * @param imgH         Height of image.
+ * @param id           ID for Page, if NULL it is left unset.
+ * @param before_node  If !=NULL inserts it before the provided Page node.
+ * @return             Pointer to created element.
+ */
+xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, const char* id, xmlNodePtr before_node ) {
+  xmlNodePtr page;
+
+  if( before_node != NULL ) {
+    if( ! nodeIs( before_node, "Page" ) )
+      throw runtime_error( "PageXML.addPage: before_node is required to be a Page" );
+    page = addElem( "Page", id, before_node, PAGEXML_INSERT_PREVSIB, true );
+  }
+  else {
+    xmlNodePtr pcgts = selectNth("/_:PcGts",0);
+    if( ! pcgts )
+      throw runtime_error( "PageXML.addPage: unable to select PcGts node" );
+    page = addElem( "Page", id, pcgts, PAGEXML_INSERT_CHILD, true );
+  }
+
+  // @todo Adjust array of images for loading
+
+  setAttr( page, "imageFilename", image );
+  setAttr( page, "imageWidth", to_string(imgW).c_str() );
+  setAttr( page, "imageHeight", to_string(imgH).c_str() );
+
+  return page;
+}
+
+/**
+ * Adds a Page to the PcGts node.
+ *
+ * @param image        Path to the image file.
+ * @param imgW         Width of image.
+ * @param imgH         Height of image.
+ * @param id           ID for Page, if NULL it is left unset.
+ * @param before_node  If !=NULL inserts it before the provided Page node.
+ * @return             Pointer to created element.
+ */
+xmlNodePtr PageXML::addPage( std::string image, const int imgW, const int imgH, const char* id, xmlNodePtr before_node ) {
+  return addPage(image.c_str(),imgW,imgH,id,before_node);
 }
 
 /**

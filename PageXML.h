@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.11.06$
+ * @version $Version: 2017.11.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -101,7 +101,7 @@ class PageXML {
     void loadConf( const libconfig::Config& config );
 #endif
     void printConf( FILE* file = stdout );
-    void newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
+    void newXml( const char* creator, const char* image, const int imgW, const int imgH );
     void loadXml( const char* fname );
     void loadXml( int fnum, bool prevfree = true );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
@@ -165,6 +165,8 @@ class PageXML {
     xmlNodePtr addTextLine( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addTextRegion( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL );
+    xmlNodePtr addPage( const char* image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
+    xmlNodePtr addPage( std::string image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
     char* getBase();
     int write( const char* fname = "-" );
 #if defined (__PAGEXML_OGR__)
