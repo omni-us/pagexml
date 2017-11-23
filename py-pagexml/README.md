@@ -60,3 +60,12 @@
 
     # Write XML to file
     pxml.write("example_image.xml")
+
+    # Load an existing XML
+    pxml.loadXml("example_image.xml")
+
+    # Add content to loaded XML
+    pxml.setProperty( pxml.selectNth("//_:Page",0), "key", "value" )
+
+    # Write XML to file
+    pxml.write("example_image_2.xml")
