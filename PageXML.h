@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.11.13$
+ * @version $Version: 2017.11.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -13,6 +13,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
+#include <libxslt/transform.h>
 #include <opencv2/opencv.hpp>
 
 #if defined (__PAGEXML_LIBCONFIG__)
@@ -145,8 +146,8 @@ class PageXML {
     int getReadingDirection( const xmlNodePtr elem );
     float getXheight( const xmlNodePtr node );
     float getXheight( const char* id );
-    std::vector<cv::Point2f> getPoints( const xmlNodePtr node );
-    std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePtr> nodes );
+    std::vector<cv::Point2f> getPoints( const xmlNodePtr node, const char* xpath = "_:Coords" );
+    std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePtr> nodes, const char* xpath = "_:Coords" );
     std::string getTextEquiv( xmlNodePtr node, const char* xpath = ".", const char* separator = " " );
     void registerProcess( const char* tool, const char* ref = NULL );
     xmlNodePtr setProperty( xmlNodePtr node, const char* key, const char* val = NULL );
@@ -157,6 +158,8 @@ class PageXML {
     xmlNodePtr setCoordsBBox( xmlNodePtr node, double xmin, double ymin, double width, double height, const double* _conf = NULL );
     xmlNodePtr setBaseline( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setBaseline( xmlNodePtr node, double x1, double y1, double x2, double y2, const double* _conf = NULL );
+    xmlNodePtr setPolystripe( xmlNodePtr node, double height, double offset = 0.25 );
     xmlNodePtr addGlyph( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addGlyph( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addWord( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
@@ -186,6 +189,7 @@ class PageXML {
     char* imgbase = NULL;
     xmlDocPtr xml = NULL;
     xmlXPathContextPtr context = NULL;
+    xsltStylesheetPtr sortattr = NULL;
     xmlNodePtr rootnode = NULL;
     PageImage pageimg;
     unsigned int width;

@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.13$
+ * @version $Version: 2017.11.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -43,7 +43,7 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.13";
+static char class_version[] = "Version: 2017.11.25";
 
 /**
  * Returns the class version.
@@ -85,6 +85,9 @@ void PageXML::release() {
   if( context != NULL )
     xmlXPathFreeContext(context);
   context = NULL;
+  if( sortattr != NULL )
+    xsltFreeStylesheet(sortattr);
+  sortattr = NULL;
   if( xmldir != NULL )
     free(xmldir);
   xmldir = NULL;
@@ -154,7 +157,11 @@ PageXML::PageXML( const char* cfgfile ) {
  * @return       Number of bytes written.
  */
 int PageXML::write( const char* fname ) {
-  return xmlSaveFormatFileEnc( fname, xml, "utf-8", indent );
+  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, xml, NULL );
+  int bytes = xmlSaveFormatFileEnc( fname, sortedXml, "utf-8", indent );
+  xmlFreeDoc(sortedXml);
+  return bytes;
+  //return xmlSaveFormatFileEnc( fname, xml, "utf-8", indent );
 }
 
 /**
@@ -371,6 +378,9 @@ void PageXML::setupXml() {
 
   if( xmldir == NULL )
     xmldir = strdup(".");
+
+  if( sortattr == NULL )
+    sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 }
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
@@ -1288,12 +1298,12 @@ float PageXML::getXheight( const char* id ) {
  * @param node   Base node.
  * @return       Reference to the points vector.
  */
-vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node ) {
+vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node, const char* xpath ) {
   vector<cv::Point2f> points;
   if( node == NULL )
     return points;
 
-  vector<xmlNodePtr> coords = select( "_:Coords[@points]", node );
+  vector<xmlNodePtr> coords = select( xpath, node );
   if( coords.size() == 0 )
     return points;
 
@@ -1310,10 +1320,10 @@ vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node ) {
  * @param nodes  Base nodes.
  * @return       Reference to the points vector.
  */
-std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePtr> nodes ) {
+std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePtr> nodes, const char* xpath ) {
   std::vector<std::vector<cv::Point2f> > points;
   for ( int n=0; n<(int)nodes.size(); n++ ) {
-    std::vector<cv::Point2f> pts_n = getPoints( nodes[n] );
+    std::vector<cv::Point2f> pts_n = getPoints( nodes[n], xpath );
     if ( pts_n.size() == 0 )
       return std::vector<std::vector<cv::Point2f> >();
     points.push_back(pts_n);
@@ -1519,7 +1529,7 @@ xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poi
 }
 
 /**
- * Adds or modifies (if already exists) the Coords as a bounding box given node.
+ * Adds or modifies (if already exists) the Coords as a bounding box for a given node.
  *
  * @param node   The node of element to set the Coords.
  * @param xmin   Minimum x value of bounding box.
@@ -1589,6 +1599,100 @@ xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& p
     throw runtime_error( string("PageXML.setBaseline: unmatched target: xpath=") + xpath );
 
   return setBaseline( target[0], points, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) a two point Baseline for a given node.
+ *
+ * @param node   The node of element to set the Baseline.
+ * @param x1     x value of first point.
+ * @param y1     y value of first point.
+ * @param x2     x value of second point.
+ * @param y2     y value of second point.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setBaseline( xmlNodePtr node, double x1, double y1, double x2, double y2, const double* _conf ) {
+  vector<cv::Point2f> pts;
+  pts.push_back( cv::Point2f(x1,y1) );
+  pts.push_back( cv::Point2f(x2,y2) );
+
+  return setBaseline( node, pts, _conf );
+}
+
+/**
+ * Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+ */
+bool intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point2f line2_point1, cv::Point2f line2_point2, cv::Point2f& _ipoint ) {
+  cv::Point2f x = line2_point1-line1_point1;
+  cv::Point2f direct1 = line1_point2-line1_point1;
+  cv::Point2f direct2 = line2_point2-line2_point1;
+
+  double cross = direct1.x*direct2.y - direct1.y*direct2.x;
+  if( fabs(cross) < /*EPS*/1e-8 )
+    return false;
+
+  double t1 = (x.x * direct2.y - x.y * direct2.x)/cross;
+  _ipoint = line1_point1+t1*direct1;
+
+  return true;
+}
+
+/**
+ * Sets the Coords of a TextLine as a poly-stripe of the baseline.
+ *
+ * @param node   The node of element to set the Coords.
+ * @param height The height of the poly-stripe in pixels (>0).
+ * @param offset The offset of the poly-stripe (>=0 && <= 0.5).
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset ) {
+  if( ! nodeIs( node, "TextLine" ) )
+    throw runtime_error( "PageXML.setPolystripe: node is required to be a TextLine" );
+  if( count( "_:Baseline", node ) == 0 )
+    throw runtime_error( "PageXML.setPolystripe: node is required to have a Baseline" );
+  if ( height <= 0 )
+    throw runtime_error( "PageXML.setPolystripe: unexpected height" );
+  if ( offset < 0 || offset > 0.5 )
+    throw runtime_error( "PageXML.setPolystripe: unexpected offset" );
+
+  double offup = height - offset*height;
+  double offdown = height - offup;
+
+  vector<cv::Point2f> baseline = getPoints( node, "_:Baseline" );
+  vector<cv::Point2f> coords;
+
+  cv::Point2f l1p1, l1p2, l2p1, l2p2, base, perp, point;
+
+  for ( int n=0; n<(int)baseline.size()-1; n++ ) {
+    base = baseline[n+1]-baseline[n];
+    perp = cv::Point2f(base.y,-base.x)*(offup/cv::norm(base));
+    l2p1 = baseline[n]+perp;
+    l2p2 = baseline[n+1]+perp;
+    if ( n == 0 || ! intersection( l1p1, l1p2, l2p1, l2p2, point ) )
+      coords.push_back(cv::Point2f(l2p1));
+    else
+      coords.push_back(cv::Point2f(point));
+    l1p1 = l2p1;
+    l1p2 = l2p2;
+  }
+  coords.push_back(cv::Point2f(l2p2));
+
+  for ( int n = baseline.size()-1; n>0; n-- ) {
+    base = baseline[n-1]-baseline[n];
+    perp = cv::Point2f(base.y,-base.x)*(offdown/cv::norm(base));
+    l2p1 = baseline[n]+perp;
+    l2p2 = baseline[n-1]+perp;
+    if ( n == (int)baseline.size()-1 || ! intersection( l1p1, l1p2, l2p1, l2p2, point ) )
+      coords.push_back(cv::Point2f(l2p1));
+    else
+      coords.push_back(cv::Point2f(point));
+    l1p1 = l2p1;
+    l1p2 = l2p2;
+  }
+  coords.push_back(cv::Point2f(l2p2));
+
+  return setCoords( node, coords );
 }
 
 /**
