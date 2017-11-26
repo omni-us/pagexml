@@ -18,15 +18,14 @@
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
 //#include <libxslt/xslt.h>
-//#include <libxslt/xsltconfig.h>
+#include <libxslt/xsltconfig.h>
 
 using namespace std;
 
 const char* PageXML::settingNames[] = {
   "indent",
   "pagens",
-  "grayimg",
-  "extended_names"
+  "grayimg"
 };
 
 char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
@@ -38,6 +37,9 @@ Magick::Color opaque("rgba(0,0,0,100%)");
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
 regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
 regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
+regex reFileExt("\\.[^.]+$");
+regex reInvalidBaseChars(" ");
+
 
 /////////////////////
 /// Class version ///
@@ -55,7 +57,7 @@ char* PageXML::version() {
 void PageXML::printVersions( FILE* file ) {
   fprintf( file, "compiled against PageXML %s\n", class_version+9 );
   fprintf( file, "compiled against libxml2 %s, linked with %s\n", LIBXML_DOTTED_VERSION, xmlParserVersion );
-  //fprintf( file, "compiled against libxslt %s, linked with %s\n", LIBXSLT_DOTTED_VERSION, xsltEngineVersion );
+  fprintf( file, "compiled against libxslt %s, linked with %s\n", LIBXSLT_DOTTED_VERSION, xsltEngineVersion );
   fprintf( file, "compiled against opencv %s\n", CV_VERSION );
 }
 
@@ -71,14 +73,6 @@ void PageXML::release() {
   if( xml == NULL )
     return;
 
-#if defined (__PAGEXML_LEPT__)
-  if( pageimg != NULL )
-    pixDestroy(&pageimg);
-#elif defined (__PAGEXML_MAGICK__)
-  pageimg = Magick::Image();
-#elif defined (__PAGEXML_CVIMG__)
-  pageimg = cv::Mat();
-#endif
   if( xml != NULL )
     xmlFreeDoc(xml);
   xml = NULL;
@@ -88,15 +82,15 @@ void PageXML::release() {
   if( sortattr != NULL )
     xsltFreeStylesheet(sortattr);
   sortattr = NULL;
-  if( xmldir != NULL )
-    free(xmldir);
-  xmldir = NULL;
-  if( imgpath != NULL )
-    free(imgpath);
-  imgpath = NULL;
-  if( imgbase != NULL )
-    free(imgbase);
-  imgbase = NULL;
+  xmlDir = string("");
+#if defined (__PAGEXML_LEPT__)
+  for( int n=0; n<(int)pagesImage.size(); n++ )
+    pixDestroy(&(pagesImage[n]));
+#endif
+  pagesImage = std::vector<PageImage>();
+  pagesImageFilename = std::vector<std::string>();
+  pagesImageBase = std::vector<std::string>();
+  process_running = NULL;
 }
 
 /**
@@ -157,6 +151,8 @@ PageXML::PageXML( const char* cfgfile ) {
  * @return       Number of bytes written.
  */
 int PageXML::write( const char* fname ) {
+  if ( process_running )
+    processEnd();
   xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, xml, NULL );
   int bytes = xmlSaveFormatFileEnc( fname, sortedXml, "utf-8", indent );
   xmlFreeDoc(sortedXml);
@@ -164,14 +160,6 @@ int PageXML::write( const char* fname ) {
   //return xmlSaveFormatFileEnc( fname, xml, "utf-8", indent );
 }
 
-/**
- * Gets the base name of the Page file derived from the image file name.
- *
- * @return  String containing the image base name.
- */
-char* PageXML::getBase() {
-  return imgbase;
-}
 
 /////////////////////
 /// Configuration ///
@@ -220,9 +208,6 @@ void PageXML::loadConf( const libconfig::Config& config ) {
       case PAGEXML_SETTING_GRAYIMG:
         grayimg = (bool)setting;
         break;
-      case PAGEXML_SETTING_EXTENDED_NAMES:
-        extended_names = (bool)setting;
-        break;
       default:
         throw invalid_argument( string("PageXML.loadConf: unexpected configuration property: ") + setting.getName() );
     }
@@ -241,7 +226,6 @@ void PageXML::printConf( FILE* file ) {
   fprintf( file, "  indent = %s;\n", indent ? "true" : "false" );
   fprintf( file, "  pagens = \"%s\";\n", pagens );
   fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
-  fprintf( file, "  extended_names = %s;\n", extended_names ? "true" : "false" );
   fprintf( file, "}\n" );
 }
 
@@ -282,16 +266,16 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
 
   if( imgW <= 0 || imgH <= 0 ) {
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
-    loadImage( NULL, false );
+    loadImage( 0, NULL, false );
 #if defined (__PAGEXML_LEPT__)
-    width = pixGetWidth(pageimg);
-    height = pixGetHeight(pageimg);
+    int width = pixGetWidth(pagesImage[0]);
+    int height = pixGetHeight(pagesImage[0]);
 #elif defined (__PAGEXML_MAGICK__)
-    width = pageimg.columns();
-    height = pageimg.rows();
+    int width = pagesImage[0].columns();
+    int height = pagesImage[0].rows();
 #elif defined (__PAGEXML_CVIMG__)
-    width = pageimg.size().width;
-    height = pageimg.size().height;
+    int width = pagesImage[0].size().width;
+    int height = pagesImage[0].size().height;
 #endif
     setAttr( "//_:Page", "imageWidth", to_string(width).c_str() );
     setAttr( "//_:Page", "imageHeight", to_string(height).c_str() );
@@ -315,8 +299,11 @@ void PageXML::loadXml( const char* fname ) {
     return;
   }
 
-  if ( strrchr(fname,'/') != NULL )
-    xmldir = strndup(fname,strrchr(fname,'/')-fname);
+  size_t slash_pos = string(fname).find_last_of("/");
+  xmlDir = slash_pos == string::npos ?
+    string(""):
+    string(fname).substr(0,slash_pos);
+
   FILE *file;
   if ( (file=fopen(fname,"rb")) == NULL ) {
     throw_runtime_error( "PageXML.loadXml: unable to open file: %s", fname );
@@ -341,6 +328,23 @@ void PageXML::loadXml( int fnum, bool prevfree ) {
 }
 
 /**
+ * Populates the imageFilename and pagesImageBase arrays for the given page number.
+ */
+void PageXML::parsePageImage( int pagenum ) {
+  xmlNodePtr page = selectNth( "//_:Page", pagenum );
+  string imageFilename;
+  if( ! getAttr( page, "imageFilename", imageFilename ) ) {
+    throw_runtime_error( "PageXML.parsePageImage: problems retrieving image filename from xml" );
+    return;
+  }
+  pagesImageFilename[pagenum] = imageFilename;
+
+  string imageBase = regex_replace( imageFilename, reFileExt, "" );
+  imageBase = regex_replace( imageBase, reInvalidBaseChars, "_" );
+  pagesImageBase[pagenum] = imageBase;
+}
+
+/**
  * Setups internal variables related to the loaded Page XML.
  */
 void PageXML::setupXml() {
@@ -358,41 +362,19 @@ void PageXML::setupXml() {
 
   vector<xmlNodePtr> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
-    throw_runtime_error( "PageXML.setupXml: unable to find page element" );
+    throw_runtime_error( "PageXML.setupXml: unable to find Page element(s)" );
     return;
   }
 
-  /// Get page size ///
-  char* uwidth = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageWidth" );
-  char* uheight = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageHeight" );
-  if( uwidth == NULL || uheight == NULL ) {
-    throw_runtime_error( "PageXML.setupXml: problems retrieving page size from xml" );
-    return;
-  }
-  width = atoi(uwidth);
-  height = atoi(uheight);
-  free(uwidth);
-  free(uheight);
+  pagesImage = std::vector<PageImage>(elem_page.size());
+  pagesImageFilename = std::vector<std::string>(elem_page.size());
+  pagesImageBase = std::vector<std::string>(elem_page.size());
 
-  /// Get image path ///
-  imgpath = (char*)xmlGetProp( elem_page[0], (xmlChar*)"imageFilename" );
-  if( imgpath ==NULL ) {
-    throw_runtime_error( "PageXML.setupXml: problems retrieving image file from xml" );
-    return;
-  }
+  for( int n=0; n<(int)elem_page.size(); n++ )
+    parsePageImage(n);
 
-  char* p = strrchr(imgpath,'/') == NULL ? imgpath : strrchr(imgpath,'/')+1;
-  if( strrchr(p,'.') == NULL ) {
-    throw_runtime_error( "PageXML.setupXml: expected image file name to have an extension: %s", p );
-    return;
-  }
-  imgbase = strndup(p,strrchr(p,'.')-p);
-  for( char *p=imgbase; *p!='\0'; p++ )
-    if( *p == ' ' /*|| *p == '[' || *p == ']' || *p == '(' || *p == ')'*/ )
-      *p = '_';
-
-  if( xmldir == NULL )
-    xmldir = strdup(".");
+  if( xmlDir.empty() )
+    xmlDir = string(".");
 
   if( sortattr == NULL )
     sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
@@ -405,28 +387,30 @@ void PageXML::setupXml() {
  *
  * @param fname  File name of the image to read.
  */
-void PageXML::loadImage( const char* fname, const bool check_size ) {
+void PageXML::loadImage( int pagenum, const char* fname, const bool check_size ) {
   string aux;
-  if( fname == NULL )
-    fname = imgpath[0] == '/' ? imgpath : (aux=string(xmldir)+'/'+imgpath).c_str();
+  if( fname == NULL ) {
+    aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (xmlDir+'/'+pagesImageFilename[pagenum]);
+    fname = aux.c_str();
+  }
 
 #if defined (__PAGEXML_LEPT__)
-  pageimg = pixRead(fname);
-  if( pageimg == NULL ) {
+  pagesImage[pagenum] = pixRead(fname);
+  if( pagesImage[pagenum] == NULL ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
   }
 #elif defined (__PAGEXML_MAGICK__)
   try {
-    pageimg.read(fname);
+    pagesImage[pagenum].read(fname);
   }
   catch( exception& e ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", e.what() );
     return;
   }
 #elif defined (__PAGEXML_CVIMG__)
-  pageimg = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
-  if ( ! pageimg.data ) {
+  pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
+  if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
   }
@@ -434,30 +418,41 @@ void PageXML::loadImage( const char* fname, const bool check_size ) {
 
   if( grayimg ) {
 #if defined (__PAGEXML_LEPT__)
-    pageimg = pixRead(fname);
-    Pix *orig = pageimg;
-    pageimg = pixConvertRGBToGray(orig,0.0,0.0,0.0);
+    pagesImage[pagenum] = pixRead(fname);
+    Pix *orig = pagesImage[pagenum];
+    pagesImage[pagenum] = pixConvertRGBToGray(orig,0.0,0.0,0.0);
     pixDestroy(&orig);
 #elif defined (__PAGEXML_MAGICK__)
-    if( pageimg.matte() && pageimg.type() != Magick::GrayscaleMatteType )
-      pageimg.type( Magick::GrayscaleMatteType );
-    else if( ! pageimg.matte() && pageimg.type() != Magick::GrayscaleType )
-      pageimg.type( Magick::GrayscaleType );
+    if( pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleMatteType )
+      pagesImage[pagenum].type( Magick::GrayscaleMatteType );
+    else if( ! pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleType )
+      pagesImage[pagenum].type( Magick::GrayscaleType );
 #endif
   }
 
-  if( check_size )
+  // @todo Check image orientation and rotate if != 0
+
+  if( check_size ) {
+    int width = getPageWidth(pagenum);
+    int height = getPageHeight(pagenum);
 #if defined (__PAGEXML_LEPT__)
-    if( (int)width != pixGetWidth(pageimg) || (int)height != pixGetHeight(pageimg) ) {
+    if( width != pixGetWidth(pagesImage[pagenum]) || height != pixGetHeight(pagesImage[pagenum]) )
 #elif defined (__PAGEXML_MAGICK__)
-    if( width != pageimg.columns() || height != pageimg.rows() ) {
+    if( width != (int)pagesImage[pagenum].columns() || height != (int)pagesImage[pagenum].rows() )
 #elif defined (__PAGEXML_CVIMG__)
-    if( (int)width != pageimg.size().width || (int)height != pageimg.size().height ) {
+    if( width != pagesImage[pagenum].size().width || height != pagesImage[pagenum].size().height )
 #endif
       throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size: %s", fname );
-      return;
-    }
+  }
 }
+
+void PageXML::loadImage( xmlNodePtr node, const char* fname, const bool check_size ) {
+  int pagenum = getPageNumber(node);
+  if( pagenum >= 0 )
+    return loadImage( pagenum, fname, check_size );
+  throw_runtime_error( "PageXML.loadImage: node must be a Page or descendant of a Page" );
+}
+
 
 #endif
 
@@ -730,6 +725,13 @@ xmlNodePtr PageXML::selectNth( string xpath, unsigned num, xmlNodePtr node ) {
 }
 
 /**
+ * Selects closest node of a given name.
+ */
+xmlNodePtr PageXML::closest( const char* name, xmlNodePtr node ) {
+  return selectNth( string("ancestor-or-self::*[local-name()='")+name+"']", 0, node );
+}
+
+/**
  * Checks if node is of given name.
  *
  * @param node  XML node.
@@ -758,21 +760,36 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
   if( elems_coords.size() == 0 )
     return images;
 
-#if defined (__PAGEXML_LEPT__)
-  if( pageimg == NULL )
-#elif defined (__PAGEXML_MAGICK__)
-  if( pageimg.columns() == 0 )
-#elif defined (__PAGEXML_CVIMG__)
-  if( ! pageimg.data )
-#endif
-    loadImage();
+  xmlNodePtr prevPage = NULL;
+  string imageBase;
+  unsigned int width = 0;
+  unsigned int height = 0;
+  PageImage pageImage;
 
   for( int n=0; n<(int)elems_coords.size(); n++ ) {
     xmlNodePtr node = elems_coords[n];
 
-    if( xmlStrcmp( node->name, (const xmlChar*)"Coords") ) {
+    if( ! nodeIs( node, "Coords") ) {
       throw_runtime_error( "PageXML.crop: expected xpath to match only Coords elements: match=%d xpath=%s", n+1, xpath );
       return images;
+    }
+
+    xmlNodePtr page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+    if( prevPage != page ) {
+      prevPage = page;
+      int pagenum = getPageNumber(page);
+      imageBase = pagesImageBase[pagenum];
+      width = getPageWidth(page);
+      height = getPageHeight(page);
+      #if defined (__PAGEXML_LEPT__)
+        if( pagesImage[pagenum] == NULL )
+      #elif defined (__PAGEXML_MAGICK__)
+        if( pagesImage[pagenum].columns() == 0 )
+      #elif defined (__PAGEXML_CVIMG__)
+        if( ! pagesImage[pagenum].data )
+      #endif
+          loadImage(pagenum);
+        pageImage = pagesImage[pagenum];
     }
 
     /// Get parent node id ///
@@ -783,20 +800,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     }
 
     /// Construct sample name ///
-    string sampname = string(".") + sampid;
-    if( extended_names )
-      if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"TextLine") ||
-          ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-        string id2;
-        getAttr( node->parent->parent, "id", id2 );
-        sampname = string(".") + id2 + sampname;
-        if( ! xmlStrcmp( node->parent->name, (const xmlChar*)"Word") ) {
-          string id3;
-          getAttr( node->parent->parent->parent, "id", id3 );
-          sampname = string(".") + id3 + sampname;
-        }
-      }
-    sampname = string(imgbase) + sampname;
+    string sampname = imageBase + "." + sampid;
 
     /// Get coords points ///
     string spoints;
@@ -834,10 +838,10 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     /// Crop image ///
 #if defined (__PAGEXML_LEPT__)
     BOX* box = boxCreate(cropX, cropY, cropW, cropH);
-    Pix* cropimg = pixClipRectangle(pageimg, box, NULL);
+    Pix* cropimg = pixClipRectangle(pageImage, box, NULL);
     boxDestroy(&box);
 #elif defined (__PAGEXML_MAGICK__)
-    Magick::Image cropimg = pageimg;
+    Magick::Image cropimg = pageImage;
     cropimg.crop( Magick::Geometry(cropW,cropH,cropX,cropY) );
 #elif defined (__PAGEXML_CVIMG__)
     cv::Rect roi;
@@ -845,7 +849,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     roi.y = cropY;
     roi.width = cropW;
     roi.height = cropH;
-    cv::Mat cropimg = pageimg(roi);
+    cv::Mat cropimg = pageImage(roi);
 #endif
 
     if( opaque_coords /*&& ! isBBox( coords )*/ ) {
@@ -923,6 +927,8 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       cropimg = wmask;
 #endif
     }
+
+// @todo Get baseline orientation for rotation in case of TextLine with Baseline
 
     /// Append crop and related data to list ///
     NamedImage namedimage(
@@ -1418,7 +1424,7 @@ std::string PageXML::getTextEquiv( xmlNodePtr node, const char* xpath, const cha
 /**
  * Registers a process in the Page XML.
  */
-void PageXML::registerProcess( const char* tool, const char* ref ) {
+/*void PageXML::registerProcess( const char* tool, const char* ref ) {
   if( tool == NULL || tool[0] == '\0' ) {
     throw_runtime_error( "PageXML.registerProcess: tool string is required" );
     return;
@@ -1448,8 +1454,9 @@ void PageXML::registerProcess( const char* tool, const char* ref ) {
       proc = procs[procs.size()-1];
   }
   if ( ! proc ) {
-    string pid = string("pr")+to_string(procs.size()+1);
-    proc = addElem( "Process", pid.c_str(), "//_:Metadata" );
+    //string pid = string("pr")+to_string(procs.size()+1);
+    //proc = addElem( "Process", pid.c_str(), "//_:Metadata" );
+    proc = addElem( "Process", NULL, "//_:Metadata" );
   }
   if ( ! proc ) {
     throw_runtime_error( "PageXML.registerProcess: problems creating or selecting element" );
@@ -1479,6 +1486,76 @@ void PageXML::registerProcess( const char* tool, const char* ref ) {
   xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
   if( ! text || ! xmlAddChild(lastchange[0],text) ) {
     throw_runtime_error( "PageXML.registerProcess: problems updating time stamp" );
+    return;
+  }
+}*/
+
+/**
+ * Starts a process in the Page XML.
+ */
+void PageXML::processStart( const char* tool, const char* ref ) {
+  if( tool == NULL || tool[0] == '\0' ) {
+    throw_runtime_error( "PageXML.processStart: tool string is required" );
+    return;
+  }
+  if( ref != NULL && ref[0] == '\0' ) {
+    throw_runtime_error( "PageXML.processStart: ref if provided cannot be empty" );
+    return;
+  }
+
+  process_started = chrono::high_resolution_clock::now();
+
+  /// Add Process element ///
+  process_running = addElem( "Process", NULL, "//_:Metadata" );
+  if ( ! process_running ) {
+    throw_runtime_error( "PageXML.processStart: problems creating element" );
+    return;
+  }
+
+  /// Start time attribute ///
+  time_t now;
+  time(&now);
+  char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
+  strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
+  setAttr( process_running, "started", tstamp );
+
+  /// Tool and ref attributes ///
+  setAttr( process_running, "tool", tool );
+  if ( ref != NULL )
+    setAttr( process_running, "ref", ref );
+}
+
+/**
+ * Ends the running process in the Page XML.
+ */
+void PageXML::processEnd() {
+  if ( ! process_running )
+    return;
+  double duration = 1e-6*chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now()-process_started).count();
+  char sduration[64];
+  snprintf( sduration, sizeof sduration, "%g", duration );
+  setAttr( process_running, "time", sduration );
+  process_running = NULL;
+  updateLastChange();
+}
+
+/**
+ * Updates the last change time stamp.
+ */
+void PageXML::updateLastChange() {
+  xmlNodePtr lastchange = selectNth( "//_:LastChange", 0 );
+  if( ! lastchange ) {
+    throw_runtime_error( "PageXML.updateLastChange: unable to select node" );
+    return;
+  }
+  rmElems( select( "text()", lastchange ) );
+  time_t now;
+  time(&now);
+  char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
+  strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
+  xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
+  if( ! text || ! xmlAddChild(lastchange,text) ) {
+    throw_runtime_error( "PageXML.updateLastChange: problems updating time stamp" );
     return;
   }
 }
@@ -1603,6 +1680,20 @@ xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& point
   }
 
   return coords;
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords for a given node.
+ *
+ * @param node   The node of element to set the Coords.
+ * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @return       Pointer to created element.
+ */
+xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point>& points, const double* _conf ) {
+  std::vector<cv::Point2f> points2f;
+  cv::Mat(points).convertTo(points2f, cv::Mat(points2f).type());
+  return setCoords( node, points2f, _conf );
 }
 
 /**
@@ -1807,6 +1898,18 @@ xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset
 }
 
 /**
+ * Gets the page number for the given node.
+ */
+int PageXML::getPageNumber( xmlNodePtr node ) {
+  node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+  vector<xmlNodePtr> pages = select("//_:Page");
+  for( int n=0; n<(int)pages.size(); n++ )
+    if( node == pages[n] )
+      return n;
+  return -1;
+}
+
+/**
  * Sets the image orientation for the given Page node.
  *
  * @param node   The page node.
@@ -1834,7 +1937,7 @@ void PageXML::setPageImageOrientation( xmlNodePtr node, int angle, const double*
 
   if( _conf != NULL ) {
     char conf[32];
-    snprintf( conf, sizeof(conf), "%g", *_conf );
+    snprintf( conf, sizeof conf, "%g", *_conf );
     setAttr( orientation, "conf", conf );
   }
 }
@@ -1872,7 +1975,7 @@ int PageXML::getPageImageOrientation( int pagenum ) {
 unsigned int PageXML::getPageWidth( xmlNodePtr node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
-    throw_runtime_error( "PageXML.getPageWidth: node is required to be a Page" );
+    throw_runtime_error( "PageXML.getPageWidth: node is required to be a Page or descendant of a Page" );
     return 0;
   }
   string width;
@@ -1889,7 +1992,7 @@ unsigned int PageXML::getPageHeight( int pagenum ) {
 unsigned int PageXML::getPageHeight( xmlNodePtr node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
-    throw_runtime_error( "PageXML.getPageHeight: node is required to be a Page" );
+    throw_runtime_error( "PageXML.getPageHeight: node is required to be a Page or descendant of a Page" );
     return 0;
   }
   string height;
@@ -1907,7 +2010,7 @@ string PageXML::getPageImageFilename( xmlNodePtr node ) {
   string image;
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
-    throw_runtime_error( "PageXML.getPageImageFilename: node is required to be a Page" );
+    throw_runtime_error( "PageXML.getPageImageFilename: node is required to be a Page or descendant of a Page" );
     return image;
   }
   getAttr( node, "imageFilename", image );
@@ -1915,6 +2018,31 @@ string PageXML::getPageImageFilename( xmlNodePtr node ) {
 }
 string PageXML::getPageImageFilename( int pagenum ) {
   return getPageImageFilename( selectNth("//_:Page",pagenum) );
+}
+
+/**
+ * Returns the image for the given page.
+ */
+PageImage PageXML::getPageImage( int pagenum ) {
+  if( pagenum < 0 || pagenum >= (int)pagesImage.size() ) {
+    throw_runtime_error( "PageXML.getPageImage: page number out of range" );
+    PageImage pageImage;
+    return pageImage;
+  }
+
+#if defined (__PAGEXML_LEPT__)
+  if( pagesImage[pagenum] == NULL )
+#elif defined (__PAGEXML_MAGICK__)
+  if( pagesImage[pagenum].columns() == 0 )
+#elif defined (__PAGEXML_CVIMG__)
+  if( ! pagesImage[pagenum].data )
+#endif
+    loadImage(pagenum);
+
+  return pagesImage[pagenum];
+}
+PageImage PageXML::getPageImage( xmlNodePtr node ) {
+  return getPageImage( getPageNumber(node) );
 }
 
 /**
@@ -2227,12 +2355,29 @@ xmlNodePtr PageXML::addTextRegion( const char* xpath, const char* id, const char
 xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, const char* id, xmlNodePtr before_node ) {
   xmlNodePtr page;
 
+  PageImage pageImage;
+  string imageFilename;
+  string imageBase;
+
+  int page_num = -1;
+
   if( before_node != NULL ) {
     if( ! nodeIs( before_node, "Page" ) ) {
       throw_runtime_error( "PageXML.addPage: before_node is required to be a Page" );
       return NULL;
     }
     page = addElem( "Page", id, before_node, PAGEXML_INSERT_PREVSIB, true );
+    page_num = getPageNumber(page);
+
+    int numpages = pagesImage.size();
+    pagesImage.push_back(pagesImage[numpages-1]);
+    pagesImageFilename.push_back(pagesImageFilename[numpages-1]);
+    pagesImageBase.push_back(pagesImageBase[numpages-1]);
+    for( int n=numpages-1; n>page_num; n-- ) {
+      pagesImage[n] = pagesImage[n-1];
+      pagesImageFilename[n] = pagesImageFilename[n-1];
+      pagesImageBase[n] = pagesImageBase[n-1];
+    }
   }
   else {
     xmlNodePtr pcgts = selectNth("/_:PcGts",0);
@@ -2241,13 +2386,18 @@ xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, 
       return NULL;
     }
     page = addElem( "Page", id, pcgts, PAGEXML_INSERT_APPEND, true );
-  }
+    page_num = getPageNumber(page);
 
-  // @todo Adjust array of images for loading
+    pagesImage.push_back(pageImage);
+    pagesImageFilename.push_back(imageFilename);
+    pagesImageBase.push_back(imageBase);
+  }
 
   setAttr( page, "imageFilename", image );
   setAttr( page, "imageWidth", to_string(imgW).c_str() );
   setAttr( page, "imageHeight", to_string(imgH).c_str() );
+
+  parsePageImage( page_num );
 
   return page;
 }
@@ -2298,11 +2448,17 @@ int PageXML::simplifyIDs() {
 
   regex reTrim("^[^a-zA-Z]*");
   regex reInvalid("[^a-zA-Z0-9_-]");
-  string sampbase(imgbase);
+  string sampbase;
+  xmlNodePtr prevPage = NULL;
 
   vector<xmlNodePtr> nodes = select( "//*[@id][local-name()='TextLine' or local-name()='TextRegion']" );
 
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
+    xmlNodePtr page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, nodes[n] );
+    if( prevPage != page ) {
+      prevPage = page;
+      sampbase = pagesImageBase[getPageNumber(page)];
+    }
     char* id = (char*)xmlGetProp( nodes[n], (xmlChar*)"id" );
     string sampid(id);
     if( sampid.size() > sampbase.size() &&
@@ -2380,18 +2536,4 @@ OGRMultiPolygon* PageXML::getOGRpolygon( xmlNodePtr node ) {
  */
 xmlDocPtr PageXML::getDocPtr() {
   return xml;
-}
-
-/**
- * Returns the image width.
- */
-unsigned int PageXML::getWidth() {
-  return width;
-}
-
-/**
- * Returns the image height.
- */
-unsigned int PageXML::getHeight() {
-  return height;
 }

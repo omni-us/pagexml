@@ -10,6 +10,7 @@
 #define __PAGEXML_H__
 
 #include <vector>
+#include <chrono>
 
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
@@ -41,8 +42,7 @@ typedef cv::Mat PageImage;
 enum PAGEXML_SETTING {
   PAGEXML_SETTING_INDENT = 0,      // "indent"
   PAGEXML_SETTING_PAGENS,          // "pagens"
-  PAGEXML_SETTING_GRAYIMG,         // "grayimg"
-  PAGEXML_SETTING_EXTENDED_NAMES   // "extended_names"
+  PAGEXML_SETTING_GRAYIMG          // "grayimg"
 };
 
 enum PAGEXML_INSERT {
@@ -113,7 +113,8 @@ class PageXML {
     void loadXml( const char* fname );
     void loadXml( int fnum, bool prevfree = true );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
-    void loadImage( const char* fname = NULL, const bool check_size = true );
+    void loadImage( int pagenum, const char* fname = NULL, const bool check_size = true );
+    void loadImage( xmlNodePtr node, const char* fname = NULL, const bool check_size = true );
 #endif
     int simplifyIDs();
     void relativizeImageFilename( const char* xml_path );
@@ -132,6 +133,7 @@ class PageXML {
     std::vector<xmlNodePtr> select( std::string xpath, xmlNodePtr basenode = NULL );
     xmlNodePtr selectNth( const char* xpath, unsigned num = 0, xmlNodePtr basenode = NULL );
     xmlNodePtr selectNth( std::string xpath, unsigned num = 0, xmlNodePtr basenode = NULL );
+    xmlNodePtr closest( const char* name, xmlNodePtr node );
     static bool nodeIs( xmlNodePtr node, const char* name );
     bool getAttr( const xmlNodePtr node,   const char* name,       std::string& value );
     bool getAttr( const char* xpath,       const char* name,       std::string& value );
@@ -156,17 +158,21 @@ class PageXML {
     std::vector<cv::Point2f> getPoints( const xmlNodePtr node, const char* xpath = "_:Coords" );
     std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePtr> nodes, const char* xpath = "_:Coords" );
     std::string getTextEquiv( xmlNodePtr node, const char* xpath = ".", const char* separator = " " );
-    void registerProcess( const char* tool, const char* ref = NULL );
+    void processStart( const char* tool, const char* ref = NULL );
+    void processEnd();
+    void updateLastChange();
     xmlNodePtr setProperty( xmlNodePtr node, const char* key, const char* val = NULL );
     xmlNodePtr setTextEquiv( xmlNodePtr node,   const char* text, const double* _conf = NULL );
     xmlNodePtr setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
     xmlNodePtr setCoords( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePtr setCoords( xmlNodePtr node,   const std::vector<cv::Point>& points,   const double* _conf = NULL );
     xmlNodePtr setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setCoordsBBox( xmlNodePtr node, double xmin, double ymin, double width, double height, const double* _conf = NULL );
     xmlNodePtr setBaseline( xmlNodePtr node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setBaseline( xmlNodePtr node, double x1, double y1, double x2, double y2, const double* _conf = NULL );
     xmlNodePtr setPolystripe( xmlNodePtr node, double height, double offset = 0.25 );
+    int getPageNumber( xmlNodePtr node );
     void setPageImageOrientation( xmlNodePtr node, int angle, const double* _conf = NULL );
     void setPageImageOrientation( int pagenum,     int angle, const double* _conf = NULL );
     int getPageImageOrientation( xmlNodePtr node );
@@ -177,6 +183,8 @@ class PageXML {
     unsigned int getPageHeight( int pagenum );
     std::string getPageImageFilename( xmlNodePtr node );
     std::string getPageImageFilename( int pagenum );
+    PageImage getPageImage( int pagenum );
+    PageImage getPageImage( xmlNodePtr node );
     xmlNodePtr addGlyph( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addGlyph( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addWord( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
@@ -187,31 +195,28 @@ class PageXML {
     xmlNodePtr addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addPage( const char* image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
     xmlNodePtr addPage( std::string image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
-    char* getBase();
     int write( const char* fname = "-" );
 #if defined (__PAGEXML_OGR__)
     OGRMultiPolygon* getOGRpolygon( const xmlNodePtr node );
 #endif
     xmlDocPtr getDocPtr();
-    unsigned int getWidth();
-    unsigned int getHeight();
   private:
     bool indent = true;
     bool grayimg = false;
-    bool extended_names = false;
     char* pagens = NULL;
     xmlNsPtr rpagens = NULL;
-    char* xmldir = NULL;
-    char* imgpath = NULL;
-    char* imgbase = NULL;
+    std::string xmlDir;
+    std::vector<PageImage> pagesImage;
+    std::vector<std::string> pagesImageFilename;
+    std::vector<std::string> pagesImageBase;
     xmlDocPtr xml = NULL;
     xmlXPathContextPtr context = NULL;
     xsltStylesheetPtr sortattr = NULL;
     xmlNodePtr rootnode = NULL;
-    PageImage pageimg;
-    unsigned int width;
-    unsigned int height;
+    xmlNodePtr process_running = NULL;
+    std::chrono::high_resolution_clock::time_point process_started;
     void release();
+    void parsePageImage( int pagenum );
     void setupXml();
 };
 
