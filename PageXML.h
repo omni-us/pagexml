@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.11.25$
+ * @version $Version: 2017.11.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,8 @@ enum PAGEXML_SETTING {
 };
 
 enum PAGEXML_INSERT {
-  PAGEXML_INSERT_CHILD = 0,
+  PAGEXML_INSERT_APPEND = 0,
+  PAGEXML_INSERT_PREPEND,
   PAGEXML_INSERT_NEXTSIB,
   PAGEXML_INSERT_PREVSIB
 };
@@ -88,6 +89,12 @@ struct NamedImage {
     node = _node;
   }
 };
+
+#if defined (__PAGEXML_NOTHROW__)
+#define throw_runtime_error( fmt, ... ) fprintf( stderr, "error: " fmt "\n", ##__VA_ARGS__ )
+#else
+#define throw_runtime_error( fmt, ... ) { char buffer[1024]; snprintf( buffer, sizeof(buffer), fmt, ##__VA_ARGS__ ); throw runtime_error(buffer); }
+#endif
 
 class PageXML {
   public:
@@ -133,9 +140,9 @@ class PageXML {
     int setAttr( xmlNodePtr node,               const char* name,       const char* value );
     int setAttr( const char* xpath,             const char* name,       const char* value );
     int setAttr( const std::string xpath,       const std::string name, const std::string value );
-    xmlNodePtr addElem( const char* name,       const char* id,       const xmlNodePtr node,   PAGEXML_INSERT itype = PAGEXML_INSERT_CHILD, bool checkid = false );
-    xmlNodePtr addElem( const char* name,       const char* id,       const char* xpath,       PAGEXML_INSERT itype = PAGEXML_INSERT_CHILD, bool checkid = false );
-    xmlNodePtr addElem( const std::string name, const std::string id, const std::string xpath, PAGEXML_INSERT itype = PAGEXML_INSERT_CHILD, bool checkid = false );
+    xmlNodePtr addElem( const char* name,       const char* id,       const xmlNodePtr node,   PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
+    xmlNodePtr addElem( const char* name,       const char* id,       const char* xpath,       PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
+    xmlNodePtr addElem( const std::string name, const std::string id, const std::string xpath, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
     void rmElem( const xmlNodePtr& node );
     int rmElems( const std::vector<xmlNodePtr>& nodes );
     int rmElems( const char* xpath,       xmlNodePtr basenode = NULL );
@@ -160,6 +167,16 @@ class PageXML {
     xmlNodePtr setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePtr setBaseline( xmlNodePtr node, double x1, double y1, double x2, double y2, const double* _conf = NULL );
     xmlNodePtr setPolystripe( xmlNodePtr node, double height, double offset = 0.25 );
+    void setPageImageOrientation( xmlNodePtr node, int angle, const double* _conf = NULL );
+    void setPageImageOrientation( int pagenum,     int angle, const double* _conf = NULL );
+    int getPageImageOrientation( xmlNodePtr node );
+    int getPageImageOrientation( int pagenum );
+    unsigned int getPageWidth( xmlNodePtr node );
+    unsigned int getPageWidth( int pagenum );
+    unsigned int getPageHeight( xmlNodePtr node );
+    unsigned int getPageHeight( int pagenum );
+    std::string getPageImageFilename( xmlNodePtr node );
+    std::string getPageImageFilename( int pagenum );
     xmlNodePtr addGlyph( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addGlyph( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePtr addWord( xmlNodePtr node, const char* id = NULL, const char* before_id = NULL );
