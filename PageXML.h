@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.11.26$
+ * @version $Version: 2017.11.27$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -110,8 +110,9 @@ class PageXML {
 #endif
     void printConf( FILE* file = stdout );
     void newXml( const char* creator, const char* image, const int imgW, const int imgH );
-    void loadXml( const char* fname );
-    void loadXml( int fnum, bool prevfree = true );
+    bool loadXml( const char* fname );
+    bool loadXml( int fnum, bool prevfree = true );
+    bool loadXmlString( const char* xml_string );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
     void loadImage( int pagenum, const char* fname = NULL, const bool check_size = true );
     void loadImage( xmlNodePtr node, const char* fname = NULL, const bool check_size = true );
@@ -196,6 +197,7 @@ class PageXML {
     xmlNodePtr addPage( const char* image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
     xmlNodePtr addPage( std::string image, const int imgW, const int imgH, const char* id = NULL, xmlNodePtr before_node = NULL );
     int write( const char* fname = "-" );
+    std::string toString();
 #if defined (__PAGEXML_OGR__)
     OGRMultiPolygon* getOGRpolygon( const xmlNodePtr node );
 #endif
@@ -217,7 +219,7 @@ class PageXML {
     std::chrono::high_resolution_clock::time_point process_started;
     void release();
     void parsePageImage( int pagenum );
-    void setupXml();
+    bool setupXml();
 };
 
 #endif

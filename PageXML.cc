@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.26$
+ * @version $Version: 2017.11.27$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.26";
+static char class_version[] = "Version: 2017.11.27";
 
 /**
  * Returns the class version.
@@ -158,6 +158,23 @@ int PageXML::write( const char* fname ) {
   xmlFreeDoc(sortedXml);
   return bytes;
   //return xmlSaveFormatFileEnc( fname, xml, "utf-8", indent );
+}
+
+/**
+ * Creates a string representation of the Page XML.
+ */
+string PageXML::toString() {
+  string sxml;
+  xmlChar *cxml;
+  int size;
+  xmlDocDumpMemory(xml, &cxml, &size);
+  if ( cxml == NULL ) {
+    throw_runtime_error( "PageXML.toString: problem dumping to memory" );
+    return sxml;
+  }
+  sxml = string((char*)cxml);
+  xmlFree(cxml);
+  return sxml;
 }
 
 
@@ -291,13 +308,11 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
  *
  * @param fname  File name of the XML file to read.
  */
-void PageXML::loadXml( const char* fname ) {
+bool PageXML::loadXml( const char* fname ) {
   release();
 
-  if ( ! strcmp(fname,"-") ) {
-    loadXml( STDIN_FILENO, false );
-    return;
-  }
+  if ( ! strcmp(fname,"-") )
+    return loadXml( STDIN_FILENO, false );
 
   size_t slash_pos = string(fname).find_last_of("/");
   xmlDir = slash_pos == string::npos ?
@@ -307,10 +322,11 @@ void PageXML::loadXml( const char* fname ) {
   FILE *file;
   if ( (file=fopen(fname,"rb")) == NULL ) {
     throw_runtime_error( "PageXML.loadXml: unable to open file: %s", fname );
-    return;
+    return false;
   }
-  loadXml( fileno(file), false );
+  bool load = loadXml( fileno(file), false );
   fclose(file);
+  return load;
 }
 
 /**
@@ -318,13 +334,32 @@ void PageXML::loadXml( const char* fname ) {
  *
  * @param fnum  File number from where to read the XML file.
  */
-void PageXML::loadXml( int fnum, bool prevfree ) {
+bool PageXML::loadXml( int fnum, bool prevfree ) {
   if ( prevfree )
     release();
 
   xmlKeepBlanksDefault(0);
   xml = xmlReadFd( fnum, NULL, NULL, XML_PARSE_NONET );
+  if ( ! xml ) {
+   throw_runtime_error( "PageXML.loadXml: problems reading file" );
+   return false;
+  }
   setupXml();
+}
+
+/**
+ * Loads a Page XML from a string.
+ *
+ * @param xml_string  The XML content.
+ */
+bool PageXML::loadXmlString( const char* xml_string ) {
+  release();
+  xml = xmlParseDoc( (xmlChar*)xml_string );
+  if ( ! xml ) {
+   throw_runtime_error( "PageXML.loadXml: problems reading XML from string" );
+   return false;
+  }
+  return setupXml();
 }
 
 /**
@@ -347,15 +382,15 @@ void PageXML::parsePageImage( int pagenum ) {
 /**
  * Setups internal variables related to the loaded Page XML.
  */
-void PageXML::setupXml() {
+bool PageXML::setupXml() {
   context = xmlXPathNewContext(xml);
   if( context == NULL ) {
     throw_runtime_error( "PageXML.setupXml: unable create xpath context" );
-    return;
+    return false;
   }
   if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to register namespace" );
-    return;
+    return false;
   }
   rootnode = context->node;
   rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
@@ -363,7 +398,7 @@ void PageXML::setupXml() {
   vector<xmlNodePtr> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to find Page element(s)" );
-    return;
+    return false;
   }
 
   pagesImage = std::vector<PageImage>(elem_page.size());
@@ -378,6 +413,8 @@ void PageXML::setupXml() {
 
   if( sortattr == NULL )
     sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
+
+  return true;
 }
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
@@ -1420,75 +1457,6 @@ std::string PageXML::getTextEquiv( xmlNodePtr node, const char* xpath, const cha
   }
   return text;
 }
-
-/**
- * Registers a process in the Page XML.
- */
-/*void PageXML::registerProcess( const char* tool, const char* ref ) {
-  if( tool == NULL || tool[0] == '\0' ) {
-    throw_runtime_error( "PageXML.registerProcess: tool string is required" );
-    return;
-  }
-
-  if( ref != NULL && ref[0] == '\0' ) {
-    throw_runtime_error( "PageXML.registerProcess: ref if provided cannot be empty" );
-    return;
-  }
-
-  time_t now;
-  time(&now);
-  char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
-  strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
-
-  /// Set Process element ///
-  xmlNodePtr proc = NULL;
-  std::vector<xmlNodePtr> procs = select("//_:Process");
-  if ( procs.size() > 0 && count( string("@tool[.=\"")+tool+"\"]", procs[procs.size()-1] ) > 0 ) {
-    string prevdate;
-    getAttr( procs[procs.size()-1], "date", prevdate );
-    std::istringstream ss(prevdate);
-    struct std::tm tm;
-    ss >> std::get_time( &tm, "%FT%TZ" );
-    std::time_t prevt = mktime(&tm) - timezone;
-    if ( now-prevt < 12*3600 )
-      proc = procs[procs.size()-1];
-  }
-  if ( ! proc ) {
-    //string pid = string("pr")+to_string(procs.size()+1);
-    //proc = addElem( "Process", pid.c_str(), "//_:Metadata" );
-    proc = addElem( "Process", NULL, "//_:Metadata" );
-  }
-  if ( ! proc ) {
-    throw_runtime_error( "PageXML.registerProcess: problems creating or selecting element" );
-    return;
-  }
-  if ( ! setAttr( proc, "date", tstamp ) ) {
-    throw_runtime_error( "PageXML.registerProcess: problems setting date attribute" );
-    return;
-  }
-  if ( ! setAttr( proc, "tool", tool ) ) {
-    throw_runtime_error( "PageXML.registerProcess: problems setting tool attribute" );
-    return;
-  }
-  if ( ref != NULL )
-    if ( ! setAttr( proc, "ref", ref ) ) {
-      throw_runtime_error( "PageXML.registerProcess: problems setting ref attribute" );
-      return;
-    }
-
-  /// Update last change ///
-  vector<xmlNodePtr> lastchange = select( "//_:LastChange" );
-  if( lastchange.size() != 1 ) {
-    throw_runtime_error( "PageXML.registerProcess: unable to select node" );
-    return;
-  }
-  rmElems( select( "text()", lastchange[0] ) );
-  xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
-  if( ! text || ! xmlAddChild(lastchange[0],text) ) {
-    throw_runtime_error( "PageXML.registerProcess: problems updating time stamp" );
-    return;
-  }
-}*/
 
 /**
  * Starts a process in the Page XML.
