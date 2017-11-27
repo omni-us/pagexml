@@ -22,7 +22,7 @@ def pagexml_Extension():
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
     return Extension('_pagexml',
-                     define_macros = [('__PAGEXML_CVIMG__',''),('__PAGEXML_NOTHROW__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     define_macros = [('__PAGEXML_CVIMG__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
                      swig_opts = ['-modern','-c++'],
