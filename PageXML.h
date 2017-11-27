@@ -110,9 +110,9 @@ class PageXML {
 #endif
     void printConf( FILE* file = stdout );
     void newXml( const char* creator, const char* image, const int imgW, const int imgH );
-    bool loadXml( const char* fname );
-    bool loadXml( int fnum, bool prevfree = true );
-    bool loadXmlString( const char* xml_string );
+    void loadXml( const char* fname );
+    void loadXml( int fnum, bool prevfree = true );
+    void loadXmlString( const char* xml_string );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
     void loadImage( int pagenum, const char* fname = NULL, const bool check_size = true );
     void loadImage( xmlNodePtr node, const char* fname = NULL, const bool check_size = true );
@@ -219,7 +219,7 @@ class PageXML {
     std::chrono::high_resolution_clock::time_point process_started;
     void release();
     void parsePageImage( int pagenum );
-    bool setupXml();
+    void setupXml();
 };
 
 #endif

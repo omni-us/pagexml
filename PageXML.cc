@@ -308,11 +308,13 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
  *
  * @param fname  File name of the XML file to read.
  */
-bool PageXML::loadXml( const char* fname ) {
+void PageXML::loadXml( const char* fname ) {
   release();
 
-  if ( ! strcmp(fname,"-") )
-    return loadXml( STDIN_FILENO, false );
+  if ( ! strcmp(fname,"-") ) {
+    loadXml( STDIN_FILENO, false );
+    return;
+  }
 
   size_t slash_pos = string(fname).find_last_of("/");
   xmlDir = slash_pos == string::npos ?
@@ -322,11 +324,10 @@ bool PageXML::loadXml( const char* fname ) {
   FILE *file;
   if ( (file=fopen(fname,"rb")) == NULL ) {
     throw_runtime_error( "PageXML.loadXml: unable to open file: %s", fname );
-    return false;
+    return;
   }
-  bool load = loadXml( fileno(file), false );
+  loadXml( fileno(file), false );
   fclose(file);
-  return load;
 }
 
 /**
@@ -334,7 +335,7 @@ bool PageXML::loadXml( const char* fname ) {
  *
  * @param fnum  File number from where to read the XML file.
  */
-bool PageXML::loadXml( int fnum, bool prevfree ) {
+void PageXML::loadXml( int fnum, bool prevfree ) {
   if ( prevfree )
     release();
 
@@ -342,7 +343,7 @@ bool PageXML::loadXml( int fnum, bool prevfree ) {
   xml = xmlReadFd( fnum, NULL, NULL, XML_PARSE_NONET );
   if ( ! xml ) {
    throw_runtime_error( "PageXML.loadXml: problems reading file" );
-   return false;
+   return;
   }
   setupXml();
 }
@@ -352,14 +353,15 @@ bool PageXML::loadXml( int fnum, bool prevfree ) {
  *
  * @param xml_string  The XML content.
  */
-bool PageXML::loadXmlString( const char* xml_string ) {
+void PageXML::loadXmlString( const char* xml_string ) {
   release();
+
   xml = xmlParseDoc( (xmlChar*)xml_string );
   if ( ! xml ) {
    throw_runtime_error( "PageXML.loadXml: problems reading XML from string" );
-   return false;
+   return;
   }
-  return setupXml();
+  setupXml();
 }
 
 /**
@@ -382,15 +384,15 @@ void PageXML::parsePageImage( int pagenum ) {
 /**
  * Setups internal variables related to the loaded Page XML.
  */
-bool PageXML::setupXml() {
+void PageXML::setupXml() {
   context = xmlXPathNewContext(xml);
   if( context == NULL ) {
     throw_runtime_error( "PageXML.setupXml: unable create xpath context" );
-    return false;
+    return;
   }
   if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to register namespace" );
-    return false;
+    return;
   }
   rootnode = context->node;
   rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
@@ -398,7 +400,7 @@ bool PageXML::setupXml() {
   vector<xmlNodePtr> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to find Page element(s)" );
-    return false;
+    return;
   }
 
   pagesImage = std::vector<PageImage>(elem_page.size());
@@ -413,8 +415,6 @@ bool PageXML::setupXml() {
 
   if( sortattr == NULL )
     sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
-
-  return true;
 }
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
