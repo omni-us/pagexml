@@ -53,9 +53,9 @@
     # Add property to text region
     pxml.setProperty( reg, "key", "value" )
 
-    # Add a second page with a text region
+    # Add a second page with a text region and specific id
     page = pxml.addPage("example_image_2.jpg", 300, 300)
-    reg = pxml.addTextRegion(page)
+    reg = pxml.addTextRegion( page, "regA" )
     pxml.setCoordsBBox( reg, 15, 12, 76, 128 )
 
     # Write XML to file
