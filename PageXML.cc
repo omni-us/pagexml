@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.11.27$
+ * @version $Version: 2017.12.01$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.11.27";
+static char class_version[] = "Version: 2017.12.01";
 
 /**
  * Returns the class version.
@@ -259,7 +259,7 @@ void PageXML::printConf( FILE* file ) {
  * @param imgW     Width of image.
  * @param imgH     Height of image.
  */
-void PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
+xmlNodePtr PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
   release();
 
   time_t now;
@@ -298,9 +298,12 @@ void PageXML::newXml( const char* creator, const char* image, const int imgW, co
     setAttr( "//_:Page", "imageHeight", to_string(height).c_str() );
 #else
     throw_runtime_error( "PageXML.newXml: invalid image size" );
-    return;
+    release();
+    return NULL;
 #endif
   }
+
+  return selectNth( "//_:Page", 0 );
 }
 
 /**
@@ -1969,6 +1972,20 @@ unsigned int PageXML::getPageHeight( xmlNodePtr node ) {
 }
 unsigned int PageXML::getPageWidth( int pagenum ) {
   return getPageWidth( selectNth("//_:Page",pagenum) );
+}
+
+/**
+ * Sets the imageFilename of a page.
+ */
+void PageXML::setPageImageFilename( xmlNodePtr node, const char* image ) {
+  if( ! nodeIs( node, "Page" ) ) {
+    throw_runtime_error( "PageXML.setPageImageFilename: node is required to be a Page" );
+    return;
+  }
+  setAttr( node, "imageFilename", image );
+}
+void PageXML::setPageImageFilename( int pagenum, const char* image ) {
+  return setPageImageFilename( selectNth("//_:Page",pagenum), image );
 }
 
 /**
