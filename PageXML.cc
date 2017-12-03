@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.12.01$
+ * @version $Version: 2017.12.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.12.01";
+static char class_version[] = "Version: 2017.12.03";
 
 /**
  * Returns the class version.
@@ -425,7 +425,9 @@ void PageXML::setupXml() {
 /**
  * Loads an image for the Page XML.
  *
- * @param fname  File name of the image to read.
+ * @param pagenum  The number of the page to load the image.
+ * @param fname    File name of the image to read overriding the one in the XML.
+ * @param fname    Whether to check that size of image agrees with XML.
  */
 void PageXML::loadImage( int pagenum, const char* fname, const bool check_size ) {
   string aux;
@@ -470,9 +472,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
 #endif
   }
 
-  // @todo Check image orientation and rotate if != 0
-
-  if( check_size ) {
+  /// Check that image size agrees with XML ///
+  if ( check_size ) {
     int width = getPageWidth(pagenum);
     int height = getPageHeight(pagenum);
 #if defined (__PAGEXML_LEPT__)
@@ -483,6 +484,57 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
     if( width != pagesImage[pagenum].size().width || height != pagesImage[pagenum].size().height )
 #endif
       throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size: %s", fname );
+  }
+
+  /// Check image orientation and rotate accordingly ///
+  int angle = getPageImageOrientation( pagenum );
+  if ( angle ) {
+#if defined (__PAGEXML_LEPT__)
+    Pix *orig = pagesImage[pagenum];
+    if ( angle == 90 )
+      pagesImage[pagenum] = pixRotateOrth(orig,1);
+    else if ( angle == 180 )
+      pagesImage[pagenum] = pixRotateOrth(orig,2);
+    else if ( angle == -90 )
+      pagesImage[pagenum] = pixRotateOrth(orig,3);
+    pixDestroy(&orig);
+#elif defined (__PAGEXML_MAGICK__)
+    int width_orig = pagesImage[pagenum].columns();
+    int height_orig = pagesImage[pagenum].rows();
+    int width_rot = angle == 180 ? width_orig : height_orig;
+    int height_rot = angle == 180 ? height_orig : width_orig;
+    Magick::Image rotated( Magick::Geometry(width_rot, height_rot), Magick::Color("black") );
+    Magick::Pixels view_orig(pagesImage[pagenum]);
+    Magick::Pixels view_rot(rotated);
+    const Magick::PixelPacket *pixs_orig = view_orig.getConst( 0, 0, width_orig, height_orig );
+    Magick::PixelPacket *pixs_rot = view_rot.get( 0, 0, width_rot, height_rot );
+    if ( angle == 90 ) {
+      for( int y=0, n=0; y<height_orig; y++ )
+        for( int x=0; x<width_orig; x++, n++ )
+          pixs_rot[x*width_rot+(width_rot-1-y)] = pixs_orig[n];
+    }
+    else if ( angle == 180 ) {
+      for( int y=0, n=0; y<height_orig; y++ )
+        for( int x=0; x<width_orig; x++, n++ )
+          pixs_rot[(height_rot-1-y)*width_rot+(width_rot-1-x)] = pixs_orig[n];
+    }
+    else if ( angle == -90 ) {
+      for( int y=0, n=0; y<height_orig; y++ )
+        for( int x=0; x<width_orig; x++, n++ )
+          pixs_rot[(height_rot-1-x)*width_rot+y] = pixs_orig[n];
+    }
+    view_rot.sync();
+    pagesImage[pagenum] = rotated;
+#elif defined (__PAGEXML_CVIMG__)
+    PageImage rotated;
+    if ( angle == 90 )
+      cv::rotate( pagesImage[pagenum], rotated, ROTATE_90_CLOCKWISE );
+    else if ( angle == 180 )
+      cv::rotate( pagesImage[pagenum], rotated, ROTATE_180 );
+    else if ( angle == -90 )
+      cv::rotate( pagesImage[pagenum], rotated, ROTATE_90_COUNTERCLOCKWISE );
+    pagesImage[pagenum] = rotated;
+#endif
   }
 }
 
@@ -1920,6 +1972,7 @@ void PageXML::setPageImageOrientation( int pagenum, int angle, const double* _co
  * Gets the image orientation for the given node.
  *
  * @param node   A node to get its image orientation.
+ * @return       Orientation in degrees.
  */
 int PageXML::getPageImageOrientation( xmlNodePtr node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
