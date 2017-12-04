@@ -9,6 +9,9 @@
 %include "opencv.i"
 %cv_instantiate_all_defaults
 
+%define PageImage cv::Mat
+%enddef
+
 %exception {
   try {
     $function
