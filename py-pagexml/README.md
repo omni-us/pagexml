@@ -1,4 +1,4 @@
-# PageXML library as a python module
+# PageXML C++ library as a python module
 
 
 ## Dependencies
@@ -24,7 +24,9 @@
     pip3 install --user pagexml-2017.11.5-cp35-cp35m-linux_x86_64.whl
 
 
-## Usage of the module in python
+## Usage examples of the module in python
+
+### Create a new Page XML adding regions, text and properties
 
     import pagexml
     pxml = pagexml.PageXML()
@@ -61,6 +63,8 @@
     # Write XML to file
     pxml.write("example_image.xml")
 
+### Modify an existing Page XML
+
     # Load an existing XML
     pxml.loadXml("example_image.xml")
 
@@ -69,3 +73,9 @@
 
     # Write XML to file
     pxml.write("example_image_2.xml")
+
+
+## Build wheel file from source
+
+    python setup.py build
+    python setup.py bdist_wheel

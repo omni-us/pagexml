@@ -25,7 +25,7 @@ def pagexml_Extension():
                      define_macros = [('__PAGEXML_CVIMG__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = ['-modern','-c++'],
+                     swig_opts = pkgconfig.cflags('opencv').split()+['-I./opencv-swig/lib','-modern','-c++'],
                      sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
 
 def pagexml_Version():

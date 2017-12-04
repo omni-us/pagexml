@@ -6,6 +6,9 @@
 %include "std_string.i"
 %include "exception.i"
 
+%include "opencv.i"
+%cv_instantiate_all_defaults
+
 %exception {
   try {
     $function
