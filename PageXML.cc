@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.12.03$
+ * @version $Version: 2017.12.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.12.03";
+static char class_version[] = "Version: 2017.12.04";
 
 /**
  * Returns the class version.
@@ -527,12 +527,17 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
     pagesImage[pagenum] = rotated;
 #elif defined (__PAGEXML_CVIMG__)
     PageImage rotated;
-    if ( angle == 90 )
-      cv::rotate( pagesImage[pagenum], rotated, ROTATE_90_CLOCKWISE );
-    else if ( angle == 180 )
-      cv::rotate( pagesImage[pagenum], rotated, ROTATE_180 );
-    else if ( angle == -90 )
-      cv::rotate( pagesImage[pagenum], rotated, ROTATE_90_COUNTERCLOCKWISE );
+    if ( angle == 90 ) {
+      cv::transpose(pagesImage[pagenum], rotated);
+      cv::flip(rotated, rotated, 1); //transpose+flip(1)=CW
+    }
+    else if ( angle == 180 ) {
+      cv::flip(pagesImage[pagenum], rotated, -1); //flip(-1)=180
+    }
+    else if ( angle == -90 ) {
+      cv::transpose(pagesImage[pagenum], rotated);
+      cv::flip(rotated, rotated, 0); //transpose+flip(0)=CCW
+    }
     pagesImage[pagenum] = rotated;
 #endif
   }
