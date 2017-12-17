@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.12.04$
+ * @version $Version: 2017.12.17$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.12.04";
+static char class_version[] = "Version: 2017.12.17";
 
 /**
  * Returns the class version.
@@ -861,7 +861,11 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
   string imageBase;
   unsigned int width = 0;
   unsigned int height = 0;
+#if defined (__PAGEXML_LEPT__)
+  PageImage pageImage = NULL;
+#else
   PageImage pageImage;
+#endif
 
   for( int n=0; n<(int)elems_coords.size(); n++ ) {
     xmlNodePtr node = elems_coords[n];
@@ -1845,7 +1849,7 @@ xmlNodePtr PageXML::setBaseline( xmlNodePtr node, double x1, double y1, double x
 /**
  * Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
  */
-bool intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point2f line2_point1, cv::Point2f line2_point2, cv::Point2f& _ipoint ) {
+bool PageXML::intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point2f line2_point1, cv::Point2f line2_point2, cv::Point2f& _ipoint ) {
   cv::Point2f x = line2_point1-line1_point1;
   cv::Point2f direct1 = line1_point2-line1_point1;
   cv::Point2f direct2 = line2_point2-line2_point1;
@@ -1868,7 +1872,7 @@ bool intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point
  * @param offset The offset of the poly-stripe (>=0 && <= 0.5).
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset ) {
+xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset, bool offset_check ) {
   if( ! nodeIs( node, "TextLine" ) ) {
     throw_runtime_error( "PageXML.setPolystripe: node is required to be a TextLine" );
     return NULL;
@@ -1881,7 +1885,7 @@ xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset
     throw_runtime_error( "PageXML.setPolystripe: unexpected height" );
     return NULL;
   }
-  if ( offset < 0 || offset > 0.5 ) {
+  if ( offset_check && ( offset < 0 || offset > 0.5 ) ) {
     throw_runtime_error( "PageXML.setPolystripe: unexpected offset" );
     return NULL;
   }
