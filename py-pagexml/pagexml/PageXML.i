@@ -7,7 +7,8 @@
 %include "exception.i"
 
 %include "opencv.i"
-%cv_instantiate_all_defaults
+%cv_mat__instantiate_defaults
+%cv_point_instantiate_defaults
 
 %define PageImage cv::Mat
 %enddef
@@ -27,5 +28,6 @@
 %pointer_class(double, ptr_double);
 
 %template(cvPoint2fVector) std::vector<cv::Point2f>;
+%template(xmlNodePtrVector) std::vector<xmlNodePtr>;
 
 %include "PageXML.h"
