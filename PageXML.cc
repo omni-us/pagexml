@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.12.17$
+ * @version $Version: 2017.12.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.12.17";
+static char class_version[] = "Version: 2017.12.22";
 
 /**
  * Returns the class version.
@@ -259,7 +259,7 @@ void PageXML::printConf( FILE* file ) {
  * @param imgW     Width of image.
  * @param imgH     Height of image.
  */
-xmlNodePtr PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
+xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
   release();
 
   time_t now;
@@ -371,7 +371,7 @@ void PageXML::loadXmlString( const char* xml_string ) {
  * Populates the imageFilename and pagesImageBase arrays for the given page number.
  */
 void PageXML::parsePageImage( int pagenum ) {
-  xmlNodePtr page = selectNth( "//_:Page", pagenum );
+  xmlNodePt page = selectNth( "//_:Page", pagenum );
   string imageFilename;
   if( ! getAttr( page, "imageFilename", imageFilename ) ) {
     throw_runtime_error( "PageXML.parsePageImage: problems retrieving image filename from xml" );
@@ -400,7 +400,7 @@ void PageXML::setupXml() {
   rootnode = context->node;
   rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
 
-  vector<xmlNodePtr> elem_page = select( "//_:Page" );
+  vector<xmlNodePt> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to find Page element(s)" );
     return;
@@ -543,7 +543,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
   }
 }
 
-void PageXML::loadImage( xmlNodePtr node, const char* fname, const bool check_size ) {
+void PageXML::loadImage( xmlNodePt node, const char* fname, const bool check_size ) {
   int pagenum = getPageNumber(node);
   if( pagenum >= 0 )
     return loadImage( pagenum, fname, check_size );
@@ -719,7 +719,7 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Number of matched nodes.
  */
-int PageXML::count( const char* xpath, xmlNodePtr basenode ) {
+int PageXML::count( const char* xpath, xmlNodePt basenode ) {
   return select( xpath, basenode ).size();
 }
 
@@ -730,7 +730,7 @@ int PageXML::count( const char* xpath, xmlNodePtr basenode ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Number of matched nodes.
  */
-int PageXML::count( string xpath, xmlNodePtr basenode ) {
+int PageXML::count( string xpath, xmlNodePt basenode ) {
   return select( xpath.c_str(), basenode ).size();
 }
 
@@ -741,8 +741,8 @@ int PageXML::count( string xpath, xmlNodePtr basenode ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Vector of matched nodes.
  */
-vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
-  vector<xmlNodePtr> matched;
+vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt basenode ) {
+  vector<xmlNodePt> matched;
 
 #define __REUSE_CONTEXT__
 
@@ -759,7 +759,7 @@ vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
       return matched;
     }
 #endif
-    ncontext->node = basenode;
+    ncontext->node = (xmlNodePtr)basenode;
   }
 
   xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
@@ -792,7 +792,7 @@ vector<xmlNodePtr> PageXML::select( const char* xpath, xmlNodePtr basenode ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Vector of matched nodes.
  */
-vector<xmlNodePtr> PageXML::select( string xpath, xmlNodePtr node ) {
+vector<xmlNodePt> PageXML::select( string xpath, const xmlNodePt node ) {
   return select( xpath.c_str(), node );
 }
 
@@ -804,8 +804,8 @@ vector<xmlNodePtr> PageXML::select( string xpath, xmlNodePtr node ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Matched node.
  */
-xmlNodePtr PageXML::selectNth( const char* xpath, unsigned num, xmlNodePtr node ) {
-  vector<xmlNodePtr> matches = select( xpath, node );
+xmlNodePt PageXML::selectNth( const char* xpath, unsigned num, const xmlNodePt node ) {
+  vector<xmlNodePt> matches = select( xpath, node );
   return matches.size() > num ? select( xpath, node )[num] : NULL;
 }
 
@@ -817,14 +817,14 @@ xmlNodePtr PageXML::selectNth( const char* xpath, unsigned num, xmlNodePtr node 
  * @param node   XML node for context, set to NULL for root node.
  * @return       Matched node.
  */
-xmlNodePtr PageXML::selectNth( string xpath, unsigned num, xmlNodePtr node ) {
+xmlNodePt PageXML::selectNth( string xpath, unsigned num, const xmlNodePt node ) {
   return selectNth( xpath.c_str(), num, node );
 }
 
 /**
  * Selects closest node of a given name.
  */
-xmlNodePtr PageXML::closest( const char* name, xmlNodePtr node ) {
+xmlNodePt PageXML::closest( const char* name, xmlNodePt node ) {
   return selectNth( string("ancestor-or-self::*[local-name()='")+name+"']", 0, node );
 }
 
@@ -835,7 +835,7 @@ xmlNodePtr PageXML::closest( const char* name, xmlNodePtr node ) {
  * @param name  String with name to match against.
  * @return      True if name matches, otherwise false.
  */
-bool PageXML::nodeIs( xmlNodePtr node, const char* name ) {
+bool PageXML::nodeIs( xmlNodePt node, const char* name ) {
   return ! node || xmlStrcmp( node->name, (const xmlChar*)name ) ? false : true;
 }
 
@@ -853,11 +853,11 @@ bool PageXML::nodeIs( xmlNodePtr node, const char* name ) {
 vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath ) {
   vector<NamedImage> images;
 
-  vector<xmlNodePtr> elems_coords = select( xpath );
+  vector<xmlNodePt> elems_coords = select( xpath );
   if( elems_coords.size() == 0 )
     return images;
 
-  xmlNodePtr prevPage = NULL;
+  xmlNodePt prevPage = NULL;
   string imageBase;
   unsigned int width = 0;
   unsigned int height = 0;
@@ -868,14 +868,14 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 #endif
 
   for( int n=0; n<(int)elems_coords.size(); n++ ) {
-    xmlNodePtr node = elems_coords[n];
+    xmlNodePt node = elems_coords[n];
 
     if( ! nodeIs( node, "Coords") ) {
       throw_runtime_error( "PageXML.crop: expected xpath to match only Coords elements: match=%d xpath=%s", n+1, xpath );
       return images;
     }
 
-    xmlNodePtr page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+    xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
     if( prevPage != page ) {
       prevPage = page;
       int pagenum = getPageNumber(page);
@@ -999,11 +999,11 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 
       /// Draw semi-transparent polygons according to xpath ///
       if( transp_xpath != NULL ) {
-        vector<xmlNodePtr> child_coords = select( transp_xpath, node );
+        vector<xmlNodePt> child_coords = select( transp_xpath, node );
 
         polys.clear();
         for( int m=0; m<(int)child_coords.size(); m++ ) {
-          xmlNodePtr childnode = child_coords[m];
+          xmlNodePt childnode = child_coords[m];
 
           string childid;
           getAttr( childnode->parent, "id", childid );
@@ -1059,7 +1059,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
  * @param value  String to set the value.
  * @return       True if attribute found, otherwise false.
 */
-bool PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) {
+bool PageXML::getAttr( const xmlNodePt node, const char* name, string& value ) {
   if( node == NULL )
     return false;
 
@@ -1081,7 +1081,7 @@ bool PageXML::getAttr( const xmlNodePtr node, const char* name, string& value ) 
  * @return       True if attribute found, otherwise false.
 */
 bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
-  vector<xmlNodePtr> xsel = select( xpath );
+  vector<xmlNodePt> xsel = select( xpath );
   if( xsel.size() == 0 )
     return false;
 
@@ -1097,7 +1097,7 @@ bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
  * @return       True if attribute found, otherwise false.
 */
 bool PageXML::getAttr( const string xpath, const string name, string& value ) {
-  vector<xmlNodePtr> xsel = select( xpath.c_str() );
+  vector<xmlNodePt> xsel = select( xpath.c_str() );
   if( xsel.size() == 0 )
     return false;
 
@@ -1112,7 +1112,7 @@ bool PageXML::getAttr( const string xpath, const string name, string& value ) {
  * @param value  Attribute value.
  * @return       Number of elements modified.
  */
-int PageXML::setAttr( vector<xmlNodePtr> nodes, const char* name, const char* value ) {
+int PageXML::setAttr( vector<xmlNodePt> nodes, const char* name, const char* value ) {
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
     xmlAttrPtr attr = xmlHasProp( nodes[n], (xmlChar*)name ) ?
       xmlSetProp( nodes[n], (xmlChar*)name, (xmlChar*)value ) :
@@ -1134,8 +1134,8 @@ int PageXML::setAttr( vector<xmlNodePtr> nodes, const char* name, const char* va
  * @param value  Attribute value.
  * @return       Number of elements modified.
  */
-int PageXML::setAttr( xmlNodePtr node, const char* name, const char* value ) {
-  return setAttr( vector<xmlNodePtr>{node}, name, value );
+int PageXML::setAttr( const xmlNodePt node, const char* name, const char* value ) {
+  return setAttr( vector<xmlNodePt>{(xmlNodePtr)node}, name, value );
 }
 
 /**
@@ -1171,15 +1171,15 @@ int PageXML::setAttr( const string xpath, const string name, const string value 
  * @param itype  Type of insertion.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::addElem( const char* name, const char* id, const xmlNodePtr node, PAGEXML_INSERT itype, bool checkid ) {
-  xmlNodePtr elem = xmlNewNode( rpagens, (xmlChar*)name );
+xmlNodePt PageXML::addElem( const char* name, const char* id, const xmlNodePt node, PAGEXML_INSERT itype, bool checkid ) {
+  xmlNodePt elem = xmlNewNode( rpagens, (xmlChar*)name );
   if( ! elem ) {
     throw_runtime_error( "PageXML.addElem: problems creating new element: name=%s", name );
     return NULL;
   }
   if( id != NULL ) {
     if( checkid ) {
-      vector<xmlNodePtr> idsel = select( (string("//*[@id='")+id+"']").c_str() );
+      vector<xmlNodePt> idsel = select( (string("//*[@id='")+id+"']").c_str() );
       if( idsel.size() > 0 ) {
         throw_runtime_error( "PageXML.addElem: id already exists: id=%s", id );
         return NULL;
@@ -1188,23 +1188,23 @@ xmlNodePtr PageXML::addElem( const char* name, const char* id, const xmlNodePtr 
     xmlNewProp( elem, (xmlChar*)"id", (xmlChar*)id );
   }
 
-  xmlNodePtr sel = NULL;
+  xmlNodePt sel = NULL;
   switch( itype ) {
     case PAGEXML_INSERT_APPEND:
-      elem = xmlAddChild(node,elem);
+      elem = xmlAddChild((xmlNodePtr)node,elem);
       break;
     case PAGEXML_INSERT_PREPEND:
       sel = selectNth("*",0,node);
       if( sel )
         elem = xmlAddPrevSibling(sel,elem);
       else
-        elem = xmlAddChild(node,elem);
+        elem = xmlAddChild((xmlNodePtr)node,elem);
       break;
     case PAGEXML_INSERT_NEXTSIB:
-      elem = xmlAddNextSibling(node,elem);
+      elem = xmlAddNextSibling((xmlNodePtr)node,elem);
       break;
     case PAGEXML_INSERT_PREVSIB:
-      elem = xmlAddPrevSibling(node,elem);
+      elem = xmlAddPrevSibling((xmlNodePtr)node,elem);
       break;
   }
 
@@ -1220,8 +1220,8 @@ xmlNodePtr PageXML::addElem( const char* name, const char* id, const xmlNodePtr 
  * @param itype  Type of insertion.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::addElem( const char* name, const char* id, const char* xpath, PAGEXML_INSERT itype, bool checkid ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::addElem( const char* name, const char* id, const char* xpath, PAGEXML_INSERT itype, bool checkid ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addElem: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -1239,8 +1239,8 @@ xmlNodePtr PageXML::addElem( const char* name, const char* id, const char* xpath
  * @param itype  Type of insertion.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::addElem( const string name, const string id, const string xpath, PAGEXML_INSERT itype, bool checkid ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::addElem( const string name, const string id, const string xpath, PAGEXML_INSERT itype, bool checkid ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addElem: unmatched target: xpath=%s", xpath.c_str() );
     return NULL;
@@ -1254,9 +1254,9 @@ xmlNodePtr PageXML::addElem( const string name, const string id, const string xp
  *
  * @param node   Element.
  */
-void PageXML::rmElem( const xmlNodePtr& node ) {
-  xmlUnlinkNode(node);
-  xmlFreeNode(node);
+void PageXML::rmElem( const xmlNodePt node ) {
+  xmlUnlinkNode((xmlNodePtr)node);
+  xmlFreeNode((xmlNodePtr)node);
 }
 
 /**
@@ -1265,10 +1265,10 @@ void PageXML::rmElem( const xmlNodePtr& node ) {
  * @param nodes  Vector of elements.
  * @return       Number of elements removed.
  */
-int PageXML::rmElems( const vector<xmlNodePtr>& nodes ) {
+int PageXML::rmElems( const vector<xmlNodePt>& nodes ) {
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
-    xmlUnlinkNode(nodes[n]);
-    xmlFreeNode(nodes[n]);
+    xmlUnlinkNode((xmlNodePtr)nodes[n]);
+    xmlFreeNode((xmlNodePtr)nodes[n]);
   }
 
   return (int)nodes.size();
@@ -1281,7 +1281,7 @@ int PageXML::rmElems( const vector<xmlNodePtr>& nodes ) {
  * @param node   Base node for element selection.
  * @return       Number of elements removed.
  */
-int PageXML::rmElems( const char* xpath, xmlNodePtr basenode ) {
+int PageXML::rmElems( const char* xpath, xmlNodePt basenode ) {
   return rmElems( select( xpath, basenode ) );
 }
 
@@ -1292,7 +1292,7 @@ int PageXML::rmElems( const char* xpath, xmlNodePtr basenode ) {
  * @param basenode Base node for element selection.
  * @return         Number of elements removed.
  */
-int PageXML::rmElems( const string xpath, xmlNodePtr basenode ) {
+int PageXML::rmElems( const string xpath, xmlNodePt basenode ) {
   return rmElems( select( xpath.c_str(), basenode ) );
 }
 
@@ -1304,7 +1304,7 @@ int PageXML::rmElems( const string xpath, xmlNodePtr basenode ) {
  * @param node       Node of the TextRegion element.
  * @param rotation   Rotation angle to set.
  */
-void PageXML::setRotation( const xmlNodePtr node, const float rotation ) {
+void PageXML::setRotation( const xmlNodePt node, const float rotation ) {
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextRegion") ) {
     char rot[64];
     snprintf( rot, sizeof rot, "%g", rotation );
@@ -1325,7 +1325,7 @@ void PageXML::setRotation( const xmlNodePtr node, const float rotation ) {
  * @param node       Node of the TextRegion element.
  * @param direction  Direction to set.
  */
-void PageXML::setReadingDirection( const xmlNodePtr node, PAGEXML_READ_DIRECTION direction ) {
+void PageXML::setReadingDirection( const xmlNodePt node, PAGEXML_READ_DIRECTION direction ) {
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextRegion") ) {
     if( direction == PAGEXML_READ_DIRECTION_RTL )
       setAttr( node, "readingDirection", "right-to-left" );
@@ -1349,12 +1349,12 @@ void PageXML::setReadingDirection( const xmlNodePtr node, PAGEXML_READ_DIRECTION
  * @param elem   Node of the TextLine or TextRegion element.
  * @return       The rotation angle in degrees, 0 if unset.
  */
-float PageXML::getRotation( const xmlNodePtr elem ) {
+float PageXML::getRotation( const xmlNodePt elem ) {
   float rotation = 0;
   if( elem == NULL )
     return rotation;
 
-  xmlNodePtr node = elem;
+  xmlNodePt node = (xmlNodePt)elem;
 
   /// If TextLine try to get rotation from custom attribute ///
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
@@ -1386,12 +1386,12 @@ float PageXML::getRotation( const xmlNodePtr elem ) {
  * @param elem   Node of the TextLine or TextRegion element.
  * @return       The reading direction, PAGEXML_READ_DIRECTION_LTR if unset.
  */
-int PageXML::getReadingDirection( const xmlNodePtr elem ) {
+int PageXML::getReadingDirection( const xmlNodePt elem ) {
   int direction = PAGEXML_READ_DIRECTION_LTR;
   if( elem == NULL )
     return direction;
 
-  xmlNodePtr node = elem;
+  xmlNodePt node = (xmlNodePt)elem;
 
   /// If TextLine try to get direction from custom attribute ///
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
@@ -1438,7 +1438,7 @@ int PageXML::getReadingDirection( const xmlNodePtr elem ) {
  * @param node   Node of the TextLine element.
  * @return       x-height>0 on success, -1 if unset.
  */
-float PageXML::getXheight( const xmlNodePtr node ) {
+float PageXML::getXheight( const xmlNodePt node ) {
   float xheight = -1;
 
   if( node != NULL &&
@@ -1460,7 +1460,7 @@ float PageXML::getXheight( const xmlNodePtr node ) {
  * @return       x-height>0 on success, -1 if unset.
  */
 float PageXML::getXheight( const char* id ) {
-  vector<xmlNodePtr> elem = select( string("//*[@id='")+id+"']" );
+  vector<xmlNodePt> elem = select( string("//*[@id='")+id+"']" );
   return getXheight( elem.size() == 0 ? NULL : elem[0] );
 }
 
@@ -1470,12 +1470,12 @@ float PageXML::getXheight( const char* id ) {
  * @param node   Base node.
  * @return       Reference to the points vector.
  */
-vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node, const char* xpath ) {
+vector<cv::Point2f> PageXML::getPoints( const xmlNodePt node, const char* xpath ) {
   vector<cv::Point2f> points;
   if( node == NULL )
     return points;
 
-  vector<xmlNodePtr> coords = select( xpath, node );
+  vector<xmlNodePt> coords = select( xpath, node );
   if( coords.size() == 0 )
     return points;
 
@@ -1492,7 +1492,7 @@ vector<cv::Point2f> PageXML::getPoints( const xmlNodePtr node, const char* xpath
  * @param nodes  Base nodes.
  * @return       Reference to the points vector.
  */
-std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePtr> nodes, const char* xpath ) {
+std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePt> nodes, const char* xpath ) {
   std::vector<std::vector<cv::Point2f> > points;
   for ( int n=0; n<(int)nodes.size(); n++ ) {
     std::vector<cv::Point2f> pts_n = getPoints( nodes[n], xpath );
@@ -1511,8 +1511,8 @@ std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xml
  * @param separator  String to add between TextEquivs.
  * @return           String with the concatenated TextEquivs.
  */
-std::string PageXML::getTextEquiv( xmlNodePtr node, const char* xpath, const char* separator ) {
-  std::vector<xmlNodePtr> nodes = select( std::string(xpath)+"/_:TextEquiv/_:Unicode", node );
+std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char* separator ) {
+  std::vector<xmlNodePt> nodes = select( std::string(xpath)+"/_:TextEquiv/_:Unicode", node );
   std::string text;
   for ( int n=0; n<(int)nodes.size(); n++ ) {
     xmlChar* t = xmlNodeGetContent(nodes[n]);
@@ -1575,7 +1575,7 @@ void PageXML::processEnd() {
  * Updates the last change time stamp.
  */
 void PageXML::updateLastChange() {
-  xmlNodePtr lastchange = selectNth( "//_:LastChange", 0 );
+  xmlNodePt lastchange = selectNth( "//_:LastChange", 0 );
   if( ! lastchange ) {
     throw_runtime_error( "PageXML.updateLastChange: unable to select node" );
     return;
@@ -1585,7 +1585,7 @@ void PageXML::updateLastChange() {
   time(&now);
   char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
-  xmlNodePtr text = xmlNewText( (xmlChar*)tstamp );
+  xmlNodePt text = xmlNewText( (xmlChar*)tstamp );
   if( ! text || ! xmlAddChild(lastchange,text) ) {
     throw_runtime_error( "PageXML.updateLastChange: problems updating time stamp" );
     return;
@@ -1600,13 +1600,13 @@ void PageXML::updateLastChange() {
  * @param val   The optional value for the Property.
  * @return      Pointer to created element.
  */
-xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* val ) {
+xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val ) {
   rmElems( select( std::string("_:Property[@key=\"")+key+"\"]", node ) );
 
-  std::vector<xmlNodePtr> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata']", node );
-  std::vector<xmlNodePtr> props = select( "_:Property", node );
+  std::vector<xmlNodePt> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata']", node );
+  std::vector<xmlNodePt> props = select( "_:Property", node );
 
-  xmlNodePtr prop = NULL;
+  xmlNodePt prop = NULL;
   if ( props.size() > 0 )
     prop = addElem( "Property", NULL, props[props.size()-1], PAGEXML_INSERT_NEXTSIB );
   else if ( siblafter.size() > 0 )
@@ -1638,12 +1638,12 @@ xmlNodePtr PageXML::setProperty( xmlNodePtr node, const char* key, const char* v
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setTextEquiv( xmlNodePtr node, const char* text, const double* _conf ) {
+xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double* _conf ) {
   rmElems( select( "_:TextEquiv", node ) );
 
-  xmlNodePtr textequiv = addElem( "TextEquiv", NULL, node );
+  xmlNodePt textequiv = addElem( "TextEquiv", NULL, node );
 
-  xmlNodePtr unicode = xmlNewTextChild( textequiv, NULL, (xmlChar*)"Unicode", (xmlChar*)text );
+  xmlNodePt unicode = xmlNewTextChild( textequiv, NULL, (xmlChar*)"Unicode", (xmlChar*)text );
   if( ! unicode ) {
     throw_runtime_error( "PageXML.setTextEquiv: problems setting TextEquiv" );
     return NULL;
@@ -1669,8 +1669,8 @@ xmlNodePtr PageXML::setTextEquiv( xmlNodePtr node, const char* text, const doubl
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.setTextEquiv: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -1687,11 +1687,11 @@ xmlNodePtr PageXML::setTextEquiv( const char* xpath, const char* text, const dou
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& points, const double* _conf ) {
+xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points, const double* _conf ) {
   rmElems( select( "_:Coords", node ) );
 
-  xmlNodePtr coords;
-  vector<xmlNodePtr> sel = select( "*[local-name()!='Property']", node );
+  xmlNodePt coords;
+  vector<xmlNodePt> sel = select( "*[local-name()!='Property']", node );
   if( sel.size() > 0 )
     coords = addElem( "Coords", NULL, sel[0], PAGEXML_INSERT_PREVSIB );
   else
@@ -1722,7 +1722,7 @@ xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point2f>& point
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point>& points, const double* _conf ) {
+xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, const double* _conf ) {
   std::vector<cv::Point2f> points2f;
   cv::Mat(points).convertTo(points2f, cv::Mat(points2f).type());
   return setCoords( node, points2f, _conf );
@@ -1736,8 +1736,8 @@ xmlNodePtr PageXML::setCoords( xmlNodePtr node, const vector<cv::Point>& points,
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.setCoords: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -1757,7 +1757,7 @@ xmlNodePtr PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poi
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setCoordsBBox( xmlNodePtr node, double xmin, double ymin, double width, double height, const double* _conf ) {
+xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf ) {
   double xmax = xmin+width;
   double ymax = ymin+height;
   vector<cv::Point2f> bbox;
@@ -1777,7 +1777,7 @@ xmlNodePtr PageXML::setCoordsBBox( xmlNodePtr node, double xmin, double ymin, do
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& points, const double* _conf ) {
+xmlNodePt PageXML::setBaseline( xmlNodePt node, const vector<cv::Point2f>& points, const double* _conf ) {
   if( ! nodeIs( node, "TextLine" ) ) {
     throw_runtime_error( "PageXML.setBaseline: node is required to be a TextLine" );
     return NULL;
@@ -1785,8 +1785,8 @@ xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& poi
 
   rmElems( select( "_:Baseline", node ) );
 
-  xmlNodePtr baseline;
-  vector<xmlNodePtr> sel = select( "*[local-name()!='Property' and local-name()!='Coords']", node );
+  xmlNodePt baseline;
+  vector<xmlNodePt> sel = select( "*[local-name()!='Property' and local-name()!='Coords']", node );
   if( sel.size() > 0 )
     baseline = addElem( "Baseline", NULL, sel[0], PAGEXML_INSERT_PREVSIB );
   else
@@ -1817,8 +1817,8 @@ xmlNodePtr PageXML::setBaseline( xmlNodePtr node, const vector<cv::Point2f>& poi
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.setBaseline: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -1838,7 +1838,7 @@ xmlNodePtr PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& p
  * @param conf   Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setBaseline( xmlNodePtr node, double x1, double y1, double x2, double y2, const double* _conf ) {
+xmlNodePt PageXML::setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double* _conf ) {
   vector<cv::Point2f> pts;
   pts.push_back( cv::Point2f(x1,y1) );
   pts.push_back( cv::Point2f(x2,y2) );
@@ -1872,7 +1872,7 @@ bool PageXML::intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, 
  * @param offset The offset of the poly-stripe (>=0 && <= 0.5).
  * @return       Pointer to created element.
  */
-xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset, bool offset_check ) {
+xmlNodePt PageXML::setPolystripe( xmlNodePt node, double height, double offset, bool offset_check ) {
   if( ! nodeIs( node, "TextLine" ) ) {
     throw_runtime_error( "PageXML.setPolystripe: node is required to be a TextLine" );
     return NULL;
@@ -1932,9 +1932,9 @@ xmlNodePtr PageXML::setPolystripe( xmlNodePtr node, double height, double offset
 /**
  * Gets the page number for the given node.
  */
-int PageXML::getPageNumber( xmlNodePtr node ) {
+int PageXML::getPageNumber( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
-  vector<xmlNodePtr> pages = select("//_:Page");
+  vector<xmlNodePt> pages = select("//_:Page");
   for( int n=0; n<(int)pages.size(); n++ )
     if( node == pages[n] )
       return n;
@@ -1948,7 +1948,7 @@ int PageXML::getPageNumber( xmlNodePtr node ) {
  * @param angle  The orientation angle in degrees {0,90,180,-90}.
  * @param conf   Pointer to confidence value, NULL for no confidence.
  */
-void PageXML::setPageImageOrientation( xmlNodePtr node, int angle, const double* _conf ) {
+void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double* _conf ) {
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.setPageImageOrientation: node is required to be a Page" );
     return;
@@ -1963,7 +1963,7 @@ void PageXML::setPageImageOrientation( xmlNodePtr node, int angle, const double*
   if( _conf == NULL && angle == 0 )
     return;
 
-  xmlNodePtr orientation = addElem( "ImageOrientation", NULL, node, PAGEXML_INSERT_PREPEND );
+  xmlNodePt orientation = addElem( "ImageOrientation", NULL, node, PAGEXML_INSERT_PREPEND );
 
   setAttr( orientation, "angle", to_string(angle).c_str() );
 
@@ -1983,7 +1983,7 @@ void PageXML::setPageImageOrientation( int pagenum, int angle, const double* _co
  * @param node   A node to get its image orientation.
  * @return       Orientation in degrees.
  */
-int PageXML::getPageImageOrientation( xmlNodePtr node ) {
+int PageXML::getPageImageOrientation( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! node ) {
     throw_runtime_error( "PageXML.getPageImageOrientation: node must be a Page or descendant of a Page" );
@@ -2005,7 +2005,7 @@ int PageXML::getPageImageOrientation( int pagenum ) {
 /**
  * Returns the width of a page.
  */
-unsigned int PageXML::getPageWidth( xmlNodePtr node ) {
+unsigned int PageXML::getPageWidth( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.getPageWidth: node is required to be a Page or descendant of a Page" );
@@ -2022,7 +2022,7 @@ unsigned int PageXML::getPageHeight( int pagenum ) {
 /**
  * Returns the height of a page.
  */
-unsigned int PageXML::getPageHeight( xmlNodePtr node ) {
+unsigned int PageXML::getPageHeight( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.getPageHeight: node is required to be a Page or descendant of a Page" );
@@ -2039,7 +2039,7 @@ unsigned int PageXML::getPageWidth( int pagenum ) {
 /**
  * Sets the imageFilename of a page.
  */
-void PageXML::setPageImageFilename( xmlNodePtr node, const char* image ) {
+void PageXML::setPageImageFilename( xmlNodePt node, const char* image ) {
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.setPageImageFilename: node is required to be a Page" );
     return;
@@ -2053,7 +2053,7 @@ void PageXML::setPageImageFilename( int pagenum, const char* image ) {
 /**
  * Returns the imageFilename of a page.
  */
-string PageXML::getPageImageFilename( xmlNodePtr node ) {
+string PageXML::getPageImageFilename( xmlNodePt node ) {
   string image;
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
@@ -2088,7 +2088,7 @@ PageImage PageXML::getPageImage( int pagenum ) {
 
   return pagesImage[pagenum];
 }
-PageImage PageXML::getPageImage( xmlNodePtr node ) {
+PageImage PageXML::getPageImage( xmlNodePt node ) {
   return getPageImage( getPageNumber(node) );
 }
 
@@ -2100,13 +2100,13 @@ PageImage PageXML::getPageImage( xmlNodePtr node ) {
  * @param before_id  If !=NULL inserts it before the Glyph with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addGlyph( xmlNodePt node, const char* id, const char* before_id ) {
   if( ! nodeIs( node, "Word" ) ) {
     throw_runtime_error( "PageXML.addGlyph: node is required to be a Word" );
     return NULL;
   }
 
-  xmlNodePtr glyph;
+  xmlNodePt glyph;
 
   string gid;
   if( id != NULL )
@@ -2131,7 +2131,7 @@ xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* befor
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePtr> sel = select( string("*[@id='")+before_id+"']", node );
+    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
     if( sel.size() == 0 ) {
       throw_runtime_error( "PageXML.addGlyph: unable to find id=%s", before_id );
       return NULL;
@@ -2139,7 +2139,7 @@ xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* befor
     glyph = addElem( "Glyph", gid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
   else {
-    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    vector<xmlNodePt> sel = select( "_:TextEquiv", node );
     if( sel.size() > 0 )
       glyph = addElem( "Glyph", gid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
     else
@@ -2157,8 +2157,8 @@ xmlNodePtr PageXML::addGlyph( xmlNodePtr node, const char* id, const char* befor
  * @param before_id  If !=NULL inserts it before the Glyph with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addGlyph( const char* xpath, const char* id, const char* before_id ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::addGlyph( const char* xpath, const char* id, const char* before_id ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addGlyph: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -2175,13 +2175,13 @@ xmlNodePtr PageXML::addGlyph( const char* xpath, const char* id, const char* bef
  * @param before_id  If !=NULL inserts it before the Word with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_id ) {
   if( ! nodeIs( node, "TextLine" ) ) {
     throw_runtime_error( "PageXML.addWord: node is required to be a TextLine" );
     return NULL;
   }
 
-  xmlNodePtr word;
+  xmlNodePt word;
 
   string wid;
   if( id != NULL )
@@ -2206,7 +2206,7 @@ xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePtr> sel = select( string("*[@id='")+before_id+"']", node );
+    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
     if( sel.size() == 0 ) {
       throw_runtime_error( "PageXML.addWord: unable to find id=%s", before_id );
       return NULL;
@@ -2214,7 +2214,7 @@ xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before
     word = addElem( "Word", wid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
   else {
-    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    vector<xmlNodePt> sel = select( "_:TextEquiv", node );
     if( sel.size() > 0 )
       word = addElem( "Word", wid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
     else
@@ -2232,8 +2232,8 @@ xmlNodePtr PageXML::addWord( xmlNodePtr node, const char* id, const char* before
  * @param before_id  If !=NULL inserts it before the Word with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addWord( const char* xpath, const char* id, const char* before_id ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::addWord( const char* xpath, const char* id, const char* before_id ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addWord: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -2250,13 +2250,13 @@ xmlNodePtr PageXML::addWord( const char* xpath, const char* id, const char* befo
  * @param before_id  If !=NULL inserts it before the TextLine with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* before_id ) {
   if( ! nodeIs( node, "TextRegion" ) ) {
     throw_runtime_error( "PageXML.addTextLine: node is required to be a TextRegion" );
     return NULL;
   }
 
-  xmlNodePtr textline;
+  xmlNodePt textline;
 
   string lid;
   if( id != NULL )
@@ -2281,7 +2281,7 @@ xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* be
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePtr> sel = select( string("*[@id='")+before_id+"']", node );
+    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
     if( sel.size() == 0 ) {
       throw_runtime_error( "PageXML.addTextLine: unable to find id=%s", before_id );
       return NULL;
@@ -2289,7 +2289,7 @@ xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* be
     textline = addElem( "TextLine", lid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
   else {
-    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    vector<xmlNodePt> sel = select( "_:TextEquiv", node );
     if( sel.size() > 0 )
       textline = addElem( "TextLine", lid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
     else
@@ -2307,8 +2307,8 @@ xmlNodePtr PageXML::addTextLine( xmlNodePtr node, const char* id, const char* be
  * @param before_id  If !=NULL inserts it before the TextLine with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addTextLine( const char* xpath, const char* id, const char* before_id ) {
-  vector<xmlNodePtr> target = select( xpath );
+xmlNodePt PageXML::addTextLine( const char* xpath, const char* id, const char* before_id ) {
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addTextLine: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -2325,13 +2325,13 @@ xmlNodePtr PageXML::addTextLine( const char* xpath, const char* id, const char* 
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* before_id ) {
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.addTextRegion: node is required to be a Page" );
     return NULL;
   }
 
-  xmlNodePtr textreg;
+  xmlNodePt textreg;
 
   string rid;
   if( id != NULL )
@@ -2351,7 +2351,7 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePtr> sel = select( string("*[@id='")+before_id+"']", node );
+    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
     if( sel.size() == 0 ) {
       throw_runtime_error( "PageXML.addTextRegion: unable to find id=%s", before_id );
       return NULL;
@@ -2359,7 +2359,7 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
     textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
   else {
-    vector<xmlNodePtr> sel = select( "_:TextEquiv", node );
+    vector<xmlNodePt> sel = select( "_:TextEquiv", node );
     if( sel.size() > 0 )
       textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
     else
@@ -2377,10 +2377,10 @@ xmlNodePtr PageXML::addTextRegion( xmlNodePtr node, const char* id, const char* 
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePtr PageXML::addTextRegion( const char* xpath, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char* before_id ) {
   if( xpath == NULL )
     xpath = "//_:Page";
-  vector<xmlNodePtr> target = select( xpath );
+  vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.addTextRegion: unmatched target: xpath=%s", xpath );
     return NULL;
@@ -2399,8 +2399,8 @@ xmlNodePtr PageXML::addTextRegion( const char* xpath, const char* id, const char
  * @param before_node  If !=NULL inserts it before the provided Page node.
  * @return             Pointer to created element.
  */
-xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, const char* id, xmlNodePtr before_node ) {
-  xmlNodePtr page;
+xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, const char* id, xmlNodePt before_node ) {
+  xmlNodePt page;
 
   PageImage pageImage;
   string imageFilename;
@@ -2427,7 +2427,7 @@ xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, 
     }
   }
   else {
-    xmlNodePtr pcgts = selectNth("/_:PcGts",0);
+    xmlNodePt pcgts = selectNth("/_:PcGts",0);
     if( ! pcgts ) {
       throw_runtime_error( "PageXML.addPage: unable to select PcGts node" );
       return NULL;
@@ -2459,7 +2459,7 @@ xmlNodePtr PageXML::addPage( const char* image, const int imgW, const int imgH, 
  * @param before_node  If !=NULL inserts it before the provided Page node.
  * @return             Pointer to created element.
  */
-xmlNodePtr PageXML::addPage( std::string image, const int imgW, const int imgH, const char* id, xmlNodePtr before_node ) {
+xmlNodePt PageXML::addPage( std::string image, const int imgW, const int imgH, const char* id, xmlNodePt before_node ) {
   return addPage(image.c_str(),imgW,imgH,id,before_node);
 }
 
@@ -2471,7 +2471,7 @@ bool PageXML::areIDsUnique() {
   bool unique = true;
   map<string,bool> seen;
 
-  vector<xmlNodePtr> nodes = select( "//*[@id]" );
+  vector<xmlNodePt> nodes = select( "//*[@id]" );
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
     getAttr( nodes[n], "id", id );
     if( seen.find(id) != seen.end() && seen[id] ) {
@@ -2496,12 +2496,12 @@ int PageXML::simplifyIDs() {
   regex reTrim("^[^a-zA-Z]*");
   regex reInvalid("[^a-zA-Z0-9_-]");
   string sampbase;
-  xmlNodePtr prevPage = NULL;
+  xmlNodePt prevPage = NULL;
 
-  vector<xmlNodePtr> nodes = select( "//*[@id][local-name()='TextLine' or local-name()='TextRegion']" );
+  vector<xmlNodePt> nodes = select( "//*[@id][local-name()='TextLine' or local-name()='TextRegion']" );
 
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
-    xmlNodePtr page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, nodes[n] );
+    xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, nodes[n] );
     if( prevPage != page ) {
       prevPage = page;
       sampbase = pagesImageBase[getPageNumber(page)];
@@ -2531,7 +2531,7 @@ int PageXML::simplifyIDs() {
 void PageXML::relativizeImageFilename( const char* xml_path ) {
   string xml_base = regex_replace(xml_path,regex("/[^/]+$"),"/");
 
-  vector<xmlNodePtr> pages = select( "//_:Page" );
+  vector<xmlNodePt> pages = select( "//_:Page" );
 
   for ( int n=(int)pages.size()-1; n>=0; n-- ) {
     std::string img;
@@ -2552,8 +2552,8 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
  * @param node       The element from which to extract the Coords points.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::getOGRpolygon( xmlNodePtr node ) {
-  std::vector<xmlNodePtr> coords = select( "_:Coords", node );
+OGRMultiPolygon* PageXML::getOGRpolygon( xmlNodePt node ) {
+  std::vector<xmlNodePt> coords = select( "_:Coords", node );
   if ( coords.size() == 0 )
     return NULL;
 
