@@ -28,6 +28,6 @@
 %pointer_class(double, ptr_double);
 
 %template(cvPoint2fVector) std::vector<cv::Point2f>;
-%template(xmlNodePtrVector) std::vector<xmlNodePtr>;
+%template(xmlNodePtrVector) std::vector<xmlNode*>;
 
 %include "PageXML.h"
