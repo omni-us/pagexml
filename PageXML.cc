@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2017.12.22$
+ * @version $Version: 2017.12.29$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.12.22";
+static char class_version[] = "Version: 2017.12.29";
 
 /**
  * Returns the class version.
@@ -2552,7 +2552,7 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
  * @param node       The element from which to extract the Coords points.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::getOGRpolygon( xmlNodePt node ) {
+OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node ) {
   std::vector<xmlNodePt> coords = select( "_:Coords", node );
   if ( coords.size() == 0 )
     return NULL;
