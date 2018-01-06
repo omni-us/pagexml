@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2017.12.29$
+ * @version $Version: 2018.01.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -111,7 +111,7 @@ class PageXML {
     void loadConf( const libconfig::Config& config );
 #endif
     void printConf( FILE* file = stdout );
-    xmlNodePt newXml( const char* creator, const char* image, const int imgW, const int imgH );
+    xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
     void loadXml( const char* fname );
     void loadXml( int fnum, bool prevfree = true );
     void loadXmlString( const char* xml_string );
