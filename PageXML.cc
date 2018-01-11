@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.01.06$
+ * @version $Version: 2018.01.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.01.06";
+static char class_version[] = "Version: 2018.01.11";
 
 /**
  * Returns the class version.
@@ -1598,9 +1598,10 @@ void PageXML::updateLastChange() {
  * @param node  The node of element to set the Property.
  * @param key   The key for the Property.
  * @param val   The optional value for the Property.
+ * @param _conf Pointer to confidence value, NULL for no confidence.
  * @return      Pointer to created element.
  */
-xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val ) {
+xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val, const double* _conf ) {
   rmElems( select( std::string("_:Property[@key=\"")+key+"\"]", node ) );
 
   std::vector<xmlNodePt> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata']", node );
@@ -1621,10 +1622,22 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val
   if ( ! setAttr( prop, "key", key ) ) {
     rmElem( prop );
     throw_runtime_error( "PageXML.setProperty: problems setting key attribute" );
+    return NULL;
   }
   if ( val != NULL && ! setAttr( prop, "value", val ) ) {
     rmElem( prop );
     throw_runtime_error( "PageXML.setProperty: problems setting value attribute" );
+    return NULL;
+  }
+
+  if( _conf != NULL ) {
+    char conf[64];
+    snprintf( conf, sizeof conf, "%g", *_conf );
+    if( ! xmlNewProp( prop, (xmlChar*)"conf", (xmlChar*)conf ) ) {
+      rmElem( prop );
+      throw_runtime_error( "PageXML.setProperty: problems setting conf attribute" );
+      return NULL;
+    }
   }
 
   return prop;
@@ -1635,7 +1648,7 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val
  *
  * @param node   The node of element to set the TextEquiv.
  * @param text   The text string.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double* _conf ) {
@@ -1666,7 +1679,7 @@ xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double*
  *
  * @param xpath  Selector for element to set the TextEquiv.
  * @param text   The text string.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf ) {
@@ -1684,7 +1697,7 @@ xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const doub
  *
  * @param node   The node of element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points, const double* _conf ) {
@@ -1719,7 +1732,7 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points,
  *
  * @param node   The node of element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, const double* _conf ) {
@@ -1733,7 +1746,7 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, c
  *
  * @param node   Selector for element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
@@ -1754,7 +1767,7 @@ xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poin
  * @param ymin   Minimum y value of bounding box.
  * @param width  Width of bounding box.
  * @param height Height of bounding box.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf ) {
@@ -1774,7 +1787,7 @@ xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, doub
  *
  * @param node   The node of element to set the Baseline.
  * @param points Vector of x,y coordinates for the points attribute.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setBaseline( xmlNodePt node, const vector<cv::Point2f>& points, const double* _conf ) {
@@ -1814,7 +1827,7 @@ xmlNodePt PageXML::setBaseline( xmlNodePt node, const vector<cv::Point2f>& point
  *
  * @param xpath  Selector for element to set the Baseline.
  * @param points Vector of x,y coordinates for the points attribute.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points, const double* _conf ) {
@@ -1835,7 +1848,7 @@ xmlNodePt PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& po
  * @param y1     y value of first point.
  * @param x2     x value of second point.
  * @param y2     y value of second point.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double* _conf ) {
@@ -1946,7 +1959,7 @@ int PageXML::getPageNumber( xmlNodePt node ) {
  *
  * @param node   The page node.
  * @param angle  The orientation angle in degrees {0,90,180,-90}.
- * @param conf   Pointer to confidence value, NULL for no confidence.
+ * @param _conf  Pointer to confidence value, NULL for no confidence.
  */
 void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double* _conf ) {
   if( ! nodeIs( node, "Page" ) ) {
