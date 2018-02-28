@@ -1465,6 +1465,34 @@ float PageXML::getXheight( const char* id ) {
 }
 
 /**
+ * Retrieves the features parallelogram (Property[@key="fpgram"]/@value) for a given node.
+ *
+ * @param node   Base node.
+ * @return       Reference to the points vector.
+ */
+vector<cv::Point2f> PageXML::getFpgram( const xmlNodePt node ) {
+  vector<cv::Point2f> points;
+  if( node == NULL )
+    return points;
+
+  vector<xmlNodePt> coords = select( "_:Property[@key='fpgram']", node );
+  if( coords.size() == 0 )
+    return points;
+
+  string spoints;
+  if( ! getAttr( coords[0], "value", spoints ) )
+    return points;
+
+  points = stringToPoints( spoints.c_str() );
+  if( points.size() != 4 ) {
+    throw_runtime_error( "PageXML.getFpgram: expected property value to be four points" );
+    return points;
+  }
+
+  return points;
+}
+
+/**
  * Retrieves and parses the Coords/@points for a given base node.
  *
  * @param node   Base node.
@@ -2474,6 +2502,15 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
  */
 xmlNodePt PageXML::addPage( std::string image, const int imgW, const int imgH, const char* id, xmlNodePt before_node ) {
   return addPage(image.c_str(),imgW,imgH,id,before_node);
+}
+
+/**
+ * Gets image bases for all pages in xml.
+ *
+ * @return  Vector of strings containing the image base names.
+ */
+std::vector<std::string> PageXML::getImageBases() {
+  return pagesImageBase;
 }
 
 /**

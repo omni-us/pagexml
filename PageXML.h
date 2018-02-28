@@ -121,6 +121,7 @@ class PageXML {
 #endif
     int simplifyIDs();
     void relativizeImageFilename( const char* xml_path );
+    std::vector<std::string> getImageBases();
     bool areIDsUnique();
     std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL );
     static std::vector<cv::Point2f> stringToPoints( const char* spoints );
@@ -158,6 +159,7 @@ class PageXML {
     int getReadingDirection( const xmlNodePt elem );
     float getXheight( const xmlNodePt node );
     float getXheight( const char* id );
+    std::vector<cv::Point2f> getFpgram( const xmlNodePt node );
     std::vector<cv::Point2f> getPoints( const xmlNodePt node, const char* xpath = "_:Coords" );
     std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
     std::string getTextEquiv( xmlNodePt node, const char* xpath = ".", const char* separator = " " );
