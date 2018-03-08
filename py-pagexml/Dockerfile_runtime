@@ -1,6 +1,6 @@
 FROM library/ubuntu:16.04
 
-MAINTAINER Mauricio Villegas <mauricio@searchink.com>
+MAINTAINER Mauricio Villegas <mauricio@omnius.com>
 
 ### Install pre-requisites ###
 RUN apt-get update --fix-missing \
