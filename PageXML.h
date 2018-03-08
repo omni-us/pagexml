@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.01.11$
+ * @version $Version: 2018.03.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -207,6 +207,7 @@ class PageXML {
     std::string toString();
 #if defined (__PAGEXML_OGR__)
     OGRMultiPolygon* getOGRpolygon( const xmlNodePt node );
+    double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
 #endif
     xmlDocPtr getDocPtr();
   private:

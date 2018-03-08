@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.01.11$
+ * @version $Version: 2018.03.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.01.11";
+static char class_version[] = "Version: 2018.03.08";
 
 /**
  * Returns the class version.
@@ -2603,27 +2603,39 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
  * @return           Pointer to OGRMultiPolygon element.
  */
 OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node ) {
-  std::vector<xmlNodePt> coords = select( "_:Coords", node );
-  if ( coords.size() == 0 )
-    return NULL;
+  std::vector<cv::Point2f> pts = getPoints(node);
 
-  // @todo THE FOLLOWING (BASED ON STRING) IS ONLY TEMPORAL !!!! Should get points and create a polygon point by point
-  std::string pts;
-  getAttr( coords[0], "points", pts );
-  std::replace( pts.begin(), pts.end(), ',', ';');
-  std::replace( pts.begin(), pts.end(), ' ', ',');
-  std::replace( pts.begin(), pts.end(), ';', ' ');
-  std::string::size_type pos = pts.find(',');
-  pts = std::string("POLYGON ((")+pts+","+pts.substr(0,pos)+"))";
-  //const char *wkt = pts.c_str();
-  char *wkt = &pts[0];
+  OGRLinearRing* ring = new OGRLinearRing();
+  OGRPolygon* poly = new OGRPolygon();
 
-  //fprintf(stderr,"%s\n",wkt);
+  for ( int n=0; n<(int)pts.size(); n++ )
+    ring->addPoint(pts[n].x, pts[n].y);
+  ring->closeRings();
+  poly->addRing(ring);
 
-  OGRGeometry *geom;
-  OGRGeometryFactory::createFromWkt( &wkt, NULL, &geom );
+  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+}
 
-  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(geom);
+/**
+ * Computes the intersection over union (IoU) of to polygons.
+ *
+ * @param poly1      First polygon.
+ * @param poly2      Second polygon.
+ * @return           IoU value.
+ */
+double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
+  OGRGeometry *isect_geom = poly1->Intersection(poly2);
+  int isect_type = isect_geom->getGeometryType();
+  if ( isect_type != wkbPolygon &&
+       isect_type != wkbMultiPolygon &&
+       isect_type != wkbGeometryCollection )
+    return 0.0;
+
+  double iou = ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
+  if ( iou != 0.0 )
+    iou /= ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly1->Union(poly2)))->get_Area();
+
+  return iou;
 }
 
 #endif
