@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2017.06.09$
+ * @version $Version: 2018.03.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,7 +61,7 @@ const Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2017.06.09";
+static char class_version[] = "Version: 2018.03.12";
 
 /**
  * Returns the class version.
@@ -1151,6 +1151,16 @@ void findOuterContours( Image& img, vector< vector<Point> >& contours, int metho
       cv::approxPolyDP( contours[n], approx, eps, true );
       contours[n] = approx;
     }
+  }
+
+  /// If no contours, use full image as contour ///
+  if( contours.size() == 0 ) {
+    vector<Point> contour;
+    contour.push_back( Point(0,0) );
+    contour.push_back( Point(img.columns()-1,0) );
+    contour.push_back( Point(img.columns()-1,img.rows()-1) );
+    contour.push_back( Point(0,img.rows()-1) );
+    contours.push_back(contour);
   }
 
   /// Add image page offset to contour coordinates ///
