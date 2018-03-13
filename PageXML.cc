@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.03.08$
+ * @version $Version: 2018.03.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.03.08";
+static char class_version[] = "Version: 2018.03.13";
 
 /**
  * Returns the class version.
@@ -2633,7 +2633,7 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
 
   double iou = ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
   if ( iou != 0.0 )
-    iou /= ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly1->Union(poly2)))->get_Area();
+    iou /= ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly1))->get_Area()+((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly2))->get_Area()-iou;
 
   return iou;
 }
