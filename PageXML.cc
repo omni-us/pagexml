@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.03.13$
+ * @version $Version: 2018.03.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.03.13";
+static char class_version[] = "Version: 2018.03.22";
 
 /**
  * Returns the class version.
@@ -2602,8 +2602,8 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
  * @param node       The element from which to extract the Coords points.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node ) {
-  std::vector<cv::Point2f> pts = getPoints(node);
+OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath ) {
+  std::vector<cv::Point2f> pts = getPoints(node,xpath);
 
   OGRLinearRing* ring = new OGRLinearRing();
   OGRPolygon* poly = new OGRPolygon();
@@ -2614,6 +2614,23 @@ OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node ) {
   poly->addRing(ring);
 
   return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+}
+
+/**
+ * Gets the element's Baseline as an OGRMultiLineString.
+ *
+ * @param node       The element from which to extract the Baseline points.
+ * @return           Pointer to OGRMultiLineString element.
+ */
+OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* xpath ) {
+  std::vector<cv::Point2f> pts = getPoints(node,xpath);
+
+  OGRLineString* curve = new OGRLineString();
+
+  for ( int n=0; n<(int)pts.size(); n++ )
+    curve->addPoint(pts[n].x, pts[n].y);
+
+  return (OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(curve);
 }
 
 /**
@@ -2633,7 +2650,7 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
 
   double iou = ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
   if ( iou != 0.0 )
-    iou /= ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly1))->get_Area()+((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly2))->get_Area()-iou;
+    iou /= poly1->get_Area()+poly2->get_Area()-iou;
 
   return iou;
 }

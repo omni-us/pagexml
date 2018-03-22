@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.03.13$
+ * @version $Version: 2018.03.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -206,7 +206,8 @@ class PageXML {
     int write( const char* fname = "-" );
     std::string toString();
 #if defined (__PAGEXML_OGR__)
-    OGRMultiPolygon* getOGRpolygon( const xmlNodePt node );
+    OGRMultiPolygon* getOGRpolygon( const xmlNodePt node, const char* xpath = "_:Coords" );
+    OGRMultiLineString* getOGRpolyline( const xmlNodePt node, const char* xpath = "_:Baseline" );
     double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
 #endif
     xmlDocPtr getDocPtr();
