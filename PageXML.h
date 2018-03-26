@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.03.22$
+ * @version $Version: 2018.03.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -155,6 +155,7 @@ class PageXML {
     int rmElems( const std::string xpath, xmlNodePt basenode = NULL );
     void setRotation( const xmlNodePt elem, const float rotation );
     void setReadingDirection( const xmlNodePt elem, PAGEXML_READ_DIRECTION direction );
+    double getBaselineOrientation( xmlNodePt elem );
     float getRotation( const xmlNodePt elem );
     int getReadingDirection( const xmlNodePt elem );
     float getXheight( const xmlNodePt node );

@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.03.22$
+ * @version $Version: 2018.03.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -45,7 +45,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.03.22";
+static char class_version[] = "Version: 2018.03.26";
 
 /**
  * Returns the class version.
@@ -1341,6 +1341,51 @@ void PageXML::setReadingDirection( const xmlNodePt node, PAGEXML_READ_DIRECTION 
     throw_runtime_error( "PageXML.setReadingDirection: only possible for TextRegion" );
     return;
   }
+}
+
+/**
+ * Computes the difference between two angles [-PI,PI] unaffected by the discontinuity
+ */
+double static inline angleDiff( double a1, double a2 ) {
+  double a = a1 - a2;
+  a += (a>M_PI) ? -2*M_PI : (a<-M_PI) ? 2*M_PI : 0;
+  return a;
+}
+
+/**
+ * Gets the (average) baseline orientation angle in radians of a given text line.
+ *
+ * @param elem   Node of the TextLine element.
+ * @return       The orientation angle in radians, NaN if unset.
+ */
+double PageXML::getBaselineOrientation( xmlNodePt elem ) {
+  if ( ! nodeIs( elem, "TextLine" ) ) {
+    throw_runtime_error( "PageXML.getBaselineOrientation: node is required to be a TextLine" );
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  std::vector<cv::Point2f> points = getPoints( elem, "_:Baseline" );
+  if ( points.size() == 0 )
+    return std::numeric_limits<double>::quiet_NaN();
+
+  double avgAngle = 0.0;
+  double totlgth = 0.0;
+  double angle1st = 0.0;
+
+  for ( int n = 1; n < (int)points.size(); n++ ) {
+    double lgth = cv::norm(points[n]-points[n-1]);
+    totlgth += lgth;
+    double angle = -atan2( points[n].y-points[n-1].y, points[n].x-points[n-1].x );
+    if ( n == 1 ) {
+      angle1st = angle;
+      avgAngle += lgth*angle;
+    }
+    else {
+      avgAngle += lgth*(angle1st+angleDiff(angle,angle1st));
+    }
+  }
+
+  return avgAngle/totlgth;
 }
 
 /**
