@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.03.26$
+ * @version $Version: 2018.04.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <regex>
 #include <iomanip>
+#include <unordered_set>
 
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
@@ -45,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.03.26";
+static char class_version[] = "Version: 2018.04.05";
 
 /**
  * Returns the class version.
@@ -1344,12 +1345,49 @@ void PageXML::setReadingDirection( const xmlNodePt node, PAGEXML_READ_DIRECTION 
 }
 
 /**
- * Computes the difference between two angles [-PI,PI] unaffected by the discontinuity
+ * Projects points onto a line defined by a direction and y-offset
+ */
+std::vector<double> static project_2d_to_1d( std::vector<cv::Point2f> points, cv::Point2f axis, double yoffset = 0.0 ) {
+  axis /= cv::norm(axis);
+  std::vector<double> proj(points.size());
+  for ( int n=0; n<(int)points.size(); n++ )
+    proj[n] = points[n].x*axis.x + (points[n].y-yoffset)*axis.y;
+  return proj;
+}
+
+/**
+ * Computes the difference between two angles [-PI,PI] accounting for the discontinuity
  */
 double static inline angleDiff( double a1, double a2 ) {
   double a = a1 - a2;
   a += (a>M_PI) ? -2*M_PI : (a<-M_PI) ? 2*M_PI : 0;
   return a;
+}
+
+/**
+ * Computes the 1D intersection
+ */
+double static inline intersection_1d( double& a1, double& a2, double& b1, double& b2 ) {
+  double tmp;
+  if ( a1 > a2 ) {
+    tmp = a1;
+    a1 = a2;
+    a2 = tmp;
+  }
+  if ( b1 > b2 ) {
+    tmp = b1;
+    b1 = b2;
+    b2 = tmp;
+  }
+  return std::max(0.0, std::min(a2, b2) - std::max(a1, b1));
+}
+
+/**
+ * Computes the 1D intersection over union
+ */
+double static inline IoU_1d( double a1, double a2, double b1, double b2 ) {
+  double isect = intersection_1d(a1,a2,b1,b2);
+  return isect == 0.0 ? 0.0 : isect/((a2-a1)+(b2-b1));
 }
 
 /**
@@ -1363,8 +1401,17 @@ double PageXML::getBaselineOrientation( xmlNodePt elem ) {
     throw_runtime_error( "PageXML.getBaselineOrientation: node is required to be a TextLine" );
     return std::numeric_limits<double>::quiet_NaN();
   }
-
   std::vector<cv::Point2f> points = getPoints( elem, "_:Baseline" );
+  return getBaselineOrientation(points);
+}
+
+/**
+ * Gets the (average) baseline orientation angle in radians of a given baseline.
+ *
+ * @param points  Baseline points.
+ * @return        The orientation angle in radians, NaN if unset.
+ */
+double PageXML::getBaselineOrientation( std::vector<cv::Point2f> points ) {
   if ( points.size() == 0 )
     return std::numeric_limits<double>::quiet_NaN();
 
@@ -1386,6 +1433,19 @@ double PageXML::getBaselineOrientation( xmlNodePt elem ) {
   }
 
   return avgAngle/totlgth;
+}
+
+/**
+ * Gets the baseline length.
+ *
+ * @param points  Baseline points.
+ * @return        The orientation angle in radians, NaN if unset.
+ */
+double PageXML::getBaselineLength( std::vector<cv::Point2f> points ) {
+  double totlgth = 0.0;
+  for ( int n = 1; n < (int)points.size(); n++ )
+    totlgth += cv::norm(points[n]-points[n-1]);
+  return totlgth;
 }
 
 /**
@@ -2701,6 +2761,247 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
 }
 
 #endif
+
+/**
+ * Tests for text line continuation (requires single segment polystripe).
+ *
+ * @param lines      TextLine elements to test for continuation.
+ * @return           Matrix of continuation scores.
+ */
+int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
+  /// Get points and compute baseline angles and lengths ///
+  std::vector< std::vector<cv::Point2f> > coords;
+  std::vector< std::vector<cv::Point2f> > baseline;
+  std::vector<double> angle;
+  std::vector<double> length;
+  int num_lines = lines.size();
+  for ( int n=0; n<num_lines; n++ ) {
+    coords.push_back( getPoints(lines[n]) );
+    baseline.push_back( getPoints(lines[n],"_:Baseline") );
+    angle.push_back(getBaselineOrientation(baseline[n]));
+    length.push_back(getBaselineLength(baseline[n]));
+
+    if ( ! nodeIs( lines[n], "TextLine" ) ) {
+      throw_runtime_error( "PageXML.testTextLineContinuation: input nodes need to be TextLines" );
+      return -1;
+    }
+    // @todo Check for single segment polystripe 
+    if ( baseline[n].size() != 2 || coords[n].size() != 4 ) {
+      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines a Coords are required to have exactly 2 and 4 points respectively" );
+      return -1;
+    }
+  }
+
+  std::vector<std::unordered_set<int> > line_groups;
+  std::vector<std::vector<int> > line_group_order;
+  std::vector<std::vector<double> > line_group_scores;
+  std::vector<double> line_group_direct;
+
+  /// Loop through all directed pairs of text lines ///
+  for ( int n=0; n<num_lines; n++ )
+    for ( int m=0; m<num_lines; m++ )
+      if ( n != m ) {
+        /// Check that baseline angle difference is small ///
+        double angle_diff = fabs(angleDiff(angle[n],angle[m]));
+        if ( angle_diff > cfg_max_angle_diff )
+          continue;
+
+        /// Project baseline limits onto the local horizontal axis ///
+        cv::Point2f dir_n = baseline[n][1]-baseline[n][0];
+        cv::Point2f dir_m = baseline[m][1]-baseline[m][0];
+        dir_n /= cv::norm(dir_n);
+        dir_m /= cv::norm(dir_m);
+        cv::Point2f horiz = (length[n]*dir_n+length[m]*dir_m)/(length[n]+length[m]);
+
+        std::vector<double> horiz_n = project_2d_to_1d(baseline[n],horiz);
+        std::vector<double> horiz_m = project_2d_to_1d(baseline[m],horiz);
+
+        /// Check that line n starts before line m ///
+        double direct = horiz_n[0] < horiz_n[1] ? 1.0 : -1.0;
+        if ( direct*horiz_m[0] < direct*horiz_n[0] )
+          continue;
+        
+        /// Check that horizontal IoU is small //
+        double iou = IoU_1d(horiz_n[0],horiz_n[1],horiz_m[0],horiz_m[1]);
+        if ( iou > cfg_max_horiz_iou )
+          continue;
+
+        /// Compute coords endpoint-startpoint intersection factors ///
+        std::vector<cv::Point2f> pts_n = coords[n];
+        std::vector<cv::Point2f> pts_m = coords[m];
+        std::vector<cv::Point2f> isect_nm(2);
+        std::vector<cv::Point2f> isect_mn(2);
+
+        if ( ! intersection( pts_n[0], pts_n[1], pts_m[0], pts_m[3], isect_nm[0] ) ) continue;
+        if ( ! intersection( pts_n[3], pts_n[2], pts_m[0], pts_m[3], isect_nm[1] ) ) continue;
+        if ( ! intersection( pts_m[0], pts_m[1], pts_n[1], pts_n[2], isect_mn[0] ) ) continue;
+        if ( ! intersection( pts_m[3], pts_m[2], pts_n[1], pts_n[2], isect_mn[1] ) ) continue;
+
+        std::vector<double> vert_nm_n = project_2d_to_1d(isect_nm, pts_m[3]-pts_m[0]);
+        std::vector<double> vert_nm_m = project_2d_to_1d(pts_m, pts_m[3]-pts_m[0]);
+        std::vector<double> vert_mn_n = project_2d_to_1d(pts_n, pts_n[2]-pts_n[1]);
+        std::vector<double> vert_mn_m = project_2d_to_1d(isect_mn, pts_n[2]-pts_n[1]);
+        double coords_fact_nm = intersection_1d(vert_nm_n[0],vert_nm_n[1],vert_nm_m[0],vert_nm_m[3])/cv::norm(pts_m[3]-pts_m[0]);
+        double coords_fact_mn = intersection_1d(vert_mn_n[1],vert_mn_n[2],vert_mn_m[0],vert_mn_m[1])/cv::norm(pts_n[2]-pts_n[1]);
+
+        /// Compute baseline alignment factors ///
+        std::vector<cv::Point2f> bline_n = baseline[n];
+        std::vector<cv::Point2f> bline_m = baseline[m];
+        if ( ! intersection( bline_n[0], bline_n[1], pts_m[0], pts_m[3], isect_nm[0] ) ) continue;
+        if ( ! intersection( bline_m[1], bline_m[0], pts_n[1], pts_n[2], isect_mn[0] ) ) continue;
+        double bline_fact_nm = cv::norm( isect_nm[0]-bline_m[0] )/cv::norm( pts_m[3]-pts_m[0] );
+        double bline_fact_mn = cv::norm( isect_mn[0]-bline_n[1] )/cv::norm( pts_n[2]-pts_n[1] );
+
+        double coords_fact = 0.5*(coords_fact_nm+coords_fact_mn);
+        double bline_fact = 0.5*((1.0-bline_fact_nm)+(1.0-bline_fact_mn));
+
+        double alpha = 0.8;
+        double prolong_fact = alpha*bline_fact + (1.0-0.8)*coords_fact;
+        if ( prolong_fact < cfg_min_prolong_fact )
+          continue;
+
+        /// Add text lines to a line group (new or existing) ///
+        std::unordered_set<int> line_group;
+        std::vector<int> group_order;
+        std::vector<double> group_scores;
+        std::vector<double> group_direct;
+        int k;
+        for ( k=0; k<(int)line_groups.size(); k++ )
+          if ( line_groups[k].find(n) != line_groups[k].end() || line_groups[k].find(m) != line_groups[k].end() ) {
+            line_group = line_groups[k];
+            group_order = line_group_order[k];
+            group_scores = line_group_scores[k];
+            break;
+          }
+        line_group.insert(n);
+        line_group.insert(m);
+        group_order.push_back(n);
+        group_order.push_back(m);
+        group_scores.push_back(prolong_fact);
+        if ( k < (int)line_groups.size() ) {
+          line_groups[k] = line_group;
+          line_group_order[k] = group_order;
+          line_group_scores[k] = group_scores;
+          line_group_direct[k] = direct;
+        }
+        else {
+          line_groups.push_back(line_group);
+          line_group_order.push_back(group_order);
+          line_group_scores.push_back(group_scores);
+          line_group_direct.push_back(direct);
+        }
+      }
+
+  /// Adjust text line order for groups with more than two text lines ///
+  std::vector<std::vector<int> > extra_group_order;
+  std::vector<double> extra_group_score;
+
+  for ( int k=0; k<(int)line_groups.size(); k++ )
+    if ( line_group_scores[k].size() > 1 ) {
+      int num_group = line_groups[k].size();
+
+      /// Get horizontal direction ///
+      std::vector<int> idx;
+      double totlength = 0.0;
+      cv::Point2f horiz(0.0,0.0);
+      for ( auto it = line_groups[k].begin(); it != line_groups[k].end(); it++ ) {
+        idx.push_back(*it);
+        totlength += length[*it];
+        cv::Point2f tmp = baseline[*it][1]-baseline[*it][0];
+        horiz += length[*it]*(tmp/cv::norm(tmp));
+      }
+      horiz /= totlength;
+
+      /// Check that high horizontal overlaps within group ///
+      std::vector<std::vector<double> > blines;
+      for ( int j=0; j<(int)idx.size(); j++ )
+        blines.push_back( project_2d_to_1d(baseline[idx[j]],horiz) );
+
+      bool recurse = false;
+      for ( int j=0; j<(int)blines.size(); j++ )
+        for ( int i=j+1; i<(int)blines.size(); i++ ) {
+          double iou = IoU_1d(blines[j][0],blines[j][1],blines[i][0],blines[i][1]);
+          if ( iou > cfg_max_horiz_iou ) {
+            recurse = true;
+            j=blines.size();
+            break;
+          }
+        }
+
+      /// If high overlap recurse with stricter criterion ///
+      double recurse_factor = 0.9;
+      if ( recurse ) {
+        std::vector<xmlNodePtr> recurse_lines;
+        std::vector<std::vector<int> > recurse_group_order;
+        std::vector<double> recurse_group_score;
+
+        for ( int j=0; j<(int)idx.size(); j++ )
+          recurse_lines.push_back(lines[idx[j]]);
+
+        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, cfg_max_angle_diff*recurse_factor, cfg_max_horiz_iou*recurse_factor, cfg_min_prolong_fact/recurse_factor );
+
+        if ( recurse_group_order.size() == 0 ) {
+          line_groups.erase(line_groups.begin()+k);
+          line_group_order.erase(line_group_order.begin()+k);
+          line_group_scores.erase(line_group_scores.begin()+k);
+          line_group_direct.erase(line_group_direct.begin()+k);
+          k--;
+        }
+        else {
+          for ( int j=0; j<(int)recurse_group_order.size(); j++ )
+            for ( int i=0; i<(int)recurse_group_order[j].size(); i++ )
+              recurse_group_order[j][i] = idx[recurse_group_order[j][i]];
+          line_group_order[k] = recurse_group_order[0];
+          line_group_scores[k].clear();
+          line_group_scores[k].push_back(recurse_group_score[0]);
+          for ( int j=1; j<(int)recurse_group_order.size(); j++ ) {
+            extra_group_order.push_back(recurse_group_order[j]);
+            extra_group_score.push_back(recurse_group_score[j]);
+          }
+        }
+
+        continue;
+      }
+
+      /// Project baseline centers onto the local horizontal axis ///
+      std::vector<cv::Point2f> cent;
+      for ( int j=0; j<(int)idx.size(); j++ )
+        cent.push_back(0.5*(baseline[idx[j]][0]+baseline[idx[j]][1]));
+      std::vector<double> hpos = project_2d_to_1d(cent,horiz);
+
+      /// Sort text lines by horizontal center projections ///
+      int flags = line_group_direct[k] == 1.0 ? CV_SORT_ASCENDING : CV_SORT_DESCENDING;
+      std::vector<int> sidx(num_group);
+      cv::sortIdx( hpos, sidx, flags );
+      std::vector<int> group_order;
+      for ( int j=0; j<(int)sidx.size(); j++ )
+        group_order.push_back(idx[sidx[j]]);
+
+      /// Score as average of scores ///
+      double score = 0.0;
+      for ( int j=0; j<(int)line_group_scores[k].size(); j++ )
+        score += line_group_scores[k][j];
+      std::vector<double> group_scores;
+      group_scores.push_back(score/line_group_scores[k].size());
+
+      line_group_order[k] = group_order;
+      line_group_scores[k] = group_scores;
+    }
+
+  std::vector<double> line_group_score;
+  for ( int k=0; k<(int)line_group_scores.size(); k++ )
+    line_group_score.push_back(line_group_scores[k][0]);
+
+  if ( extra_group_order.size() > 0 ) {
+    line_group_order.insert(line_group_order.end(), extra_group_order.begin(), extra_group_order.end());
+    line_group_score.insert(line_group_score.end(), extra_group_score.begin(), extra_group_score.end());
+  }
+
+  _line_group_order = line_group_order;
+  _line_group_score = line_group_score;
+
+  return (int)line_groups.size();
+}
 
 /**
  * Returns the XML document pointer.

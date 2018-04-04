@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.03.26$
+ * @version $Version: 2018.04.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -156,6 +156,8 @@ class PageXML {
     void setRotation( const xmlNodePt elem, const float rotation );
     void setReadingDirection( const xmlNodePt elem, PAGEXML_READ_DIRECTION direction );
     double getBaselineOrientation( xmlNodePt elem );
+    double getBaselineOrientation( std::vector<cv::Point2f> points );
+    double getBaselineLength( std::vector<cv::Point2f> points );
     float getRotation( const xmlNodePt elem );
     int getReadingDirection( const xmlNodePt elem );
     float getXheight( const xmlNodePt node );
@@ -211,6 +213,7 @@ class PageXML {
     OGRMultiLineString* getOGRpolyline( const xmlNodePt node, const char* xpath = "_:Baseline" );
     double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
 #endif
+    int testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff = 25*M_PI/180, double cfg_max_horiz_iou = 0.1, double cfg_min_prolong_fact = 0.5 );
     xmlDocPtr getDocPtr();
   private:
     bool indent = true;
