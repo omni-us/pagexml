@@ -2765,8 +2765,13 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
 /**
  * Tests for text line continuation (requires single segment polystripe).
  *
- * @param lines      TextLine elements to test for continuation.
- * @return           Matrix of continuation scores.
+ * @param lines                 TextLine elements to test for continuation.
+ * @param _line_group_order     Join groups line indices (output).
+ * @param _line_group_score     Join group scores (output).
+ * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
+ * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
+ * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
+ * @return                      Number of join groups.
  */
 int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
   /// Get points and compute baseline angles and lengths ///
@@ -3001,6 +3006,87 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
   _line_group_score = line_group_score;
 
   return (int)line_groups.size();
+}
+
+/**
+ * Gets the reading order for a set of text lines (requires single segment polystripe).
+ *
+ * @param lines                 TextLine elements to process.
+ * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
+ * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
+ * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
+ * @return                      Reading order indices.
+ */
+std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
+  /// Get text line join groups ///
+  std::vector<std::vector<int> > line_groups;
+  std::vector<double> join_group_score;
+  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, cfg_max_angle_diff, cfg_max_horiz_iou, cfg_min_prolong_fact );
+
+  /// Get points and compute baseline angles and lengths ///
+  std::vector<std::vector<cv::Point2f> > baseline;
+  std::vector<double> length;
+  for ( int n=0; n<(int)lines.size(); n++ ) {
+    baseline.push_back( getPoints(lines[n],"_:Baseline") );
+    length.push_back( getBaselineLength(baseline[n]) );
+  }
+
+  /// Get horizontal direction ///
+  double totlength = 0.0;
+  cv::Point2f horiz(0.0,0.0);
+  for ( int n=0; n<(int)lines.size(); n++ ) {
+    totlength += length[n];
+    cv::Point2f tmp = baseline[n][1]-baseline[n][0];
+    horiz += length[n]*(tmp/cv::norm(tmp));
+  }
+  horiz /= totlength;
+
+  /// Add text lines not in join groups ///
+  for ( int n=0; n<(int)lines.size(); n++ ) {
+    bool in_join_group = false;
+    for ( int i=0; i<num_joins; i++ )
+      for ( int j=0; j<(int)line_groups[i].size(); j++ )
+        if ( n == line_groups[i][j] ) {
+          in_join_group = true;
+          i = num_joins;
+          break;
+        }
+    if ( ! in_join_group ) {
+      std::vector<int> new_line;
+      new_line.push_back(n);
+      line_groups.push_back(new_line);
+    }
+  }
+
+  /// Get vertical group center projections ///
+  std::vector<cv::Point2f> cent;
+  for ( int i=0; i<(int)line_groups.size(); i++ ) {
+    double totlength = 0.0;
+    cv::Point2f gcent(0.0,0.0);
+    for ( int j=0; j<(int)line_groups[i].size(); j++ ) {
+      int n = line_groups[i][j];
+      totlength += length[n];
+      gcent += length[n]*0.5*(baseline[n][0]+baseline[n][1]);
+    }
+    gcent /= totlength;
+    cent.push_back(gcent);
+  }
+  cv::Point2f vert(-horiz.y,horiz.x);
+  std::vector<double> vpos = project_2d_to_1d(cent,vert);
+
+  /// Sort groups by vertical center projections ///
+  std::vector<int> sidx(vpos.size());
+  cv::sortIdx( vpos, sidx, CV_SORT_ASCENDING );
+
+  /// Populate reading order vector ///
+  std::vector<int> reading_order;
+  for ( int ii=0; ii<(int)sidx.size(); ii++ ) {
+    int i = sidx[ii];
+    for ( int j=0; j<(int)line_groups[i].size(); j++ )
+      reading_order.push_back(line_groups[i][j]);
+  }
+
+  return reading_order;
 }
 
 /**
