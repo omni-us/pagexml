@@ -74,7 +74,7 @@ struct NamedImage {
   NamedImage() {};
   NamedImage( std::string _id,
               std::string _name,
-              float _rotation,
+              double _rotation,
               int _direction,
               int _x,
               int _y,
@@ -123,6 +123,7 @@ class PageXML {
     void relativizeImageFilename( const char* xml_path );
     std::vector<std::string> getImageBases();
     bool areIDsUnique();
+    std::string getNodeName( xmlNodePt node );
     std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL );
     static std::vector<cv::Point2f> stringToPoints( const char* spoints );
     static std::vector<cv::Point2f> stringToPoints( std::string spoints );
@@ -158,7 +159,7 @@ class PageXML {
     double getBaselineOrientation( xmlNodePt elem );
     double getBaselineOrientation( std::vector<cv::Point2f> points );
     double getBaselineLength( std::vector<cv::Point2f> points );
-    float getRotation( const xmlNodePt elem );
+    double getRotation( const xmlNodePt elem );
     int getReadingDirection( const xmlNodePt elem );
     float getXheight( const xmlNodePt node );
     float getXheight( const char* id );

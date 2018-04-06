@@ -840,6 +840,24 @@ bool PageXML::nodeIs( xmlNodePt node, const char* name ) {
   return ! node || xmlStrcmp( node->name, (const xmlChar*)name ) ? false : true;
 }
 
+/**
+ * Gets the name of the given node.
+ *
+ * @param node  XML node.
+ * @return      String with the name.
+ */
+std::string PageXML::getNodeName( xmlNodePt node ) {
+  string nodename;
+  if( ! getAttr( node, "id", nodename ) ) {
+    throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
+    return nodename;
+  }
+  
+  xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+  nodename = pagesImageBase[getPageNumber(page)] + "." + nodename;
+  return nodename;
+}
+
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
 
 /**
@@ -859,7 +877,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     return images;
 
   xmlNodePt prevPage = NULL;
-  string imageBase;
+  //string imageBase;
   unsigned int width = 0;
   unsigned int height = 0;
 #if defined (__PAGEXML_LEPT__)
@@ -880,7 +898,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     if( prevPage != page ) {
       prevPage = page;
       int pagenum = getPageNumber(page);
-      imageBase = pagesImageBase[pagenum];
+      //imageBase = pagesImageBase[pagenum];
       width = getPageWidth(page);
       height = getPageHeight(page);
       #if defined (__PAGEXML_LEPT__)
@@ -902,7 +920,8 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     }
 
     /// Construct sample name ///
-    string sampname = imageBase + "." + sampid;
+    //string sampname = imageBase + "." + sampid;
+    std::string sampname = getNodeName( node->parent );
 
     /// Get coords points ///
     string spoints;
@@ -1030,13 +1049,17 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 #endif
     }
 
-// @todo Get baseline orientation for rotation in case of TextLine with Baseline
+    double rotation = std::numeric_limits<double>::quiet_NaN();
+    if ( nodeIs( node->parent, "TextLine" ) )
+      rotation = getBaselineOrientation( node->parent )*180.0/M_PI;
+    if ( std::isnan(rotation) )
+      rotation = getRotation(node->parent);
 
     /// Append crop and related data to list ///
     NamedImage namedimage(
       sampid,
       sampname,
-      getRotation(node->parent),
+      rotation,
       getReadingDirection(node->parent),
       cropX,
       cropY,
@@ -1454,8 +1477,8 @@ double PageXML::getBaselineLength( std::vector<cv::Point2f> points ) {
  * @param elem   Node of the TextLine or TextRegion element.
  * @return       The rotation angle in degrees, 0 if unset.
  */
-float PageXML::getRotation( const xmlNodePt elem ) {
-  float rotation = 0;
+double PageXML::getRotation( const xmlNodePt elem ) {
+  double rotation = 0.0;
   if( elem == NULL )
     return rotation;
 
@@ -1469,7 +1492,7 @@ float PageXML::getRotation( const xmlNodePt elem ) {
       xmlChar* attr = xmlGetProp( node, (xmlChar*)"custom" );
       cmatch base_match;
       if( regex_match((char*)attr,base_match,reRotation) )
-        rotation = stof(base_match[1].str());
+        rotation = stod(base_match[1].str());
       else
         node = node->parent;
       xmlFree(attr);
@@ -1478,7 +1501,7 @@ float PageXML::getRotation( const xmlNodePt elem ) {
   /// Otherwise try to get rotation from readingOrientation attribute ///
   if( xmlHasProp( node, (xmlChar*)"readingOrientation" ) ) {
     xmlChar* attr = xmlGetProp( node, (xmlChar*)"readingOrientation" );
-    rotation = stof((char*)attr);
+    rotation = stod((char*)attr);
     xmlFree(attr);
   }
 
