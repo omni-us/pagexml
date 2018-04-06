@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.04.05$
+ * @version $Version: 2018.04.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.04.05";
+static char class_version[] = "Version: 2018.04.06";
 
 /**
  * Returns the class version.
@@ -1348,7 +1348,7 @@ void PageXML::setReadingDirection( const xmlNodePt node, PAGEXML_READ_DIRECTION 
  * Projects points onto a line defined by a direction and y-offset
  */
 std::vector<double> static project_2d_to_1d( std::vector<cv::Point2f> points, cv::Point2f axis, double yoffset = 0.0 ) {
-  axis /= cv::norm(axis);
+  axis *= 1.0/cv::norm(axis);
   std::vector<double> proj(points.size());
   for ( int n=0; n<(int)points.size(); n++ )
     proj[n] = points[n].x*axis.x + (points[n].y-yoffset)*axis.y;
@@ -2814,9 +2814,9 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         /// Project baseline limits onto the local horizontal axis ///
         cv::Point2f dir_n = baseline[n][1]-baseline[n][0];
         cv::Point2f dir_m = baseline[m][1]-baseline[m][0];
-        dir_n /= cv::norm(dir_n);
-        dir_m /= cv::norm(dir_m);
-        cv::Point2f horiz = (length[n]*dir_n+length[m]*dir_m)/(length[n]+length[m]);
+        dir_n *= 1.0/cv::norm(dir_n);
+        dir_m *= 1.0/cv::norm(dir_m);
+        cv::Point2f horiz = (length[n]*dir_n+length[m]*dir_m)*(1.0/(length[n]+length[m]));
 
         std::vector<double> horiz_n = project_2d_to_1d(baseline[n],horiz);
         std::vector<double> horiz_m = project_2d_to_1d(baseline[m],horiz);
@@ -2913,9 +2913,9 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         idx.push_back(*it);
         totlength += length[*it];
         cv::Point2f tmp = baseline[*it][1]-baseline[*it][0];
-        horiz += length[*it]*(tmp/cv::norm(tmp));
+        horiz += (length[*it]/cv::norm(tmp))*tmp;
       }
-      horiz /= totlength;
+      horiz *= 1.0/totlength;
 
       /// Check that high horizontal overlaps within group ///
       std::vector<std::vector<double> > blines;
@@ -2928,10 +2928,10 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
           double iou = IoU_1d(blines[j][0],blines[j][1],blines[i][0],blines[i][1]);
           if ( iou > cfg_max_horiz_iou ) {
             recurse = true;
-            j=blines.size();
-            break;
+            goto afterRecourseLoop;
           }
         }
+      afterRecourseLoop:
 
       /// If high overlap recurse with stricter criterion ///
       double recurse_factor = 0.9;
@@ -3037,9 +3037,9 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
   for ( int n=0; n<(int)lines.size(); n++ ) {
     totlength += length[n];
     cv::Point2f tmp = baseline[n][1]-baseline[n][0];
-    horiz += length[n]*(tmp/cv::norm(tmp));
+    horiz += (length[n]/cv::norm(tmp))*tmp;
   }
-  horiz /= totlength;
+  horiz *= 1.0/totlength;
 
   /// Add text lines not in join groups ///
   for ( int n=0; n<(int)lines.size(); n++ ) {
@@ -3068,7 +3068,7 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
       totlength += length[n];
       gcent += length[n]*0.5*(baseline[n][0]+baseline[n][1]);
     }
-    gcent /= totlength;
+    gcent *= 1.0/totlength;
     cent.push_back(gcent);
   }
   cv::Point2f vert(-horiz.y,horiz.x);
