@@ -3018,6 +3018,10 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
  * @return                      Reading order indices.
  */
 std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
+  std::vector<int> reading_order;
+  if ( lines.size() == 0 )
+    return reading_order;
+
   /// Get text line join groups ///
   std::vector<std::vector<int> > line_groups;
   std::vector<double> join_group_score;
@@ -3079,7 +3083,6 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
   cv::sortIdx( vpos, sidx, CV_SORT_ASCENDING );
 
   /// Populate reading order vector ///
-  std::vector<int> reading_order;
   for ( int ii=0; ii<(int)sidx.size(); ii++ ) {
     int i = sidx[ii];
     for ( int j=0; j<(int)line_groups[i].size(); j++ )
