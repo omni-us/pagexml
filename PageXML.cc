@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.04.06$
+ * @version $Version: 2018.04.16$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.04.06";
+static char class_version[] = "Version: 2018.04.16";
 
 /**
  * Returns the class version.
@@ -2762,7 +2762,7 @@ OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* x
 }
 
 /**
- * Computes the intersection over union (IoU) of to polygons.
+ * Computes the intersection over union (IoU) of two polygons.
  *
  * @param poly1      First polygon.
  * @param poly2      Second polygon.
@@ -2781,6 +2781,103 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
     iou /= poly1->get_Area()+poly2->get_Area()-iou;
 
   return iou;
+}
+
+/**
+ * Computes the intersection over unions (IoU) of polygons.
+ *
+ * @param poly      Polygon.
+ * @param polys     Vector of polygons.
+ * @param ious      IoU values.
+ */
+void PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double>& ious ) {
+  ious.clear();
+  for ( int n=0; n<(int)polys.size(); n++ )
+    ious.push_back( computeIoU(poly,polys[n]) );
+}
+
+/**
+ * Computes coords-region intersections weighted by area.
+ *
+ * @param line       TextLine element.
+ * @param regs       TextRegion elements.
+ * @param reg_polys  Extracted OGR polygons.
+ * @param reg_areas  Region areas.
+ * @param scores     Obtained intersection scores.
+ */
+void PageXML::computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores ) {
+  /// Get region polygons ///
+  if ( regs.size() != reg_polys.size() || reg_polys.size() == 0 ) {
+    reg_polys.clear();
+    for ( int n=0; n<(int)regs.size(); n++ )
+      reg_polys.push_back( getOGRpolygon(regs[n]) );
+  }
+  /// Compute region areas ///
+  if ( regs.size() != reg_areas.size() || reg_areas.size() == 0 ) {
+    reg_areas.clear();
+    for ( int n=0; n<(int)reg_polys.size(); n++ )
+      reg_areas.push_back( reg_polys[n]->get_Area() );
+  }
+
+  /// Compute baseline intersections ///
+  scores.clear();
+  OGRMultiPolygon *coords = getOGRpolygon( line );
+  double coords_area = coords->get_Area();
+  double sum_areas = 0.0;
+  for ( int n=0; n<(int)reg_polys.size(); n++ ) {
+    OGRGeometry *isect_geom = reg_polys[n]->Intersection(coords);
+    double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Area();
+    scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/coords_area );
+    if ( isect_area > 0.0 )
+      sum_areas += reg_areas[n];
+  }
+
+  /// Weight by areas ///
+  for ( int n=0; n<(int)scores.size(); n++ )
+    if ( scores[n] > 0.0 )
+      scores[n] *= 1.0-reg_areas[n]/sum_areas;
+}
+
+/**
+ * Computes baseline-region intersections weighted by area.
+ *
+ * @param line       TextLine element.
+ * @param regs       TextRegion elements.
+ * @param reg_polys  Extracted OGR polygons.
+ * @param reg_areas  Region areas.
+ * @param scores     Obtained intersection scores.
+ */
+void PageXML::computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores ) {
+  /// Get region polygons ///
+  if ( regs.size() != reg_polys.size() || reg_polys.size() == 0 ) {
+    reg_polys.clear();
+    for ( int n=0; n<(int)regs.size(); n++ )
+      reg_polys.push_back( getOGRpolygon(regs[n]) );
+  }
+  /// Compute region areas ///
+  if ( regs.size() != reg_areas.size() || reg_areas.size() == 0 ) {
+    reg_areas.clear();
+    for ( int n=0; n<(int)reg_polys.size(); n++ )
+      reg_areas.push_back( reg_polys[n]->get_Area() );
+  }
+
+  /// Compute baseline intersections ///
+  scores.clear();
+  OGRMultiLineString *baseline = getOGRpolyline( line );
+  double baseline_length = baseline->get_Length();
+  double sum_areas = 0.0;
+  for ( int n=0; n<(int)reg_polys.size(); n++ ) {
+    OGRGeometry *isect_geom = reg_polys[n]->Intersection(baseline);
+    double isect_lgth = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Length();
+    scores.push_back( isect_lgth <= 0.0 ? 0.0 : isect_lgth/baseline_length );
+    if ( isect_lgth > 0.0 )
+      sum_areas += reg_areas[n];
+  }
+
+  /// Weight by areas ///
+  for ( int n=0; n<(int)scores.size(); n++ )
+    if ( scores[n] > 0.0 )
+      scores[n] *= 1.0-reg_areas[n]/sum_areas;
 }
 
 #endif
