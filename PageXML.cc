@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.04.16$
+ * @version $Version: 2018.04.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.04.16";
+static char class_version[] = "Version: 2018.04.20";
 
 /**
  * Returns the class version.
@@ -2029,6 +2029,89 @@ bool PageXML::intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, 
 
   double t1 = (x.x * direct2.y - x.y * direct2.x)/cross;
   _ipoint = line1_point1+t1*direct1;
+
+  return true;
+}
+
+/**
+ * Checks if a point is within a line segment
+ *
+ * @param segm_start  Point for begining of segment.
+ * @param segm_end    Point for end of segment.
+ * @param point       Point to check withiness.
+ * @return            0 if within segment, +1 if outside but aligned to the right, -1 if outside but aligned to the left, otherwise NaN.
+ */
+double withinSegment( cv::Point2f segm_start, cv::Point2f segm_end, cv::Point2f point ) {
+  cv::Point2f a = segm_start;
+  cv::Point2f b = segm_end;
+  cv::Point2f c = point;
+  double ab = cv::norm(a-b);
+  double ac = cv::norm(a-c);
+  double bc = cv::norm(b-c);
+  double area = fabs( a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y) ) / (2*(ab+ac+bc)*(ab+ac+bc));
+
+  /// check collinearity (normalized triangle area) ///
+  if ( area > 1e-3 )
+    return std::numeric_limits<double>::quiet_NaN();
+  /// return zero if in segment ///
+  if ( ac <= ab && bc <= ab )
+    return 0.0;
+  /// return +1 if to the right and -1 if to the left ///
+  return ac > bc ? 1.0 : -1.0;
+}
+
+/**
+ * Checks whether Coords is a poly-stripe for its corresponding baseline.
+ *
+ * @param coords    Coords points.
+ * @param baseline  Baseline points.
+ * @param offset    The offset of the poly-stripe (>=0 && <= 0.5).
+ * @return          Pointer to created element.
+ */
+bool PageXML::isPolystripe( std::vector<cv::Point2f> coords, std::vector<cv::Point2f> baseline, double* height, double* offset ) {
+  if ( baseline.size() == 0 ||
+       baseline.size()*2 != coords.size() )
+    return false;
+
+  double eps = 1e-2;
+  cv::Point2f prevbase;
+  cv::Point2f prevabove;
+  cv::Point2f prevbelow;
+
+  for ( int n=0; n<(int)baseline.size(); n++ ) {
+    int m = coords.size()-1-n;
+
+    /// Check points are collinear ///
+    if ( withinSegment( coords[n], coords[m], baseline[n] ) == 0.0 )
+      return false;
+
+    /// Check lines are parallel ///
+    if ( n > 0 ) {
+      prevbase = baseline[n-1]-baseline[n]; prevbase *= 1.0/cv::norm(prevbase);
+      prevabove = coords[n-1]-coords[n];    prevabove *= 1.0/cv::norm(prevabove);
+      prevbelow = coords[m+1]-coords[m];    prevbelow *= 1.0/cv::norm(prevbelow);
+      if ( fabs(1-fabs(prevabove.x*prevbase.x+prevabove.y*prevbase.y)) > eps ||
+           fabs(1-fabs(prevbelow.x*prevbase.x+prevbelow.y*prevbase.y)) > eps )
+        return false;
+    }
+
+    /// Check stripe extremes perpendicular to baseline ///
+    if ( n == 0 || n == (int)(baseline.size()-1) ) {
+      cv::Point2f base = n > 0 ? prevbase : baseline[1]-baseline[0]; base *= 1.0/cv::norm(base);
+      cv::Point2f extr = coords[n]-coords[m]; extr *= 1.0/cv::norm(extr);
+      if ( base.x*extr.x+base.y*extr.y > eps )
+        return false;
+    }
+  }
+
+  if ( height != NULL || offset != NULL ) {
+    double offup = cv::norm(baseline[0]-coords[0]);
+    double offdown = cv::norm(baseline[0]-coords[coords.size()-1]);
+    if ( height != NULL )
+      *height = offup+offdown;
+    if ( offset != NULL )
+      *offset = offdown/(offup+offdown);
+  }
 
   return true;
 }
