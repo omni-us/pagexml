@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.04.20$
+ * @version $Version: 2018.04.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -213,6 +213,7 @@ class PageXML {
 #if defined (__PAGEXML_OGR__)
     OGRMultiPolygon* getOGRpolygon( const xmlNodePt node, const char* xpath = "_:Coords" );
     OGRMultiLineString* getOGRpolyline( const xmlNodePt node, const char* xpath = "_:Baseline" );
+    double computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
     double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
     void computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double>& ious );
     void computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores );

@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.04.20$
+ * @version $Version: 2018.04.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.04.20";
+static char class_version[] = "Version: 2018.04.21";
 
 /**
  * Returns the class version.
@@ -2842,6 +2842,24 @@ OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* x
     curve->addPoint(pts[n].x, pts[n].y);
 
   return (OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(curve);
+}
+
+/**
+ * Computes the intersection factor of one polygon over another.
+ *
+ * @param poly1      First polygon.
+ * @param poly2      Second polygon.
+ * @return           Factor value.
+ */
+double PageXML::computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
+  OGRGeometry *isect_geom = poly1->Intersection(poly2);
+  int isect_type = isect_geom->getGeometryType();
+  if ( isect_type != wkbPolygon &&
+       isect_type != wkbMultiPolygon &&
+       isect_type != wkbGeometryCollection )
+    return 0.0;
+
+  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area()/poly1->get_Area();
 }
 
 /**
