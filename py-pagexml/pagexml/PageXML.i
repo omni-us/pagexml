@@ -13,6 +13,9 @@
 %define PageImage cv::Mat
 %enddef
 
+%define __PAGEXML_OGR__
+%enddef
+
 %exception {
   try {
     $function

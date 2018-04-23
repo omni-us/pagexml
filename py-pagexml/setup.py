@@ -15,7 +15,7 @@ class build(_build):
 
 def pagexml_Extension():
     import pkgconfig
-    libs = ['opencv','libxml-2.0','libxslt']
+    libs = ['opencv','libxml-2.0','libxslt','gdal']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
@@ -23,7 +23,7 @@ def pagexml_Extension():
         link_args += pkgconfig.libs(lib).split()
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
     return Extension('_pagexml',
-                     define_macros = [('__PAGEXML_CVIMG__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     define_macros = [('__PAGEXML_CVIMG__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
                      swig_opts = [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
