@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.04.24$
+ * @version $Version: 2018.05.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -140,9 +140,9 @@ class PageXML {
     xmlNodePt selectNth( std::string xpath, unsigned num = 0, const xmlNodePt basenode = NULL );
     xmlNodePt closest( const char* name, xmlNodePt node );
     static bool nodeIs( xmlNodePt node, const char* name );
-    bool getAttr( const xmlNodePt node,   const char* name,       std::string& value );
-    bool getAttr( const char* xpath,       const char* name,       std::string& value );
-    bool getAttr( const std::string xpath, const std::string name, std::string& value );
+    std::string getAttr( const xmlNodePt node,   const char* name );
+    std::string getAttr( const char* xpath,       const char* name );
+    std::string getAttr( const std::string xpath, const std::string name );
     int setAttr( std::vector<xmlNodePt> nodes, const char* name,       const char* value );
     int setAttr( const xmlNodePt node,          const char* name,       const char* value );
     int setAttr( const char* xpath,             const char* name,       const char* value );

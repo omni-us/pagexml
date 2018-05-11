@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.04.24$
+ * @version $Version: 2018.05.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.04.24";
+static char class_version[] = "Version: 2018.05.11";
 
 /**
  * Returns the class version.
@@ -373,8 +373,8 @@ void PageXML::loadXmlString( const char* xml_string ) {
  */
 void PageXML::parsePageImage( int pagenum ) {
   xmlNodePt page = selectNth( "//_:Page", pagenum );
-  string imageFilename;
-  if( ! getAttr( page, "imageFilename", imageFilename ) ) {
+  string imageFilename = getAttr( page, "imageFilename" );
+  if( imageFilename.empty() ) {
     throw_runtime_error( "PageXML.parsePageImage: problems retrieving image filename from xml" );
     return;
   }
@@ -847,8 +847,8 @@ bool PageXML::nodeIs( xmlNodePt node, const char* name ) {
  * @return      String with the name.
  */
 std::string PageXML::getNodeName( xmlNodePt node ) {
-  string nodename;
-  if( ! getAttr( node, "id", nodename ) ) {
+  string nodename = getAttr( node, "id" );
+  if( nodename.empty() ) {
     throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
     return nodename;
   }
@@ -913,8 +913,8 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     }
 
     /// Get parent node id ///
-    string sampid;
-    if( ! getAttr( node->parent, "id", sampid ) ) {
+    string sampid = getAttr( node->parent, "id" );
+    if( sampid.empty() ) {
       throw_runtime_error( "PageXML.crop: expected parent element to include id attribute: match=%d xpath=%s", n+1, xpath );
       return images;
     }
@@ -924,8 +924,8 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     std::string sampname = getNodeName( node->parent );
 
     /// Get coords points ///
-    string spoints;
-    if( ! getAttr( node, "points", spoints ) ) {
+    string spoints = getAttr( node, "points" );
+    if( spoints.empty() ) {
       throw_runtime_error( "PageXML.crop: expected a points attribute in Coords element: id=%s", sampid.c_str() );
       return images;
     }
@@ -1025,10 +1025,10 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
         for( int m=0; m<(int)child_coords.size(); m++ ) {
           xmlNodePt childnode = child_coords[m];
 
-          string childid;
-          getAttr( childnode->parent, "id", childid );
+          string childid = getAttr( childnode->parent, "id" );
 
-          if( ! getAttr( childnode, "points", spoints ) ) {
+          spoints = getAttr( childnode, "points" );
+          if( spoints.empty() ) {
             throw_runtime_error( "PageXML.crop: expected a points attribute in Coords element: id=%s", childid.c_str() );
             return images;
           }
@@ -1083,17 +1083,18 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
  * @param value  String to set the value.
  * @return       True if attribute found, otherwise false.
 */
-bool PageXML::getAttr( const xmlNodePt node, const char* name, string& value ) {
+string PageXML::getAttr( const xmlNodePt node, const char* name ) {
+  string value("");
   if( node == NULL )
-    return false;
+    return value;
 
   xmlChar* attr = xmlGetProp( node, (xmlChar*)name );
   if( attr == NULL )
-    return false;
+    return value;
   value = string((char*)attr);
   xmlFree(attr);
 
-  return true;
+  return value;
 }
 
 /**
@@ -1104,12 +1105,12 @@ bool PageXML::getAttr( const xmlNodePt node, const char* name, string& value ) {
  * @param value  String to set the value.
  * @return       True if attribute found, otherwise false.
 */
-bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
+string PageXML::getAttr( const char* xpath, const char* name ) {
   vector<xmlNodePt> xsel = select( xpath );
   if( xsel.size() == 0 )
-    return false;
+    return string("");
 
-  return getAttr( xsel[0], name, value );
+  return getAttr( xsel[0], name );
 }
 
 /**
@@ -1120,12 +1121,12 @@ bool PageXML::getAttr( const char* xpath, const char* name, string& value ) {
  * @param value  String to set the value.
  * @return       True if attribute found, otherwise false.
 */
-bool PageXML::getAttr( const string xpath, const string name, string& value ) {
+string PageXML::getAttr( const string xpath, const string name ) {
   vector<xmlNodePt> xsel = select( xpath.c_str() );
   if( xsel.size() == 0 )
-    return false;
+    return string("");
 
-  return getAttr( xsel[0], name.c_str(), value );
+  return getAttr( xsel[0], name.c_str() );
 }
 
 /**
@@ -1607,8 +1608,8 @@ vector<cv::Point2f> PageXML::getFpgram( const xmlNodePt node ) {
   if( coords.size() == 0 )
     return points;
 
-  string spoints;
-  if( ! getAttr( coords[0], "value", spoints ) )
+  string spoints = getAttr( coords[0], "value" );
+  if( spoints.empty() )
     return points;
 
   points = stringToPoints( spoints.c_str() );
@@ -1635,8 +1636,8 @@ vector<cv::Point2f> PageXML::getPoints( const xmlNodePt node, const char* xpath 
   if( coords.size() == 0 )
     return points;
 
-  string spoints;
-  if( ! getAttr( coords[0], "points", spoints ) )
+  string spoints = getAttr( coords[0], "points" );
+  if( spoints.empty() )
     return points;
 
   return stringToPoints( spoints.c_str() );
@@ -2246,8 +2247,7 @@ int PageXML::getPageImageOrientation( xmlNodePt node ) {
   if( ! node )
     return 0;
 
-  string angle;
-  getAttr( node, "angle", angle );
+  string angle = getAttr( node, "angle" );
   return atoi(angle.c_str());
 }
 int PageXML::getPageImageOrientation( int pagenum ) {
@@ -2263,8 +2263,7 @@ unsigned int PageXML::getPageWidth( xmlNodePt node ) {
     throw_runtime_error( "PageXML.getPageWidth: node is required to be a Page or descendant of a Page" );
     return 0;
   }
-  string width;
-  getAttr( node, "imageWidth", width );
+  string width = getAttr( node, "imageWidth" );
   return atoi(width.c_str());
 }
 unsigned int PageXML::getPageHeight( int pagenum ) {
@@ -2280,8 +2279,7 @@ unsigned int PageXML::getPageHeight( xmlNodePt node ) {
     throw_runtime_error( "PageXML.getPageHeight: node is required to be a Page or descendant of a Page" );
     return 0;
   }
-  string height;
-  getAttr( node, "imageHeight", height );
+  string height = getAttr( node, "imageHeight" );
   return atoi(height.c_str());
 }
 unsigned int PageXML::getPageWidth( int pagenum ) {
@@ -2306,14 +2304,12 @@ void PageXML::setPageImageFilename( int pagenum, const char* image ) {
  * Returns the imageFilename of a page.
  */
 string PageXML::getPageImageFilename( xmlNodePt node ) {
-  string image;
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.getPageImageFilename: node is required to be a Page or descendant of a Page" );
-    return image;
+    return string("");
   }
-  getAttr( node, "imageFilename", image );
-  return image;
+  return getAttr( node, "imageFilename" );
 }
 string PageXML::getPageImageFilename( int pagenum ) {
   return getPageImageFilename( selectNth("//_:Page",pagenum) );
@@ -2364,8 +2360,8 @@ xmlNodePt PageXML::addGlyph( xmlNodePt node, const char* id, const char* before_
   if( id != NULL )
     gid = string(id);
   else {
-    string wid;
-    if( ! getAttr( node, "id", wid ) ) {
+    string wid = getAttr( node, "id" );
+    if( wid.empty() ) {
       throw_runtime_error( "PageXML.addGlyph: expected element to have an id attribute" );
       return NULL;
     }
@@ -2439,8 +2435,8 @@ xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_i
   if( id != NULL )
     wid = string(id);
   else {
-    string lid;
-    if( ! getAttr( node, "id", lid ) ) {
+    string lid = getAttr( node, "id" );
+    if( lid.empty() ) {
       throw_runtime_error( "PageXML.addWord: expected element to have an id attribute" );
       return NULL;
     }
@@ -2514,8 +2510,8 @@ xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* befo
   if( id != NULL )
     lid = string(id);
   else {
-    string rid;
-    if( ! getAttr( node, "id", rid ) ) {
+    string rid = getAttr( node, "id" );
+    if( rid.empty() ) {
       throw_runtime_error( "PageXML.addTextLine: expected element to have an id attribute" );
       return NULL;
     }
@@ -2734,7 +2730,7 @@ bool PageXML::areIDsUnique() {
 
   vector<xmlNodePt> nodes = select( "//*[@id]" );
   for( int n=(int)nodes.size()-1; n>=0; n-- ) {
-    getAttr( nodes[n], "id", id );
+    id = getAttr( nodes[n], "id" );
     if( seen.find(id) != seen.end() && seen[id] ) {
       fprintf( stderr, "PageXML.areIDsUnique: duplicate ID: %s\n", id.c_str() );
       seen[id] = unique = false;
@@ -2795,8 +2791,7 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
   vector<xmlNodePt> pages = select( "//_:Page" );
 
   for ( int n=(int)pages.size()-1; n>=0; n-- ) {
-    std::string img;
-    getAttr( pages[n], "imageFilename", img );
+    std::string img = getAttr( pages[n], "imageFilename" );
     if ( img.compare(0, xml_base.length(), xml_base) == 0 ) {
       img.erase(0,xml_base.length());
       setAttr( pages[n], "imageFilename", img.c_str() );
