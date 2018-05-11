@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.03.12$
+ * @version $Version: 2018.05.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,7 +61,7 @@ const Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.03.12";
+static char class_version[] = "Version: 2018.05.11";
 
 /**
  * Returns the class version.
@@ -1464,6 +1464,8 @@ void TextFeatExtractor::estimateAngles( Image& image, float* _slope, float* _sla
     if( verbose )
       fprintf(stderr,"deslope time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
     vslope = stof( desloped.artifact("deskew:angle") );
+    if( vslope == 0.0 )
+      vslope = 0.0; // prevent negative zero
   }
   if( _slope != NULL )
     *_slope = vslope;
@@ -1488,6 +1490,8 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
   if( deslant ) {
     tm = high_resolution_clock::now();
     vslant = estimateSlant( desloped, deslant_min, deslant_max, deslant_step, deslant_hsteps );
+    if( vslant == 0.0 )
+      vslant = 0.0; // prevent negative zero
     if( verbose )
       fprintf(stderr,"deslant time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
   }
