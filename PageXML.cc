@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.05.11$
+ * @version $Version: 2018.05.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,7 +46,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.05.11";
+static char class_version[] = "Version: 2018.05.26";
 
 /**
  * Returns the class version.
@@ -2803,9 +2803,10 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
 #if defined (__PAGEXML_OGR__)
 
 /**
- * Gets the element's Coors as an OGRMultiPolygon.
+ * Gets an element's Coords as an OGRMultiPolygon.
  *
  * @param node       The element from which to extract the Coords points.
+ * @param xpath      Selector for the Coords element.
  * @return           Pointer to OGRMultiPolygon element.
  */
 OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath ) {
@@ -2820,6 +2821,44 @@ OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath
   poly->addRing(ring);
 
   return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+}
+
+/**
+ * Gets elements' Coords as OGRMultiPolygons.
+ *
+ * @param nodes      Elements from which to extract the Coords points.
+ * @param xpath      Selector for the Coords element.
+ * @return           Vector of OGRMultiPolygon pointer elements.
+ */
+std::vector<OGRMultiPolygon*> PageXML::getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath ) {
+  std::vector<OGRMultiPolygon*> polys;
+  for ( int n=0; n<(int)nodes.size(); n++ )
+    polys.push_back( getOGRpolygon(nodes[n],xpath) );
+  return polys;
+}
+
+/**
+ * Gets the union of Coords elements as a OGRMultiPolygon.
+ *
+ * @param nodes      Elements from which to extract the Coords points.
+ * @param xpath      Selector for the Coords element.
+ * @return           Pointer to OGRMultiPolygon element.
+ */
+OGRMultiPolygon* PageXML::getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath ) {
+  OGRGeometry* geo_union = getOGRpolygon(nodes[0],xpath);
+  for ( int n=1; n<(int)nodes.size(); n++ )
+    geo_union = geo_union->Union( getOGRpolygon(nodes[n],xpath) );
+  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(geo_union));
+}
+
+/**
+ * Gets the area of a OGRMultiPolygon.
+ *
+ * @param poly       OGRMultiPolygon pointer.
+ * @return           Area.
+ */
+double PageXML::getOGRpolygonArea( OGRMultiPolygon* poly ) {
+  return poly->get_Area();
 }
 
 /**
