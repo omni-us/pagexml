@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.05.26$
+ * @version $Version: 2018.06.01$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -147,6 +147,7 @@ class PageXML {
     int setAttr( const xmlNodePt node,          const char* name,       const char* value );
     int setAttr( const char* xpath,             const char* name,       const char* value );
     int setAttr( const std::string xpath,       const std::string name, const std::string value );
+    xmlNodePt insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype );
     xmlNodePt addElem( const char* name,       const char* id,       const xmlNodePt node,   PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
     xmlNodePt addElem( const char* name,       const char* id,       const char* xpath,       PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
     xmlNodePt addElem( const std::string name, const std::string id, const std::string xpath, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
@@ -154,6 +155,7 @@ class PageXML {
     int rmElems( const std::vector<xmlNodePt>& nodes );
     int rmElems( const char* xpath,       xmlNodePt basenode = NULL );
     int rmElems( const std::string xpath, xmlNodePt basenode = NULL );
+    xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype );
     void setRotation( const xmlNodePt elem, const float rotation );
     void setReadingDirection( const xmlNodePt elem, PAGEXML_READ_DIRECTION direction );
     double getBaselineOrientation( xmlNodePt elem );

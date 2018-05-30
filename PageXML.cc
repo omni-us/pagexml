@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.05.26$
+ * @version $Version: 2018.06.01$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -15,6 +15,7 @@
 #include <regex>
 #include <iomanip>
 #include <unordered_set>
+#include <cassert>
 
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
@@ -46,7 +47,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.05.26";
+static char class_version[] = "Version: 2018.06.01";
 
 /**
  * Returns the class version.
@@ -1188,6 +1189,41 @@ int PageXML::setAttr( const string xpath, const string name, const string value 
 }
 
 /**
+ * Inserts an element relative to a given node.
+ *
+ * @param elem   Element to insert.
+ * @param node   Reference element for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to inserted element.
+ */
+xmlNodePt PageXML::insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
+  assert( elem != NULL );
+
+  xmlNodePt sel = NULL;
+  switch( itype ) {
+    case PAGEXML_INSERT_APPEND:
+      elem = xmlAddChild((xmlNodePtr)node,elem);
+      break;
+    case PAGEXML_INSERT_PREPEND:
+      sel = selectNth("*",0,node);
+      if( sel )
+        elem = xmlAddPrevSibling(sel,elem);
+      else
+        elem = xmlAddChild((xmlNodePtr)node,elem);
+      break;
+    case PAGEXML_INSERT_NEXTSIB:
+      elem = xmlAddNextSibling((xmlNodePtr)node,elem);
+      break;
+    case PAGEXML_INSERT_PREVSIB:
+      elem = xmlAddPrevSibling((xmlNodePtr)node,elem);
+      break;
+  }
+
+  return elem;
+}
+
+
+/**
  * Creates a new element and adds it relative to a given node.
  *
  * @param name   Name of element to create.
@@ -1213,7 +1249,9 @@ xmlNodePt PageXML::addElem( const char* name, const char* id, const xmlNodePt no
     xmlNewProp( elem, (xmlChar*)"id", (xmlChar*)id );
   }
 
-  xmlNodePt sel = NULL;
+  return insertElem( elem, node, itype );
+
+/*   xmlNodePt sel = NULL;
   switch( itype ) {
     case PAGEXML_INSERT_APPEND:
       elem = xmlAddChild((xmlNodePtr)node,elem);
@@ -1233,7 +1271,7 @@ xmlNodePt PageXML::addElem( const char* name, const char* id, const xmlNodePt no
       break;
   }
 
-  return elem;
+  return elem; */
 }
 
 /**
@@ -1321,7 +1359,19 @@ int PageXML::rmElems( const string xpath, xmlNodePt basenode ) {
   return rmElems( select( xpath.c_str(), basenode ) );
 }
 
-
+/**
+ * Unlink an element and add it relative to a given node.
+ *
+ * @param elem   Element to move.
+ * @param node   Reference element for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to moved element.
+ */
+xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
+  assert( elem != NULL );
+  xmlUnlinkNode(elem);
+  return insertElem( elem, node, itype );
+}
 
 /**
  * Sets the rotation angle to a TextRegion node.
@@ -2689,6 +2739,7 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
   }
 
   setAttr( page, "imageFilename", image );
+  // @todo If size is zero, read the image and get size like in newXml
   setAttr( page, "imageWidth", to_string(imgW).c_str() );
   setAttr( page, "imageHeight", to_string(imgH).c_str() );
 
