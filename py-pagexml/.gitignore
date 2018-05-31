@@ -2,4 +2,6 @@ build
 dist
 pagexml/PageXML_wrap.cpp
 pagexml/pagexml.py
-pagexml/pagexml.egg-info
+pagexml.egg-info
+__pycache__
+_pagexml.*.so

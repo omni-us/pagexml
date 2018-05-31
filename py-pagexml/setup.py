@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, Extension
+from setuptools import setup, find_packages, Extension
 
 #https://stackoverflow.com/questions/17666018/using-distutils-where-swig-interface-file-is-in-src-folder
 from distutils.command.build import build as _build
@@ -33,7 +33,7 @@ def pagexml_Version():
     import re
     with open("pagexml/PageXML.h") as f:
         for line in f:
-            if "$Version:" in line:
+            if "$Version: 2018.05.31" in line:
                 line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
                 return re.sub(r'\.0', '.', line)
 
@@ -45,6 +45,7 @@ setup(name = 'pagexml',
       long_description = 'Library for handling of Page XML files.',
       #setup_requires = ['pkgconfig'], # does not install when missing?
       cmdclass = {'build': build}, #Use your own build class
-      py_modules = ['pagexml'],
-      package_dir = {'' : 'pagexml'},
+      packages = find_packages(exclude=('tests')),
+      test_suite = 'tests',
+      package_data = {'pagexml': ['xslt/*.xslt']},
       ext_modules = [pagexml_Extension()])
