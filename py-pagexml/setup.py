@@ -33,7 +33,7 @@ def pagexml_Version():
     import re
     with open("pagexml/PageXML.h") as f:
         for line in f:
-            if "$Version: 2018.05.31" in line:
+            if 'Version:' in line:
                 line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
                 return re.sub(r'\.0', '.', line)
 
@@ -46,6 +46,7 @@ setup(name = 'pagexml',
       #setup_requires = ['pkgconfig'], # does not install when missing?
       cmdclass = {'build': build}, #Use your own build class
       packages = find_packages(exclude=('tests')),
+      install_requires = [ 'lxml' ],
       test_suite = 'tests',
       package_data = {'pagexml': ['xslt/*.xslt']},
       ext_modules = [pagexml_Extension()])
