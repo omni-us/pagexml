@@ -1374,6 +1374,34 @@ xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
 }
 
 /**
+ * Unlink elements and add them relative to a given node.
+ *
+ * @param elem   Element to move.
+ * @param node   Reference element for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to moved element.
+ */
+int PageXML::moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype ) {
+  int moves = 0;
+  switch( itype ) {
+    case PAGEXML_INSERT_APPEND:
+    case PAGEXML_INSERT_PREVSIB:
+      for( int n=0; n<(int)elems.size(); n++ )
+        if( moveElem(elems[n],node,itype) != NULL )
+          moves++;
+      break;
+    case PAGEXML_INSERT_PREPEND:
+    case PAGEXML_INSERT_NEXTSIB:
+      for( int n=(int)elems.size()-1; n>=0; n-- )
+        if( moveElem(elems[n],node,itype) != NULL )
+          moves++;
+      break;
+  }
+
+  return moves;
+}
+
+/**
  * Sets the rotation angle to a TextRegion node.
  *
  * @param node       Node of the TextRegion element.
@@ -3116,7 +3144,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
     }
     // @todo Check for single segment polystripe 
     if ( baseline[n].size() != 2 || coords[n].size() != 4 ) {
-      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines a Coords are required to have exactly 2 and 4 points respectively" );
+      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines and Coords are required to have exactly 2 and 4 points respectively" );
       return -1;
     }
   }

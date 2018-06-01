@@ -155,7 +155,8 @@ class PageXML {
     int rmElems( const std::vector<xmlNodePt>& nodes );
     int rmElems( const char* xpath,       xmlNodePt basenode = NULL );
     int rmElems( const std::string xpath, xmlNodePt basenode = NULL );
-    xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype );
+    xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
+    int moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
     void setRotation( const xmlNodePt elem, const float rotation );
     void setReadingDirection( const xmlNodePt elem, PAGEXML_READ_DIRECTION direction );
     double getBaselineOrientation( xmlNodePt elem );
