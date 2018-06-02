@@ -202,6 +202,10 @@ class PageXML {
     unsigned int getPageWidth( int pagenum );
     unsigned int getPageHeight( xmlNodePt node );
     unsigned int getPageHeight( int pagenum );
+    std::vector<cv::Size2i> getPagesSize( std::vector<xmlNodePt> pages );
+    std::vector<cv::Size2i> getPagesSize( const char* xpath = "//_:Page" );
+    int resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio = true );
+    int resize( std::vector<cv::Size2i> sizes, const char* xpath = "//_:Page", bool check_aspect_ratio = true );
     void setPageImageFilename( xmlNodePt node, const char* image );
     void setPageImageFilename( int pagenum, const char* image );
     std::string getPageImageFilename( xmlNodePt node );

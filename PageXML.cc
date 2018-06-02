@@ -964,7 +964,14 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     boxDestroy(&box);
 #elif defined (__PAGEXML_MAGICK__)
     Magick::Image cropimg = pageImage;
-    cropimg.crop( Magick::Geometry(cropW,cropH,cropX,cropY) );
+    try {
+      cropimg.crop( Magick::Geometry(cropW,cropH,cropX,cropY) );
+      // @todo If crop partially outside image it will not fail, but fpgram will be wrong?
+    }
+    catch( exception& error ) {
+      fprintf( stderr, "PageXML.crop: error (%s): %s\n", sampname.c_str(), error.what() );
+      continue;
+    }
 #elif defined (__PAGEXML_CVIMG__)
     cv::Rect roi;
     roi.x = cropX;
@@ -2362,6 +2369,99 @@ unsigned int PageXML::getPageHeight( xmlNodePt node ) {
 }
 unsigned int PageXML::getPageWidth( int pagenum ) {
   return getPageWidth( selectNth("//_:Page",pagenum) );
+}
+
+/**
+ * Retrieves pages size.
+ *
+ * @param pages      Page nodes.
+ * @return           Vector of page sizes.
+ */
+std::vector<cv::Size2i> PageXML::getPagesSize( std::vector<xmlNodePt> pages ) {
+  std::vector<cv::Size2i> sizes;
+  for ( int n=0; n<(int)pages.size(); n++ ) {
+    if( ! nodeIs( pages[n], "Page" ) ) {
+      throw_runtime_error( "PageXML.getPagesSize: node is required to be a Page" );
+      return sizes;
+    }
+    cv::Size2i size( getPageWidth(pages[n]), getPageHeight(pages[n]) );
+    sizes.push_back(size);
+  }
+  return sizes;
+}
+std::vector<cv::Size2i> PageXML::getPagesSize( const char* xpath ) {
+  return getPagesSize( select(xpath) );
+}
+
+/**
+ * Resizes pages and all respective coordinates.
+ *
+ * @param sizes      Page sizes to resize to.
+ * @param pages      Page nodes.
+ * @return           Number of pages+points attributes modified.
+ */
+int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio ) {
+  /// Input checks ///
+  if ( sizes.size() != pages.size() ) {
+    throw_runtime_error( "PageXML.resize: number of sizes and pages must coincide" );
+    return 0;
+  }
+  for ( int n=0; n<(int)pages.size(); n++ )
+    if ( ! nodeIs( pages[n], "Page" ) ) {
+      throw_runtime_error( "PageXML.resize: all nodes are required to be Page" );
+      return 0;
+    }
+
+  /// Check that aspect ratios are the same ///
+  std::vector<cv::Size2i> orig_sizes = getPagesSize(pages);
+  if ( check_aspect_ratio )
+    for ( int n=0; n<(int)pages.size(); n++ ) {
+      double ratio_diff = sizes[n].width < sizes[n].height ?
+        (double)sizes[n].width/sizes[n].height - (double)orig_sizes[n].width/orig_sizes[n].height:
+        (double)sizes[n].height/sizes[n].width - (double)orig_sizes[n].height/orig_sizes[n].width;
+      if ( fabs(ratio_diff) > 1e-2 ) {
+        throw_runtime_error( "PageXML.resize: aspect ratio too different for page %d (%ux%u vs. %ux%u)", n, orig_sizes[n].width, orig_sizes[n].height, sizes[n].width, sizes[n].height );
+        return 0;
+      }
+    }
+
+  /// For each page update size and resize coords ///
+  int updated = 0;
+  for ( int n=0; n<(int)pages.size(); n++ ) {
+    setAttr( pages[n], "imageWidth", std::to_string(sizes[n].width).c_str() );
+    setAttr( pages[n], "imageHeight", std::to_string(sizes[n].height).c_str() );
+    double fact_x = (double)sizes[n].width/orig_sizes[n].width;
+    double fact_y = (double)sizes[n].height/orig_sizes[n].height;
+
+    /// Resize Coords/@points and Baseline/@points ///
+    std::vector<xmlNodePt> coords = select( ".//*[@points]", pages[n] );
+    for ( int m=0; m<(int)coords.size(); m++ ) {
+      std::vector<cv::Point2f> pts = stringToPoints( getAttr(coords[m],"points") );
+      for ( int k=(int)pts.size()-1; k>=0; k-- ) {
+        pts[k].x *= fact_x;
+        pts[k].y *= fact_y;
+      }
+      setAttr( coords[m], "points", pointsToString(pts).c_str() );
+    }
+
+    /// Resize Property[@key='fpgram']/@value ///
+    std::vector<xmlNodePt> fpgram = select( ".//_:Property[@key='fpgram' and @value]", pages[n] );
+    for ( int m=0; m<(int)fpgram.size(); m++ ) {
+      std::vector<cv::Point2f> pts = stringToPoints( getAttr(fpgram[m],"value") );
+      for ( int k=(int)pts.size()-1; k>=0; k-- ) {
+        pts[k].x *= fact_x;
+        pts[k].y *= fact_y;
+      }
+      setAttr( fpgram[m], "value", pointsToString(pts).c_str() );
+    }
+
+    updated += coords.size()+fpgram.size();
+  }
+
+  return updated+pages.size();
+}
+int PageXML::resize( std::vector<cv::Size2i> sizes, const char* xpath, bool check_aspect_ratio ) {
+  return resize( sizes, select(xpath), check_aspect_ratio );
 }
 
 /**
