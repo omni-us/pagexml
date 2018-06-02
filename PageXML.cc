@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.01$
+ * @version $Version: 2018.06.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.01";
+static char class_version[] = "Version: 2018.06.02";
 
 /**
  * Returns the class version.
@@ -3110,6 +3110,105 @@ void PageXML::computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::
   for ( int n=0; n<(int)scores.size(); n++ )
     if ( scores[n] > 0.0 )
       scores[n] *= 1.0-reg_areas[n]/sum_areas;
+}
+
+/**
+ * Copies TextLines from one page xml to another assigning to regions based on overlap.
+ *
+ * @param pageFrom      PageXML from where to copy TextLines.
+ * @param overlap_type  Type of overlap to use for assigning lines to regions.
+ * @param overlap_fact  Overlapping factor.
+ * @return              Number of TextLines copied.
+ */
+int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type, double overlap_fact ) {
+  xmlDocPtr docToPtr = getDocPtr();
+  std::vector<xmlNodePtr> pgsFrom = pageFrom.select("//_:Page");
+  std::vector<xmlNodePtr> pgsTo = select("//_:Page");
+
+  if ( pgsFrom.size() != pgsTo.size() ) {
+    throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: PageXML objects must have the same number of pages" );
+    return 0;
+  }
+
+  int linesCopied = 0;
+
+  /// Loop through pages ///
+  for ( int npage = 0; npage<(int)pgsFrom.size(); npage++ ) {
+    std::vector<xmlNodePtr> linesFrom = pageFrom.select( ".//_:TextLine", pgsFrom[npage] );
+    if( linesFrom.size() == 0 )
+      continue;
+
+    unsigned int toImW = getPageWidth(npage);
+    unsigned int toImH = getPageHeight(npage);
+    /// Check that image size is the same in both PageXMLs ///
+    if ( toImW != pageFrom.getPageWidth(npage) ||
+         toImH != pageFrom.getPageHeight(npage) ) {
+      throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: for Page %d image size differs between input PageXMLs", npage );
+      return 0;
+    }
+
+    /// Select page region or create one if it does not exist ///
+    std::string xmax = std::to_string(toImW-1);
+    std::string ymax = std::to_string(toImH-1);
+    xmlNodePtr pageRegTo = selectNth( std::string("_:TextRegion[_:Coords[@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']]", 0, pgsTo[npage] );
+    bool pageregadded = false;
+    if ( ! pageRegTo ) {
+      pageregadded = true;
+      pageRegTo = addTextRegion( pgsTo[npage], (std::string("page")+std::to_string(npage+1)).c_str() );
+      setCoordsBBox( pageRegTo, 0, 0, toImW-1, toImH-1 );
+    }
+
+    /// Select relevant elements ///
+    std::vector<xmlNodePtr> linesTo = select( ".//_:TextLine", pgsTo[npage] );
+    std::vector<xmlNodePtr> regsTo = select( ".//_:TextRegion", pgsTo[npage] );
+
+    /// Get polygons of regions for IoU computation ///
+    std::vector<OGRMultiPolygon*> regs_poly = getOGRpolygons(regsTo);
+
+    /// Loop through lines ///
+    std::vector<xmlNodePtr> linesAdded;
+    std::vector<double> reg_areas;
+    for ( int n=0; n<(int)linesFrom.size(); n++ ) {
+      /// Compute overlap scores ///
+      std::vector<double> overlap;
+      std::vector<double> overlap2;
+      switch ( overlap_type ) {
+        case PAGEXML_OVERLAP_COORDS_IOU:
+          computeIoUs( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, overlap );
+          break;
+        case PAGEXML_OVERLAP_COORDS_IWA:
+          computeCoordsIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
+          break;
+        case PAGEXML_OVERLAP_BASELINE_IWA:
+          computeBaselineIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
+          break;
+        case PAGEXML_OVERLAP_COORDS_BASELINE_IWA:
+          computeBaselineIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
+          computeCoordsIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap2 );
+          for ( int m=0; m<(int)overlap.size(); m++ )
+            overlap[m] = overlap_fact*overlap[m]+(1-overlap_fact)*overlap2[m];
+          break;
+      }
+
+      /// Clone line and add it to the destination region node ///
+      xmlNodePtr lineclone = NULL;
+      if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, linesFrom[n], &lineclone, docToPtr, NULL, 1, 0 ) ||
+          lineclone == NULL ) {
+        throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: problems cloning TextLine node" );
+        return 0;
+      }
+      int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
+      xmlAddChild(regsTo[max_idx],lineclone);
+    }
+
+    /// Remove added page region if no TextLine was added to it ///
+    if ( pageregadded && count("_:TextLine",pageRegTo) == 0 )
+      rmElem(pageRegTo);
+
+    linesCopied += linesFrom.size();
+  }
+
+  return linesCopied;
 }
 
 #endif

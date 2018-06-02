@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.06.01$
+ * @version $Version: 2018.06.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -59,6 +59,13 @@ enum PAGEXML_READ_DIRECTION {
   PAGEXML_READ_DIRECTION_RTL,
   PAGEXML_READ_DIRECTION_TTB,
   PAGEXML_READ_DIRECTION_BTT
+};
+
+enum PAGEXML_OVERLAP {
+  PAGEXML_OVERLAP_COORDS_IOU = 0,
+  PAGEXML_OVERLAP_COORDS_IWA,
+  PAGEXML_OVERLAP_BASELINE_IWA,
+  PAGEXML_OVERLAP_COORDS_BASELINE_IWA
 };
 
 struct NamedImage {
@@ -225,6 +232,7 @@ class PageXML {
     void computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double>& ious );
     void computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores );
     void computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores );
+    int copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IOU, double overlap_fact = 0.5 );
 #endif
     int testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff = 25*M_PI/180, double cfg_max_horiz_iou = 0.1, double cfg_min_prolong_fact = 0.5 );
     std::vector<int> getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff = 25*M_PI/180, double cfg_max_horiz_iou = 0.1, double cfg_min_prolong_fact = 0.5 );
