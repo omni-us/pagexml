@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from pagexml import pagexml
+import pagexml
 
 class MainTest(unittest.TestCase):
     def test_page_size(self):
