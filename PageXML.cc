@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.02$
+ * @version $Version: 2018.06.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.02";
+static char class_version[] = "Version: 2018.06.04";
 
 /**
  * Returns the class version.
@@ -828,6 +828,16 @@ xmlNodePt PageXML::selectNth( string xpath, unsigned num, const xmlNodePt node )
  */
 xmlNodePt PageXML::closest( const char* name, xmlNodePt node ) {
   return selectNth( string("ancestor-or-self::*[local-name()='")+name+"']", 0, node );
+}
+
+/**
+ * Returns the parent of a node.
+ *
+ * @param node   XML node.
+ * @return       Parent node.
+ */
+xmlNodePt PageXML::parent( const xmlNodePt node ) {
+  return node->parent;
 }
 
 /**
