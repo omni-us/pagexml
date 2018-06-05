@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.04$
+ * @version $Version: 2018.06.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ regex reInvalidBaseChars(" ");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.04";
+static char class_version[] = "Version: 2018.06.05";
 
 /**
  * Returns the class version.
@@ -857,15 +857,20 @@ bool PageXML::nodeIs( xmlNodePt node, const char* name ) {
  * @param node  XML node.
  * @return      String with the name.
  */
-std::string PageXML::getNodeName( xmlNodePt node ) {
+std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
   string nodename = getAttr( node, "id" );
   if( nodename.empty() ) {
     throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
     return nodename;
   }
   
-  xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
-  nodename = pagesImageBase[getPageNumber(page)] + "." + nodename;
+  if( base_node != NULL )
+    nodename = getValue(base_node) + "." + nodename;
+  else {
+    xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+    nodename = pagesImageBase[getPageNumber(page)] + "." + nodename;
+  }
+
   return nodename;
 }
 
@@ -880,7 +885,7 @@ std::string PageXML::getNodeName( xmlNodePt node ) {
  * @param transp_xpath   Selector for semi-transparent elements.
  * @return               An std::vector containing NamedImage objects of the cropped images.
  */
-vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath ) {
+vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath, const char* base_xpath ) {
   vector<NamedImage> images;
 
   vector<xmlNodePt> elems_coords = select( xpath );
@@ -896,6 +901,16 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 #else
   PageImage pageImage;
 #endif
+
+  xmlNodePt base_node = NULL;
+  if( base_xpath != NULL ) {
+    base_node = selectNth( base_xpath, 0 );
+    if( base_node == NULL ) {
+      throw_runtime_error( "PageXML.crop: base xpath did not match any nodes: xpath=%s", base_xpath );
+      return images;
+    }
+  }
+  // @todo Allow base_xpath to be relative to node, e.g. to select a different property for each page, region, etc.
 
   for( int n=0; n<(int)elems_coords.size(); n++ ) {
     xmlNodePt node = elems_coords[n];
@@ -932,7 +947,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 
     /// Construct sample name ///
     //string sampname = imageBase + "." + sampid;
-    std::string sampname = getNodeName( node->parent );
+    std::string sampname = getNodeName( node->parent, base_node );
 
     /// Get coords points ///
     string spoints = getAttr( node, "points" );
@@ -1092,6 +1107,20 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
 
 #endif
 
+/**
+ * Retrieves a node value.
+ *
+ * @param node       Node element.
+ * @return           String with the node value.
+ */
+std::string PageXML::getValue( xmlNodePt node ) {
+  if( node == NULL )
+    throw_runtime_error( "PageXML.getValue: received NULL pointer" );
+  xmlChar* val = xmlNodeGetContent(node);
+  std::string text = (char*)val;
+  xmlFree(val);
+  return text;
+}
 
 /**
  * Gets an attribute value from an xml node.
@@ -1769,7 +1798,7 @@ std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char
   for ( int n=0; n<(int)nodes.size(); n++ ) {
     xmlChar* t = xmlNodeGetContent(nodes[n]);
     text += std::string(n==0?"":separator) + (char*)t;
-    free(t);
+    xmlFree(t);
   }
   return text;
 }

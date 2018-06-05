@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.06.04$
+ * @version $Version: 2018.06.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -130,8 +130,8 @@ class PageXML {
     void relativizeImageFilename( const char* xml_path );
     std::vector<std::string> getImageBases();
     bool areIDsUnique();
-    std::string getNodeName( xmlNodePt node );
-    std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL );
+    std::string getNodeName( xmlNodePt node, xmlNodePt base_node = NULL );
+    std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
     static std::vector<cv::Point2f> stringToPoints( const char* spoints );
     static std::vector<cv::Point2f> stringToPoints( std::string spoints );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
@@ -148,10 +148,11 @@ class PageXML {
     xmlNodePt closest( const char* name, xmlNodePt node );
     xmlNodePt parent( const xmlNodePt node );
     static bool nodeIs( xmlNodePt node, const char* name );
-    std::string getAttr( const xmlNodePt node,   const char* name );
+    std::string getValue( xmlNodePt node );
+    std::string getAttr( const xmlNodePt node,    const char* name );
     std::string getAttr( const char* xpath,       const char* name );
     std::string getAttr( const std::string xpath, const std::string name );
-    int setAttr( std::vector<xmlNodePt> nodes, const char* name,       const char* value );
+    int setAttr( std::vector<xmlNodePt> nodes,  const char* name,       const char* value );
     int setAttr( const xmlNodePt node,          const char* name,       const char* value );
     int setAttr( const char* xpath,             const char* name,       const char* value );
     int setAttr( const std::string xpath,       const std::string name, const std::string value );
