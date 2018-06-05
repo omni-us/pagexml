@@ -123,8 +123,9 @@ class PageXML {
     void loadXml( int fnum, bool prevfree = true );
     void loadXmlString( const char* xml_string );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
-    void loadImage( int pagenum, const char* fname = NULL, const bool check_size = true );
-    void loadImage( xmlNodePt node, const char* fname = NULL, const bool check_size = true );
+    void loadImage( int pagenum, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
+    void loadImage( xmlNodePt node, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
+    void loadImages( const bool resize_coords, const int density );
 #endif
     int simplifyIDs();
     void relativizeImageFilename( const char* xml_path );
@@ -208,6 +209,7 @@ class PageXML {
     std::vector<cv::Size2i> getPagesSize( const char* xpath = "//_:Page" );
     int resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio = true );
     int resize( std::vector<cv::Size2i> sizes, const char* xpath = "//_:Page", bool check_aspect_ratio = true );
+    int resize( cv::Size2i size, xmlNodePt page, bool check_aspect_ratio = true );
     void setPageImageFilename( xmlNodePt node, const char* image );
     void setPageImageFilename( int pagenum, const char* image );
     std::string getPageImageFilename( xmlNodePt node );

@@ -41,6 +41,7 @@ regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
 regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 regex reFileExt("\\.[^.]+$");
 regex reInvalidBaseChars(" ");
+regex imagePageNum("(^.*)\\[([0-9]+)]$");
 
 
 /////////////////////
@@ -425,16 +426,23 @@ void PageXML::setupXml() {
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
 
 /**
- * Loads an image for the Page XML.
+ * Loads an image for a Page in the XML.
  *
- * @param pagenum  The number of the page to load the image.
- * @param fname    File name of the image to read overriding the one in the XML.
- * @param fname    Whether to check that size of image agrees with XML.
+ * @param pagenum        The number of the page for which to load the image.
+ * @param fname          File name of the image to read, overriding the one in the XML.
+ * @param resize_coords  If image size differs, resize page XML coordinates.
+ * @param density        Load the image at the given density, resizing the page coordinates if required.
  */
-void PageXML::loadImage( int pagenum, const char* fname, const bool check_size ) {
+void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density ) {
   string aux;
   if( fname == NULL ) {
     aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (xmlDir+'/'+pagesImageFilename[pagenum]);
+    fname = aux.c_str();
+  }
+
+  cmatch base_match;
+  if( regex_match(fname,base_match,imagePageNum) ) {
+    aux = base_match[1].str() + "[" + std::to_string(stoi(base_match[2].str())-1) + "]";
     fname = aux.c_str();
   }
 
@@ -446,6 +454,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
   }
 #elif defined (__PAGEXML_MAGICK__)
   try {
+    if( density )
+      pagesImage[pagenum].density(std::to_string(density).c_str());
     pagesImage[pagenum].read(fname);
   }
   catch( exception& e ) {
@@ -474,19 +484,30 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
 #endif
   }
 
-  /// Check that image size agrees with XML ///
-  if ( check_size ) {
-    int width = getPageWidth(pagenum);
-    int height = getPageHeight(pagenum);
 #if defined (__PAGEXML_LEPT__)
-    if( width != pixGetWidth(pagesImage[pagenum]) || height != pixGetHeight(pagesImage[pagenum]) )
+  int imgwidth = pixGetWidth(pagesImage[pagenum]);
+  int imgheight = pixGetHeight(pagesImage[pagenum]);
 #elif defined (__PAGEXML_MAGICK__)
-    if( width != (int)pagesImage[pagenum].columns() || height != (int)pagesImage[pagenum].rows() )
+  int imgwidth = (int)pagesImage[pagenum].columns();
+  int imgheight = (int)pagesImage[pagenum].rows();
 #elif defined (__PAGEXML_CVIMG__)
-    if( width != pagesImage[pagenum].size().width || height != pagesImage[pagenum].size().height )
+  int imgwidth = pagesImage[pagenum].size().width;
+  int imgheight = pagesImage[pagenum].size().height;
 #endif
-      throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size: %s", fname );
+  int width = getPageWidth(pagenum);
+  int height = getPageHeight(pagenum);
+
+  /// Resize XML coords if required ///
+  if( ( width != imgwidth || height != imgheight ) && resize_coords ) {
+    xmlNodePt page = selectNth("//_:Page",pagenum);
+    resize( cv::Size2i(imgwidth,imgheight), page, true );
+    width = getPageWidth(page);
+    height = getPageHeight(page);
   }
+
+  /// Check that image size agrees with XML ///
+  if( width != imgwidth || height != imgheight )
+    throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size (%dx%d vs. %dx%d): %s", imgwidth, imgheight, width, height, fname );
 
   /// Check image orientation and rotate accordingly ///
   int angle = getPageImageOrientation( pagenum );
@@ -545,11 +566,17 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool check_size )
   }
 }
 
-void PageXML::loadImage( xmlNodePt node, const char* fname, const bool check_size ) {
+void PageXML::loadImage( xmlNodePt node, const char* fname, const bool resize_coords, const int density ) {
   int pagenum = getPageNumber(node);
   if( pagenum >= 0 )
-    return loadImage( pagenum, fname, check_size );
+    return loadImage( pagenum, fname, resize_coords, density );
   throw_runtime_error( "PageXML.loadImage: node must be a Page or descendant of a Page" );
+}
+
+void PageXML::loadImages( const bool resize_coords, const int density ) {
+  int numpages = count("//_:Page");
+  for( int n=0; n<numpages; n++ )
+    loadImage( n, NULL, resize_coords, density );
 }
 
 
@@ -2390,8 +2417,8 @@ unsigned int PageXML::getPageWidth( xmlNodePt node ) {
   string width = getAttr( node, "imageWidth" );
   return atoi(width.c_str());
 }
-unsigned int PageXML::getPageHeight( int pagenum ) {
-  return getPageHeight( selectNth("//_:Page",pagenum) );
+unsigned int PageXML::getPageWidth( int pagenum ) {
+  return getPageWidth( selectNth("//_:Page",pagenum) );
 }
 
 /**
@@ -2406,8 +2433,8 @@ unsigned int PageXML::getPageHeight( xmlNodePt node ) {
   string height = getAttr( node, "imageHeight" );
   return atoi(height.c_str());
 }
-unsigned int PageXML::getPageWidth( int pagenum ) {
-  return getPageWidth( selectNth("//_:Page",pagenum) );
+unsigned int PageXML::getPageHeight( int pagenum ) {
+  return getPageHeight( selectNth("//_:Page",pagenum) );
 }
 
 /**
@@ -2501,6 +2528,11 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
 }
 int PageXML::resize( std::vector<cv::Size2i> sizes, const char* xpath, bool check_aspect_ratio ) {
   return resize( sizes, select(xpath), check_aspect_ratio );
+}
+int PageXML::resize( cv::Size2i size, xmlNodePt page, bool check_aspect_ratio ) {
+  std::vector<cv::Size2i> sizes = {size};
+  std::vector<xmlNodePt> pages = {page};
+  return resize( sizes, pages, check_aspect_ratio );
 }
 
 /**
