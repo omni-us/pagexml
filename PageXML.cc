@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.05$
+ * @version $Version: 2018.06.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -48,7 +48,7 @@ regex imagePageNum("(^.*)\\[([0-9]+)]$");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.05";
+static char class_version[] = "Version: 2018.06.12";
 
 /**
  * Returns the class version.
@@ -3229,7 +3229,7 @@ void PageXML::computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::ve
   double sum_areas = 0.0;
   for ( int n=0; n<(int)reg_polys.size(); n++ ) {
     OGRGeometry *isect_geom = reg_polys[n]->Intersection(coords);
-    double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Area();
+    double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
     scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/coords_area );
     if ( isect_area > 0.0 )
       sum_areas += reg_areas[n];
@@ -3393,9 +3393,10 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
  * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
  * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
  * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
+ * @param fake_baseline         Use bottom line of Coords rectangle as the baseline.
  * @return                      Number of join groups.
  */
-int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
+int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, bool fake_baseline ) {
   /// Get points and compute baseline angles and lengths ///
   std::vector< std::vector<cv::Point2f> > coords;
   std::vector< std::vector<cv::Point2f> > baseline;
@@ -3404,7 +3405,18 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
   int num_lines = lines.size();
   for ( int n=0; n<num_lines; n++ ) {
     coords.push_back( getPoints(lines[n]) );
-    baseline.push_back( getPoints(lines[n],"_:Baseline") );
+    if ( fake_baseline ) {
+      if ( coords[n].size() != 4 ) {
+        throw_runtime_error( "PageXML.testTextLineContinuation: fake_baseline requires Coords to have exactly 4 points" );
+        return -1;
+      }
+      std::vector<cv::Point2f> baseline_n;
+      baseline_n.push_back( cv::Point2f(coords[n][3]) );
+      baseline_n.push_back( cv::Point2f(coords[n][2]) );
+      baseline.push_back(baseline_n);
+    }
+    else
+      baseline.push_back( getPoints(lines[n],"_:Baseline") );
     angle.push_back(getBaselineOrientation(baseline[n]));
     length.push_back(getBaselineLength(baseline[n]));
 
@@ -3565,7 +3577,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         for ( int j=0; j<(int)idx.size(); j++ )
           recurse_lines.push_back(lines[idx[j]]);
 
-        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, cfg_max_angle_diff*recurse_factor, cfg_max_horiz_iou*recurse_factor, cfg_min_prolong_fact/recurse_factor );
+        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, cfg_max_angle_diff*recurse_factor, cfg_max_horiz_iou*recurse_factor, cfg_min_prolong_fact/recurse_factor, fake_baseline );
 
         if ( recurse_group_order.size() == 0 ) {
           line_groups.erase(line_groups.begin()+k);
@@ -3639,7 +3651,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
  * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
  * @return                      Reading order indices.
  */
-std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact ) {
+std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, bool fake_baseline ) {
   std::vector<int> reading_order;
   if ( lines.size() == 0 )
     return reading_order;
@@ -3647,13 +3659,21 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
   /// Get text line join groups ///
   std::vector<std::vector<int> > line_groups;
   std::vector<double> join_group_score;
-  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, cfg_max_angle_diff, cfg_max_horiz_iou, cfg_min_prolong_fact );
+  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, cfg_max_angle_diff, cfg_max_horiz_iou, cfg_min_prolong_fact, fake_baseline );
 
   /// Get points and compute baseline angles and lengths ///
   std::vector<std::vector<cv::Point2f> > baseline;
   std::vector<double> length;
   for ( int n=0; n<(int)lines.size(); n++ ) {
-    baseline.push_back( getPoints(lines[n],"_:Baseline") );
+    if ( fake_baseline ) {
+      std::vector<cv::Point2f> coords = getPoints(lines[n]);
+      std::vector<cv::Point2f> baseline_n;
+      baseline_n.push_back(coords[3]);
+      baseline_n.push_back(coords[2]);
+      baseline.push_back(baseline_n);
+    }
+    else
+      baseline.push_back( getPoints(lines[n],"_:Baseline") );
     length.push_back( getBaselineLength(baseline[n]) );
   }
 
