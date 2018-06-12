@@ -28,7 +28,7 @@
 
 ### Create a new Page XML adding regions, text and properties
 
-    from pagexml import pagexml
+    import pagexml
     pxml = pagexml.PageXML()
 
     # Create a new page xml
