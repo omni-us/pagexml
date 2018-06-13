@@ -1901,6 +1901,17 @@ void PageXML::updateLastChange() {
 }
 
 /**
+ * Retrieves a Property value.
+ *
+ * @param node       Node element.
+ * @return           String with the property value.
+ */
+std::string PageXML::getPropertyValue( xmlNodePt node, const char* key ) {
+  xmlNodePt prop = selectNth( std::string("_:Property[@key='")+key+"']/@value", 0, node );
+  return prop == NULL ? std::string("") : getValue(prop);
+}
+
+/**
  * Sets a Property for a given xpath.
  *
  * @param node  The node of element to set the Property.

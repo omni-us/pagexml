@@ -183,6 +183,7 @@ class PageXML {
     void processStart( const char* tool, const char* ref = NULL );
     void processEnd();
     void updateLastChange();
+    std::string getPropertyValue( xmlNodePt node, const char* key );
     xmlNodePt setProperty( xmlNodePt node, const char* key, const char* val = NULL, const double* _conf = NULL );
     xmlNodePt setTextEquiv( xmlNodePt node,   const char* text, const double* _conf = NULL );
     xmlNodePt setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
