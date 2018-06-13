@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.12$
+ * @version $Version: 2018.06.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -48,7 +48,7 @@ regex imagePageNum("(^.*)\\[([0-9]+)]$");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.12";
+static char class_version[] = "Version: 2018.06.13";
 
 /**
  * Returns the class version.
@@ -3227,13 +3227,20 @@ void PageXML::computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::ve
   OGRMultiPolygon *coords = getOGRpolygon( line );
   double coords_area = coords->get_Area();
   double sum_areas = 0.0;
+  int isect_count = 0;
   for ( int n=0; n<(int)reg_polys.size(); n++ ) {
     OGRGeometry *isect_geom = reg_polys[n]->Intersection(coords);
     double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
     scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/coords_area );
-    if ( isect_area > 0.0 )
+    if ( isect_area > 0.0 ) {
       sum_areas += reg_areas[n];
+      isect_count++;
+    }
   }
+
+  /// Return if fewer than 2 intersects ///
+  if ( isect_count < 2 )
+    return;
 
   /// Weight by areas ///
   for ( int n=0; n<(int)scores.size(); n++ )
@@ -3269,13 +3276,20 @@ void PageXML::computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::
   OGRMultiLineString *baseline = getOGRpolyline( line );
   double baseline_length = baseline->get_Length();
   double sum_areas = 0.0;
+  int isect_count = 0;
   for ( int n=0; n<(int)reg_polys.size(); n++ ) {
     OGRGeometry *isect_geom = reg_polys[n]->Intersection(baseline);
     double isect_lgth = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Length();
     scores.push_back( isect_lgth <= 0.0 ? 0.0 : isect_lgth/baseline_length );
-    if ( isect_lgth > 0.0 )
+    if ( isect_lgth > 0.0 ) {
       sum_areas += reg_areas[n];
+      isect_count++;
+    }
   }
+
+  /// Return if fewer than 2 intersects ///
+  if ( isect_count < 2 )
+    return;
 
   /// Weight by areas ///
   for ( int n=0; n<(int)scores.size(); n++ )
@@ -3369,6 +3383,8 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
         return 0;
       }
       int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
+      if ( overlap[max_idx] == 0.0 )
+        throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: TextLine does not overlap with any region" );
       xmlAddChild(regsTo[max_idx],lineclone);
     }
 
