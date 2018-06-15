@@ -140,6 +140,19 @@ PageXML::PageXML( const char* cfgfile ) {
     pagens = default_pagens;
 }
 
+#else
+
+/**
+ * PageXML constructor that receives a file name to load.
+ *
+ * @param fname  File name of the XML file to read.
+ */
+PageXML::PageXML( const char* fname ) {
+  if( pagens == NULL )
+    pagens = default_pagens;
+  loadXml( fname );
+}
+
 #endif
 
 
@@ -339,7 +352,8 @@ void PageXML::loadXml( const char* fname ) {
 /**
  * Loads a Page XML from an input stream.
  *
- * @param fnum  File number from where to read the XML file.
+ * @param fnum      File number from where to read the XML file.
+ * @param prevfree  Whether to release resources before loading.
  */
 void PageXML::loadXml( int fnum, bool prevfree ) {
   if ( prevfree )

@@ -116,6 +116,8 @@ class PageXML {
     PageXML( const libconfig::Config& config );
     PageXML( const char* cfgfile );
     void loadConf( const libconfig::Config& config );
+#else
+    PageXML( const char* fname );
 #endif
     void printConf( FILE* file = stdout );
     xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
