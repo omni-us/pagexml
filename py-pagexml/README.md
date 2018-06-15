@@ -9,6 +9,7 @@
  - python-setuptools
  - libxml2-dev
  - opencv-dev
+ - libgdal-dev
 
 ### Runtime
 
@@ -17,11 +18,16 @@
  - libopencv-highgui2.4
  - libopencv-imgproc2.4
  - libopencv-core2.4
+ - libgdal1i
 
 
 ## Installation from wheel binary file
 
     pip3 install --user pagexml-2017.11.5-cp35-cp35m-linux_x86_64.whl
+
+## Documentation
+
+A doxygen+moxygen generated API documentation for the C++ PageXML library can be found at [../doc/PageXML-API.md](../doc/PageXML-API.md).
 
 
 ## Usage examples of the module in python
