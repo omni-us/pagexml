@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.13$
+ * @version $Version: 2018.06.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -48,7 +48,7 @@ regex imagePageNum("(^.*)\\[([0-9]+)]$");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.13";
+static char class_version[] = "Version: 2018.06.15";
 
 /**
  * Returns the class version.
@@ -829,7 +829,7 @@ vector<xmlNodePt> PageXML::select( string xpath, const xmlNodePt node ) {
  * Selects the n-th node that matches an xpath.
  *
  * @param xpath  Selector expression.
- * @param xpath  Element number (0-indexed).
+ * @param num    Element number (0-indexed).
  * @param node   XML node for context, set to NULL for root node.
  * @return       Matched node.
  */
@@ -842,12 +842,24 @@ xmlNodePt PageXML::selectNth( const char* xpath, unsigned num, const xmlNodePt n
  * Selects the n-th node that matches an xpath.
  *
  * @param xpath  Selector expression.
- * @param xpath  Element number (0-indexed).
+ * @param num    Element number (0-indexed).
  * @param node   XML node for context, set to NULL for root node.
  * @return       Matched node.
  */
 xmlNodePt PageXML::selectNth( string xpath, unsigned num, const xmlNodePt node ) {
   return selectNth( xpath.c_str(), num, node );
+}
+
+/**
+ * Selects an element with a given ID.
+ *
+ * @param id     ID of element to select.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Matched node.
+ */
+xmlNodePt PageXML::selectByID( const char* id, const xmlNodePt node ) {
+  vector<xmlNodePt> sel = select( (string(".//*[@id='")+id+"']").c_str(), node );
+  return sel.size() == 0 ? NULL : sel[0];
 }
 
 /**

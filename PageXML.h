@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.06.13$
+ * @version $Version: 2018.06.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -143,9 +143,10 @@ class PageXML {
     int count( const char* xpath, xmlNodePt basenode = NULL );
     int count( std::string xpath, xmlNodePt basenode = NULL );
     std::vector<xmlNodePt> select( const char* xpath, const xmlNodePt basenode = NULL );
-    std::vector<xmlNodePt> select( std::string xpath, const xmlNodePt basenode = NULL );
-    xmlNodePt selectNth( const char* xpath, unsigned num = 0, const xmlNodePt basenode = NULL );
-    xmlNodePt selectNth( std::string xpath, unsigned num = 0, const xmlNodePt basenode = NULL );
+    std::vector<xmlNodePt> select( std::string xpath, const xmlNodePt node = NULL );
+    xmlNodePt selectNth( const char* xpath, unsigned num = 0, const xmlNodePt node = NULL );
+    xmlNodePt selectNth( std::string xpath, unsigned num = 0, const xmlNodePt node = NULL );
+    xmlNodePt selectByID( const char* id, const xmlNodePt node = NULL );
     xmlNodePt closest( const char* name, xmlNodePt node );
     xmlNodePt parent( const xmlNodePt node );
     static bool nodeIs( xmlNodePt node, const char* name );
