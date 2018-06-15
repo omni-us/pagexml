@@ -1,1 +1,1 @@
-../../libs/PageXML.cc
+../../c++-libs/PageXML.cc
