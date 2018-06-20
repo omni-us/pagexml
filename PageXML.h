@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.06.15$
+ * @version $Version: 2018.06.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -25,7 +25,8 @@
 
 #if defined (__PAGEXML_LEPT__)
 #include <../leptonica/allheaders.h>
-#elif defined (__PAGEXML_MAGICK__)
+#endif
+#if defined (__PAGEXML_MAGICK__)
 #include <Magick++.h>
 #endif
 
@@ -214,6 +215,7 @@ class PageXML {
     int resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio = true );
     int resize( std::vector<cv::Size2i> sizes, const char* xpath = "//_:Page", bool check_aspect_ratio = true );
     int resize( cv::Size2i size, xmlNodePt page, bool check_aspect_ratio = true );
+    int resize( double fact, const char* xpath = "//_:Page" );
     void setPageImageFilename( xmlNodePt node, const char* image );
     void setPageImageFilename( int pagenum, const char* image );
     std::string getPageImageFilename( xmlNodePt node );

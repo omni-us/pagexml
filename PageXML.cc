@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.15$
+ * @version $Version: 2018.06.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -41,14 +41,15 @@ regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
 regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 regex reFileExt("\\.[^.]+$");
 regex reInvalidBaseChars(" ");
-regex imagePageNum("(^.*)\\[([0-9]+)]$");
+regex reImagePageNum("(^.*)\\[([0-9]+)]$");
+regex reIsPdf(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase);
 
 
 /////////////////////
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.15";
+static char class_version[] = "Version: 2018.06.22";
 
 /**
  * Returns the class version.
@@ -440,6 +441,23 @@ void PageXML::setupXml() {
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
 
 /**
+ * Function that creates a temporal file using the mktemp command
+ *
+ * @param tempbase    The mktemp template to use, including at least 3 consecutive X.
+ */
+void mktemp( const char* tempbase, char *tempname ) {
+  char cmd[FILENAME_MAX];
+  sprintf( cmd, "mktemp %s", tempbase );
+  FILE *p = popen( cmd, "r" );
+  if( p != NULL ) {
+    sprintf( cmd, "%%%ds\n", FILENAME_MAX-1 );
+    if( fscanf( p, cmd, tempname ) != 1 )
+      tempname[0] = '\0';
+    pclose(p);
+  }
+}
+
+/**
  * Loads an image for a Page in the XML.
  *
  * @param pagenum        The number of the page for which to load the image.
@@ -454,14 +472,43 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     fname = aux.c_str();
   }
 
+#if defined (__PAGEXML_MAGICK__)
   cmatch base_match;
-  if( regex_match(fname,base_match,imagePageNum) ) {
+  if( std::regex_match(fname,base_match,reImagePageNum) ) {
     aux = base_match[1].str() + "[" + std::to_string(stoi(base_match[2].str())-1) + "]";
     fname = aux.c_str();
   }
+#endif
 
 #if defined (__PAGEXML_LEPT__)
+#if defined (__PAGEXML_MAGICK__)
+  if( std::regex_match(fname, reIsPdf) ) {
+    int ldensity = density;
+    if( ! density ) {
+      if( resize_coords )
+        throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
+      Magick::Image ptmp;
+      ptmp.ping(fname);
+      double Dw = 72.0*getPageWidth(pagenum)/ptmp.columns();
+      double Dh = 72.0*getPageHeight(pagenum)/ptmp.rows();
+      ldensity = std::round(0.5*(Dw+Dh));
+    }
+    Magick::Image tmp;
+    tmp.density(std::to_string(ldensity).c_str());
+    tmp.read(fname);
+    char tmpfname[FILENAME_MAX];
+    std::string tmpbase = std::string("tmp_PageXML_pdf_")+std::to_string(pagenum)+"_XXXXXXXX.png";
+    mktemp( tmpbase.c_str(), tmpfname );
+    tmp.resolutionUnits(MagickCore::ResolutionType::PixelsPerInchResolution);
+    tmp.write( (std::string("png24:")+tmpfname).c_str() );
+    pagesImage[pagenum] = pixRead(tmpfname);
+    unlink(tmpfname);
+  }
+  else
+    pagesImage[pagenum] = pixRead(fname);
+#else
   pagesImage[pagenum] = pixRead(fname);
+#endif
   if( pagesImage[pagenum] == NULL ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
@@ -486,7 +533,6 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 
   if( grayimg ) {
 #if defined (__PAGEXML_LEPT__)
-    pagesImage[pagenum] = pixRead(fname);
     Pix *orig = pagesImage[pagenum];
     pagesImage[pagenum] = pixConvertRGBToGray(orig,0.0,0.0,0.0);
     pixDestroy(&orig);
@@ -2499,9 +2545,10 @@ std::vector<cv::Size2i> PageXML::getPagesSize( const char* xpath ) {
 /**
  * Resizes pages and all respective coordinates.
  *
- * @param sizes      Page sizes to resize to.
- * @param pages      Page nodes.
- * @return           Number of pages+points attributes modified.
+ * @param sizes               Page sizes to resize to.
+ * @param pages               Page nodes.
+ * @param check_aspect_ratio  Whether to check that the aspect ratio is properly preserved.
+ * @return                    Number of pages+points attributes modified.
  */
 int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio ) {
   /// Input checks ///
@@ -2563,13 +2610,48 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
 
   return updated+pages.size();
 }
+
+/**
+ * Resizes pages and all respective coordinates.
+ *
+ * @param sizes               Page sizes to resize to.
+ * @param xpath               Selector for Page nodes.
+ * @param check_aspect_ratio  Whether to check that the aspect ratio is properly preserved.
+ * @return                    Number of pages+points attributes modified.
+ */
 int PageXML::resize( std::vector<cv::Size2i> sizes, const char* xpath, bool check_aspect_ratio ) {
   return resize( sizes, select(xpath), check_aspect_ratio );
 }
+
+/**
+ * Resizes a page and all respective coordinates.
+ *
+ * @param size                Page size to resize to.
+ * @param page                Page node.
+ * @param check_aspect_ratio  Whether to check that the aspect ratio is properly preserved.
+ * @return                    Number of pages+points attributes modified.
+ */
 int PageXML::resize( cv::Size2i size, xmlNodePt page, bool check_aspect_ratio ) {
   std::vector<cv::Size2i> sizes = {size};
   std::vector<xmlNodePt> pages = {page};
   return resize( sizes, pages, check_aspect_ratio );
+}
+
+/**
+ * Resizes a page and all respective coordinates.
+ *
+ * @param factor              Resizing factor.
+ * @param xpath               Selector for Page nodes.
+ * @return                    Number of pages+points attributes modified.
+ */
+int PageXML::resize( double fact, const char* xpath ) {
+  std::vector<xmlNodePt> pages = select(xpath);
+  std::vector<cv::Size2i> sizes = getPagesSize(pages);
+  for ( int p=0; p<(int)sizes.size(); p++ ) {
+    sizes[p].width = std::round(fact*sizes[p].width);
+    sizes[p].height = std::round(fact*sizes[p].height);
+  }
+  return resize( sizes, pages, true );
 }
 
 /**
