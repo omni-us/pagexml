@@ -14,7 +14,8 @@
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
 `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`imagePageNum`](#_page_x_m_l_8cc_1a80e2f9e8f7d92125a21226692e542244)`("(^.*)\\+)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a3183a587629d03d366bc99d1f2207050)`("(^.*)\\+)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac6ca0d377ab9a65bc7fb31001f8b8ad0)`(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase)`            | 
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
@@ -31,7 +32,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.06.15
+Version2018.06.22
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -82,7 +83,9 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`imagePageNum`](#_page_x_m_l_8cc_1a80e2f9e8f7d92125a21226692e542244)`("(^.*)\\+)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a3183a587629d03d366bc99d1f2207050)`("(^.*)\\+)` 
+
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac6ca0d377ab9a65bc7fb31001f8b8ad0)`(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase)` 
 
 #### `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)` 
 
@@ -122,6 +125,7 @@ Checks if a point is within a line segment
 --------------------------------|---------------------------------------------
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
 `public  `[`PageXML`](#class_page_x_m_l_1a86b2558ba9790fed8ee2a78cbb8f0ed0)`()` | Constructors ///.
+`public  `[`PageXML`](#class_page_x_m_l_1a95475e2d030caccd682493ee8f4b7c30)`(const char * fname)` | [PageXML](#class_page_x_m_l) constructor that receives a file name to load.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a95f40947e6da8415578a4dcaf7a8eea3)`(const char * creator,const char * image,const int imgW,const int imgH)` | Loaders ///.
 `public void `[`loadXml`](#class_page_x_m_l_1a1598083e01ebff5727d248a8ac150c6d)`(const char * fname)` | Loads a Page XML from a file.
@@ -202,8 +206,9 @@ Checks if a point is within a line segment
 `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1a525354fa982782061b40718607b960dd)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages)` | Retrieves pages size.
 `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1aab0456c928c85b694387acf75339c02f)`(const char * xpath)` | 
 `public int `[`resize`](#class_page_x_m_l_1a81f6aa2af3574985f268959662ac4c2b)`(std::vector< cv::Size2i > sizes,std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages,bool check_aspect_ratio)` | Resizes pages and all respective coordinates.
-`public int `[`resize`](#class_page_x_m_l_1a8b24748e08ccb010eb709a9d91c711cc)`(std::vector< cv::Size2i > sizes,const char * xpath,bool check_aspect_ratio)` | 
-`public int `[`resize`](#class_page_x_m_l_1ae9772185b88e2e12e26025effc2c39c7)`(cv::Size2i size,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool check_aspect_ratio)` | 
+`public int `[`resize`](#class_page_x_m_l_1a8b24748e08ccb010eb709a9d91c711cc)`(std::vector< cv::Size2i > sizes,const char * xpath,bool check_aspect_ratio)` | Resizes pages and all respective coordinates.
+`public int `[`resize`](#class_page_x_m_l_1ae9772185b88e2e12e26025effc2c39c7)`(cv::Size2i size,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool check_aspect_ratio)` | Resizes a page and all respective coordinates.
+`public int `[`resize`](#class_page_x_m_l_1a06f171653bd8d50c03ed153523e24fc5)`(double fact,const char * xpath)` | Resizes a page and all respective coordinates.
 `public void `[`setPageImageFilename`](#class_page_x_m_l_1a66d14b834c2ff1e162ddc268d92e9318)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * image)` | Sets the imageFilename of a page.
 `public void `[`setPageImageFilename`](#class_page_x_m_l_1a1f6225549414316c7b42d466f37ea9ae)`(int pagenum,const char * image)` | 
 `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ab6670ff942eeb850d64cb87a9932be58)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the imageFilename of a page.
@@ -235,6 +240,13 @@ Checks if a point is within a line segment
 #### `public  `[`PageXML`](#class_page_x_m_l_1a86b2558ba9790fed8ee2a78cbb8f0ed0)`()` 
 
 Constructors ///.
+
+#### `public  `[`PageXML`](#class_page_x_m_l_1a95475e2d030caccd682493ee8f4b7c30)`(const char * fname)` 
+
+[PageXML](#class_page_x_m_l) constructor that receives a file name to load.
+
+#### Parameters
+* `fname` File name of the XML file to read.
 
 #### `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` 
 
@@ -272,7 +284,9 @@ Loads a Page XML from a file.
 Loads a Page XML from an input stream.
 
 #### Parameters
-* `fnum` File number from where to read the XML file.
+* `fnum` File number from where to read the XML file. 
+
+* `prevfree` Whether to release resources before loading.
 
 #### `public void `[`loadXmlString`](#class_page_x_m_l_1acd4f674900ec7351e4f31b5fa3d66a09)`(const char * xml_string)` 
 
@@ -898,12 +912,50 @@ Resizes pages and all respective coordinates.
 
 * `pages` Page nodes. 
 
+* `check_aspect_ratio` Whether to check that the aspect ratio is properly preserved. 
+
 #### Returns
 Number of pages+points attributes modified.
 
 #### `public int `[`resize`](#class_page_x_m_l_1a8b24748e08ccb010eb709a9d91c711cc)`(std::vector< cv::Size2i > sizes,const char * xpath,bool check_aspect_ratio)` 
 
+Resizes pages and all respective coordinates.
+
+#### Parameters
+* `sizes` Page sizes to resize to. 
+
+* `xpath` Selector for Page nodes. 
+
+* `check_aspect_ratio` Whether to check that the aspect ratio is properly preserved. 
+
+#### Returns
+Number of pages+points attributes modified.
+
 #### `public int `[`resize`](#class_page_x_m_l_1ae9772185b88e2e12e26025effc2c39c7)`(cv::Size2i size,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool check_aspect_ratio)` 
+
+Resizes a page and all respective coordinates.
+
+#### Parameters
+* `size` Page size to resize to. 
+
+* `page` Page node. 
+
+* `check_aspect_ratio` Whether to check that the aspect ratio is properly preserved. 
+
+#### Returns
+Number of pages+points attributes modified.
+
+#### `public int `[`resize`](#class_page_x_m_l_1a06f171653bd8d50c03ed153523e24fc5)`(double fact,const char * xpath)` 
+
+Resizes a page and all respective coordinates.
+
+#### Parameters
+* `factor` Resizing factor. 
+
+* `xpath` Selector for Page nodes. 
+
+#### Returns
+Number of pages+points attributes modified.
 
 #### `public void `[`setPageImageFilename`](#class_page_x_m_l_1a66d14b834c2ff1e162ddc268d92e9318)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * image)` 
 
