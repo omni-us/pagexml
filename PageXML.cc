@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.22$
+ * @version $Version: 2018.06.28$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -49,7 +49,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.22";
+static char class_version[] = "Version: 2018.06.28";
 
 /**
  * Returns the class version.
@@ -3473,6 +3473,10 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     std::vector<xmlNodePtr> linesAdded;
     std::vector<double> reg_areas;
     for ( int n=0; n<(int)linesFrom.size(); n++ ) {
+      if ( getPoints(linesFrom[n]).size() < 4 ) {
+        fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
+        continue;
+      }
       /// Compute overlap scores ///
       std::vector<double> overlap;
       std::vector<double> overlap2;
