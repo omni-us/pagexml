@@ -32,7 +32,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.06.22
+Version2018.06.28
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
