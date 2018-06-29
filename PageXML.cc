@@ -49,11 +49,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-<<<<<<< HEAD
-static char class_version[] = "Version: 2018.06.28";
-=======
 static char class_version[] = "Version: 2018.06.29";
->>>>>>> PageXML:
 
 /**
  * Returns the class version.
@@ -1094,15 +1090,14 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     Magick::Image cropimg = pageImage;
     try {
       cropimg.crop( Magick::Geometry(cropW,cropH,cropX,cropY) );
-      // @todo If crop partially outside image it will not fail, but fpgram will be wrong?
     }
     catch( exception& error ) {
       fprintf( stderr, "PageXML.crop: error (%s): %s\n", sampname.c_str(), error.what() );
       continue;
     }
 
-    if( cropimg.columns() != cropW || cropimg.rows() != cropH || cropimg.page().xOff() != cropX || cropimg.page().yOff() != cropY )
-      fprintf(stderr,"warning: modified crop for id=%s, requested: %zux%zu+%d+%d vs. obtained: %zux%zu+%ld+%ld\n", sampid.c_str(), cropW,cropH,cropX,cropY, cropimg.columns(),cropimg.rows(),cropimg.page().xOff(),cropimg.page().yOff() );
+    //if( cropimg.columns() != cropW || cropimg.rows() != cropH || cropimg.page().xOff() != cropX || cropimg.page().yOff() != cropY )
+    //  fprintf(stderr,"warning: modified crop for id=%s, requested: %zux%zu+%d+%d vs. obtained: %zux%zu+%ld+%ld\n", sampid.c_str(), cropW,cropH,cropX,cropY, cropimg.columns(),cropimg.rows(),cropimg.page().xOff(),cropimg.page().yOff() );
 
 #elif defined (__PAGEXML_CVIMG__)
     cv::Rect roi;
