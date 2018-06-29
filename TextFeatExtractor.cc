@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.05.11$
+ * @version $Version: 2018.06.29$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,7 +61,7 @@ const Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.05.11";
+static char class_version[] = "Version: 2018.06.29";
 
 /**
  * Returns the class version.
@@ -1355,6 +1355,8 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
   tm = high_resolution_clock::now();
   if( toGrayscale(image) && verbose )
     fprintf(stderr,"gray time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
+  Geometry page = image.page();
+  image.strip();
 
   if( procimgs )
     image.write("procimg_1_input.png");
@@ -1404,10 +1406,9 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     tmp.threshold(QuantumRange-1);
 
     /// Add border ///
-    Geometry page = image.page();
     tmp.borderColor( colorWhite );
     tmp.border( Geometry(border,border) );
-    tmp.page( Geometry(page.width(),page.height(),page.xOff()-border,page.yOff()-border) );
+    tmp.page( Geometry(0,0,0,0) );
 
     /// Apply RLSA ///
     gray** gimg = NULL;
@@ -1417,7 +1418,7 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     graym2magick(tmp,gimg);
     free(gimg);
 
-    /// Joint connected components ///
+    /// Join connected components ///
     tmp.negate();
     joinComponents( tmp );
 
@@ -1432,6 +1433,11 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     //int method = CV_CHAIN_APPROX_TC89_KCOS;
     int method = CV_CHAIN_APPROX_SIMPLE;
     findOuterContours( tmp, fcontour, method, eps );
+
+    for( int k=fcontour[0].size()-1; k>=0; k-- ) {
+      fcontour[0][k].x += page.xOff()-border;
+      fcontour[0][k].y += page.yOff()-border;
+    }
 
     *_fcontour = fcontour[0];
 
@@ -1526,6 +1532,9 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     slant += rnd;
   }
 
+  if( rotate != 0.0 )
+    slope += rotate;
+
   /// Apply affine transformation considering both slope and slant ///
   int bboxoffx = feaimg.page().xOff();
   int bboxoffy = feaimg.page().yOff();
@@ -1542,16 +1551,6 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   Matx33d S1( 1, 0, 0, -s, 1, 0, 0, 0, 1 );
   Matx33d A0 = R0*S0;
   Matx33d A1 = S1*R1;
-
-  if( rotate != 0.0 ) {
-    feaimg.rotate(rotate);
-    // @todo The following is incorrect, need to fix it
-    //fprintf("warning: fpgrams for rotated lines not yet implemented\n");
-    co = cos( -rotate*deg_to_rad );
-    si = sin( -rotate*deg_to_rad );
-    Matx33d R3( co, -si, 0,  si, co, 0, 0, 0, 1 );
-    A1 = A1*R3;
-  }
 
   feaimg.page( Geometry(0,0,0,0) );
 
@@ -1581,7 +1580,8 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     feaimg = trimmed;
     offx += feaimg.page().xOff();
     offy += feaimg.page().yOff();
-    //fprintf( stderr, "trim_page_off: %d %d\n", offx, offy );
+    if( verbose )
+      fprintf( stderr, "trim_page_off: %dx%d+%d+%d\n", (int)feaimg.columns()-(int)feaimg.page().width(), (int)feaimg.rows()-(int)feaimg.page().height(), offx, offy );
   }
 
   /// Momentum normalization ///
@@ -1625,7 +1625,6 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     feaimg.resize( Geometry( (to_string(fact)+"%").c_str() ) );
   }
 
-// @todo BUG: When there is an image resize (height normalization) fpgram is wrong
   if( normheight && ! normxheight ) {
     scaling *= (float)normheight/(float)feaimg.rows();
     feaimg.resize( Geometry( ("x"+to_string(normheight)).c_str() ) );
@@ -1688,7 +1687,6 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
                                Point2f(pts(2,0),pts(2,1)),
                                Point2f(pts(3,0),pts(3,1)) };
 
-    if( rotate == 0.0 ) // @todo
     *_fpgram = fpgram;
   }
 
