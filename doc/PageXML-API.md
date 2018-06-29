@@ -14,8 +14,8 @@
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
 `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a3183a587629d03d366bc99d1f2207050)`("(^.*)\\+)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac6ca0d377ab9a65bc7fb31001f8b8ad0)`(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)`            | 
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
@@ -32,7 +32,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.06.28
+Version2018.06.29
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -83,9 +83,9 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a3183a587629d03d366bc99d1f2207050)`("(^.*)\\+)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac6ca0d377ab9a65bc7fb31001f8b8ad0)`(".*\\.pdf(\\[[0-9]+])*$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)` 
 
 #### `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)` 
 
@@ -181,7 +181,8 @@ Checks if a point is within a line segment
 `public void `[`processEnd`](#class_page_x_m_l_1a29d780f46c1f14b241f48665d835394c)`()` | Ends the running process in the Page XML.
 `public void `[`updateLastChange`](#class_page_x_m_l_1a99bc8c45fae21207bb608e69609dedcd)`()` | Updates the last change time stamp.
 `public std::string `[`getPropertyValue`](#class_page_x_m_l_1ab4d79c28bc94086d1d379f0ea73ff899)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key)` | Retrieves a Property value.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1af6e80d30313f63054228fcb15305db31)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double * _conf)` | Sets a Property for a given xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1af6e80d30313f63054228fcb15305db31)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double * _conf)` | Sets a Property to a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a82ffe7a5366736034a3e4514b43ab389)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double * _conf)` | Sets a Property to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a65f380acfc400de2a6dc59eb1ee22904)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ae7938084955a0668bc44f24307ad77ba)`(const char * xpath,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a8d92328ba656b8e8e847bf2ad3607a46)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
@@ -726,7 +727,7 @@ String with the property value.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1af6e80d30313f63054228fcb15305db31)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double * _conf)` 
 
-Sets a Property for a given xpath.
+Sets a Property to a given node.
 
 #### Parameters
 * `node` The node of element to set the Property. 
@@ -734,6 +735,22 @@ Sets a Property for a given xpath.
 * `key` The key for the Property. 
 
 * `val` The optional value for the Property. 
+
+* `_conf` Pointer to confidence value, NULL for no confidence. 
+
+#### Returns
+Pointer to created element.
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a82ffe7a5366736034a3e4514b43ab389)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double * _conf)` 
+
+Sets a Property to a given node.
+
+#### Parameters
+* `node` The node of element to set the Property. 
+
+* `key` The key for the Property. 
+
+* `val` Numeric value for the Property. 
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
 
