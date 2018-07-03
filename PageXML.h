@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.06.29$
+ * @version $Version: 2018.07.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -141,7 +141,7 @@ class PageXML {
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
     static std::string pointsToString( std::vector<cv::Point> points );
     static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
-    static void pointsBBox( std::vector<cv::Point2f>& points, std::vector<cv::Point2f>& bbox );
+    static std::vector<cv::Point2f> pointsBBox( std::vector<cv::Point2f> points );
     static bool isBBox( const std::vector<cv::Point2f>& points );
     int count( const char* xpath, xmlNodePt basenode = NULL );
     int count( std::string xpath, xmlNodePt basenode = NULL );
@@ -195,7 +195,7 @@ class PageXML {
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,   const double* _conf = NULL );
     xmlNodePt setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
-    xmlNodePt setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf = NULL );
+    xmlNodePt setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf = NULL, bool subone = true );
     xmlNodePt setBaseline( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double* _conf = NULL );

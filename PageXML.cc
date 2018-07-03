@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.06.29$
+ * @version $Version: 2018.07.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -35,6 +35,7 @@ char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/20
 #ifdef __PAGEXML_MAGICK__
 Magick::Color transparent("rgba(0,0,0,0)");
 Magick::Color opaque("rgba(0,0,0,100%)");
+Magick::Color colorWhite("white");
 #endif
 regex reXheight(".*x-height: *([0-9.]+) *px;.*");
 regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
@@ -49,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.29";
+static char class_version[] = "Version: 2018.07.03";
 
 /**
  * Returns the class version.
@@ -457,6 +458,28 @@ void mktemp( const char* tempbase, char *tempname ) {
   }
 }
 
+#if defined (__PAGEXML_MAGICK__)
+
+/**
+ * Removes alpha channel, setting all transparent regions to the background color.
+ *
+ * @param image    Image to process.
+ * @param color    Color for the background.
+ * @return         Whether flattening was performed.
+ */
+bool flattenImage( Magick::Image& image, const Magick::Color* color = NULL ) {
+  if( ! image.matte() )
+    return false;
+  image.backgroundColor( color == NULL ? colorWhite : *color );
+  list<Magick::Image> flattenList = { image };
+  Magick::Image flat;
+  flattenImages( &flat, flattenList.begin(), flattenList.end() );
+  image = flat;
+  return true;
+}
+
+#endif
+
 /**
  * Loads an image for a Page in the XML.
  *
@@ -518,6 +541,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     if( density )
       pagesImage[pagenum].density(std::to_string(density).c_str());
     pagesImage[pagenum].read(fname);
+    if( std::regex_match(fname, reIsPdf) )
+      flattenImage( pagesImage[pagenum] );
   }
   catch( exception& e ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", e.what() );
@@ -730,12 +755,12 @@ void PageXML::pointsLimits( vector<cv::Point2f>& points, double& xmin, double& x
  * Generates a vector of 4 points that define the bounding box for a given vector of points.
  *
  * @param points     The vector of points to find the limits.
- * @param bbox       The 4 points defining the bounding box.
+ * @return           The 4 points defining the bounding box (top-left clockwise).
  */
-void PageXML::pointsBBox( vector<cv::Point2f>& points, vector<cv::Point2f>& bbox ) {
-  bbox.clear();
+std::vector<cv::Point2f> PageXML::pointsBBox( std::vector<cv::Point2f> points ) {
+  std::vector<cv::Point2f> bbox;
   if( points.size() == 0 )
-    return;
+    return bbox;
 
   double xmin;
   double xmax;
@@ -749,7 +774,7 @@ void PageXML::pointsBBox( vector<cv::Point2f>& points, vector<cv::Point2f>& bbox
   bbox.push_back( cv::Point2f(xmax,ymax) );
   bbox.push_back( cv::Point2f(xmin,ymax) );
 
-  return;
+  return bbox;
 }
 
 /**
@@ -2171,17 +2196,18 @@ xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poin
 /**
  * Adds or modifies (if already exists) the Coords as a bounding box for a given node.
  *
- * @param node   The node of element to set the Coords.
- * @param xmin   Minimum x value of bounding box.
- * @param ymin   Minimum y value of bounding box.
- * @param width  Width of bounding box.
- * @param height Height of bounding box.
- * @param _conf  Pointer to confidence value, NULL for no confidence.
- * @return       Pointer to created element.
+ * @param node      The node of element to set the Coords.
+ * @param xmin      Minimum x value of bounding box.
+ * @param ymin      Minimum y value of bounding box.
+ * @param width     Width of bounding box.
+ * @param height    Height of bounding box.
+ * @param _conf     Pointer to confidence value, NULL for no confidence.
+ * @param subone    Whether to subtract 1 when computing xmax and ymax (discrete compatibility).
+ * @return          Pointer to created element.
  */
-xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf ) {
-  double xmax = xmin+width;
-  double ymax = ymin+height;
+xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf, bool subone ) {
+  double xmax = xmin + width - (subone?1:0);
+  double ymax = ymin + height - (subone?1:0);
   vector<cv::Point2f> bbox;
   bbox.push_back( cv::Point2f(xmin,ymin) );
   bbox.push_back( cv::Point2f(xmax,ymin) );
