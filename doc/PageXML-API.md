@@ -32,7 +32,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.06.29
+Version2018.07.03
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -188,7 +188,7 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a8d92328ba656b8e8e847bf2ad3607a46)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a626847a8aac3c4bc650d0b27f3ce042b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double * _conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a1038c674a0522759ea3004bac9cac5f2)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` | 
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1adfb61e69e1c0fab65f0a6bed2b550c13)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf)` | Adds or modifies (if already exists) the Coords as a bounding box for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1ac42051db4e4f1feb754401e78f5cb53d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf,bool subone)` | Adds or modifies (if already exists) the Coords as a bounding box for a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a2a85dc0b7eb35ac29780551a642a3e51)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a12a577c21cf6109f30843336bbdaba8d)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a489cf14031d07454f538a048e4b48c03)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double * _conf)` | Adds or modifies (if already exists) a two point Baseline for a given node.
@@ -791,7 +791,7 @@ Pointer to created element.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a1038c674a0522759ea3004bac9cac5f2)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` 
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1adfb61e69e1c0fab65f0a6bed2b550c13)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1ac42051db4e4f1feb754401e78f5cb53d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf,bool subone)` 
 
 Adds or modifies (if already exists) the Coords as a bounding box for a given node.
 
@@ -807,6 +807,8 @@ Adds or modifies (if already exists) the Coords as a bounding box for a given no
 * `height` Height of bounding box. 
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
+
+* `subone` Whether to subtract 1 when computing xmax and ymax (discrete compatibility). 
 
 #### Returns
 Pointer to created element.
