@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.07.03$
+ * @version $Version: 2018.07.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -236,6 +236,8 @@ class PageXML {
     int write( const char* fname = "-" );
     std::string toString();
 #if defined (__PAGEXML_OGR__)
+    OGRMultiPolygon* pointsToOGRpolygon( std::vector<cv::Point2f> points );
+    std::vector<OGRMultiPolygon*> pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points );
     OGRMultiPolygon* getOGRpolygon( const xmlNodePt node, const char* xpath = "_:Coords" );
     std::vector<OGRMultiPolygon*> getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
     OGRMultiPolygon* getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
@@ -244,9 +246,12 @@ class PageXML {
     double computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
     double computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolygon* poly2 );
     double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
-    void computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double>& ious );
-    void computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores );
-    void computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores );
+    std::vector<double> computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys );
+    std::vector<double> computeAreas( std::vector<OGRMultiPolygon*> polys );
+    std::vector<double> computeCoordsIntersectionsWeightedByArea( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );
+    std::vector<double> computeBaselineIntersectionsWeightedByArea( OGRMultiLineString* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );
+    std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, xmlNodePt page, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
+    std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, int pagenum, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
     int copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IOU, double overlap_fact = 0.5 );
 #endif
     int testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff = 25*M_PI/180, double cfg_max_horiz_iou = 0.1, double cfg_min_prolong_fact = 0.5, bool fake_baseline = false );

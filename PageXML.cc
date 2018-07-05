@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.03$
+ * @version $Version: 2018.07.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.03";
+static char class_version[] = "Version: 2018.07.05";
 
 /**
  * Returns the class version.
@@ -467,7 +467,7 @@ void mktemp( const char* tempbase, char *tempname ) {
  * @param color    Color for the background.
  * @return         Whether flattening was performed.
  */
-bool flattenImage( Magick::Image& image, const Magick::Color* color = NULL ) {
+bool listFlattenImage( Magick::Image& image, const Magick::Color* color = NULL ) {
   if( ! image.matte() )
     return false;
   image.backgroundColor( color == NULL ? colorWhite : *color );
@@ -542,7 +542,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
       pagesImage[pagenum].density(std::to_string(density).c_str());
     pagesImage[pagenum].read(fname);
     if( std::regex_match(fname, reIsPdf) )
-      flattenImage( pagesImage[pagenum] );
+      listFlattenImage( pagesImage[pagenum] );
   }
   catch( exception& e ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", e.what() );
@@ -3216,6 +3216,37 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
 #if defined (__PAGEXML_OGR__)
 
 /**
+ * Converts Coords to an OGRMultiPolygon.
+ *
+ * @param points     Vector of x,y points.
+ * @return           Pointer to OGRMultiPolygon element.
+ */
+OGRMultiPolygon* PageXML::pointsToOGRpolygon( std::vector<cv::Point2f> points ) {
+  OGRLinearRing* ring = new OGRLinearRing();
+  OGRPolygon* poly = new OGRPolygon();
+
+  for ( int n=0; n<(int)points.size(); n++ )
+    ring->addPoint(points[n].x, points[n].y);
+  ring->closeRings();
+  poly->addRing(ring);
+
+  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+}
+
+/**
+ * Converts Coords to OGRMultiPolygons.
+ *
+ * @param points     Vectors of x,y points.
+ * @return           Pointer to OGRMultiPolygon element.
+ */
+std::vector<OGRMultiPolygon*> PageXML::pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points ) {
+  std::vector<OGRMultiPolygon*> polys;
+  for ( int n=0; n<(int)points.size(); n++ )
+    polys.push_back( pointsToOGRpolygon(points[n]) );
+  return polys;
+}
+
+/**
  * Gets an element's Coords as an OGRMultiPolygon.
  *
  * @param node       The element from which to extract the Coords points.
@@ -3224,16 +3255,7 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
  */
 OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath ) {
   std::vector<cv::Point2f> pts = getPoints(node,xpath);
-
-  OGRLinearRing* ring = new OGRLinearRing();
-  OGRPolygon* poly = new OGRPolygon();
-
-  for ( int n=0; n<(int)pts.size(); n++ )
-    ring->addPoint(pts[n].x, pts[n].y);
-  ring->closeRings();
-  poly->addRing(ring);
-
-  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+  return pts.size() == 0 ? NULL : pointsToOGRpolygon(pts);
 }
 
 /**
@@ -3354,110 +3376,188 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
  *
  * @param poly      Polygon.
  * @param polys     Vector of polygons.
- * @param ious      IoU values.
+ * @return          IoU values.
  */
-void PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double>& ious ) {
-  ious.clear();
+std::vector<double> PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys ) {
+  std::vector<double> ious;
   for ( int n=0; n<(int)polys.size(); n++ )
     ious.push_back( computeIoU(poly,polys[n]) );
+  return ious;
 }
 
 /**
- * Computes coords-region intersections weighted by area.
+ * Computes the areas for given polygons.
  *
- * @param line       TextLine element.
- * @param regs       TextRegion elements.
- * @param reg_polys  Extracted OGR polygons.
- * @param reg_areas  Region areas.
- * @param scores     Obtained intersection scores.
+ * @param polys      Polygons to process.
+ * @return           The polygon areas.
  */
-void PageXML::computeCoordsIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores ) {
-  /// Get region polygons ///
-  if ( regs.size() != reg_polys.size() || reg_polys.size() == 0 ) {
-    reg_polys.clear();
-    for ( int n=0; n<(int)regs.size(); n++ )
-      reg_polys.push_back( getOGRpolygon(regs[n]) );
-  }
-  /// Compute region areas ///
-  if ( regs.size() != reg_areas.size() || reg_areas.size() == 0 ) {
-    reg_areas.clear();
-    for ( int n=0; n<(int)reg_polys.size(); n++ )
-      reg_areas.push_back( reg_polys[n]->get_Area() );
+std::vector<double> PageXML::computeAreas( std::vector<OGRMultiPolygon*> polys ) {
+  std::vector<double> areas;
+  for ( int n=0; n<(int)polys.size(); n++ )
+    areas.push_back( polys[n]->get_Area() );
+  return areas;
+}
+
+/**
+ * Computes polygon-polygon intersections weighted by area.
+ *
+ * @param poly    Polygon.
+ * @param polys   Polygons to compare with.
+ * @param areas   Polygons areas.
+ * @return        Obtained intersection scores.
+ */
+std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas ) {
+  std::vector<double> scores;
+
+  /// Check input ///
+  if ( polys.size() != areas.size() ) {
+    throw_runtime_error( "PageXML.computeCoordsIntersectionsWeightedByArea: size of polys and areas must be the same" );
+    return scores;
   }
 
-  /// Compute baseline intersections ///
-  scores.clear();
-  OGRMultiPolygon *coords = getOGRpolygon( line );
-  double coords_area = coords->get_Area();
+  /// Compute intersections ///
+  double poly_area = poly->get_Area();
   double sum_areas = 0.0;
   int isect_count = 0;
-  for ( int n=0; n<(int)reg_polys.size(); n++ ) {
-    OGRGeometry *isect_geom = reg_polys[n]->Intersection(coords);
+  for ( int n=0; n<(int)polys.size(); n++ ) {
+    OGRGeometry *isect_geom = polys[n]->Intersection(poly);
     double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
-    scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/coords_area );
+    scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/poly_area );
     if ( isect_area > 0.0 ) {
-      sum_areas += reg_areas[n];
+      sum_areas += areas[n];
       isect_count++;
     }
   }
 
   /// Return if fewer than 2 intersects ///
   if ( isect_count < 2 )
-    return;
+    return scores;
 
   /// Weight by areas ///
   for ( int n=0; n<(int)scores.size(); n++ )
     if ( scores[n] > 0.0 )
-      scores[n] *= 1.0-reg_areas[n]/sum_areas;
+      scores[n] *= 1.0-areas[n]/sum_areas;
+
+  return scores;
 }
 
 /**
- * Computes baseline-region intersections weighted by area.
+ * Computes line-polygon intersections weighted by area.
  *
- * @param line       TextLine element.
- * @param regs       TextRegion elements.
- * @param reg_polys  Extracted OGR polygons.
- * @param reg_areas  Region areas.
- * @param scores     Obtained intersection scores.
+ * @param poly    Polyline.
+ * @param polys   Polygons to compare with.
+ * @param areas   Polygons areas.
+ * @return        Obtained intersection scores.
  */
-void PageXML::computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::vector<xmlNodePtr> regs, std::vector<OGRMultiPolygon*>& reg_polys, std::vector<double>& reg_areas, std::vector<double>& scores ) {
-  /// Get region polygons ///
-  if ( regs.size() != reg_polys.size() || reg_polys.size() == 0 ) {
-    reg_polys.clear();
-    for ( int n=0; n<(int)regs.size(); n++ )
-      reg_polys.push_back( getOGRpolygon(regs[n]) );
-  }
-  /// Compute region areas ///
-  if ( regs.size() != reg_areas.size() || reg_areas.size() == 0 ) {
-    reg_areas.clear();
-    for ( int n=0; n<(int)reg_polys.size(); n++ )
-      reg_areas.push_back( reg_polys[n]->get_Area() );
+std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMultiLineString* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas ) {
+  std::vector<double> scores;
+
+  /// Check input ///
+  if ( polys.size() != areas.size() ) {
+    throw_runtime_error( "PageXML.computeBaselineIntersectionsWeightedByArea: size of polys and areas must be the same" );
+    return scores;
   }
 
-  /// Compute baseline intersections ///
-  scores.clear();
-  OGRMultiLineString *baseline = getOGRpolyline( line );
-  double baseline_length = baseline->get_Length();
+  /// Compute intersections ///
+  double baseline_length = poly->get_Length();
   double sum_areas = 0.0;
   int isect_count = 0;
-  for ( int n=0; n<(int)reg_polys.size(); n++ ) {
-    OGRGeometry *isect_geom = reg_polys[n]->Intersection(baseline);
+  for ( int n=0; n<(int)polys.size(); n++ ) {
+    OGRGeometry *isect_geom = polys[n]->Intersection(poly);
     double isect_lgth = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Length();
     scores.push_back( isect_lgth <= 0.0 ? 0.0 : isect_lgth/baseline_length );
     if ( isect_lgth > 0.0 ) {
-      sum_areas += reg_areas[n];
+      sum_areas += areas[n];
       isect_count++;
     }
   }
 
   /// Return if fewer than 2 intersects ///
   if ( isect_count < 2 )
-    return;
+    return scores;
 
   /// Weight by areas ///
   for ( int n=0; n<(int)scores.size(); n++ )
     if ( scores[n] > 0.0 )
-      scores[n] *= 1.0-reg_areas[n]/sum_areas;
+      scores[n] *= 1.0-areas[n]/sum_areas;
+
+  return scores;
+}
+
+/**
+ * Selects elements based on overlap to a polygon.
+ *
+ * @param points        Polygon for selection.
+ * @param page          Page element for selection.
+ * @param xpath         xpath for candidate elements for selection.
+ * @param overlap_thr   Overlapping score threshold.
+ * @param overlap_type  Type of overlap to use for selecting.
+ * @return              Number of TextLines copied.
+ */
+std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points, xmlNodePt page, const char* xpath, double overlap_thr, PAGEXML_OVERLAP overlap_type ) {
+  std::vector<xmlNodePtr> selection;
+  if( xpath[0] == '/' && xpath[1] == '/' ) {
+    throw_runtime_error( "PageXML.selectByOverlap: xpath expected to be relative, got: %s", xpath );
+    return selection;
+  }
+
+  /// OGR polygon(s) for selection ///
+  std::vector<OGRMultiPolygon*> polys;
+  polys.push_back(pointsToOGRpolygon(points));
+  if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA ) {
+    double imW = getPageWidth(page);
+    double imH = getPageHeight(page);
+    std::vector<cv::Point2f> pagereg;
+    pagereg.push_back( cv::Point2f(0,0) );
+    pagereg.push_back( cv::Point2f(imW-1,0) );
+    pagereg.push_back( cv::Point2f(imW-1,imH-1) );
+    pagereg.push_back( cv::Point2f(0,imH-1) );
+    polys.push_back(pointsToOGRpolygon(pagereg));
+  }
+
+  /// Get areas for overlap computation ///
+  std::vector<double> areas = computeAreas(polys);
+
+  /// Loop through elements ///
+  std::vector<xmlNodePt> elems = select( xpath, page );
+  for ( int n=0; n<(int)elems.size(); n++ ) {
+    /// Compute overlap scores ///
+    std::vector<double> overlap;
+    switch ( overlap_type ) {
+      case PAGEXML_OVERLAP_COORDS_IOU:
+        overlap = computeIoUs( getOGRpolygon(elems[n]), polys );
+        break;
+      case PAGEXML_OVERLAP_COORDS_IWA:
+        overlap = computeCoordsIntersectionsWeightedByArea( getOGRpolygon(elems[n]), polys, areas );
+        break;
+      case PAGEXML_OVERLAP_BASELINE_IWA:
+        overlap = computeBaselineIntersectionsWeightedByArea( getOGRpolyline(elems[n]), polys, areas );
+        break;
+      case PAGEXML_OVERLAP_COORDS_BASELINE_IWA:
+        throw_runtime_error( "PageXML.selectByOverlap: PAGEXML_OVERLAP_COORDS_BASELINE_IWA not possible" );
+        return selection;
+    }
+
+    /// Add if higher than threshold ///
+    if ( overlap[0] > overlap_thr )
+      selection.push_back(elems[n]);
+  }
+
+  return selection;
+}
+
+/**
+ * Selects elements based on overlap to a polygon.
+ *
+ * @param points        Polygon for selection.
+ * @param pagenum       Page number for selection.
+ * @param xpath         xpath for candidate elements for selection.
+ * @param overlap_thr   Overlapping score threshold.
+ * @param overlap_type  Type of overlap to use for selecting.
+ * @return              Number of TextLines copied.
+ */
+std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points, int pagenum, const char* xpath, double overlap_thr, PAGEXML_OVERLAP overlap_type ) {
+  return selectByOverlap( points, selectNth("//_:Page",pagenum), xpath, overlap_thr, overlap_type );
 }
 
 /**
@@ -3470,8 +3570,8 @@ void PageXML::computeBaselineIntersectionsWeightedByArea( xmlNodePtr line, std::
  */
 int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type, double overlap_fact ) {
   xmlDocPtr docToPtr = getDocPtr();
-  std::vector<xmlNodePtr> pgsFrom = pageFrom.select("//_:Page");
-  std::vector<xmlNodePtr> pgsTo = select("//_:Page");
+  std::vector<xmlNodePt> pgsFrom = pageFrom.select("//_:Page");
+  std::vector<xmlNodePt> pgsTo = select("//_:Page");
 
   if ( pgsFrom.size() != pgsTo.size() ) {
     throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: PageXML objects must have the same number of pages" );
@@ -3482,7 +3582,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
 
   /// Loop through pages ///
   for ( int npage = 0; npage<(int)pgsFrom.size(); npage++ ) {
-    std::vector<xmlNodePtr> linesFrom = pageFrom.select( ".//_:TextLine", pgsFrom[npage] );
+    std::vector<xmlNodePt> linesFrom = pageFrom.select( ".//_:TextLine", pgsFrom[npage] );
     if( linesFrom.size() == 0 )
       continue;
 
@@ -3498,7 +3598,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     /// Select page region or create one if it does not exist ///
     std::string xmax = std::to_string(toImW-1);
     std::string ymax = std::to_string(toImH-1);
-    xmlNodePtr pageRegTo = selectNth( std::string("_:TextRegion[_:Coords[@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']]", 0, pgsTo[npage] );
+    xmlNodePt pageRegTo = selectNth( std::string("_:TextRegion[_:Coords[@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']]", 0, pgsTo[npage] );
     bool pageregadded = false;
     if ( ! pageRegTo ) {
       pageregadded = true;
@@ -3507,15 +3607,14 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     }
 
     /// Select relevant elements ///
-    std::vector<xmlNodePtr> linesTo = select( ".//_:TextLine", pgsTo[npage] );
-    std::vector<xmlNodePtr> regsTo = select( ".//_:TextRegion", pgsTo[npage] );
+    std::vector<xmlNodePt> regsTo = select( ".//_:TextRegion", pgsTo[npage] );
 
     /// Get polygons of regions for IoU computation ///
     std::vector<OGRMultiPolygon*> regs_poly = getOGRpolygons(regsTo);
+    std::vector<double> reg_areas = computeAreas(regs_poly);
 
     /// Loop through lines ///
-    std::vector<xmlNodePtr> linesAdded;
-    std::vector<double> reg_areas;
+    std::vector<xmlNodePt> linesAdded;
     for ( int n=0; n<(int)linesFrom.size(); n++ ) {
       if ( getPoints(linesFrom[n]).size() < 4 ) {
         fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
@@ -3526,24 +3625,24 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
       std::vector<double> overlap2;
       switch ( overlap_type ) {
         case PAGEXML_OVERLAP_COORDS_IOU:
-          computeIoUs( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, overlap );
+          overlap = computeIoUs( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly );
           break;
         case PAGEXML_OVERLAP_COORDS_IWA:
-          computeCoordsIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
+          overlap = computeCoordsIntersectionsWeightedByArea( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, reg_areas );
           break;
         case PAGEXML_OVERLAP_BASELINE_IWA:
-          computeBaselineIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
+          overlap = computeBaselineIntersectionsWeightedByArea( pageFrom.getOGRpolyline(linesFrom[n]), regs_poly, reg_areas );
           break;
         case PAGEXML_OVERLAP_COORDS_BASELINE_IWA:
-          computeBaselineIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap );
-          computeCoordsIntersectionsWeightedByArea( linesFrom[n], regsTo, regs_poly, reg_areas, overlap2 );
+          overlap = computeBaselineIntersectionsWeightedByArea( pageFrom.getOGRpolyline(linesFrom[n]), regs_poly, reg_areas );
+          overlap2 = computeCoordsIntersectionsWeightedByArea( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, reg_areas );
           for ( int m=0; m<(int)overlap.size(); m++ )
             overlap[m] = overlap_fact*overlap[m]+(1-overlap_fact)*overlap2[m];
           break;
       }
 
       /// Clone line and add it to the destination region node ///
-      xmlNodePtr lineclone = NULL;
+      xmlNodePt lineclone = NULL;
       if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, linesFrom[n], &lineclone, docToPtr, NULL, 1, 0 ) ||
           lineclone == NULL ) {
         throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: problems cloning TextLine node" );
@@ -3609,7 +3708,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
     }
     // @todo Check for single segment polystripe 
     if ( baseline[n].size() != 2 || coords[n].size() != 4 ) {
-      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines and Coords are required to have exactly 2 and 4 points respectively" );
+      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines and Coords are required to have exactly 2 and 4 points respectively. For horizontal left-to-right text give fake_baseline=true." );
       return -1;
     }
   }
