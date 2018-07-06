@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.07.05$
+ * @version $Version: 2018.07.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -64,6 +64,7 @@ enum PAGEXML_READ_DIRECTION {
 
 enum PAGEXML_OVERLAP {
   PAGEXML_OVERLAP_COORDS_IOU = 0,
+  PAGEXML_OVERLAP_COORDS_ISECT,
   PAGEXML_OVERLAP_COORDS_IWA,
   PAGEXML_OVERLAP_BASELINE_IWA,
   PAGEXML_OVERLAP_COORDS_BASELINE_IWA
@@ -247,6 +248,8 @@ class PageXML {
     double computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolygon* poly2 );
     double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
     std::vector<double> computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys );
+    double computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
+    std::vector<double> computeIntersectionPercentages( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys );
     std::vector<double> computeAreas( std::vector<OGRMultiPolygon*> polys );
     std::vector<double> computeCoordsIntersectionsWeightedByArea( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );
     std::vector<double> computeBaselineIntersectionsWeightedByArea( OGRMultiLineString* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );

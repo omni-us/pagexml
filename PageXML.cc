@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.05$
+ * @version $Version: 2018.07.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.05";
+static char class_version[] = "Version: 2018.07.06";
 
 /**
  * Returns the class version.
@@ -3386,6 +3386,43 @@ std::vector<double> PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGR
 }
 
 /**
+ * Computes the intersection percentage of one polygon with respect to another polygons.
+ *
+ * @param poly1      First polygon.
+ * @param poly2      Second polygon.
+ * @return           Intersection percentage value.
+ */
+double PageXML::computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
+  OGRGeometry *isect_geom = poly1->Intersection(poly2);
+  int isect_type = isect_geom->getGeometryType();
+  if ( isect_type != wkbPolygon &&
+       isect_type != wkbMultiPolygon &&
+       isect_type != wkbGeometryCollection )
+    return 0.0;
+
+  double poly1_area = poly1->get_Area();
+  if ( poly1_area == 0.0 )
+    return 0.0;
+
+  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area()/poly1_area;
+}
+
+/**
+ * Computes the intersection percentage of one polygon with respect to other polygons.
+ *
+ * @param poly      Polygon.
+ * @param polys     Vector of polygons.
+ * @return          Intersection percentage values.
+ */
+std::vector<double> PageXML::computeIntersectionPercentages( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys ) {
+  std::vector<double> isect;
+  for ( int n=0; n<(int)polys.size(); n++ )
+    isect.push_back( computeIntersectionPercentage(poly,polys[n]) );
+  return isect;
+}
+
+
+/**
  * Computes the areas for given polygons.
  *
  * @param polys      Polygons to process.
@@ -3527,6 +3564,9 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
       case PAGEXML_OVERLAP_COORDS_IOU:
         overlap = computeIoUs( getOGRpolygon(elems[n]), polys );
         break;
+      case PAGEXML_OVERLAP_COORDS_ISECT:
+        overlap = computeIntersectionPercentages( getOGRpolygon(elems[n]), polys );
+        break;
       case PAGEXML_OVERLAP_COORDS_IWA:
         overlap = computeCoordsIntersectionsWeightedByArea( getOGRpolygon(elems[n]), polys, areas );
         break;
@@ -3611,12 +3651,14 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
 
     /// Get polygons of regions for IoU computation ///
     std::vector<OGRMultiPolygon*> regs_poly = getOGRpolygons(regsTo);
-    std::vector<double> reg_areas = computeAreas(regs_poly);
+    std::vector<double> reg_areas;
+    if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA || overlap_type == PAGEXML_OVERLAP_COORDS_BASELINE_IWA )
+      reg_areas = computeAreas(regs_poly);
 
     /// Loop through lines ///
     std::vector<xmlNodePt> linesAdded;
     for ( int n=0; n<(int)linesFrom.size(); n++ ) {
-      if ( getPoints(linesFrom[n]).size() < 4 ) {
+      if ( overlap_type != PAGEXML_OVERLAP_BASELINE_IWA && getPoints(linesFrom[n]).size() < 4 ) {
         fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
         continue;
       }
@@ -3626,6 +3668,9 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
       switch ( overlap_type ) {
         case PAGEXML_OVERLAP_COORDS_IOU:
           overlap = computeIoUs( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly );
+          break;
+        case PAGEXML_OVERLAP_COORDS_ISECT:
+          overlap = computeIntersectionPercentages( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly );
           break;
         case PAGEXML_OVERLAP_COORDS_IWA:
           overlap = computeCoordsIntersectionsWeightedByArea( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, reg_areas );
