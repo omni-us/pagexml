@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.06.29$
+ * @version $Version: 2018.07.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,7 +61,7 @@ const Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.06.29";
+static char class_version[] = "Version: 2018.07.06";
 
 /**
  * Returns the class version.
@@ -488,8 +488,10 @@ void TextFeatExtractor::print( const Mat& feats, FILE* file ) {
 void TextFeatExtractor::write( const Mat& feats, const char* fname ) {
   if( feats.cols == 0 )
     throw runtime_error( "TextFeatExtractor::write: empty features matrix" );
-  if( format == TEXTFEAT_FORMAT_IMAGE )
-    imwrite( fname, feats );
+  if( format == TEXTFEAT_FORMAT_IMAGE ) {
+    if( ! imwrite( fname, feats ) )
+      throw runtime_error( string("TextFeatExtractor::write: failed to save image: ") + fname );
+  }
   else {
     FILE *file;
     if( (file=fopen(fname,"wb")) == NULL )
