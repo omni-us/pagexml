@@ -32,7 +32,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.07.05
+Version2018.07.06
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -69,6 +69,7 @@ PAGEXML_READ_DIRECTION_BTT            |
  Values                         | Descriptions                                
 --------------------------------|---------------------------------------------
 PAGEXML_OVERLAP_COORDS_IOU            | 
+PAGEXML_OVERLAP_COORDS_ISECT            | 
 PAGEXML_OVERLAP_COORDS_IWA            | 
 PAGEXML_OVERLAP_BASELINE_IWA            | 
 PAGEXML_OVERLAP_COORDS_BASELINE_IWA            | 
