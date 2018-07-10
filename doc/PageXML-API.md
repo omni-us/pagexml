@@ -16,6 +16,7 @@
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
 `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
 `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)`            | 
+`public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
@@ -88,6 +89,13 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)` 
 
+#### `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)` 
+
+Function that creates a temporal file using the mktemp command
+
+#### Parameters
+* `tempbase` The mktemp template to use, including at least 3 consecutive X.
+
 #### `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)` 
 
 Projects points onto a line defined by a direction and y-offset
@@ -132,12 +140,15 @@ Checks if a point is within a line segment
 `public void `[`loadXml`](#class_page_x_m_l_1a1598083e01ebff5727d248a8ac150c6d)`(const char * fname)` | Loads a Page XML from a file.
 `public void `[`loadXml`](#class_page_x_m_l_1a6c06d9d821dfe96ce0bf140e639f5978)`(int fnum,bool prevfree)` | Loads a Page XML from an input stream.
 `public void `[`loadXmlString`](#class_page_x_m_l_1acd4f674900ec7351e4f31b5fa3d66a09)`(const char * xml_string)` | Loads a Page XML from a string.
+`public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` | Loads an image for a Page in the XML.
+`public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` | 
+`public void `[`loadImages`](#class_page_x_m_l_1a8c3f3f964ef4039094e0a81a73f679a0)`(const bool resize_coords,const int density)` | 
 `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` | Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
 `public void `[`relativizeImageFilename`](#class_page_x_m_l_1a3c43349d7cff78cea6d1ba7b01f023b3)`(const char * xml_path)` | Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
 `public std::vector< std::string > `[`getImageBases`](#class_page_x_m_l_1a3c43f4e51877f674f29af7a421fa973b)`()` | Gets image bases for all pages in xml.
 `public bool `[`areIDsUnique`](#class_page_x_m_l_1aeb8f1e60e4e2521c2bb50fe495327648)`()` | Verifies that all IDs in page are unique.
 `public std::string `[`getNodeName`](#class_page_x_m_l_1a8e8ded73daa9edf93b02d75bac16b9de)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` base_node)` | Gets the name of the given node.
-`public std::vector< `[`NamedImage`](#struct_named_image)` > `[`crop`](#class_page_x_m_l_1a29d91aa96aa24473432b2ddab1b751d4)`(const char * xpath,cv::Point2f * margin,bool opaque_coords,const char * transp_xpath,const char * base_xpath)` | 
+`public std::vector< `[`NamedImage`](#struct_named_image)` > `[`crop`](#class_page_x_m_l_1a3264214ef4bc3ea7d5706b33440c57a0)`(const char * xpath,cv::Point2f * margin,bool opaque_coords,const char * transp_xpath,const char * base_xpath)` | Crops images using its Coords polygon, regions outside the polygon are set to transparent.
 `public int `[`count`](#class_page_x_m_l_1ad4fa4aef07f44a011f154cee73aa6002)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | Returns number of matched nodes for a given xpath.
 `public int `[`count`](#class_page_x_m_l_1a9017068318dd91aead4d39a472ee2a8d)`(std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | 
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a562f6a2af80c35e01a9cfa36afc10435)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | Selects nodes given an xpath.
@@ -215,8 +226,8 @@ Checks if a point is within a line segment
 `public void `[`setPageImageFilename`](#class_page_x_m_l_1a1f6225549414316c7b42d466f37ea9ae)`(int pagenum,const char * image)` | 
 `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ab6670ff942eeb850d64cb87a9932be58)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the imageFilename of a page.
 `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ac6fe17760af6634bf781b82831f6145b)`(int pagenum)` | 
-`public PageImage `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` | Returns the image for the given page.
-`public PageImage `[`getPageImage`](#class_page_x_m_l_1abf54fa39f33ca21661e87528136b00b6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
+`public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` | Returns the image for the given page.
+`public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1abf54fa39f33ca21661e87528136b00b6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addGlyph`](#class_page_x_m_l_1a0814aa1518e897289014c38c441a8bf1)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` | Adds a Glyph to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addGlyph`](#class_page_x_m_l_1acaa1832064f9fadb99580bce37ff2a61)`(const char * xpath,const char * id,const char * before_id)` | Adds a Glyph to a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addWord`](#class_page_x_m_l_1ab865d14cd40a7898f7612ca3e1cb507f)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` | Adds a Word to a given node.
@@ -229,6 +240,25 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1ad7c0aed4a410245017724a7cefc40654)`(std::string image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public int `[`write`](#class_page_x_m_l_1a3de4da73170e0d402131603da0314ecf)`(const char * fname)` | Output ///.
 `public std::string `[`toString`](#class_page_x_m_l_1a32549b2df27c0b2308d2ad7437cf328f)`()` | Creates a string representation of the Page XML.
+`public OGRMultiPolygon * `[`pointsToOGRpolygon`](#class_page_x_m_l_1a8c9648fe45b6f8787f72a426b2b21efd)`(std::vector< cv::Point2f > points)` | Converts Coords to an OGRMultiPolygon.
+`public std::vector< OGRMultiPolygon * > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a0824036bc27ae4707329665fb2d8c422)`(std::vector< std::vector< cv::Point2f > > points)` | Converts Coords to OGRMultiPolygons.
+`public OGRMultiPolygon * `[`getOGRpolygon`](#class_page_x_m_l_1a87274fd138a85857892a1de1f177e8d2)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets an element's Coords as an OGRMultiPolygon.
+`public std::vector< OGRMultiPolygon * > `[`getOGRpolygons`](#class_page_x_m_l_1a3fdacaecdb7f703513f53b25b5907732)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets elements' Coords as OGRMultiPolygons.
+`public OGRMultiPolygon * `[`getUnionOGRpolygon`](#class_page_x_m_l_1a281c42635101e469e08fea5b8ec03906)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets the union of Coords elements as a OGRMultiPolygon.
+`public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a64ebd377c84d7a93636f266617173f48)`(OGRMultiPolygon * poly)` | Gets the area of a OGRMultiPolygon.
+`public OGRMultiLineString * `[`getOGRpolyline`](#class_page_x_m_l_1a1ee918e01bb6529a44d605c7256c69a6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets the element's Baseline as an OGRMultiLineString.
+`public double `[`computeIntersectFactor`](#class_page_x_m_l_1a14235c2d307d8b6c2ede5fba074ae6b4)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection factor of one polygon over another.
+`public double `[`computeIntersectFactor`](#class_page_x_m_l_1a013c3823c3f6c5ceefb43cb8f3205490)`(OGRMultiLineString * poly1,OGRMultiPolygon * poly2)` | Computes the intersection factor of one polyline over polygon.
+`public double `[`computeIoU`](#class_page_x_m_l_1a17808b4a1ddc73d3678c6441c5d44b83)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection over union (IoU) of two polygons.
+`public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1aceff17e141c37b9e39fed30fe67c7379)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` | Computes the intersection over unions (IoU) of polygons.
+`public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1a3c3bf48e2cf7496a07790253384d1008)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection percentage of one polygon with respect to another polygons.
+`public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1a465631113aa581de9c9aa2ba4d780716)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` | Computes the intersection percentage of one polygon with respect to other polygons.
+`public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1a00b39565e78cad9a8b4abceb106a105c)`(std::vector< OGRMultiPolygon * > polys)` | Computes the areas for given polygons.
+`public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1aaac21cae37920f6707f511d4300fb5d4)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` | Computes polygon-polygon intersections weighted by area.
+`public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a4c30956a60ac8c6149486029e3b4eb09)`(OGRMultiLineString * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` | Computes line-polygon intersections weighted by area.
+`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
+`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
+`public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
 `public int `[`testTextLineContinuation`](#class_page_x_m_l_1a508d158670341a3fc48ae03918f1b65b)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,bool fake_baseline)` | Tests for text line continuation (requires single segment polystripe).
 `public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625fb5d653053410316f8c7a5f741c3e)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,bool fake_baseline)` | Gets the reading order for a set of text lines (requires single segment polystripe).
 `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` | Returns the XML document pointer.
@@ -297,6 +327,23 @@ Loads a Page XML from a string.
 #### Parameters
 * `xml_string` The XML content.
 
+#### `public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` 
+
+Loads an image for a Page in the XML.
+
+#### Parameters
+* `pagenum` The number of the page for which to load the image. 
+
+* `fname` File name of the image to read, overriding the one in the XML. 
+
+* `resize_coords` If image size differs, resize page XML coordinates. 
+
+* `density` Load the image at the given density, resizing the page coordinates if required.
+
+#### `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` 
+
+#### `public void `[`loadImages`](#class_page_x_m_l_1a8c3f3f964ef4039094e0a81a73f679a0)`(const bool resize_coords,const int density)` 
+
 #### `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` 
 
 Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
@@ -329,7 +376,21 @@ Gets the name of the given node.
 #### Returns
 String with the name.
 
-#### `public std::vector< `[`NamedImage`](#struct_named_image)` > `[`crop`](#class_page_x_m_l_1a29d91aa96aa24473432b2ddab1b751d4)`(const char * xpath,cv::Point2f * margin,bool opaque_coords,const char * transp_xpath,const char * base_xpath)` 
+#### `public std::vector< `[`NamedImage`](#struct_named_image)` > `[`crop`](#class_page_x_m_l_1a3264214ef4bc3ea7d5706b33440c57a0)`(const char * xpath,cv::Point2f * margin,bool opaque_coords,const char * transp_xpath,const char * base_xpath)` 
+
+Crops images using its Coords polygon, regions outside the polygon are set to transparent.
+
+#### Parameters
+* `xpath` Selector for polygons to crop. 
+
+* `margin` Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height. 
+
+* `opaque_coords` Whether to include an alpha channel with the polygon interior in opaque. 
+
+* `transp_xpath` Selector for semi-transparent elements. 
+
+#### Returns
+An std::vector containing [NamedImage](#struct_named_image) objects of the cropped images.
 
 #### `public int `[`count`](#class_page_x_m_l_1ad4fa4aef07f44a011f154cee73aa6002)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
 
@@ -989,11 +1050,11 @@ Returns the imageFilename of a page.
 
 #### `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ac6fe17760af6634bf781b82831f6145b)`(int pagenum)` 
 
-#### `public PageImage `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` 
+#### `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` 
 
 Returns the image for the given page.
 
-#### `public PageImage `[`getPageImage`](#class_page_x_m_l_1abf54fa39f33ca21661e87528136b00b6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+#### `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1abf54fa39f33ca21661e87528136b00b6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addGlyph`](#class_page_x_m_l_1a0814aa1518e897289014c38c441a8bf1)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` 
 
@@ -1159,6 +1220,242 @@ Number of bytes written.
 
 Creates a string representation of the Page XML.
 
+#### `public OGRMultiPolygon * `[`pointsToOGRpolygon`](#class_page_x_m_l_1a8c9648fe45b6f8787f72a426b2b21efd)`(std::vector< cv::Point2f > points)` 
+
+Converts Coords to an OGRMultiPolygon.
+
+#### Parameters
+* `points` Vector of x,y points. 
+
+#### Returns
+Pointer to OGRMultiPolygon element.
+
+#### `public std::vector< OGRMultiPolygon * > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a0824036bc27ae4707329665fb2d8c422)`(std::vector< std::vector< cv::Point2f > > points)` 
+
+Converts Coords to OGRMultiPolygons.
+
+#### Parameters
+* `points` Vectors of x,y points. 
+
+#### Returns
+Pointer to OGRMultiPolygon element.
+
+#### `public OGRMultiPolygon * `[`getOGRpolygon`](#class_page_x_m_l_1a87274fd138a85857892a1de1f177e8d2)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
+
+Gets an element's Coords as an OGRMultiPolygon.
+
+#### Parameters
+* `node` The element from which to extract the Coords points. 
+
+* `xpath` Selector for the Coords element. 
+
+#### Returns
+Pointer to OGRMultiPolygon element.
+
+#### `public std::vector< OGRMultiPolygon * > `[`getOGRpolygons`](#class_page_x_m_l_1a3fdacaecdb7f703513f53b25b5907732)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
+
+Gets elements' Coords as OGRMultiPolygons.
+
+#### Parameters
+* `nodes` Elements from which to extract the Coords points. 
+
+* `xpath` Selector for the Coords element. 
+
+#### Returns
+Vector of OGRMultiPolygon pointer elements.
+
+#### `public OGRMultiPolygon * `[`getUnionOGRpolygon`](#class_page_x_m_l_1a281c42635101e469e08fea5b8ec03906)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
+
+Gets the union of Coords elements as a OGRMultiPolygon.
+
+#### Parameters
+* `nodes` Elements from which to extract the Coords points. 
+
+* `xpath` Selector for the Coords element. 
+
+#### Returns
+Pointer to OGRMultiPolygon element.
+
+#### `public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a64ebd377c84d7a93636f266617173f48)`(OGRMultiPolygon * poly)` 
+
+Gets the area of a OGRMultiPolygon.
+
+#### Parameters
+* `poly` OGRMultiPolygon pointer. 
+
+#### Returns
+Area.
+
+#### `public OGRMultiLineString * `[`getOGRpolyline`](#class_page_x_m_l_1a1ee918e01bb6529a44d605c7256c69a6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
+
+Gets the element's Baseline as an OGRMultiLineString.
+
+#### Parameters
+* `node` The element from which to extract the Baseline points. 
+
+#### Returns
+Pointer to OGRMultiLineString element.
+
+#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1a14235c2d307d8b6c2ede5fba074ae6b4)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+
+Computes the intersection factor of one polygon over another.
+
+#### Parameters
+* `poly1` First polygon. 
+
+* `poly2` Second polygon. 
+
+#### Returns
+Factor value.
+
+#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1a013c3823c3f6c5ceefb43cb8f3205490)`(OGRMultiLineString * poly1,OGRMultiPolygon * poly2)` 
+
+Computes the intersection factor of one polyline over polygon.
+
+#### Parameters
+* `poly1` Polyline. 
+
+* `poly2` Polygon. 
+
+#### Returns
+Factor value.
+
+#### `public double `[`computeIoU`](#class_page_x_m_l_1a17808b4a1ddc73d3678c6441c5d44b83)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+
+Computes the intersection over union (IoU) of two polygons.
+
+#### Parameters
+* `poly1` First polygon. 
+
+* `poly2` Second polygon. 
+
+#### Returns
+IoU value.
+
+#### `public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1aceff17e141c37b9e39fed30fe67c7379)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` 
+
+Computes the intersection over unions (IoU) of polygons.
+
+#### Parameters
+* `poly` Polygon. 
+
+* `polys` Vector of polygons. 
+
+#### Returns
+IoU values.
+
+#### `public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1a3c3bf48e2cf7496a07790253384d1008)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+
+Computes the intersection percentage of one polygon with respect to another polygons.
+
+#### Parameters
+* `poly1` First polygon. 
+
+* `poly2` Second polygon. 
+
+#### Returns
+Intersection percentage value.
+
+#### `public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1a465631113aa581de9c9aa2ba4d780716)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` 
+
+Computes the intersection percentage of one polygon with respect to other polygons.
+
+#### Parameters
+* `poly` Polygon. 
+
+* `polys` Vector of polygons. 
+
+#### Returns
+Intersection percentage values.
+
+#### `public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1a00b39565e78cad9a8b4abceb106a105c)`(std::vector< OGRMultiPolygon * > polys)` 
+
+Computes the areas for given polygons.
+
+#### Parameters
+* `polys` Polygons to process. 
+
+#### Returns
+The polygon areas.
+
+#### `public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1aaac21cae37920f6707f511d4300fb5d4)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` 
+
+Computes polygon-polygon intersections weighted by area.
+
+#### Parameters
+* `poly` Polygon. 
+
+* `polys` Polygons to compare with. 
+
+* `areas` Polygons areas. 
+
+#### Returns
+Obtained intersection scores.
+
+#### `public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a4c30956a60ac8c6149486029e3b4eb09)`(OGRMultiLineString * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` 
+
+Computes line-polygon intersections weighted by area.
+
+#### Parameters
+* `poly` Polyline. 
+
+* `polys` Polygons to compare with. 
+
+* `areas` Polygons areas. 
+
+#### Returns
+Obtained intersection scores.
+
+#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` 
+
+Selects elements based on overlap to a polygon.
+
+#### Parameters
+* `points` Polygon for selection. 
+
+* `page` Page element for selection. 
+
+* `xpath` xpath for candidate elements for selection. 
+
+* `overlap_thr` Overlapping score threshold. 
+
+* `overlap_type` Type of overlap to use for selecting. 
+
+#### Returns
+Number of TextLines copied.
+
+#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` 
+
+Selects elements based on overlap to a polygon.
+
+#### Parameters
+* `points` Polygon for selection. 
+
+* `pagenum` Page number for selection. 
+
+* `xpath` xpath for candidate elements for selection. 
+
+* `overlap_thr` Overlapping score threshold. 
+
+* `overlap_type` Type of overlap to use for selecting. 
+
+#### Returns
+Number of TextLines copied.
+
+#### `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` 
+
+Copies TextLines from one page xml to another assigning to regions based on overlap.
+
+#### Parameters
+* `pageFrom` [PageXML](#class_page_x_m_l) from where to copy TextLines. 
+
+* `overlap_type` Type of overlap to use for assigning lines to regions. 
+
+* `overlap_fact` Overlapping factor. 
+
+#### Returns
+Number of TextLines copied.
+
 #### `public int `[`testTextLineContinuation`](#class_page_x_m_l_1a508d158670341a3fc48ae03918f1b65b)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,bool fake_baseline)` 
 
 Tests for text line continuation (requires single segment polystripe).
@@ -1213,10 +1510,10 @@ Returns the XML document pointer.
 `public int `[`direction`](#struct_named_image_1a014632405141de28d9ef5c3d8b33fd27) | 
 `public int `[`x`](#struct_named_image_1a0ca2bf51b4d9e41ffc6013b6ebb0eb5f) | 
 `public int `[`y`](#struct_named_image_1ae37031be3a775dc1bdab07378169bc61) | 
-`public PageImage `[`image`](#struct_named_image_1ad3acaf8a72f72434ff9474dfeee81a03) | 
+`public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`image`](#struct_named_image_1ad3acaf8a72f72434ff9474dfeee81a03) | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`node`](#struct_named_image_1a0ea94db18d30fd437a8424cf742afb9d) | 
 `public inline  `[`NamedImage`](#struct_named_image_1a70560cf030f1554b2ebe91e01584d30f)`()` | 
-`public inline  `[`NamedImage`](#struct_named_image_1af33a1269609e69b72d9b1e3425e09309)`(std::string _id,std::string _name,double _rotation,int _direction,int _x,int _y,PageImage _image,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` _node)` | 
+`public inline  `[`NamedImage`](#struct_named_image_1af33a1269609e69b72d9b1e3425e09309)`(std::string _id,std::string _name,double _rotation,int _direction,int _x,int _y,`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` _image,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` _node)` | 
 
 ## Members
 
@@ -1232,12 +1529,12 @@ Returns the XML document pointer.
 
 #### `public int `[`y`](#struct_named_image_1ae37031be3a775dc1bdab07378169bc61) 
 
-#### `public PageImage `[`image`](#struct_named_image_1ad3acaf8a72f72434ff9474dfeee81a03) 
+#### `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`image`](#struct_named_image_1ad3acaf8a72f72434ff9474dfeee81a03) 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`node`](#struct_named_image_1a0ea94db18d30fd437a8424cf742afb9d) 
 
 #### `public inline  `[`NamedImage`](#struct_named_image_1a70560cf030f1554b2ebe91e01584d30f)`()` 
 
-#### `public inline  `[`NamedImage`](#struct_named_image_1af33a1269609e69b72d9b1e3425e09309)`(std::string _id,std::string _name,double _rotation,int _direction,int _x,int _y,PageImage _image,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` _node)` 
+#### `public inline  `[`NamedImage`](#struct_named_image_1af33a1269609e69b72d9b1e3425e09309)`(std::string _id,std::string _name,double _rotation,int _direction,int _x,int _y,`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` _image,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` _node)` 
 
 Generated by [Moxygen](https://sourcey.com/moxygen)
