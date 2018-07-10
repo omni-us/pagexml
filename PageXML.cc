@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.06$
+ * @version $Version: 2018.07.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.06";
+static char class_version[] = "Version: 2018.07.10";
 
 /**
  * Returns the class version.
@@ -378,6 +378,7 @@ void PageXML::loadXml( int fnum, bool prevfree ) {
 void PageXML::loadXmlString( const char* xml_string ) {
   release();
 
+  xmlKeepBlanksDefault(0);
   xml = xmlParseDoc( (xmlChar*)xml_string );
   if ( ! xml ) {
    throw_runtime_error( "PageXML.loadXml: problems reading XML from string" );
