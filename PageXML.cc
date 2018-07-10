@@ -185,7 +185,9 @@ string PageXML::toString() {
   string sxml;
   xmlChar *cxml;
   int size;
-  xmlDocDumpMemory(xml, &cxml, &size);
+  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, xml, NULL );
+  xmlDocDumpMemory(sortedXml, &cxml, &size);
+  xmlFreeDoc(sortedXml);
   if ( cxml == NULL ) {
     throw_runtime_error( "PageXML.toString: problem dumping to memory" );
     return sxml;
