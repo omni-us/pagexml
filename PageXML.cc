@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.10$
+ * @version $Version: 2018.07.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.10";
+static char class_version[] = "Version: 2018.07.13";
 
 /**
  * Returns the class version.
@@ -546,6 +546,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     pagesImage[pagenum].read(fname);
     if( std::regex_match(fname, reIsPdf) )
       listFlattenImage( pagesImage[pagenum] );
+    pagesImage[pagenum].page( Magick::Geometry(0,0,0,0) );
   }
   catch( exception& e ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", e.what() );
