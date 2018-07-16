@@ -33,7 +33,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.07.06
+Version2018.07.16
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -234,8 +234,8 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addWord`](#class_page_x_m_l_1a35b83528a5e85c0f8e5fe91e6603ea7f)`(const char * xpath,const char * id,const char * before_id)` | Adds a Word to a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextLine`](#class_page_x_m_l_1a990faea859827afc6ed10243f1c347fb)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` | Adds a TextLine to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextLine`](#class_page_x_m_l_1a52798d2245ba8af0afb948b31b311243)`(const char * xpath,const char * id,const char * before_id)` | Adds a TextLine to a given xpath.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1a6d91f5453b458fd901d4e48021e47a54)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` | Adds a TextRegion to a given node.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1a2dfd95ecd730c1724aacdb967cdb54c3)`(const char * xpath,const char * id,const char * before_id)` | Adds new TextRegion to a given xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1af335dbda4b11ddc8078df72ffca38f7c)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id,bool prepend)` | Adds a TextRegion to a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1afd831d3d6a2a33cc53feae4e4c3b4662)`(const char * xpath,const char * id,const char * before_id,bool prepend)` | Adds new TextRegion to a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1a99fbe6075faea2c881f8a5bbb2d68f0e)`(const char * image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1ad7c0aed4a410245017724a7cefc40654)`(std::string image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public int `[`write`](#class_page_x_m_l_1a3de4da73170e0d402131603da0314ecf)`(const char * fname)` | Output ///.
@@ -1140,7 +1140,7 @@ Adds a TextLine to a given xpath.
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1a6d91f5453b458fd901d4e48021e47a54)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1af335dbda4b11ddc8078df72ffca38f7c)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id,bool prepend)` 
 
 Adds a TextRegion to a given node.
 
@@ -1151,10 +1151,12 @@ Adds a TextRegion to a given node.
 
 * `before_id` If !=NULL inserts it before the TextRegion with this ID. 
 
+* `prepend` Whether to add element before all other TextRegions. 
+
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1a2dfd95ecd730c1724aacdb967cdb54c3)`(const char * xpath,const char * id,const char * before_id)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1afd831d3d6a2a33cc53feae4e4c3b4662)`(const char * xpath,const char * id,const char * before_id,bool prepend)` 
 
 Adds new TextRegion to a given xpath.
 
