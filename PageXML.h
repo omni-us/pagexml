@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.07.13$
+ * @version $Version: 2018.07.16$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -230,8 +230,8 @@ class PageXML {
     xmlNodePt addWord( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePt addTextLine( xmlNodePt node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePt addTextLine( const char* xpath, const char* id = NULL, const char* before_id = NULL );
-    xmlNodePt addTextRegion( xmlNodePt node, const char* id = NULL, const char* before_id = NULL );
-    xmlNodePt addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL );
+    xmlNodePt addTextRegion( xmlNodePt node, const char* id = NULL, const char* before_id = NULL, bool prepend = false );
+    xmlNodePt addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL, bool prepend = false );
     xmlNodePt addPage( const char* image, const int imgW, const int imgH, const char* id = NULL, xmlNodePt before_node = NULL );
     xmlNodePt addPage( std::string image, const int imgW, const int imgH, const char* id = NULL, xmlNodePt before_node = NULL );
     int write( const char* fname = "-" );

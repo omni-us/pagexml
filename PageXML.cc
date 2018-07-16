@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.13$
+ * @version $Version: 2018.07.16$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.13";
+static char class_version[] = "Version: 2018.07.16";
 
 /**
  * Returns the class version.
@@ -2987,9 +2987,10 @@ xmlNodePt PageXML::addTextLine( const char* xpath, const char* id, const char* b
  * @param node       The node of element to add the TextRegion.
  * @param id         ID for TextRegion, if NULL it is selected automatically.
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
+ * @param prepend    Whether to add element before all other TextRegions.
  * @return           Pointer to created element.
  */
-xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* before_id, bool prepend ) {
   if( ! nodeIs( node, "Page" ) ) {
     throw_runtime_error( "PageXML.addTextRegion: node is required to be a Page" );
     return NULL;
@@ -3023,7 +3024,7 @@ xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* be
     textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
   }
   else {
-    vector<xmlNodePt> sel = select( "_:TextEquiv", node );
+    vector<xmlNodePt> sel = select( prepend ? "*[local-name()='TextEquiv' or local-name()='TextRegion']" : "_:TextEquiv", node );
     if( sel.size() > 0 )
       textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
     else
@@ -3041,7 +3042,7 @@ xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* be
  * @param before_id  If !=NULL inserts it before the TextRegion with this ID.
  * @return           Pointer to created element.
  */
-xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char* before_id ) {
+xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char* before_id, bool prepend ) {
   if( xpath == NULL )
     xpath = "//_:Page";
   vector<xmlNodePt> target = select( xpath );
@@ -3050,7 +3051,7 @@ xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char*
     return NULL;
   }
 
-  return addTextRegion( target[0], id, before_id );
+  return addTextRegion( target[0], id, before_id, prepend );
 }
 
 /**
@@ -3646,7 +3647,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     bool pageregadded = false;
     if ( ! pageRegTo ) {
       pageregadded = true;
-      pageRegTo = addTextRegion( pgsTo[npage], (std::string("page")+std::to_string(npage+1)).c_str() );
+      pageRegTo = addTextRegion( pgsTo[npage], (std::string("page")+std::to_string(npage+1)).c_str(), NULL, true );
       setCoordsBBox( pageRegTo, 0, 0, toImW-1, toImH-1 );
     }
 
