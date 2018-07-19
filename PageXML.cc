@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.16$
+ * @version $Version: 2018.07.19$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.16";
+static char class_version[] = "Version: 2018.07.19";
 
 /**
  * Returns the class version.
@@ -419,8 +419,8 @@ void PageXML::setupXml() {
     throw_runtime_error( "PageXML.setupXml: unable to register namespace" );
     return;
   }
-  rootnode = context->node;
-  rpagens = xmlSearchNsByHref(xml,xmlDocGetRootElement(xml),(xmlChar*)pagens);
+  rootnode = xmlDocGetRootElement(xml);
+  rpagens = xmlSearchNsByHref(xml,rootnode,(xmlChar*)pagens);
 
   vector<xmlNodePt> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
@@ -864,29 +864,24 @@ vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt basenode )
 
 #define __REUSE_CONTEXT__
 
+#ifdef __REUSE_CONTEXT__
   xmlXPathContextPtr ncontext = context;
-  if( basenode != NULL ) {
-#ifndef __REUSE_CONTEXT__
-    ncontext = xmlXPathNewContext(basenode->doc);
-    if( ncontext == NULL ) {
-      throw_runtime_error( "PageXML.select: unable create xpath context" );
-      return matched;
-    }
-    if( xmlXPathRegisterNs( ncontext, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
-      throw_runtime_error( "PageXML.select: unable to register namespace" );
-      return matched;
-    }
-#endif
-    ncontext->node = (xmlNodePtr)basenode;
+#else
+  xmlXPathContextPtr ncontext = xmlXPathNewContext(xml);
+  if( ncontext == NULL ) {
+    throw_runtime_error( "PageXML.select: unable to create xpath context" );
+    return matched;
   }
+  if( xmlXPathRegisterNs( ncontext, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
+    throw_runtime_error( "PageXML.select: unable to register namespace" );
+    return matched;
+  }
+#endif
+  ncontext->node = basenode == NULL ? (xmlNodePtr)rootnode : (xmlNodePtr)basenode;
 
   xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
-#ifdef __REUSE_CONTEXT__
-  if( basenode != NULL )
-    ncontext->node = rootnode;
-#else
-  if( ncontext != context )
-    xmlXPathFreeContext(ncontext);
+#ifndef __REUSE_CONTEXT__
+  xmlXPathFreeContext(ncontext);
 #endif
 
   if( xsel == NULL ) {
