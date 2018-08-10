@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.07.19$
+ * @version $Version: 2018.08.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.19";
+static char class_version[] = "Version: 2018.08.10";
 
 /**
  * Returns the class version.
@@ -3694,8 +3694,10 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
         return 0;
       }
       int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
-      if ( overlap[max_idx] == 0.0 )
-        throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: TextLine does not overlap with any region" );
+      if ( overlap[max_idx] == 0.0 ) {
+        fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: TextLine does not overlap with any region, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
+        continue;
+      }
       xmlAddChild(regsTo[max_idx],lineclone);
     }
 
