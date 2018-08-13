@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.08.10$
+ * @version $Version: 2018.08.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.08.10";
+static char class_version[] = "Version: 2018.08.13";
 
 /**
  * Returns the class version.
@@ -3293,6 +3293,11 @@ OGRMultiPolygon* PageXML::getUnionOGRpolygon( std::vector<xmlNodePt> nodes, cons
  * @return           Area.
  */
 double PageXML::getOGRpolygonArea( OGRMultiPolygon* poly ) {
+  int isect_type = poly->getGeometryType();
+  if ( isect_type != wkbPolygon &&
+       isect_type != wkbMultiPolygon &&
+       isect_type != wkbGeometryCollection )
+    return 0.0;
   return poly->get_Area();
 }
 
@@ -3322,13 +3327,7 @@ OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* x
  */
 double PageXML::computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
   OGRGeometry *isect_geom = poly1->Intersection(poly2);
-  int isect_type = isect_geom->getGeometryType();
-  if ( isect_type != wkbPolygon &&
-       isect_type != wkbMultiPolygon &&
-       isect_type != wkbGeometryCollection )
-    return 0.0;
-
-  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area()/poly1->get_Area();
+  return getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))/poly1->get_Area();
 }
 
 /**
@@ -3358,13 +3357,7 @@ double PageXML::computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolyg
  */
 double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
   OGRGeometry *isect_geom = poly1->Intersection(poly2);
-  int isect_type = isect_geom->getGeometryType();
-  if ( isect_type != wkbPolygon &&
-       isect_type != wkbMultiPolygon &&
-       isect_type != wkbGeometryCollection )
-    return 0.0;
-
-  double iou = ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
+  double iou = getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom));
   if ( iou != 0.0 )
     iou /= poly1->get_Area()+poly2->get_Area()-iou;
 
@@ -3393,18 +3386,13 @@ std::vector<double> PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGR
  * @return           Intersection percentage value.
  */
 double PageXML::computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
-  OGRGeometry *isect_geom = poly1->Intersection(poly2);
-  int isect_type = isect_geom->getGeometryType();
-  if ( isect_type != wkbPolygon &&
-       isect_type != wkbMultiPolygon &&
-       isect_type != wkbGeometryCollection )
-    return 0.0;
-
   double poly1_area = poly1->get_Area();
   if ( poly1_area == 0.0 )
     return 0.0;
 
-  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area()/poly1_area;
+  OGRGeometry *isect_geom = poly1->Intersection(poly2);
+
+  return getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))/poly1_area;
 }
 
 /**
@@ -3420,7 +3408,6 @@ std::vector<double> PageXML::computeIntersectionPercentages( OGRMultiPolygon* po
     isect.push_back( computeIntersectionPercentage(poly,polys[n]) );
   return isect;
 }
-
 
 /**
  * Computes the areas for given polygons.
@@ -3458,7 +3445,7 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
   int isect_count = 0;
   for ( int n=0; n<(int)polys.size(); n++ ) {
     OGRGeometry *isect_geom = polys[n]->Intersection(poly);
-    double isect_area = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))->get_Area();
+    double isect_area = getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom));
     scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/poly_area );
     if ( isect_area > 0.0 ) {
       sum_areas += areas[n];
