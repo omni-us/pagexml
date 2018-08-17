@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.08.13$
+ * @version $Version: 2018.08.17$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.08.13";
+static char class_version[] = "Version: 2018.08.17";
 
 /**
  * Returns the class version.

@@ -1,6 +1,5 @@
 *.xml
 *.jpg
-c++-libs/xml
 py-pagexml*/build
 py-pagexml*/dist
 py-pagexml*/*.egg-info
