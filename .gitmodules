@@ -1,0 +1,3 @@
+[submodule "py-pagexml/opencv-swig"]
+	path = py-pagexml/opencv-swig
+	url = https://github.com/renatoGarcia/opencv-swig.git

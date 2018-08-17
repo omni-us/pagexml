@@ -1,0 +1,7 @@
+build
+dist
+pagexml/PageXML_wrap.cpp
+pagexml/pagexml.py
+pagexml.egg-info
+__pycache__
+_pagexml.*.so

@@ -1,0 +1,6 @@
+include pyproject.toml
+include pagexml/PageXML.h
+include opencv-swig/[ALR]*
+include opencv-swig/lib/opencv.i
+include opencv-swig/lib/opencv/*
+include opencv-swig/lib/opencv/detail/*
