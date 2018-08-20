@@ -21,6 +21,8 @@ def pagexml_Extension():
     for lib in libs:
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
+    if not pkgconfig.cflags('opencv'):
+        raise FileNotFoundError('pkgconfig did not find opencv development')
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
     return Extension('_pagexml',
                      define_macros = [('__PAGEXML_CVIMG__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],

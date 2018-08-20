@@ -1,0 +1,34 @@
+ARG UBUNTU_TAG=16.04
+#ARG UBUNTU_TAG=18.04
+
+FROM library/ubuntu:$UBUNTU_TAG
+
+MAINTAINER Mauricio Villegas <mauricio@omnius.com>
+
+ARG CV_VERSION=2.4v5
+#ARG CV_VERSION=3.2
+ARG GDAL_VERSION=1i
+#ARG GDAL_VERSION=20
+
+ENV \
+  DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update --fix-missing \
+ && apt-get install -y --no-install-recommends \
+      less \
+      nano \
+      python3 \
+      python3-setuptools \
+      libxml2 \
+      libxslt1.1 \
+      libopencv-highgui$CV_VERSION \
+      libopencv-imgproc$CV_VERSION \
+      libopencv-core$CV_VERSION \
+      libgdal$GDAL_VERSION \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* \
+ && ln -s /usr/bin/python3 /usr/local/bin/python
+
+COPY pagexml-*.egg /tmp/
+
+#RUN python -m easy_install /tmp/pagexml-*.egg

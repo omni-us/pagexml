@@ -1,0 +1,8 @@
+**/build
+**/dist
+**/__pycache__
+**/*.egg-info
+**/*.so
+pagexml/PageXML_wrap.cpp
+pagexml/pagexml.py
+lib/xml
