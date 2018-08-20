@@ -65,4 +65,12 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
   n=$((n+2));
 done
 
+if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
+  LIB_VER=$(sed -n '/"Version:/{s|.*: *||;s|".*||;p;}' lib/PageXML.cc);
+  DOC_VER=$(git show :doc/PageXML-API.md | sed -n '/Version/{s|.*Version *||;p;}');
+  [ "$LIB_VER" != "$DOC_VER" ] &&
+    echo "${0##*/}: error: doc/PageXML-API.md outdated" 1>&2 &&
+    exit 1;
+fi
+
 exit 0;
