@@ -5,20 +5,26 @@
 
 ### Building
 
- - python-pkgconfig
- - python-setuptools
+ - python3-setuptools
+ - python3-pkgconfig
+ - python3-wheel
+ - python3-dev
+ - swig
  - libxml2-dev
+ - libxslt1-dev
  - opencv-dev
  - libgdal-dev
+ - libboost-all-dev
 
 ### Runtime
 
+ - python3
  - libxml2
- - libxslt
- - libopencv-highgui2.4
- - libopencv-imgproc2.4
- - libopencv-core2.4
- - libgdal1i
+ - libxslt1.1
+ - libopencv-highgui
+ - libopencv-imgproc
+ - libopencv-core
+ - libgdal
 
 
 ## Installation from wheel binary file

@@ -2,14 +2,9 @@
 
 Library in C++ and a python wrapper for dealing with Page XML files
 
-# Build requirements
+# Requirements
 
-```
-sudo apt install libopencv-dev
-sudo apt install libxml2-dev
-sudo apt install libxslt1-dev
-sudo apt install libgdal-dev
-```
+Check [py-pagexml/README.md](py-pagexml/README.md) and/or [docker/Dockerfile_build](docker/Dockerfile_build), [docker/Dockerfile_runtime](docker/Dockerfile_runtime).
 
 # Contents 
 
