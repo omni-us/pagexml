@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.08.17$
+ * @version $Version: 2018.08.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.08.17";
+static char class_version[] = "Version: 2018.08.22";
 
 /**
  * Returns the class version.
@@ -3628,13 +3628,22 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     xmlNodePt pageRegTo = selectNth( std::string("_:TextRegion[_:Coords[@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']]", 0, pgsTo[npage] );
     bool pageregadded = false;
     if ( ! pageRegTo ) {
-      pageregadded = true;
-      pageRegTo = addTextRegion( pgsTo[npage], (std::string("page")+std::to_string(npage+1)).c_str(), NULL, true );
-      setCoordsBBox( pageRegTo, 0, 0, toImW-1, toImH-1 );
+      for ( int num=0; num<100; num++ ) {
+        std::string pageregid = std::string("page")+std::to_string(npage+1)+(num?"_cnt"+std::to_string(num):"");
+        if ( ! selectByID(pageregid.c_str()) ) {
+          pageRegTo = addTextRegion( pgsTo[npage], pageregid.c_str(), NULL, true );
+          setCoordsBBox( pageRegTo, 0, 0, toImW-1, toImH-1 );
+          pageregadded = true;
+        }
+      }
+      if ( ! pageregadded ) {
+        throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: problems adding page region for Page %d", npage );
+        return 0;
+      }
     }
 
     /// Select relevant elements ///
-    std::vector<xmlNodePt> regsTo = select( ".//_:TextRegion", pgsTo[npage] );
+    std::vector<xmlNodePt> regsTo = select( ".//_:TextRegion[_:Coords]", pgsTo[npage] );
 
     /// Get polygons of regions for IoU computation ///
     std::vector<OGRMultiPolygon*> regs_poly = getOGRpolygons(regsTo);
