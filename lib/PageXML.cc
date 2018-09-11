@@ -3669,15 +3669,16 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     /// Select page region or create one if it does not exist ///
     std::string xmax = std::to_string(toImW-1);
     std::string ymax = std::to_string(toImH-1);
-    xmlNodePt pageRegTo = selectNth( std::string("_:TextRegion[_:Coords[@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']]", 0, pgsTo[npage] );
+    xmlNodePt pageRegTo = selectNth( std::string("_:TextRegion[_:Coords/@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']", 0, pgsTo[npage] );
     bool pageregadded = false;
     if ( ! pageRegTo ) {
       for ( int num=0; num<100; num++ ) {
         std::string pageregid = std::string("page")+std::to_string(npage+1)+(num?"_cnt"+std::to_string(num):"");
         if ( ! selectByID(pageregid.c_str()) ) {
           pageRegTo = addTextRegion( pgsTo[npage], pageregid.c_str(), NULL, true );
-          setCoordsBBox( pageRegTo, 0, 0, toImW-1, toImH-1 );
+          setCoordsBBox( pageRegTo, 0, 0, toImW, toImH, NULL, true );
           pageregadded = true;
+          break;
         }
       }
       if ( ! pageregadded ) {
