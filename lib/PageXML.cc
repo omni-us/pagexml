@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.08.22$
+ * @version $Version: 2018.09.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,7 +50,7 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.08.22";
+static char class_version[] = "Version: 2018.09.11";
 
 /**
  * Returns the class version.
@@ -3215,13 +3215,35 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
 
 #if defined (__PAGEXML_OGR__)
 
+OGRMultiPolygon_::~OGRMultiPolygon_() {
+  if ( multipolygon )
+    OGRGeometryFactory::destroyGeometry(multipolygon);
+}
+OGRMultiPolygon_::OGRMultiPolygon_() {}
+OGRMultiPolygon_::OGRMultiPolygon_( OGRGeometry* geometry ) {
+  multipolygon = (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(geometry);
+}
+
+OGRMultiLineString_::~OGRMultiLineString_() {
+  if ( multipolyline )
+    OGRGeometryFactory::destroyGeometry(multipolyline);
+}
+OGRMultiLineString_::OGRMultiLineString_() {}
+OGRMultiLineString_::OGRMultiLineString_( OGRGeometry* geometry ) {
+  multipolyline = (OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(geometry);
+}
+
+
 /**
  * Converts Coords to an OGRMultiPolygon.
  *
  * @param points     Vector of x,y points.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::pointsToOGRpolygon( std::vector<cv::Point2f> points ) {
+OGRMultiPolygonPtr_ PageXML::pointsToOGRpolygon( std::vector<cv::Point2f> points ) {
+  if ( points.size() == 0 )
+    return OGRMultiPolygonPtr_(new OGRMultiPolygon_());
+
   OGRLinearRing* ring = new OGRLinearRing();
   OGRPolygon* poly = new OGRPolygon();
 
@@ -3229,8 +3251,9 @@ OGRMultiPolygon* PageXML::pointsToOGRpolygon( std::vector<cv::Point2f> points ) 
     ring->addPoint(points[n].x, points[n].y);
   ring->closeRings();
   poly->addRing(ring);
+  delete ring;
 
-  return (OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(poly);
+  return OGRMultiPolygonPtr_(new OGRMultiPolygon_(poly));
 }
 
 /**
@@ -3239,8 +3262,8 @@ OGRMultiPolygon* PageXML::pointsToOGRpolygon( std::vector<cv::Point2f> points ) 
  * @param points     Vectors of x,y points.
  * @return           Pointer to OGRMultiPolygon element.
  */
-std::vector<OGRMultiPolygon*> PageXML::pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points ) {
-  std::vector<OGRMultiPolygon*> polys;
+std::vector<OGRMultiPolygonPtr_> PageXML::pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points ) {
+  std::vector<OGRMultiPolygonPtr_> polys;
   for ( int n=0; n<(int)points.size(); n++ )
     polys.push_back( pointsToOGRpolygon(points[n]) );
   return polys;
@@ -3253,9 +3276,8 @@ std::vector<OGRMultiPolygon*> PageXML::pointsToOGRpolygons( std::vector<std::vec
  * @param xpath      Selector for the Coords element.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath ) {
-  std::vector<cv::Point2f> pts = getPoints(node,xpath);
-  return pts.size() == 0 ? NULL : pointsToOGRpolygon(pts);
+OGRMultiPolygonPtr_ PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath ) {
+  return pointsToOGRpolygon( getPoints(node,xpath) );
 }
 
 /**
@@ -3265,8 +3287,8 @@ OGRMultiPolygon* PageXML::getOGRpolygon( const xmlNodePt node, const char* xpath
  * @param xpath      Selector for the Coords element.
  * @return           Vector of OGRMultiPolygon pointer elements.
  */
-std::vector<OGRMultiPolygon*> PageXML::getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath ) {
-  std::vector<OGRMultiPolygon*> polys;
+std::vector<OGRMultiPolygonPtr_> PageXML::getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath ) {
+  std::vector<OGRMultiPolygonPtr_> polys;
   for ( int n=0; n<(int)nodes.size(); n++ )
     polys.push_back( getOGRpolygon(nodes[n],xpath) );
   return polys;
@@ -3279,11 +3301,11 @@ std::vector<OGRMultiPolygon*> PageXML::getOGRpolygons( std::vector<xmlNodePt> no
  * @param xpath      Selector for the Coords element.
  * @return           Pointer to OGRMultiPolygon element.
  */
-OGRMultiPolygon* PageXML::getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath ) {
-  OGRGeometry* geo_union = getOGRpolygon(nodes[0],xpath);
+OGRMultiPolygonPtr_ PageXML::getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath ) {
+  OGRMultiPolygonPtr_ geo_union = getOGRpolygon(nodes[0],xpath);
   for ( int n=1; n<(int)nodes.size(); n++ )
-    geo_union = geo_union->Union( getOGRpolygon(nodes[n],xpath) );
-  return ((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(geo_union));
+    geo_union = OGRMultiPolygonPtr_(new OGRMultiPolygon_( ((OGRGeometry*)geo_union->multipolygon)->Union( getOGRpolygon(nodes[n],xpath)->multipolygon ) ));
+  return geo_union;
 }
 
 /**
@@ -3292,13 +3314,13 @@ OGRMultiPolygon* PageXML::getUnionOGRpolygon( std::vector<xmlNodePt> nodes, cons
  * @param poly       OGRMultiPolygon pointer.
  * @return           Area.
  */
-double PageXML::getOGRpolygonArea( OGRMultiPolygon* poly ) {
-  int isect_type = poly->getGeometryType();
+double PageXML::getOGRpolygonArea( OGRMultiPolygonPtr_ poly ) {
+  int isect_type = poly->multipolygon->getGeometryType();
   if ( isect_type != wkbPolygon &&
        isect_type != wkbMultiPolygon &&
        isect_type != wkbGeometryCollection )
     return 0.0;
-  return poly->get_Area();
+  return poly->multipolygon->get_Area();
 }
 
 /**
@@ -3307,7 +3329,7 @@ double PageXML::getOGRpolygonArea( OGRMultiPolygon* poly ) {
  * @param node       The element from which to extract the Baseline points.
  * @return           Pointer to OGRMultiLineString element.
  */
-OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* xpath ) {
+OGRMultiLineStringPtr_ PageXML::getOGRpolyline( const xmlNodePt node, const char* xpath ) {
   std::vector<cv::Point2f> pts = getPoints(node,xpath);
 
   OGRLineString* curve = new OGRLineString();
@@ -3315,19 +3337,41 @@ OGRMultiLineString* PageXML::getOGRpolyline( const xmlNodePt node, const char* x
   for ( int n=0; n<(int)pts.size(); n++ )
     curve->addPoint(pts[n].x, pts[n].y);
 
-  return (OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(curve);
+  return OGRMultiLineStringPtr_(new OGRMultiLineString_(curve));
 }
 
 /**
- * Computes the intersection factor of one polygon over another.
+ * Computes the intersection between a multipolylines and a multipolygon.
+ *
+ * @param poly1      Polyline.
+ * @param poly2      Polygon.
+ * @return           Intersection geometry.
+ */
+OGRMultiLineStringPtr_ PageXML::multiPolylineIntersection( OGRMultiLineStringPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  return OGRMultiLineStringPtr_(new OGRMultiLineString_( poly1->multipolyline->Intersection(poly2->multipolygon) ));
+}
+
+/**
+ * Computes the intersection of two multipolygons.
+ *
+ * @param poly1      First polygon.
+ * @param poly2      Second polygon.
+ * @return           Intersection geometry.
+ */
+OGRMultiPolygonPtr_ PageXML::multiPolygonIntersection( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  return OGRMultiPolygonPtr_(new OGRMultiPolygon_( poly1->multipolygon->Intersection(poly2->multipolygon) ));
+}
+
+/**
+ * Computes the intersection factor of one multipolygon over another.
  *
  * @param poly1      First polygon.
  * @param poly2      Second polygon.
  * @return           Factor value.
  */
-double PageXML::computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
-  OGRGeometry *isect_geom = poly1->Intersection(poly2);
-  return getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))/poly1->get_Area();
+double PageXML::computeIntersectFactor( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  OGRMultiPolygonPtr_ isect = multiPolygonIntersection(poly1,poly2);
+  return getOGRpolygonArea(isect)/getOGRpolygonArea(poly1);
 }
 
 /**
@@ -3337,15 +3381,15 @@ double PageXML::computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon*
  * @param poly2      Polygon.
  * @return           Factor value.
  */
-double PageXML::computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolygon* poly2 ) {
-  OGRGeometry *isect_geom = poly2->Intersection(poly1);
-  int isect_type = isect_geom->getGeometryType();
+double PageXML::computeIntersectFactor( OGRMultiLineStringPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  OGRMultiLineStringPtr_ isect = multiPolylineIntersection(poly1,poly2);
+  int isect_type = isect->multipolyline->getGeometryType();
   if ( isect_type != wkbLineString &&
        isect_type != wkbMultiLineString &&
        isect_type != wkbGeometryCollection )
     return 0.0;
 
-  return ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Length()/poly1->get_Length();
+  return isect->multipolyline->get_Length()/poly1->multipolyline->get_Length();
 }
 
 /**
@@ -3355,11 +3399,11 @@ double PageXML::computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolyg
  * @param poly2      Second polygon.
  * @return           IoU value.
  */
-double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
-  OGRGeometry *isect_geom = poly1->Intersection(poly2);
-  double iou = getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom));
+double PageXML::computeIoU( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  OGRMultiPolygonPtr_ isect = multiPolygonIntersection(poly1,poly2);
+  double iou = getOGRpolygonArea(isect);
   if ( iou != 0.0 )
-    iou /= poly1->get_Area()+poly2->get_Area()-iou;
+    iou /= getOGRpolygonArea(poly1)+getOGRpolygonArea(poly2)-iou;
 
   return iou;
 }
@@ -3371,7 +3415,7 @@ double PageXML::computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
  * @param polys     Vector of polygons.
  * @return          IoU values.
  */
-std::vector<double> PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys ) {
+std::vector<double> PageXML::computeIoUs( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys ) {
   std::vector<double> ious;
   for ( int n=0; n<(int)polys.size(); n++ )
     ious.push_back( computeIoU(poly,polys[n]) );
@@ -3385,14 +3429,14 @@ std::vector<double> PageXML::computeIoUs( OGRMultiPolygon* poly, std::vector<OGR
  * @param poly2      Second polygon.
  * @return           Intersection percentage value.
  */
-double PageXML::computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 ) {
-  double poly1_area = poly1->get_Area();
+double PageXML::computeIntersectionPercentage( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 ) {
+  double poly1_area = getOGRpolygonArea(poly1);
   if ( poly1_area == 0.0 )
     return 0.0;
 
-  OGRGeometry *isect_geom = poly1->Intersection(poly2);
+  OGRMultiPolygonPtr_ isect = multiPolygonIntersection(poly1,poly2);
 
-  return getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom))/poly1_area;
+  return getOGRpolygonArea(isect)/poly1_area;
 }
 
 /**
@@ -3402,7 +3446,7 @@ double PageXML::computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiP
  * @param polys     Vector of polygons.
  * @return          Intersection percentage values.
  */
-std::vector<double> PageXML::computeIntersectionPercentages( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys ) {
+std::vector<double> PageXML::computeIntersectionPercentages( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys ) {
   std::vector<double> isect;
   for ( int n=0; n<(int)polys.size(); n++ )
     isect.push_back( computeIntersectionPercentage(poly,polys[n]) );
@@ -3415,10 +3459,10 @@ std::vector<double> PageXML::computeIntersectionPercentages( OGRMultiPolygon* po
  * @param polys      Polygons to process.
  * @return           The polygon areas.
  */
-std::vector<double> PageXML::computeAreas( std::vector<OGRMultiPolygon*> polys ) {
+std::vector<double> PageXML::computeAreas( std::vector<OGRMultiPolygonPtr_> polys ) {
   std::vector<double> areas;
   for ( int n=0; n<(int)polys.size(); n++ )
-    areas.push_back( polys[n]->get_Area() );
+    areas.push_back( getOGRpolygonArea(polys[n]) );
   return areas;
 }
 
@@ -3430,7 +3474,7 @@ std::vector<double> PageXML::computeAreas( std::vector<OGRMultiPolygon*> polys )
  * @param areas   Polygons areas.
  * @return        Obtained intersection scores.
  */
-std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas ) {
+std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas ) {
   std::vector<double> scores;
 
   /// Check input ///
@@ -3440,12 +3484,12 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
   }
 
   /// Compute intersections ///
-  double poly_area = poly->get_Area();
+  double poly_area = getOGRpolygonArea(poly);
   double sum_areas = 0.0;
   int isect_count = 0;
   for ( int n=0; n<(int)polys.size(); n++ ) {
-    OGRGeometry *isect_geom = polys[n]->Intersection(poly);
-    double isect_area = getOGRpolygonArea((OGRMultiPolygon*)OGRGeometryFactory::forceToMultiPolygon(isect_geom));
+    OGRMultiPolygonPtr_ isect = multiPolygonIntersection(poly,polys[n]);
+    double isect_area = getOGRpolygonArea(isect);
     scores.push_back( isect_area <= 0.0 ? 0.0 : isect_area/poly_area );
     if ( isect_area > 0.0 ) {
       sum_areas += areas[n];
@@ -3473,7 +3517,7 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
  * @param areas   Polygons areas.
  * @return        Obtained intersection scores.
  */
-std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMultiLineString* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas ) {
+std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMultiLineStringPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas ) {
   std::vector<double> scores;
 
   /// Check input ///
@@ -3483,12 +3527,12 @@ std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMult
   }
 
   /// Compute intersections ///
-  double baseline_length = poly->get_Length();
+  double baseline_length = poly->multipolyline->get_Length();
   double sum_areas = 0.0;
   int isect_count = 0;
   for ( int n=0; n<(int)polys.size(); n++ ) {
-    OGRGeometry *isect_geom = polys[n]->Intersection(poly);
-    double isect_lgth = ((OGRMultiLineString*)OGRGeometryFactory::forceToMultiLineString(isect_geom))->get_Length();
+    OGRMultiLineStringPtr_ isect = multiPolylineIntersection(poly,polys[n]);
+    double isect_lgth = isect->multipolyline->get_Length();
     scores.push_back( isect_lgth <= 0.0 ? 0.0 : isect_lgth/baseline_length );
     if ( isect_lgth > 0.0 ) {
       sum_areas += areas[n];
@@ -3526,7 +3570,7 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
   }
 
   /// OGR polygon(s) for selection ///
-  std::vector<OGRMultiPolygon*> polys;
+  std::vector<OGRMultiPolygonPtr_> polys;
   polys.push_back(pointsToOGRpolygon(points));
   if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA ) {
     double imW = getPageWidth(page);
@@ -3646,7 +3690,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     std::vector<xmlNodePt> regsTo = select( ".//_:TextRegion[_:Coords]", pgsTo[npage] );
 
     /// Get polygons of regions for IoU computation ///
-    std::vector<OGRMultiPolygon*> regs_poly = getOGRpolygons(regsTo);
+    std::vector<OGRMultiPolygonPtr_> regs_poly = getOGRpolygons(regsTo);
     std::vector<double> reg_areas;
     if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA || overlap_type == PAGEXML_OVERLAP_COORDS_BASELINE_IWA )
       reg_areas = computeAreas(regs_poly);

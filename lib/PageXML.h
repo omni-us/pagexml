@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.08.22$
+ * @version $Version: 2018.09.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -10,6 +10,7 @@
 #define __PAGEXML_H__
 
 #include <vector>
+#include <memory>
 #include <chrono>
 
 #include <libxml/parser.h>
@@ -32,6 +33,22 @@
 
 #if defined (__PAGEXML_OGR__)
 #include <ogrsf_frmts.h>
+class OGRMultiPolygon_ {
+  public:
+    ~OGRMultiPolygon_();
+    OGRMultiPolygon_();
+    OGRMultiPolygon_( OGRGeometry* geometry );
+    OGRMultiPolygon* multipolygon = NULL;
+};
+typedef std::shared_ptr<OGRMultiPolygon_> OGRMultiPolygonPtr_;
+class OGRMultiLineString_ {
+  public:
+    ~OGRMultiLineString_();
+    OGRMultiLineString_();
+    OGRMultiLineString_( OGRGeometry* geometry );
+    OGRMultiLineString* multipolyline = NULL;
+};
+typedef std::shared_ptr<OGRMultiLineString_> OGRMultiLineStringPtr_;
 #endif
 
 #if defined (__PAGEXML_LEPT__)
@@ -237,22 +254,24 @@ class PageXML {
     int write( const char* fname = "-" );
     std::string toString();
 #if defined (__PAGEXML_OGR__)
-    OGRMultiPolygon* pointsToOGRpolygon( std::vector<cv::Point2f> points );
-    std::vector<OGRMultiPolygon*> pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points );
-    OGRMultiPolygon* getOGRpolygon( const xmlNodePt node, const char* xpath = "_:Coords" );
-    std::vector<OGRMultiPolygon*> getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
-    OGRMultiPolygon* getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
-    double getOGRpolygonArea( OGRMultiPolygon* poly );
-    OGRMultiLineString* getOGRpolyline( const xmlNodePt node, const char* xpath = "_:Baseline" );
-    double computeIntersectFactor( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
-    double computeIntersectFactor( OGRMultiLineString* poly1, OGRMultiPolygon* poly2 );
-    double computeIoU( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
-    std::vector<double> computeIoUs( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys );
-    double computeIntersectionPercentage( OGRMultiPolygon* poly1, OGRMultiPolygon* poly2 );
-    std::vector<double> computeIntersectionPercentages( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys );
-    std::vector<double> computeAreas( std::vector<OGRMultiPolygon*> polys );
-    std::vector<double> computeCoordsIntersectionsWeightedByArea( OGRMultiPolygon* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );
-    std::vector<double> computeBaselineIntersectionsWeightedByArea( OGRMultiLineString* poly, std::vector<OGRMultiPolygon*> polys, std::vector<double> areas );
+    OGRMultiPolygonPtr_ pointsToOGRpolygon( std::vector<cv::Point2f> points );
+    std::vector<OGRMultiPolygonPtr_> pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points );
+    OGRMultiPolygonPtr_ getOGRpolygon( const xmlNodePt node, const char* xpath = "_:Coords" );
+    std::vector<OGRMultiPolygonPtr_> getOGRpolygons( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
+    OGRMultiPolygonPtr_ getUnionOGRpolygon( std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
+    double getOGRpolygonArea( OGRMultiPolygonPtr_ poly );
+    OGRMultiLineStringPtr_ getOGRpolyline( const xmlNodePt node, const char* xpath = "_:Baseline" );
+    OGRMultiLineStringPtr_ multiPolylineIntersection( OGRMultiLineStringPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    OGRMultiPolygonPtr_ multiPolygonIntersection( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    double computeIntersectFactor( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    double computeIntersectFactor( OGRMultiLineStringPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    double computeIoU( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    std::vector<double> computeIoUs( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys );
+    double computeIntersectionPercentage( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2 );
+    std::vector<double> computeIntersectionPercentages( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys );
+    std::vector<double> computeAreas( std::vector<OGRMultiPolygonPtr_> polys );
+    std::vector<double> computeCoordsIntersectionsWeightedByArea( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas );
+    std::vector<double> computeBaselineIntersectionsWeightedByArea( OGRMultiLineStringPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas );
     std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, xmlNodePt page, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
     std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, int pagenum, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
     int copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IOU, double overlap_fact = 0.5 );

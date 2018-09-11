@@ -22,6 +22,8 @@
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
 `public inline static double `[`IoU_1d`](#_page_x_m_l_8cc_1ac09c1ca85100d59d39f77e7f545eca8d)`(double a1,double a2,double b1,double b2)`            | Computes the 1D intersection over union
 `public double `[`withinSegment`](#_page_x_m_l_8cc_1a01aee68a0af5ee992c2f6b499b4a5558)`(cv::Point2f segm_start,cv::Point2f segm_end,cv::Point2f point)`            | Checks if a point is within a line segment
+`class `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string__) | 
+`class `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon__) | 
 `class `[`PageXML`](#class_page_x_m_l) | 
 `struct `[`NamedImage`](#struct_named_image) | 
 
@@ -33,7 +35,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.08.22
+Version2018.09.11
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -125,6 +127,48 @@ Checks if a point is within a line segment
 
 #### Returns
 0 if within segment, +1 if outside but aligned to the right, -1 if outside but aligned to the left, otherwise NaN.
+
+# class `OGRMultiLineString_` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public OGRMultiLineString * `[`multipolyline`](#class_o_g_r_multi_line_string___1a591b8a564dfa78aaf8fb9f091c1f3e84) | 
+`public  `[`~OGRMultiLineString_`](#class_o_g_r_multi_line_string___1a4cb34985e906b72407172328e7ac6103)`()` | 
+`public  `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string___1a4212f1b78f3426208e11a4adc2c0fb77)`()` | 
+`public  `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string___1af6a7b543a4e76216a60964f276213384)`(OGRGeometry * geometry)` | 
+
+## Members
+
+#### `public OGRMultiLineString * `[`multipolyline`](#class_o_g_r_multi_line_string___1a591b8a564dfa78aaf8fb9f091c1f3e84) 
+
+#### `public  `[`~OGRMultiLineString_`](#class_o_g_r_multi_line_string___1a4cb34985e906b72407172328e7ac6103)`()` 
+
+#### `public  `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string___1a4212f1b78f3426208e11a4adc2c0fb77)`()` 
+
+#### `public  `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string___1af6a7b543a4e76216a60964f276213384)`(OGRGeometry * geometry)` 
+
+# class `OGRMultiPolygon_` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public OGRMultiPolygon * `[`multipolygon`](#class_o_g_r_multi_polygon___1a0594033824c664ed647e18a3d9b79083) | 
+`public  `[`~OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1ad083a2dc271aab3ceba7a0836e4b9df9)`()` | 
+`public  `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1a62f54d49e43abe6ce938217104aadb1b)`()` | 
+`public  `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1a8baa6eb516212b6f101709bcea50a6bd)`(OGRGeometry * geometry)` | 
+
+## Members
+
+#### `public OGRMultiPolygon * `[`multipolygon`](#class_o_g_r_multi_polygon___1a0594033824c664ed647e18a3d9b79083) 
+
+#### `public  `[`~OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1ad083a2dc271aab3ceba7a0836e4b9df9)`()` 
+
+#### `public  `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1a62f54d49e43abe6ce938217104aadb1b)`()` 
+
+#### `public  `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon___1a8baa6eb516212b6f101709bcea50a6bd)`(OGRGeometry * geometry)` 
 
 # class `PageXML` 
 
@@ -240,22 +284,24 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1ad7c0aed4a410245017724a7cefc40654)`(std::string image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public int `[`write`](#class_page_x_m_l_1a3de4da73170e0d402131603da0314ecf)`(const char * fname)` | Output ///.
 `public std::string `[`toString`](#class_page_x_m_l_1a32549b2df27c0b2308d2ad7437cf328f)`()` | Creates a string representation of the Page XML.
-`public OGRMultiPolygon * `[`pointsToOGRpolygon`](#class_page_x_m_l_1a8c9648fe45b6f8787f72a426b2b21efd)`(std::vector< cv::Point2f > points)` | Converts Coords to an OGRMultiPolygon.
-`public std::vector< OGRMultiPolygon * > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a0824036bc27ae4707329665fb2d8c422)`(std::vector< std::vector< cv::Point2f > > points)` | Converts Coords to OGRMultiPolygons.
-`public OGRMultiPolygon * `[`getOGRpolygon`](#class_page_x_m_l_1a87274fd138a85857892a1de1f177e8d2)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets an element's Coords as an OGRMultiPolygon.
-`public std::vector< OGRMultiPolygon * > `[`getOGRpolygons`](#class_page_x_m_l_1a3fdacaecdb7f703513f53b25b5907732)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets elements' Coords as OGRMultiPolygons.
-`public OGRMultiPolygon * `[`getUnionOGRpolygon`](#class_page_x_m_l_1a281c42635101e469e08fea5b8ec03906)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets the union of Coords elements as a OGRMultiPolygon.
-`public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a64ebd377c84d7a93636f266617173f48)`(OGRMultiPolygon * poly)` | Gets the area of a OGRMultiPolygon.
-`public OGRMultiLineString * `[`getOGRpolyline`](#class_page_x_m_l_1a1ee918e01bb6529a44d605c7256c69a6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets the element's Baseline as an OGRMultiLineString.
-`public double `[`computeIntersectFactor`](#class_page_x_m_l_1a14235c2d307d8b6c2ede5fba074ae6b4)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection factor of one polygon over another.
-`public double `[`computeIntersectFactor`](#class_page_x_m_l_1a013c3823c3f6c5ceefb43cb8f3205490)`(OGRMultiLineString * poly1,OGRMultiPolygon * poly2)` | Computes the intersection factor of one polyline over polygon.
-`public double `[`computeIoU`](#class_page_x_m_l_1a17808b4a1ddc73d3678c6441c5d44b83)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection over union (IoU) of two polygons.
-`public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1aceff17e141c37b9e39fed30fe67c7379)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` | Computes the intersection over unions (IoU) of polygons.
-`public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1a3c3bf48e2cf7496a07790253384d1008)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` | Computes the intersection percentage of one polygon with respect to another polygons.
-`public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1a465631113aa581de9c9aa2ba4d780716)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` | Computes the intersection percentage of one polygon with respect to other polygons.
-`public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1a00b39565e78cad9a8b4abceb106a105c)`(std::vector< OGRMultiPolygon * > polys)` | Computes the areas for given polygons.
-`public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1aaac21cae37920f6707f511d4300fb5d4)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` | Computes polygon-polygon intersections weighted by area.
-`public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a4c30956a60ac8c6149486029e3b4eb09)`(OGRMultiLineString * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` | Computes line-polygon intersections weighted by area.
+`public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`pointsToOGRpolygon`](#class_page_x_m_l_1a4748cef2a547bb364d5a5e0bc15ccbc7)`(std::vector< cv::Point2f > points)` | Converts Coords to an OGRMultiPolygon.
+`public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a1655a09ca1b847b129db72d6b5b56d0b)`(std::vector< std::vector< cv::Point2f > > points)` | Converts Coords to OGRMultiPolygons.
+`public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getOGRpolygon`](#class_page_x_m_l_1a3e9e0aa471f8e86c1653386205e372c6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets an element's Coords as an OGRMultiPolygon.
+`public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`getOGRpolygons`](#class_page_x_m_l_1ad4ee556c6caa2572f2f7ee7aad14d458)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets elements' Coords as OGRMultiPolygons.
+`public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getUnionOGRpolygon`](#class_page_x_m_l_1afed5a7a57f5c0fcaf59a7dbb75811267)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Gets the union of Coords elements as a OGRMultiPolygon.
+`public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a9fa4920d5460e81c1e502cfaa9a8460d)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly)` | Gets the area of a OGRMultiPolygon.
+`public `[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` `[`getOGRpolyline`](#class_page_x_m_l_1aa5af48c42eafdd9ddc98c242b8526c37)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets the element's Baseline as an OGRMultiLineString.
+`public `[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` `[`multiPolylineIntersection`](#class_page_x_m_l_1aa9b03129f21e3ea045394caaeca06a6a)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection between a multipolylines and a multipolygon.
+`public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`multiPolygonIntersection`](#class_page_x_m_l_1a3fd32eea9e21803bcdaaae3a10fb1f1c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection of two multipolygons.
+`public double `[`computeIntersectFactor`](#class_page_x_m_l_1a45dd1f4f006af562a90637420cd21f9c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection factor of one multipolygon over another.
+`public double `[`computeIntersectFactor`](#class_page_x_m_l_1ac77c256502c08925bfc57068630d2756)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection factor of one polyline over polygon.
+`public double `[`computeIoU`](#class_page_x_m_l_1a3f29690f6a8b21819f95d2b2cbe4a182)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection over union (IoU) of two polygons.
+`public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1ad20b3e51b65a70de20085881378a074f)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` | Computes the intersection over unions (IoU) of polygons.
+`public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1afa8011384f2029c861b48a536ba39b9a)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` | Computes the intersection percentage of one polygon with respect to another polygons.
+`public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1ac1e9141dddb77e569afc962a0bf8548c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` | Computes the intersection percentage of one polygon with respect to other polygons.
+`public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1af0986a35b548f3ce33516281221ff303)`(std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` | Computes the areas for given polygons.
+`public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1a0b66bebe169432bc92dc0d36bfaa539b)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` | Computes polygon-polygon intersections weighted by area.
+`public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a1fdc1df063018096d26a9dc34ce0faad)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` | Computes line-polygon intersections weighted by area.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
@@ -1222,7 +1268,7 @@ Number of bytes written.
 
 Creates a string representation of the Page XML.
 
-#### `public OGRMultiPolygon * `[`pointsToOGRpolygon`](#class_page_x_m_l_1a8c9648fe45b6f8787f72a426b2b21efd)`(std::vector< cv::Point2f > points)` 
+#### `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`pointsToOGRpolygon`](#class_page_x_m_l_1a4748cef2a547bb364d5a5e0bc15ccbc7)`(std::vector< cv::Point2f > points)` 
 
 Converts Coords to an OGRMultiPolygon.
 
@@ -1232,7 +1278,7 @@ Converts Coords to an OGRMultiPolygon.
 #### Returns
 Pointer to OGRMultiPolygon element.
 
-#### `public std::vector< OGRMultiPolygon * > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a0824036bc27ae4707329665fb2d8c422)`(std::vector< std::vector< cv::Point2f > > points)` 
+#### `public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a1655a09ca1b847b129db72d6b5b56d0b)`(std::vector< std::vector< cv::Point2f > > points)` 
 
 Converts Coords to OGRMultiPolygons.
 
@@ -1242,7 +1288,7 @@ Converts Coords to OGRMultiPolygons.
 #### Returns
 Pointer to OGRMultiPolygon element.
 
-#### `public OGRMultiPolygon * `[`getOGRpolygon`](#class_page_x_m_l_1a87274fd138a85857892a1de1f177e8d2)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
+#### `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getOGRpolygon`](#class_page_x_m_l_1a3e9e0aa471f8e86c1653386205e372c6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
 
 Gets an element's Coords as an OGRMultiPolygon.
 
@@ -1254,7 +1300,7 @@ Gets an element's Coords as an OGRMultiPolygon.
 #### Returns
 Pointer to OGRMultiPolygon element.
 
-#### `public std::vector< OGRMultiPolygon * > `[`getOGRpolygons`](#class_page_x_m_l_1a3fdacaecdb7f703513f53b25b5907732)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
+#### `public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`getOGRpolygons`](#class_page_x_m_l_1ad4ee556c6caa2572f2f7ee7aad14d458)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
 
 Gets elements' Coords as OGRMultiPolygons.
 
@@ -1266,7 +1312,7 @@ Gets elements' Coords as OGRMultiPolygons.
 #### Returns
 Vector of OGRMultiPolygon pointer elements.
 
-#### `public OGRMultiPolygon * `[`getUnionOGRpolygon`](#class_page_x_m_l_1a281c42635101e469e08fea5b8ec03906)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
+#### `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getUnionOGRpolygon`](#class_page_x_m_l_1afed5a7a57f5c0fcaf59a7dbb75811267)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
 
 Gets the union of Coords elements as a OGRMultiPolygon.
 
@@ -1278,7 +1324,7 @@ Gets the union of Coords elements as a OGRMultiPolygon.
 #### Returns
 Pointer to OGRMultiPolygon element.
 
-#### `public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a64ebd377c84d7a93636f266617173f48)`(OGRMultiPolygon * poly)` 
+#### `public double `[`getOGRpolygonArea`](#class_page_x_m_l_1a9fa4920d5460e81c1e502cfaa9a8460d)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly)` 
 
 Gets the area of a OGRMultiPolygon.
 
@@ -1288,7 +1334,7 @@ Gets the area of a OGRMultiPolygon.
 #### Returns
 Area.
 
-#### `public OGRMultiLineString * `[`getOGRpolyline`](#class_page_x_m_l_1a1ee918e01bb6529a44d605c7256c69a6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
+#### `public `[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` `[`getOGRpolyline`](#class_page_x_m_l_1aa5af48c42eafdd9ddc98c242b8526c37)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
 
 Gets the element's Baseline as an OGRMultiLineString.
 
@@ -1298,9 +1344,33 @@ Gets the element's Baseline as an OGRMultiLineString.
 #### Returns
 Pointer to OGRMultiLineString element.
 
-#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1a14235c2d307d8b6c2ede5fba074ae6b4)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+#### `public `[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` `[`multiPolylineIntersection`](#class_page_x_m_l_1aa9b03129f21e3ea045394caaeca06a6a)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
 
-Computes the intersection factor of one polygon over another.
+Computes the intersection between a multipolylines and a multipolygon.
+
+#### Parameters
+* `poly1` Polyline. 
+
+* `poly2` Polygon. 
+
+#### Returns
+Intersection geometry.
+
+#### `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`multiPolygonIntersection`](#class_page_x_m_l_1a3fd32eea9e21803bcdaaae3a10fb1f1c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
+
+Computes the intersection of two multipolygons.
+
+#### Parameters
+* `poly1` First polygon. 
+
+* `poly2` Second polygon. 
+
+#### Returns
+Intersection geometry.
+
+#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1a45dd1f4f006af562a90637420cd21f9c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
+
+Computes the intersection factor of one multipolygon over another.
 
 #### Parameters
 * `poly1` First polygon. 
@@ -1310,7 +1380,7 @@ Computes the intersection factor of one polygon over another.
 #### Returns
 Factor value.
 
-#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1a013c3823c3f6c5ceefb43cb8f3205490)`(OGRMultiLineString * poly1,OGRMultiPolygon * poly2)` 
+#### `public double `[`computeIntersectFactor`](#class_page_x_m_l_1ac77c256502c08925bfc57068630d2756)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
 
 Computes the intersection factor of one polyline over polygon.
 
@@ -1322,7 +1392,7 @@ Computes the intersection factor of one polyline over polygon.
 #### Returns
 Factor value.
 
-#### `public double `[`computeIoU`](#class_page_x_m_l_1a17808b4a1ddc73d3678c6441c5d44b83)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+#### `public double `[`computeIoU`](#class_page_x_m_l_1a3f29690f6a8b21819f95d2b2cbe4a182)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
 
 Computes the intersection over union (IoU) of two polygons.
 
@@ -1334,7 +1404,7 @@ Computes the intersection over union (IoU) of two polygons.
 #### Returns
 IoU value.
 
-#### `public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1aceff17e141c37b9e39fed30fe67c7379)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` 
+#### `public std::vector< double > `[`computeIoUs`](#class_page_x_m_l_1ad20b3e51b65a70de20085881378a074f)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` 
 
 Computes the intersection over unions (IoU) of polygons.
 
@@ -1346,7 +1416,7 @@ Computes the intersection over unions (IoU) of polygons.
 #### Returns
 IoU values.
 
-#### `public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1a3c3bf48e2cf7496a07790253384d1008)`(OGRMultiPolygon * poly1,OGRMultiPolygon * poly2)` 
+#### `public double `[`computeIntersectionPercentage`](#class_page_x_m_l_1afa8011384f2029c861b48a536ba39b9a)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly1,`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly2)` 
 
 Computes the intersection percentage of one polygon with respect to another polygons.
 
@@ -1358,7 +1428,7 @@ Computes the intersection percentage of one polygon with respect to another poly
 #### Returns
 Intersection percentage value.
 
-#### `public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1a465631113aa581de9c9aa2ba4d780716)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys)` 
+#### `public std::vector< double > `[`computeIntersectionPercentages`](#class_page_x_m_l_1ac1e9141dddb77e569afc962a0bf8548c)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` 
 
 Computes the intersection percentage of one polygon with respect to other polygons.
 
@@ -1370,7 +1440,7 @@ Computes the intersection percentage of one polygon with respect to other polygo
 #### Returns
 Intersection percentage values.
 
-#### `public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1a00b39565e78cad9a8b4abceb106a105c)`(std::vector< OGRMultiPolygon * > polys)` 
+#### `public std::vector< double > `[`computeAreas`](#class_page_x_m_l_1af0986a35b548f3ce33516281221ff303)`(std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys)` 
 
 Computes the areas for given polygons.
 
@@ -1380,7 +1450,7 @@ Computes the areas for given polygons.
 #### Returns
 The polygon areas.
 
-#### `public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1aaac21cae37920f6707f511d4300fb5d4)`(OGRMultiPolygon * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` 
+#### `public std::vector< double > `[`computeCoordsIntersectionsWeightedByArea`](#class_page_x_m_l_1a0b66bebe169432bc92dc0d36bfaa539b)`(`[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` 
 
 Computes polygon-polygon intersections weighted by area.
 
@@ -1394,7 +1464,7 @@ Computes polygon-polygon intersections weighted by area.
 #### Returns
 Obtained intersection scores.
 
-#### `public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a4c30956a60ac8c6149486029e3b4eb09)`(OGRMultiLineString * poly,std::vector< OGRMultiPolygon * > polys,std::vector< double > areas)` 
+#### `public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a1fdc1df063018096d26a9dc34ce0faad)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` 
 
 Computes line-polygon intersections weighted by area.
 
