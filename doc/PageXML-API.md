@@ -12,10 +12,10 @@
 `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")`            | 
 `public regex `[`reRotation`](#_page_x_m_l_8cc_1ace361379b17a512eaf8ef91bc8ee0914)`(".*readingOrientation: *([0-9.]+) *;.*")`            | 
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
-`public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
+`public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)`            | 
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
@@ -83,13 +83,13 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")` 
 
-#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")` 
+#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")` 
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)` 
 
 #### `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)` 
 

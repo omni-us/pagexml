@@ -66,11 +66,24 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
 done
 
 if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
-  LIB_VER=$(sed -n '/"Version:/{s|.*: *||;s|".*||;p;}' lib/PageXML.cc);
-  DOC_VER=$(git show :doc/PageXML-API.md | sed -n '/Version/{s|.*Version *||;p;}');
-  [ "$LIB_VER" != "$DOC_VER" ] &&
-    echo "${0##*/}: error: doc/PageXML-API.md outdated" 1>&2 &&
-    exit 1;
+  ### Update C++ documentation ###
+  echo "### Update C++ documentation ###"
+  cd lib;
+  doxygen && moxygen -o ../doc/PageXML-API.md xml;
+  [ "$?" != "0" ] && exit 1;
+  cd ..;
+  git add doc/PageXML-API.md;
+
+  ### Test python wrapper and update documentation ###
+  echo "### Test python wrapper and update documentation ###"
+  cd py-pagexml;
+  python setup.py test;
+  [ "$?" != "0" ] && exit 1;
+  python setup.py build_sphinx --quiet --builder text &&
+    cp -p docs/_build/text/pagexml.txt API.rst;
+  [ "$?" != "0" ] && exit 1;
+  cd ..;
+  git add py-pagexml/API.rst;
 fi
 
 exit 0;

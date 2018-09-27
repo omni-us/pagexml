@@ -1,5 +1,7 @@
 %module pagexml
 
+%feature("autodoc", "2");
+
 %include "cpointer.i"
 %include "typemaps.i"
 %include "std_vector.i"
