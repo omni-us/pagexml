@@ -1,6 +1,6 @@
 build
 dist
-swig/PageXML_wrap.cpp
+PageXML_wrap.cpp
 pagexml.py
 __pycache__
 _pagexml.*.so

@@ -39,8 +39,8 @@ def pagexml_Extension():
                      define_macros = [('__PAGEXML_CVIMG__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = [cvinc,'-I./opencv-swig/lib','-modern','-outdir','.','-c++'],
-                     sources = ['swig/PageXML.i','swig/PageXML.cc'])
+                     swig_opts = [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
+                     sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
 
 
 def distutils_dir_name(dname):
@@ -55,7 +55,8 @@ sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', 
 
 def pagexml_Version():
     import re
-    with open("swig/PageXML.h") as f:
+    #with open("swig/PageXML.h") as f:
+    with open("pagexml/PageXML.h") as f:
         for line in f:
             if 'Version:' in line:
                 line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
@@ -103,12 +104,14 @@ setup(name=NAME,
       long_description=LONG_DESCRIPTION,
       author='Mauricio Villegas',
       author_email='mauricio@omnius.com',
+      url='https://github.com/omni-us/pagexml',
+      license='MIT',
       #setup_requires=['pkgconfig'], # does not install when missing?
       test_suite=NAME+'_tests',
       cmdclass=CMDCLASS,
-      py_modules=[NAME],
       packages=find_packages(),
       ext_modules=[pagexml_Extension()],
+      package_data={NAME: ['xsd/*.xsd']},
       command_options={
           'build_sphinx': {
               'project': ('setup.py', NAME),

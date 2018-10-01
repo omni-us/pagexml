@@ -12,10 +12,12 @@
 `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")`            | 
 `public regex `[`reRotation`](#_page_x_m_l_8cc_1ace361379b17a512eaf8ef91bc8ee0914)`(".*readingOrientation: *([0-9.]+) *;.*")`            | 
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
-`public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")`            | 
+`public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)`            | 
+`public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
+`public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
@@ -35,7 +37,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.09.11
+Version2018.10.01
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -83,13 +85,19 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")` 
 
-#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")` 
+#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")` 
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)` 
+
+#### `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)` 
+
+Schema validation ///.
+
+#### `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)` 
 
 #### `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)` 
 
@@ -176,15 +184,20 @@ Checks if a point is within a line segment
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
+`public xmlDocPtr `[`valid_doc`](#class_page_x_m_l_1a935b0e367d61517d4dc52b8eb9c98aa2) | 
+`public xmlSchemaParserCtxtPtr `[`valid_parser`](#class_page_x_m_l_1affeab4ae6649cb609705959f68941dfe) | 
+`public xmlSchemaPtr `[`valid_schema`](#class_page_x_m_l_1a91d986ca352f045c18f3e6302c115dfe) | 
+`public xmlSchemaValidCtxtPtr `[`valid_context`](#class_page_x_m_l_1acd2e993f35611ab5af66bd4e07aff4ac) | 
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
-`public  `[`PageXML`](#class_page_x_m_l_1a86b2558ba9790fed8ee2a78cbb8f0ed0)`()` | Constructors ///.
-`public  `[`PageXML`](#class_page_x_m_l_1a95475e2d030caccd682493ee8f4b7c30)`(const char * fname)` | [PageXML](#class_page_x_m_l) constructor that receives a file name to load.
+`public  `[`PageXML`](#class_page_x_m_l_1abe73714cd3533452f147a02bd004922b)`(const char * schema_path)` | Constructors ///.
+`public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
+`public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` | Validates the currently loaded XML.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a95f40947e6da8415578a4dcaf7a8eea3)`(const char * creator,const char * image,const int imgW,const int imgH)` | Loaders ///.
-`public void `[`loadXml`](#class_page_x_m_l_1a1598083e01ebff5727d248a8ac150c6d)`(const char * fname)` | Loads a Page XML from a file.
-`public void `[`loadXml`](#class_page_x_m_l_1a6c06d9d821dfe96ce0bf140e639f5978)`(int fnum,bool prevfree)` | Loads a Page XML from an input stream.
-`public void `[`loadXmlString`](#class_page_x_m_l_1acd4f674900ec7351e4f31b5fa3d66a09)`(const char * xml_string)` | Loads a Page XML from a string.
-`public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` | Loads an image for a Page in the XML.
+`public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` | Loads a Page XML from a file.
+`public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` | Loads a Page XML from an input stream.
+`public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` | Loads a Page XML from a string.
+`public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` | 
 `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` | 
 `public void `[`loadImages`](#class_page_x_m_l_1a8c3f3f964ef4039094e0a81a73f679a0)`(const bool resize_coords,const int density)` | 
 `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` | Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
@@ -282,8 +295,8 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1afd831d3d6a2a33cc53feae4e4c3b4662)`(const char * xpath,const char * id,const char * before_id,bool prepend)` | Adds new TextRegion to a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1a99fbe6075faea2c881f8a5bbb2d68f0e)`(const char * image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1ad7c0aed4a410245017724a7cefc40654)`(std::string image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
-`public int `[`write`](#class_page_x_m_l_1a3de4da73170e0d402131603da0314ecf)`(const char * fname)` | Output ///.
-`public std::string `[`toString`](#class_page_x_m_l_1a32549b2df27c0b2308d2ad7437cf328f)`()` | Creates a string representation of the Page XML.
+`public int `[`write`](#class_page_x_m_l_1a0c4b94eb5f607e85d8ae27a93e571f5f)`(const char * fname,bool validate)` | Output ///.
+`public std::string `[`toString`](#class_page_x_m_l_1af19593957ab5019cfa2e606d31b000e2)`(bool validate)` | Creates a string representation of the Page XML.
 `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`pointsToOGRpolygon`](#class_page_x_m_l_1a4748cef2a547bb364d5a5e0bc15ccbc7)`(std::vector< cv::Point2f > points)` | Converts Coords to an OGRMultiPolygon.
 `public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a1655a09ca1b847b129db72d6b5b56d0b)`(std::vector< std::vector< cv::Point2f > > points)` | Converts Coords to OGRMultiPolygons.
 `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getOGRpolygon`](#class_page_x_m_l_1a3e9e0aa471f8e86c1653386205e372c6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets an element's Coords as an OGRMultiPolygon.
@@ -311,20 +324,35 @@ Checks if a point is within a line segment
 
 ## Members
 
+#### `public xmlDocPtr `[`valid_doc`](#class_page_x_m_l_1a935b0e367d61517d4dc52b8eb9c98aa2) 
+
+#### `public xmlSchemaParserCtxtPtr `[`valid_parser`](#class_page_x_m_l_1affeab4ae6649cb609705959f68941dfe) 
+
+#### `public xmlSchemaPtr `[`valid_schema`](#class_page_x_m_l_1a91d986ca352f045c18f3e6302c115dfe) 
+
+#### `public xmlSchemaValidCtxtPtr `[`valid_context`](#class_page_x_m_l_1acd2e993f35611ab5af66bd4e07aff4ac) 
+
 #### `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` 
 
 [PageXML](#class_page_x_m_l) object destructor.
 
-#### `public  `[`PageXML`](#class_page_x_m_l_1a86b2558ba9790fed8ee2a78cbb8f0ed0)`()` 
+#### `public  `[`PageXML`](#class_page_x_m_l_1abe73714cd3533452f147a02bd004922b)`(const char * schema_path)` 
 
 Constructors ///.
 
-#### `public  `[`PageXML`](#class_page_x_m_l_1a95475e2d030caccd682493ee8f4b7c30)`(const char * fname)` 
+#### `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` 
 
-[PageXML](#class_page_x_m_l) constructor that receives a file name to load.
+Loads a schema for xml validation.
 
 #### Parameters
-* `fname` File name of the XML file to read.
+* `schema_apth` File name of the XSD file to read.
+
+#### `public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` 
+
+Validates the currently loaded XML.
+
+#### Parameters
+* `schema_apth` File name of the XSD file to read.
 
 #### `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` 
 
@@ -350,14 +378,14 @@ Creates a new Page XML.
 
 * `imgH` Height of image.
 
-#### `public void `[`loadXml`](#class_page_x_m_l_1a1598083e01ebff5727d248a8ac150c6d)`(const char * fname)` 
+#### `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` 
 
 Loads a Page XML from a file.
 
 #### Parameters
 * `fname` File name of the XML file to read.
 
-#### `public void `[`loadXml`](#class_page_x_m_l_1a6c06d9d821dfe96ce0bf140e639f5978)`(int fnum,bool prevfree)` 
+#### `public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` 
 
 Loads a Page XML from an input stream.
 
@@ -366,7 +394,7 @@ Loads a Page XML from an input stream.
 
 * `prevfree` Whether to release resources before loading.
 
-#### `public void `[`loadXmlString`](#class_page_x_m_l_1acd4f674900ec7351e4f31b5fa3d66a09)`(const char * xml_string)` 
+#### `public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` 
 
 Loads a Page XML from a string.
 
@@ -374,17 +402,6 @@ Loads a Page XML from a string.
 * `xml_string` The XML content.
 
 #### `public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` 
-
-Loads an image for a Page in the XML.
-
-#### Parameters
-* `pagenum` The number of the page for which to load the image. 
-
-* `fname` File name of the image to read, overriding the one in the XML. 
-
-* `resize_coords` If image size differs, resize page XML coordinates. 
-
-* `density` Load the image at the given density, resizing the page coordinates if required.
 
 #### `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` 
 
@@ -1252,7 +1269,7 @@ Adds a Page to the PcGts node.
 #### Returns
 Pointer to created element.
 
-#### `public int `[`write`](#class_page_x_m_l_1a3de4da73170e0d402131603da0314ecf)`(const char * fname)` 
+#### `public int `[`write`](#class_page_x_m_l_1a0c4b94eb5f607e85d8ae27a93e571f5f)`(const char * fname,bool validate)` 
 
 Output ///.
 
@@ -1264,7 +1281,7 @@ Writes the current state of the XML to a file using utf-8 encoding.
 #### Returns
 Number of bytes written.
 
-#### `public std::string `[`toString`](#class_page_x_m_l_1a32549b2df27c0b2308d2ad7437cf328f)`()` 
+#### `public std::string `[`toString`](#class_page_x_m_l_1af19593957ab5019cfa2e606d31b000e2)`(bool validate)` 
 
 Creates a string representation of the Page XML.
 
