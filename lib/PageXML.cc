@@ -47,6 +47,8 @@ regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
 
 xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 
+bool validation_enabled = true;
+
 /////////////////////
 /// Class version ///
 /////////////////////
@@ -239,9 +241,16 @@ void PageXML::loadSchema( const char *schema_path ) {
  * Validates the currently loaded XML.
  */
 bool PageXML::isValid() {
-  if( xml == NULL )
+  if( xml == NULL || ! validation_enabled )
     return true;
   return xmlSchemaValidateDoc(valid_context, xml) ? false : true;
+}
+
+/**
+ * Enables/disables schema validation.
+ */
+void PageXML::setValidationEnabled( bool val ) {
+  validation_enabled = val;
 }
 
 
@@ -3676,6 +3685,8 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
   /// OGR polygon(s) for selection ///
   std::vector<OGRMultiPolygonPtr_> polys;
   polys.push_back(pointsToOGRpolygon(points));
+  if( getOGRpolygonArea(polys[0]) == 0.0 )
+    return selection;
   if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA ) {
     double imW = getPageWidth(page);
     double imH = getPageHeight(page);

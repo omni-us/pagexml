@@ -1907,6 +1907,10 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       xpath: char const * text: char const *
 
+   static setValidationEnabled(val)
+
+      val: bool
+
    settingNames
 
    simplifyIDs(self) -> int
@@ -2040,6 +2044,10 @@ pagexml.PageXML_printVersions(*args)
    file: FILE *
 
    PageXML_printVersions()
+
+pagexml.PageXML_setValidationEnabled(val)
+
+   val: bool
 
 pagexml.PageXML_stringToPoints(*args)
 

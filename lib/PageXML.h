@@ -130,6 +130,7 @@ class PageXML {
     static const char* settingNames[];
     static char* version();
     static void printVersions( FILE* file = stdout );
+    static void setValidationEnabled( bool val );
     ~PageXML();
 #if defined (__PAGEXML_LIBCONFIG__)
     PageXML();
