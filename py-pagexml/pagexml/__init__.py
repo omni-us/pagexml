@@ -3,8 +3,10 @@ from .pagexml import *
 
 _PageXML = PageXML
 
-PAGEXMLDIR = os.path.dirname(os.path.realpath(__file__))
+PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
 
 class PageXML(_PageXML):
-    def __init__(self, schema_path = PAGEXMLDIR+'/xsd/pagecontent_searchink.xsd'):
-        super(PageXML, self).__init__(schema_path)
+    def __init__(self, *args, **kwargs):
+        if 'schema_path' not in kwargs:
+            kwargs['schema_path'] = PAGE_XSD
+        super(PageXML, self).__init__(*args, **kwargs)

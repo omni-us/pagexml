@@ -12,10 +12,10 @@
 `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")`            | 
 `public regex `[`reRotation`](#_page_x_m_l_8cc_1ace361379b17a512eaf8ef91bc8ee0914)`(".*readingOrientation: *([0-9.]+) *;.*")`            | 
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
-`public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
+`public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)`            | 
 `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
 `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
@@ -37,7 +37,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.10.01
+Version2018.10.02
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -85,13 +85,13 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")` 
 
-#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")` 
+#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")` 
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a79e508b639cf33c0f2fc6c77f1ebb138)`(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)` 
 
 #### `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)` 
 
@@ -184,12 +184,8 @@ Checks if a point is within a line segment
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public xmlDocPtr `[`valid_doc`](#class_page_x_m_l_1a935b0e367d61517d4dc52b8eb9c98aa2) | 
-`public xmlSchemaParserCtxtPtr `[`valid_parser`](#class_page_x_m_l_1affeab4ae6649cb609705959f68941dfe) | 
-`public xmlSchemaPtr `[`valid_schema`](#class_page_x_m_l_1a91d986ca352f045c18f3e6302c115dfe) | 
-`public xmlSchemaValidCtxtPtr `[`valid_context`](#class_page_x_m_l_1acd2e993f35611ab5af66bd4e07aff4ac) | 
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
-`public  `[`PageXML`](#class_page_x_m_l_1abe73714cd3533452f147a02bd004922b)`(const char * schema_path)` | Constructors ///.
+`public  `[`PageXML`](#class_page_x_m_l_1a0b930b74d48fe26bdfbfee7cde0df960)`(const char * pagexml_path,const char * schema_path)` | Constructors ///.
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
 `public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` | Validates the currently loaded XML.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
@@ -324,35 +320,31 @@ Checks if a point is within a line segment
 
 ## Members
 
-#### `public xmlDocPtr `[`valid_doc`](#class_page_x_m_l_1a935b0e367d61517d4dc52b8eb9c98aa2) 
-
-#### `public xmlSchemaParserCtxtPtr `[`valid_parser`](#class_page_x_m_l_1affeab4ae6649cb609705959f68941dfe) 
-
-#### `public xmlSchemaPtr `[`valid_schema`](#class_page_x_m_l_1a91d986ca352f045c18f3e6302c115dfe) 
-
-#### `public xmlSchemaValidCtxtPtr `[`valid_context`](#class_page_x_m_l_1acd2e993f35611ab5af66bd4e07aff4ac) 
-
 #### `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` 
 
 [PageXML](#class_page_x_m_l) object destructor.
 
-#### `public  `[`PageXML`](#class_page_x_m_l_1abe73714cd3533452f147a02bd004922b)`(const char * schema_path)` 
+#### `public  `[`PageXML`](#class_page_x_m_l_1a0b930b74d48fe26bdfbfee7cde0df960)`(const char * pagexml_path,const char * schema_path)` 
 
 Constructors ///.
+
+[PageXML](#class_page_x_m_l) constructor that receives a file name to load.
+
+#### Parameters
+* `pagexml_path` Path to the XML file to read. 
+
+* `schema_path` Path to the XSD file to read.
 
 #### `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` 
 
 Loads a schema for xml validation.
 
 #### Parameters
-* `schema_apth` File name of the XSD file to read.
+* `schema_path` File name of the XSD file to read.
 
 #### `public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` 
 
 Validates the currently loaded XML.
-
-#### Parameters
-* `schema_apth` File name of the XSD file to read.
 
 #### `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` 
 

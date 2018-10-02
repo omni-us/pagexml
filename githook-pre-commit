@@ -82,6 +82,7 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   python setup.py build_sphinx --quiet --builder text &&
     cp -p docs/_build/text/pagexml.txt API.rst;
   [ "$?" != "0" ] && exit 1;
+  sed -i 's|pagexml\.pagexml|pagexml|g' API.rst;
   cd ..;
   git add py-pagexml/API.rst;
 fi

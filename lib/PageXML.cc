@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.10.01$
+ * @version $Version: 2018.10.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -51,7 +51,7 @@ xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xs
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.10.01";
+static char class_version[] = "Version: 2018.10.02";
 
 /**
  * Returns the class version.
@@ -118,13 +118,12 @@ PageXML::~PageXML() {
 /// Constructors ///
 ////////////////////
 
-PageXML::PageXML( const char* schema_path ) {
-  loadSchema(schema_path);
+#if defined (__PAGEXML_LIBCONFIG__)
+
+PageXML::PageXML() {
   if( pagens == NULL )
     pagens = default_pagens;
 }
-
-#if defined (__PAGEXML_LIBCONFIG__)
 
 /**
  * PageXML constructor that receives a libconfig Config object.
@@ -150,6 +149,23 @@ PageXML::PageXML( const char* cfgfile ) {
   }
   if( pagens == NULL )
     pagens = default_pagens;
+}
+
+#else
+
+/**
+ * PageXML constructor that receives a file name to load.
+ *
+ * @param pagexml_path  Path to the XML file to read.
+ * @param schema_path   Path to the XSD file to read.
+ */
+PageXML::PageXML( const char* pagexml_path, const char* schema_path ) {
+  if( pagens == NULL )
+    pagens = default_pagens;
+  if( schema_path != NULL )
+    loadSchema( schema_path );
+  if( pagexml_path != NULL )
+    loadXml( pagexml_path );
 }
 
 #endif
@@ -202,7 +218,7 @@ void PageXML::freeSchema() {
 /**
  * Loads a schema for xml validation.
  *
- * @param schema_apth  File name of the XSD file to read.
+ * @param schema_path  File name of the XSD file to read.
  */
 void PageXML::loadSchema( const char *schema_path ) {
   if( schema_path == NULL )
@@ -221,8 +237,6 @@ void PageXML::loadSchema( const char *schema_path ) {
 
 /**
  * Validates the currently loaded XML.
- *
- * @param schema_apth  File name of the XSD file to read.
  */
 bool PageXML::isValid() {
   if( xml == NULL )

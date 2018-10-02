@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.10.01$
+ * @version $Version: 2018.10.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -131,16 +131,14 @@ class PageXML {
     static char* version();
     static void printVersions( FILE* file = stdout );
     ~PageXML();
-    PageXML( const char* schema_path = NULL );
 #if defined (__PAGEXML_LIBCONFIG__)
+    PageXML();
     PageXML( const libconfig::Config& config );
     PageXML( const char* cfgfile );
     void loadConf( const libconfig::Config& config );
+#else
+    PageXML( const char* pagexml_path = NULL, const char* schema_path = NULL );
 #endif
-    xmlDocPtr valid_doc = NULL;
-    xmlSchemaParserCtxtPtr valid_parser = NULL;
-    xmlSchemaPtr valid_schema = NULL;
-    xmlSchemaValidCtxtPtr valid_context = NULL;
     void loadSchema( const char* schema_path );
     bool isValid();
     void printConf( FILE* file = stdout );
@@ -298,6 +296,10 @@ class PageXML {
     xmlNodePt rootnode = NULL;
     xmlNodePt process_running = NULL;
     std::chrono::high_resolution_clock::time_point process_started;
+    xmlDocPtr valid_doc = NULL;
+    xmlSchemaParserCtxtPtr valid_parser = NULL;
+    xmlSchemaPtr valid_schema = NULL;
+    xmlSchemaValidCtxtPtr valid_context = NULL;
     void release();
     void freeXML();
     void freeSchema();
