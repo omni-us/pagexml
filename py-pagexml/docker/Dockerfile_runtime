@@ -9,6 +9,8 @@ ARG CV_VERSION=2.4v5
 #ARG CV_VERSION=3.2
 ARG GDAL_VERSION=1i
 #ARG GDAL_VERSION=20
+ARG PYTHON_VERSION=3
+#ARG PYTHON_VERSION=
 
 ENV \
   DEBIAN_FRONTEND=noninteractive
@@ -17,8 +19,8 @@ RUN apt-get update --fix-missing \
  && apt-get install -y --no-install-recommends \
       less \
       nano \
-      python3 \
-      python3-setuptools \
+      python$PYTHON_VERSION \
+      python$PYTHON_VERSION-setuptools \
       libxml2 \
       libxslt1.1 \
       libopencv-highgui$CV_VERSION \
@@ -27,8 +29,9 @@ RUN apt-get update --fix-missing \
       libgdal$GDAL_VERSION \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
- && ln -s /usr/bin/python3 /usr/local/bin/python
+ && if [ "$PYTHON_VERSION" = "3" ]; then ln -s /usr/bin/python3 /usr/local/bin/python; fi
 
 COPY pagexml-*.egg /tmp/
 
-#RUN python -m easy_install /tmp/pagexml-*.egg
+RUN python -m easy_install /tmp/pagexml-*.egg \
+ && python -m pagexml_tests.run_tests

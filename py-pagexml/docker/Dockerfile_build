@@ -1,8 +1,12 @@
-ARG UBUNTU_TAG=18.04
+ARG UBUNTU_TAG=16.04
+#ARG UBUNTU_TAG=18.04
 
 FROM library/ubuntu:$UBUNTU_TAG
 
 MAINTAINER Mauricio Villegas <mauricio@omnius.com>
+
+ARG PYTHON_VERSION=3
+#ARG PYTHON_VERSION=
 
 ENV \
   DEBIAN_FRONTEND=noninteractive
@@ -12,11 +16,11 @@ RUN apt-get update --fix-missing \
       less \
       nano \
       build-essential \
-      python3 \
-      python3-setuptools \
-      python3-pkgconfig \
-      python3-wheel \
-      python3-dev \
+      python$PYTHON_VERSION \
+      python$PYTHON_VERSION-setuptools \
+      python$PYTHON_VERSION-pkgconfig \
+      python$PYTHON_VERSION-wheel \
+      python$PYTHON_VERSION-dev \
       swig \
       libxml2-dev \
       libxslt1-dev \
@@ -25,9 +29,10 @@ RUN apt-get update --fix-missing \
       libboost-all-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
- && ln -s /usr/bin/python3 /usr/local/bin/python
+ && if [ "$PYTHON_VERSION" = "3" ]; then ln -s /usr/bin/python3 /usr/local/bin/python; fi
 
 COPY lib /opt/pagexml/lib
+COPY xsd /opt/pagexml/xsd
 COPY py-pagexml /opt/pagexml/py-pagexml
 
 WORKDIR /opt/pagexml/py-pagexml
