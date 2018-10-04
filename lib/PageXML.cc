@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.10.02$
+ * @version $Version: 2018.10.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -53,7 +53,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.10.02";
+static char class_version[] = "Version: 2018.10.04";
 
 /**
  * Returns the class version.
@@ -3878,10 +3878,11 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
  * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
  * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
  * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
+ * @param cfg_prolong_alpha     Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
  * @param fake_baseline         Use bottom line of Coords rectangle as the baseline.
  * @return                      Number of join groups.
  */
-int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, bool fake_baseline ) {
+int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, double cfg_prolong_alpha, bool fake_baseline ) {
   /// Get points and compute baseline angles and lengths ///
   std::vector< std::vector<cv::Point2f> > coords;
   std::vector< std::vector<cv::Point2f> > baseline;
@@ -3951,6 +3952,8 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
           continue;
 
         /// Compute coords endpoint-startpoint intersection factors ///
+        /// (both ways, intersection length of prolongated line 1 and line 2 divided by height of line 2) ///
+        /// @todo Possible improvement: coords_fact_xx = isect_1d / min(norm_n,norm_m)
         std::vector<cv::Point2f> pts_n = coords[n];
         std::vector<cv::Point2f> pts_m = coords[m];
         std::vector<cv::Point2f> isect_nm(2);
@@ -3969,18 +3972,20 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         double coords_fact_mn = intersection_1d(vert_mn_n[1],vert_mn_n[2],vert_mn_m[0],vert_mn_m[1])/cv::norm(pts_n[2]-pts_n[1]);
 
         /// Compute baseline alignment factors ///
+        /// (both ways, one minus distance between prolongated baseline 1 and baseline 2 divided by height of line 2 ) ///
+        /// @todo Possible improvement: max( 0, 1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )
         std::vector<cv::Point2f> bline_n = baseline[n];
         std::vector<cv::Point2f> bline_m = baseline[m];
         if ( ! intersection( bline_n[0], bline_n[1], pts_m[0], pts_m[3], isect_nm[0] ) ) continue;
         if ( ! intersection( bline_m[1], bline_m[0], pts_n[1], pts_n[2], isect_mn[0] ) ) continue;
-        double bline_fact_nm = cv::norm( isect_nm[0]-bline_m[0] )/cv::norm( pts_m[3]-pts_m[0] );
-        double bline_fact_mn = cv::norm( isect_mn[0]-bline_n[1] )/cv::norm( pts_n[2]-pts_n[1] );
+        double bline_fact_nm = 1.0-cv::norm( isect_nm[0]-bline_m[0] )/cv::norm( pts_m[3]-pts_m[0] );
+        double bline_fact_mn = 1.0-cv::norm( isect_mn[0]-bline_n[1] )/cv::norm( pts_n[2]-pts_n[1] );
 
+        /// Overall alignment factor ///
         double coords_fact = 0.5*(coords_fact_nm+coords_fact_mn);
-        double bline_fact = 0.5*((1.0-bline_fact_nm)+(1.0-bline_fact_mn));
+        double bline_fact = 0.5*(bline_fact_nm+bline_fact_mn);
 
-        double alpha = 0.8;
-        double prolong_fact = alpha*bline_fact + (1.0-0.8)*coords_fact;
+        double prolong_fact = cfg_prolong_alpha   *bline_fact + (1.0-cfg_prolong_alpha   )*coords_fact;
         if ( prolong_fact < cfg_min_prolong_fact )
           continue;
 
