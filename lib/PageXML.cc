@@ -43,7 +43,8 @@ regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 regex reFileExt("\\.[^.]+$");
 regex reInvalidBaseChars(" ");
 regex reImagePageNum("(.*)\\[([0-9]+)\\]$");
-regex reIsPdf(".*\\.pdf(\\[[0-9]+\\])*$",std::regex::icase);
+regex reIsPdf(".+\\.pdf(\\[[0-9]+\\]){0,1}$",std::regex::icase);
+regex reIsTiff(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 
 xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 
@@ -241,7 +242,7 @@ void PageXML::loadSchema( const char *schema_path ) {
  * Validates the currently loaded XML.
  */
 bool PageXML::isValid() {
-  if( xml == NULL || ! validation_enabled )
+  if( xml == NULL || valid_context == NULL || ! validation_enabled )
     return true;
   return xmlSchemaValidateDoc(valid_context, xml) ? false : true;
 }
@@ -606,20 +607,29 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density __attribute__((unused)) ) {
 #endif
   string aux;
+  string fbase;
+  int imgnum = 0;
   if( fname == NULL ) {
     aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (xmlDir+'/'+pagesImageFilename[pagenum]);
     fname = aux.c_str();
   }
 
 #if defined (__PAGEXML_MAGICK__)
+  fbase = string(fname);
   cmatch base_match;
   if( std::regex_match(fname,base_match,reImagePageNum) ) {
-    aux = base_match[1].str() + "[" + std::to_string(stoi(base_match[2].str())-1) + "]";
+    imgnum = stoi(base_match[2].str())-1;
+    aux = base_match[1].str() + "[" + std::to_string(imgnum) + "]";
     fname = aux.c_str();
+    fbase = string(base_match[1]);
   }
 #endif
 
 #if defined (__PAGEXML_LEPT__)
+  if( pagesImage[pagenum] == NULL ) {
+    pixDestroy(&(pagesImage[pagenum]));
+    pagesImage[pagenum] = NULL;
+  }
 #if defined (__PAGEXML_MAGICK__)
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
@@ -643,11 +653,20 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     pagesImage[pagenum] = pixRead(tmpfname);
     unlink(tmpfname);
   }
-  else
-    pagesImage[pagenum] = pixRead(fname);
-#else
-  pagesImage[pagenum] = pixRead(fname);
 #endif
+  if( pagesImage[pagenum] == NULL ) {
+    if( std::regex_match(fname, reIsTiff) ) {
+      PIXA* tiffimage = pixaReadMultipageTiff( fbase.c_str() );
+      if( tiffimage == NULL || tiffimage->n == 0 )
+        throw_runtime_error( "PageXML.loadImage: problems reading tiff image: %s", fbase.c_str() );
+      if( imgnum >= tiffimage->n )
+        throw_runtime_error( "PageXML.loadImage: requested page %d but tiff image only has %d pages: %s", imgnum+1, tiffimage->n, fbase.c_str() );
+      pagesImage[pagenum] = pixClone(tiffimage->pix[imgnum]);
+      pixaDestroy(&tiffimage);
+    }
+    else
+      pagesImage[pagenum] = pixRead(fname);
+  }
   if( pagesImage[pagenum] == NULL ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;

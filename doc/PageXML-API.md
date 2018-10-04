@@ -15,7 +15,8 @@
 `public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
 `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac72179235a1c7e62570ea65b1055be4c)`(".+\f(\-9]+\0,1}$",std::regex::icase)`            | 
+`public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a192ae590965b3d04d774f30aff3088bd)`(".+\f{1,2}(\-9]+\0,1}$",std::regex::icase)`            | 
 `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
 `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
@@ -91,7 +92,9 @@ PAGEXML_OVERLAP_COORDS_BASELINE_IWA            |
 
 #### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1a6c8e60338440fd8b7ed26de1cf6d41fc)`(".*\f(\-9]+\$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac72179235a1c7e62570ea65b1055be4c)`(".+\f(\-9]+\0,1}$",std::regex::icase)` 
+
+#### `public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a192ae590965b3d04d774f30aff3088bd)`(".+\f{1,2}(\-9]+\0,1}$",std::regex::icase)` 
 
 #### `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)` 
 
