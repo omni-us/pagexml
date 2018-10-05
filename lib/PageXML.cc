@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.10.04$
+ * @version $Version: 2018.10.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -54,7 +54,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.10.04";
+static char class_version[] = "Version: 2018.10.05";
 
 /**
  * Returns the class version.
@@ -608,12 +608,14 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 #endif
   string aux;
   string fbase;
-  int imgnum = 0;
   if( fname == NULL ) {
     aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (xmlDir+'/'+pagesImageFilename[pagenum]);
     fname = aux.c_str();
   }
 
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__)
+  int imgnum = 0;
+#endif
 #if defined (__PAGEXML_MAGICK__)
   fbase = string(fname);
   cmatch base_match;
@@ -898,10 +900,10 @@ std::vector<cv::Point2f> PageXML::pointsBBox( std::vector<cv::Point2f> points ) 
   if( points.size() == 0 )
     return bbox;
 
-  double xmin;
-  double xmax;
-  double ymin;
-  double ymax;
+  double xmin = std::numeric_limits<double>::quiet_NaN();
+  double xmax = std::numeric_limits<double>::quiet_NaN();
+  double ymin = std::numeric_limits<double>::quiet_NaN();
+  double ymax = std::numeric_limits<double>::quiet_NaN();
 
   pointsLimits( points, xmin, xmax, ymin, ymax );
 
@@ -1502,6 +1504,10 @@ int PageXML::setAttr( const string xpath, const string name, const string value 
  */
 xmlNodePt PageXML::insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
   assert( elem != NULL );
+  if( node->doc != xml ) {
+    throw_runtime_error( "PageXML.insertElem: node is required to be a child of this PageXML object" );
+    return NULL;
+  }
 
   xmlNodePt sel = NULL;
   switch( itype ) {
@@ -1673,7 +1679,18 @@ int PageXML::rmElems( const string xpath, xmlNodePt basenode ) {
  */
 xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
   assert( elem != NULL );
-  xmlUnlinkNode(elem);
+  if( elem->doc == xml )
+    xmlUnlinkNode(elem);
+  else {
+    xmlNodePt origelem = elem;
+    if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, origelem, &elem, xml, NULL, 1, 0 ) ||
+        elem == NULL ) {
+      throw_runtime_error( "PageXML.moveElem: problems cloning node" );
+      return NULL;
+    }
+    xmlUnlinkNode(origelem);
+    xmlFreeNode(origelem);
+  }
   return insertElem( elem, node, itype );
 }
 
@@ -3894,14 +3911,14 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
  * @param lines                 TextLine elements to test for continuation.
  * @param _line_group_order     Join groups line indices (output).
  * @param _line_group_score     Join group scores (output).
- * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
- * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
- * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
- * @param cfg_prolong_alpha     Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
+ * @param max_angle_diff        Maximum baseline angle difference for joining.
+ * @param max_horiz_iou         Maximum horizontal IoU for joining.
+ * @param min_prolong_fact      Minimum prolongation factor for joining.
+ * @param prolong_alpha         Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
  * @param fake_baseline         Use bottom line of Coords rectangle as the baseline.
  * @return                      Number of join groups.
  */
-int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, double cfg_prolong_alpha, bool fake_baseline ) {
+int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline ) {
   /// Get points and compute baseline angles and lengths ///
   std::vector< std::vector<cv::Point2f> > coords;
   std::vector< std::vector<cv::Point2f> > baseline;
@@ -3947,7 +3964,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
       if ( n != m ) {
         /// Check that baseline angle difference is small ///
         double angle_diff = fabs(angleDiff(angle[n],angle[m]));
-        if ( angle_diff > cfg_max_angle_diff )
+        if ( angle_diff > max_angle_diff )
           continue;
 
         /// Project baseline limits onto the local horizontal axis ///
@@ -3967,7 +3984,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         
         /// Check that horizontal IoU is small //
         double iou = IoU_1d(horiz_n[0],horiz_n[1],horiz_m[0],horiz_m[1]);
-        if ( iou > cfg_max_horiz_iou )
+        if ( iou > max_horiz_iou )
           continue;
 
         /// Compute coords endpoint-startpoint intersection factors ///
@@ -3997,15 +4014,15 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         std::vector<cv::Point2f> bline_m = baseline[m];
         if ( ! intersection( bline_n[0], bline_n[1], pts_m[0], pts_m[3], isect_nm[0] ) ) continue;
         if ( ! intersection( bline_m[1], bline_m[0], pts_n[1], pts_n[2], isect_mn[0] ) ) continue;
-        double bline_fact_nm = 1.0-cv::norm( isect_nm[0]-bline_m[0] )/cv::norm( pts_m[3]-pts_m[0] );
-        double bline_fact_mn = 1.0-cv::norm( isect_mn[0]-bline_n[1] )/cv::norm( pts_n[2]-pts_n[1] );
+        double bline_fact_nm = std::max(0.0, 1.0-cv::norm(isect_nm[0]-bline_m[0])/cv::norm(pts_m[3]-pts_m[0]));
+        double bline_fact_mn = std::max(0.0, 1.0-cv::norm(isect_mn[0]-bline_n[1])/cv::norm(pts_n[2]-pts_n[1]));
 
         /// Overall alignment factor ///
         double coords_fact = 0.5*(coords_fact_nm+coords_fact_mn);
         double bline_fact = 0.5*(bline_fact_nm+bline_fact_mn);
 
-        double prolong_fact = cfg_prolong_alpha   *bline_fact + (1.0-cfg_prolong_alpha   )*coords_fact;
-        if ( prolong_fact < cfg_min_prolong_fact )
+        double prolong_fact = prolong_alpha*bline_fact + (1.0-prolong_alpha)*coords_fact;
+        if ( prolong_fact < min_prolong_fact )
           continue;
 
         /// Add text lines to a line group (new or existing) ///
@@ -4069,7 +4086,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
       for ( int j=0; j<(int)blines.size(); j++ )
         for ( int i=j+1; i<(int)blines.size(); i++ ) {
           double iou = IoU_1d(blines[j][0],blines[j][1],blines[i][0],blines[i][1]);
-          if ( iou > cfg_max_horiz_iou ) {
+          if ( iou > max_horiz_iou ) {
             recurse = true;
             goto afterRecourseLoop;
           }
@@ -4086,7 +4103,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         for ( int j=0; j<(int)idx.size(); j++ )
           recurse_lines.push_back(lines[idx[j]]);
 
-        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, cfg_max_angle_diff*recurse_factor, cfg_max_horiz_iou*recurse_factor, cfg_min_prolong_fact/recurse_factor, fake_baseline );
+        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, max_angle_diff*recurse_factor, max_horiz_iou*recurse_factor, min_prolong_fact/recurse_factor, prolong_alpha, fake_baseline );
 
         if ( recurse_group_order.size() == 0 ) {
           line_groups.erase(line_groups.begin()+k);
@@ -4155,12 +4172,12 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
  * Gets the reading order for a set of text lines (requires single segment polystripe).
  *
  * @param lines                 TextLine elements to process.
- * @param cfg_max_angle_diff    Maximum baseline angle difference for joining.
- * @param cfg_max_horiz_iou     Maximum horizontal IoU for joining.
- * @param cfg_min_prolong_fact  Minimum prolongation factor for joining.
+ * @param max_angle_diff        Maximum baseline angle difference for joining.
+ * @param max_horiz_iou         Maximum horizontal IoU for joining.
+ * @param min_prolong_fact      Minimum prolongation factor for joining.
  * @return                      Reading order indices.
  */
-std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double cfg_max_angle_diff, double cfg_max_horiz_iou, double cfg_min_prolong_fact, bool fake_baseline ) {
+std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline ) {
   std::vector<int> reading_order;
   if ( lines.size() == 0 )
     return reading_order;
@@ -4168,7 +4185,7 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
   /// Get text line join groups ///
   std::vector<std::vector<int> > line_groups;
   std::vector<double> join_group_score;
-  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, cfg_max_angle_diff, cfg_max_horiz_iou, cfg_min_prolong_fact, fake_baseline );
+  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, max_angle_diff, max_horiz_iou, min_prolong_fact, prolong_alpha, fake_baseline );
 
   /// Get points and compute baseline angles and lengths ///
   std::vector<std::vector<cv::Point2f> > baseline;

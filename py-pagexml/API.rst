@@ -1,4 +1,4 @@
-pagexml API (version 2018.10.4)
+pagexml API (version 2018.10.5)
 *******************************
 
 
@@ -1341,30 +1341,38 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       node: xmlNode *
 
-   getTextLinesReadingOrder(self, lines, cfg_max_angle_diff=25, cfg_max_horiz_iou=0.1, cfg_min_prolong_fact=0.5, fake_baseline=False) -> _intArray
+   getTextLinesReadingOrder(self, lines, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False) -> _intArray
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      cfg_max_angle_diff: double cfg_max_horiz_iou: double
-      cfg_min_prolong_fact: double fake_baseline: bool
+      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
+      double prolong_alpha: double fake_baseline: bool
 
-      getTextLinesReadingOrder(self, lines, cfg_max_angle_diff=25,
-      cfg_max_horiz_iou=0.1, cfg_min_prolong_fact=0.5) -> _intArray
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      cfg_max_angle_diff: double cfg_max_horiz_iou: double
-      cfg_min_prolong_fact: double
-
-      getTextLinesReadingOrder(self, lines, cfg_max_angle_diff=25,
-      cfg_max_horiz_iou=0.1) -> _intArray
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      cfg_max_angle_diff: double cfg_max_horiz_iou: double
-
-      getTextLinesReadingOrder(self, lines, cfg_max_angle_diff=25) ->
+      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
+      max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8) ->
       _intArray
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      cfg_max_angle_diff: double
+      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
+      double prolong_alpha: double
+
+      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
+      max_horiz_iou=0.1, min_prolong_fact=0.5) -> _intArray
+
+      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
+      double
+
+      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
+      max_horiz_iou=0.1) -> _intArray
+
+      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      max_angle_diff: double max_horiz_iou: double
+
+      getTextLinesReadingOrder(self, lines, max_angle_diff=25) ->
+      _intArray
+
+      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      max_angle_diff: double
 
       getTextLinesReadingOrder(self, lines) -> _intArray
 
@@ -1925,57 +1933,55 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       spoints: std::string
 
-   testTextLineContinuation(self, lines, _line_group_order, _line_group_score, cfg_max_angle_diff=25, cfg_max_horiz_iou=0.1, cfg_min_prolong_fact=0.5, cfg_prolong_alpha=0.8, fake_baseline=False) -> int
+   testTextLineContinuation(self, lines, _line_group_order, _line_group_score, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False) -> int
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       _line_group_order: std::vector< std::vector< int,std::allocator<
       int > >,std::allocator< std::vector< int,std::allocator< int > >
       > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & cfg_max_angle_diff: double cfg_max_horiz_iou:
-      double cfg_min_prolong_fact: double cfg_prolong_alpha: double
-      fake_baseline: bool
+      double > > & max_angle_diff: double max_horiz_iou: double
+      min_prolong_fact: double prolong_alpha: double fake_baseline:
+      bool
 
       testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, cfg_max_angle_diff=25, cfg_max_horiz_iou=0.1,
-      cfg_min_prolong_fact=0.5, cfg_prolong_alpha=0.8) -> int
+      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1,
+      min_prolong_fact=0.5, prolong_alpha=0.8) -> int
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       _line_group_order: std::vector< std::vector< int,std::allocator<
       int > >,std::allocator< std::vector< int,std::allocator< int > >
       > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & cfg_max_angle_diff: double cfg_max_horiz_iou:
-      double cfg_min_prolong_fact: double cfg_prolong_alpha: double
+      double > > & max_angle_diff: double max_horiz_iou: double
+      min_prolong_fact: double prolong_alpha: double
 
       testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, cfg_max_angle_diff=25, cfg_max_horiz_iou=0.1,
-      cfg_min_prolong_fact=0.5) -> int
+      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1,
+      min_prolong_fact=0.5) -> int
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       _line_group_order: std::vector< std::vector< int,std::allocator<
       int > >,std::allocator< std::vector< int,std::allocator< int > >
       > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & cfg_max_angle_diff: double cfg_max_horiz_iou:
-      double cfg_min_prolong_fact: double
+      double > > & max_angle_diff: double max_horiz_iou: double
+      min_prolong_fact: double
 
       testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, cfg_max_angle_diff=25, cfg_max_horiz_iou=0.1)
-      -> int
+      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1) -> int
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       _line_group_order: std::vector< std::vector< int,std::allocator<
       int > >,std::allocator< std::vector< int,std::allocator< int > >
       > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & cfg_max_angle_diff: double cfg_max_horiz_iou:
-      double
+      double > > & max_angle_diff: double max_horiz_iou: double
 
       testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, cfg_max_angle_diff=25) -> int
+      _line_group_score, max_angle_diff=25) -> int
 
       lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       _line_group_order: std::vector< std::vector< int,std::allocator<
       int > >,std::allocator< std::vector< int,std::allocator< int > >
       > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & cfg_max_angle_diff: double
+      double > > & max_angle_diff: double
 
       testTextLineContinuation(self, lines, _line_group_order,
       _line_group_score) -> int

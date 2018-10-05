@@ -38,7 +38,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.10.04
+Version2018.10.05
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -317,8 +317,8 @@ Checks if a point is within a line segment
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
-`public int `[`testTextLineContinuation`](#class_page_x_m_l_1a8580e5adf3a0a07dbd319c224ab4c3a7)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,double cfg_prolong_alpha,bool fake_baseline)` | Tests for text line continuation (requires single segment polystripe).
-`public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625fb5d653053410316f8c7a5f741c3e)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,bool fake_baseline)` | Gets the reading order for a set of text lines (requires single segment polystripe).
+`public int `[`testTextLineContinuation`](#class_page_x_m_l_1a55054e5110a05615964f21f1ed43623c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` | Tests for text line continuation (requires single segment polystripe).
+`public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625bbc57abe77b4af02347e4b593c1f4)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` | Gets the reading order for a set of text lines (requires single segment polystripe).
 `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` | Returns the XML document pointer.
 
 ## Members
@@ -1540,7 +1540,7 @@ Copies TextLines from one page xml to another assigning to regions based on over
 #### Returns
 Number of TextLines copied.
 
-#### `public int `[`testTextLineContinuation`](#class_page_x_m_l_1a8580e5adf3a0a07dbd319c224ab4c3a7)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,double cfg_prolong_alpha,bool fake_baseline)` 
+#### `public int `[`testTextLineContinuation`](#class_page_x_m_l_1a55054e5110a05615964f21f1ed43623c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` 
 
 Tests for text line continuation (requires single segment polystripe).
 
@@ -1551,31 +1551,31 @@ Tests for text line continuation (requires single segment polystripe).
 
 * `_line_group_score` Join group scores (output). 
 
-* `cfg_max_angle_diff` Maximum baseline angle difference for joining. 
+* `max_angle_diff` Maximum baseline angle difference for joining. 
 
-* `cfg_max_horiz_iou` Maximum horizontal IoU for joining. 
+* `max_horiz_iou` Maximum horizontal IoU for joining. 
 
-* `cfg_min_prolong_fact` Minimum prolongation factor for joining. 
+* `min_prolong_fact` Minimum prolongation factor for joining. 
 
-* `cfg_prolong_alpha` Weight for prolongation factors: alpha*bline+(1-alpha)*coords. 
+* `prolong_alpha` Weight for prolongation factors: alpha*bline+(1-alpha)*coords. 
 
 * `fake_baseline` Use bottom line of Coords rectangle as the baseline. 
 
 #### Returns
 Number of join groups.
 
-#### `public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625fb5d653053410316f8c7a5f741c3e)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double cfg_max_angle_diff,double cfg_max_horiz_iou,double cfg_min_prolong_fact,bool fake_baseline)` 
+#### `public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625bbc57abe77b4af02347e4b593c1f4)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` 
 
 Gets the reading order for a set of text lines (requires single segment polystripe).
 
 #### Parameters
 * `lines` TextLine elements to process. 
 
-* `cfg_max_angle_diff` Maximum baseline angle difference for joining. 
+* `max_angle_diff` Maximum baseline angle difference for joining. 
 
-* `cfg_max_horiz_iou` Maximum horizontal IoU for joining. 
+* `max_horiz_iou` Maximum horizontal IoU for joining. 
 
-* `cfg_min_prolong_fact` Minimum prolongation factor for joining. 
+* `min_prolong_fact` Minimum prolongation factor for joining. 
 
 #### Returns
 Reading order indices.
