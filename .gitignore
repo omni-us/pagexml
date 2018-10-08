@@ -4,4 +4,9 @@ lib/xml
 py-pagexml*/build
 py-pagexml*/dist
 py-pagexml*/*.egg-info
-**/__pycache__
+__pycache__
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+*.so

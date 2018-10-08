@@ -1,4 +1,4 @@
-pagexml API (version 2018.10.5)
+pagexml API (version 2018.10.8)
 *******************************
 
 
@@ -1107,6 +1107,14 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
       > >
 
+   copyElem(self, elem, node, itype=PAGEXML_INSERT_APPEND) -> xmlNode
+
+      elem: xmlNode * node: xmlNode const * itype: enum PAGEXML_INSERT
+
+      copyElem(self, elem, node) -> xmlNode *
+
+      elem: xmlNode * node: xmlNode const *
+
    copyTextLinesAssignByOverlap(self, pageFrom, overlap_type=PAGEXML_OVERLAP_COORDS_IOU, overlap_fact=0.5) -> int
 
       pageFrom: PageXML & overlap_type: enum PAGEXML_OVERLAP
@@ -1121,17 +1129,17 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       pageFrom: PageXML &
 
-   count(self, xpath, basenode=None) -> int
+   count(self, xpath, node=None) -> int
 
-      xpath: char const * basenode: xmlNode *
+      xpath: char const * node: xmlNode *
 
       count(self, xpath) -> int
 
       xpath: char const *
 
-      count(self, xpath, basenode=None) -> int
+      count(self, xpath, node=None) -> int
 
-      xpath: std::string basenode: xmlNode *
+      xpath: std::string node: xmlNode *
 
       count(self, xpath) -> int
 
@@ -1391,6 +1399,14 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       node: xmlNode *
 
+      getValue(self, xpath, node=None) -> std::string
+
+      xpath: char const * node: xmlNode const *
+
+      getValue(self, xpath) -> std::string
+
+      xpath: char const *
+
    getXheight(self, node) -> float
 
       node: xmlNode const *
@@ -1627,25 +1643,25 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
       const &
 
-      rmElems(self, xpath, basenode=None) -> int
+      rmElems(self, xpath, node=None) -> int
 
-      xpath: char const * basenode: xmlNode *
+      xpath: char const * node: xmlNode *
 
       rmElems(self, xpath) -> int
 
       xpath: char const *
 
-      rmElems(self, xpath, basenode=None) -> int
+      rmElems(self, xpath, node=None) -> int
 
-      xpath: std::string const basenode: xmlNode *
+      xpath: std::string const node: xmlNode *
 
       rmElems(self, xpath) -> int
 
       xpath: std::string const
 
-   select(self, xpath, basenode=None) -> xmlNodePtrVector
+   select(self, xpath, node=None) -> xmlNodePtrVector
 
-      xpath: char const * basenode: xmlNode const *
+      xpath: char const * node: xmlNode const *
 
       select(self, xpath) -> xmlNodePtrVector
 
@@ -1658,6 +1674,16 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       select(self, xpath) -> xmlNodePtrVector
 
       xpath: std::string
+
+      select(self, xpath, nodes, unique=True) -> xmlNodePtrVector
+
+      xpath: char const * nodes: std::vector< xmlNode
+      >>*<<,std::allocator< xmlNode * > > const unique: bool
+
+      select(self, xpath, nodes) -> xmlNodePtrVector
+
+      xpath: char const * nodes: std::vector< xmlNode
+      >>*<<,std::allocator< xmlNode * > > const
 
    selectByID(self, id, node=None) -> xmlNode
 
@@ -1715,11 +1741,11 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    selectNth(self, xpath, num=0, node=None) -> xmlNode
 
-      xpath: char const * num: unsigned int node: xmlNode const *
+      xpath: char const * num: int node: xmlNode const *
 
       selectNth(self, xpath, num=0) -> xmlNode
 
-      xpath: char const * num: unsigned int
+      xpath: char const * num: int
 
       selectNth(self, xpath) -> xmlNode
 
@@ -1727,11 +1753,11 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       selectNth(self, xpath, num=0, node=None) -> xmlNode
 
-      xpath: std::string num: unsigned int node: xmlNode const *
+      xpath: std::string num: int node: xmlNode const *
 
       selectNth(self, xpath, num=0) -> xmlNode
 
-      xpath: std::string num: unsigned int
+      xpath: std::string num: int
 
       selectNth(self, xpath) -> xmlNode *
 

@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.10.05$
+ * @version $Version: 2018.10.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -165,17 +165,19 @@ class PageXML {
     static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
     static std::vector<cv::Point2f> pointsBBox( std::vector<cv::Point2f> points );
     static bool isBBox( const std::vector<cv::Point2f>& points );
-    int count( const char* xpath, xmlNodePt basenode = NULL );
-    int count( std::string xpath, xmlNodePt basenode = NULL );
-    std::vector<xmlNodePt> select( const char* xpath, const xmlNodePt basenode = NULL );
+    int count( const char* xpath, xmlNodePt node = NULL );
+    int count( std::string xpath, xmlNodePt node = NULL );
+    std::vector<xmlNodePt> select( const char* xpath, const xmlNodePt node = NULL );
     std::vector<xmlNodePt> select( std::string xpath, const xmlNodePt node = NULL );
-    xmlNodePt selectNth( const char* xpath, unsigned num = 0, const xmlNodePt node = NULL );
-    xmlNodePt selectNth( std::string xpath, unsigned num = 0, const xmlNodePt node = NULL );
+    std::vector<xmlNodePt> select( const char* xpath, const std::vector<xmlNodePt> nodes, bool unique = true );
+    xmlNodePt selectNth( const char* xpath, int num = 0, const xmlNodePt node = NULL );
+    xmlNodePt selectNth( std::string xpath, int num = 0, const xmlNodePt node = NULL );
     xmlNodePt selectByID( const char* id, const xmlNodePt node = NULL );
     xmlNodePt closest( const char* name, xmlNodePt node );
     xmlNodePt parent( const xmlNodePt node );
     static bool nodeIs( xmlNodePt node, const char* name );
     std::string getValue( xmlNodePt node );
+    std::string getValue( const char* xpath, const xmlNodePt node = NULL );
     std::string getAttr( const xmlNodePt node,    const char* name );
     std::string getAttr( const char* xpath,       const char* name );
     std::string getAttr( const std::string xpath, const std::string name );
@@ -189,8 +191,9 @@ class PageXML {
     xmlNodePt addElem( const std::string name, const std::string id, const std::string xpath, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool checkid = false );
     void rmElem( const xmlNodePt node );
     int rmElems( const std::vector<xmlNodePt>& nodes );
-    int rmElems( const char* xpath,       xmlNodePt basenode = NULL );
-    int rmElems( const std::string xpath, xmlNodePt basenode = NULL );
+    int rmElems( const char* xpath,       xmlNodePt node = NULL );
+    int rmElems( const std::string xpath, xmlNodePt node = NULL );
+    xmlNodePt copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
     xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
     int moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
     void setRotation( const xmlNodePt elem, const float rotation );

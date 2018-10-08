@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.10.05$
+ * @version $Version: 2018.10.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -54,7 +54,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.10.05";
+static char class_version[] = "Version: 2018.10.08";
 
 /**
  * Returns the class version.
@@ -971,8 +971,8 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Number of matched nodes.
  */
-int PageXML::count( const char* xpath, xmlNodePt basenode ) {
-  return select( xpath, basenode ).size();
+int PageXML::count( const char* xpath, xmlNodePt node ) {
+  return select( xpath, node ).size();
 }
 
 /**
@@ -982,8 +982,8 @@ int PageXML::count( const char* xpath, xmlNodePt basenode ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Number of matched nodes.
  */
-int PageXML::count( string xpath, xmlNodePt basenode ) {
-  return select( xpath.c_str(), basenode ).size();
+int PageXML::count( string xpath, xmlNodePt node ) {
+  return select( xpath.c_str(), node ).size();
 }
 
 /**
@@ -993,7 +993,7 @@ int PageXML::count( string xpath, xmlNodePt basenode ) {
  * @param node   XML node for context, set to NULL for root node.
  * @return       Vector of matched nodes.
  */
-vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt basenode ) {
+vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt node ) {
   vector<xmlNodePt> matched;
 
 #define __REUSE_CONTEXT__
@@ -1011,7 +1011,7 @@ vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt basenode )
     return matched;
   }
 #endif
-  ncontext->node = basenode == NULL ? (xmlNodePtr)rootnode : (xmlNodePtr)basenode;
+  ncontext->node = node == NULL ? (xmlNodePtr)rootnode : (xmlNodePtr)node;
 
   xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
 #ifndef __REUSE_CONTEXT__
@@ -1044,27 +1044,56 @@ vector<xmlNodePt> PageXML::select( string xpath, const xmlNodePt node ) {
 }
 
 /**
- * Selects the n-th node that matches an xpath.
+ * Selects nodes given an xpath and a vector of base nodes.
  *
- * @param xpath  Selector expression.
- * @param num    Element number (0-indexed).
- * @param node   XML node for context, set to NULL for root node.
- * @return       Matched node.
+ * @param xpath   Selector expression.
+ * @param nodes   XML nodes for context.
+ * @param unique  Whether to return unique matches.
+ * @return        Vector of matched nodes.
  */
-xmlNodePt PageXML::selectNth( const char* xpath, unsigned num, const xmlNodePt node ) {
-  vector<xmlNodePt> matches = select( xpath, node );
-  return matches.size() > num ? select( xpath, node )[num] : NULL;
+vector<xmlNodePt> PageXML::select( const char* xpath, const vector<xmlNodePt> nodes, bool unique ) {
+  vector<xmlNodePt> matched;
+  set<xmlNodePt> seen;
+
+  for( int n=0; n<(int)nodes.size(); n++ ) {
+    vector<xmlNodePt> matched_n = select( xpath, nodes[n] );
+    if( ! unique )
+      matched.insert( matched.end(), matched_n.begin(), matched_n.end() );
+    else
+      for( int m=0; m<(int)matched_n.size(); m++ )
+        if( seen.count(matched_n[m]) == 0 ) {
+          matched.push_back(matched_n[m]);
+          seen.insert(matched_n[m]);
+        }
+  }
+
+  return matched;
 }
 
 /**
  * Selects the n-th node that matches an xpath.
  *
  * @param xpath  Selector expression.
- * @param num    Element number (0-indexed).
+ * @param num    Element number (0-indexed), negative from last.
  * @param node   XML node for context, set to NULL for root node.
  * @return       Matched node.
  */
-xmlNodePt PageXML::selectNth( string xpath, unsigned num, const xmlNodePt node ) {
+xmlNodePt PageXML::selectNth( const char* xpath, int num, const xmlNodePt node ) {
+  vector<xmlNodePt> matches = select( xpath, node );
+  if( num >= (int)matches.size() || num < -(int)matches.size() )
+    return NULL;
+  return matches[ num < 0 ? matches.size()+num : num ];
+}
+
+/**
+ * Selects the n-th node that matches an xpath.
+ *
+ * @param xpath  Selector expression.
+ * @param num    Element number (0-indexed), negative from last.
+ * @param node   XML node for context, set to NULL for root node.
+ * @return       Matched node.
+ */
+xmlNodePt PageXML::selectNth( string xpath, int num, const xmlNodePt node ) {
   return selectNth( xpath.c_str(), num, node );
 }
 
@@ -1383,6 +1412,17 @@ std::string PageXML::getValue( xmlNodePt node ) {
 }
 
 /**
+ * Retrieves a node value.
+ *
+ * @param xpath      Selector for the element to get the value.
+ * @param node       XML node for context, set to NULL for root node.
+ * @return           String with the node value.
+ */
+std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
+  return getValue( selectNth( xpath, 0, node ) );
+}
+
+/**
  * Gets an attribute value from an xml node.
  *
  * @param node   XML node.
@@ -1503,7 +1543,9 @@ int PageXML::setAttr( const string xpath, const string name, const string value 
  * @return       Pointer to inserted element.
  */
 xmlNodePt PageXML::insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
-  assert( elem != NULL );
+  if( elem == NULL )
+    throw_runtime_error( "PageXML.insertElem: received NULL pointer" );
+
   if( node->doc != xml ) {
     throw_runtime_error( "PageXML.insertElem: node is required to be a child of this PageXML object" );
     return NULL;
@@ -1654,19 +1696,46 @@ int PageXML::rmElems( const vector<xmlNodePt>& nodes ) {
  * @param node   Base node for element selection.
  * @return       Number of elements removed.
  */
-int PageXML::rmElems( const char* xpath, xmlNodePt basenode ) {
-  return rmElems( select( xpath, basenode ) );
+int PageXML::rmElems( const char* xpath, xmlNodePt node ) {
+  return rmElems( select( xpath, node ) );
 }
 
 /**
  * Remove the elements that match a given xpath.
  *
  * @param xpath    Selector for elements to remove.
- * @param basenode Base node for element selection.
+ * @param node     Base node for element selection.
  * @return         Number of elements removed.
  */
-int PageXML::rmElems( const string xpath, xmlNodePt basenode ) {
-  return rmElems( select( xpath.c_str(), basenode ) );
+int PageXML::rmElems( const string xpath, xmlNodePt node ) {
+  return rmElems( select( xpath.c_str(), node ) );
+}
+
+/**
+ * Clone an element and add it relative to a given node.
+ *
+ * @param elem   Element to clone.
+ * @param node   Reference element for insertion.
+ * @param itype  Type of insertion.
+ * @return       Pointer to cloned element.
+ */
+xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
+  if( elem == NULL || node == NULL )
+    throw_runtime_error( "PageXML.copyElem: received NULL pointer" );
+
+  xmlNodePt elemcopy = NULL;
+  if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, elem, &elemcopy, xml, NULL, 1, 0 ) ||
+      elemcopy == NULL ) {
+    throw_runtime_error( "PageXML.copyElem: problems cloning node" );
+    return NULL;
+  }
+  try {
+    return insertElem( elemcopy, node, itype );
+  }
+  catch( exception& e ) {
+    xmlFreeNode(elemcopy);
+    throw e;
+  }
 }
 
 /**
@@ -1678,11 +1747,13 @@ int PageXML::rmElems( const string xpath, xmlNodePt basenode ) {
  * @return       Pointer to moved element.
  */
 xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
-  assert( elem != NULL );
+  if( elem == NULL || node == NULL )
+    throw_runtime_error( "PageXML.moveElem: received NULL pointer" );
+
+  xmlNodePt origelem = elem;
   if( elem->doc == xml )
     xmlUnlinkNode(elem);
   else {
-    xmlNodePt origelem = elem;
     if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, origelem, &elem, xml, NULL, 1, 0 ) ||
         elem == NULL ) {
       throw_runtime_error( "PageXML.moveElem: problems cloning node" );
@@ -1691,7 +1762,14 @@ xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
     xmlUnlinkNode(origelem);
     xmlFreeNode(origelem);
   }
-  return insertElem( elem, node, itype );
+  try {
+    return insertElem( elem, node, itype );
+  }
+  catch( exception& e ) {
+    if( elem != origelem )
+      xmlFreeNode(elem);
+    throw e;
+  }
 }
 
 /**

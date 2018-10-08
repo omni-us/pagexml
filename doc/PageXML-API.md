@@ -38,7 +38,7 @@
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.10.05
+Version2018.10.08
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -205,16 +205,18 @@ Checks if a point is within a line segment
 `public bool `[`areIDsUnique`](#class_page_x_m_l_1aeb8f1e60e4e2521c2bb50fe495327648)`()` | Verifies that all IDs in page are unique.
 `public std::string `[`getNodeName`](#class_page_x_m_l_1a8e8ded73daa9edf93b02d75bac16b9de)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` base_node)` | Gets the name of the given node.
 `public std::vector< `[`NamedImage`](#struct_named_image)` > `[`crop`](#class_page_x_m_l_1a3264214ef4bc3ea7d5706b33440c57a0)`(const char * xpath,cv::Point2f * margin,bool opaque_coords,const char * transp_xpath,const char * base_xpath)` | Crops images using its Coords polygon, regions outside the polygon are set to transparent.
-`public int `[`count`](#class_page_x_m_l_1ad4fa4aef07f44a011f154cee73aa6002)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | Returns number of matched nodes for a given xpath.
-`public int `[`count`](#class_page_x_m_l_1a9017068318dd91aead4d39a472ee2a8d)`(std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | 
-`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a562f6a2af80c35e01a9cfa36afc10435)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | Selects nodes given an xpath.
+`public int `[`count`](#class_page_x_m_l_1a4e96a80a41b38f74a9328eab24ed11a0)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns number of matched nodes for a given xpath.
+`public int `[`count`](#class_page_x_m_l_1a5817463d6e13c9472d1995e964ce28a7)`(std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
+`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a33d04b764e3a0c853ef7de78ca78cd41)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects nodes given an xpath.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1ad1fd441a90b31c4900bb9896185a177f)`(std::string xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ab23937e1762c713c2ca2636de8d1075f)`(const char * xpath,unsigned num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects the n-th node that matches an xpath.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1a20ceffc31be1dd670069e57012e5202d)`(std::string xpath,unsigned num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
+`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a6207c5d079018e4daff6de195ddf0512)`(const char * xpath,const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,bool unique)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1a693a2275353703a06ae90427d59e416e)`(const char * xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects the n-th node that matches an xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ae29d8b0b92240bc0866064c88c1eb0ab)`(std::string xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectByID`](#class_page_x_m_l_1ace787087add3c5f3016ec837553d48b5)`(const char * id,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects an element with a given ID.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`closest`](#class_page_x_m_l_1a089e2ca706141bf750b301fd34595fc1)`(const char * name,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects closest node of a given name.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`parent`](#class_page_x_m_l_1a8ac32174f32b120caf595ec3a82e57d1)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the parent of a node.
 `public std::string `[`getValue`](#class_page_x_m_l_1a806731e1825cfbfa406ddf3e6978d747)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves a node value.
+`public std::string `[`getValue`](#class_page_x_m_l_1ae27ba3fb4d85e0ba2cee85125a6eaa54)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves a node value.
 `public std::string `[`getAttr`](#class_page_x_m_l_1a23e16f7c70950b4fe990b8c22a2e1ce5)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * name)` | Gets an attribute value from an xml node.
 `public std::string `[`getAttr`](#class_page_x_m_l_1abef00c0a3b59143989b8d29beaeb14bf)`(const char * xpath,const char * name)` | Gets an attribute value for a given xpath.
 `public std::string `[`getAttr`](#class_page_x_m_l_1a057bb3cecf33b3cd2e621d56095a4716)`(const std::string xpath,const std::string name)` | 
@@ -228,8 +230,9 @@ Checks if a point is within a line segment
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addElem`](#class_page_x_m_l_1abbbf302357d6016ffde3a2b859fa1f93)`(const std::string name,const std::string id,const std::string xpath,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype,bool checkid)` | 
 `public void `[`rmElem`](#class_page_x_m_l_1ad3e1cc3040a7aef670d64fac0e2e82d8)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Removes the given element.
 `public int `[`rmElems`](#class_page_x_m_l_1a58b3870ad811accb8b91a433796fbf6f)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > & nodes)` | 
-`public int `[`rmElems`](#class_page_x_m_l_1a47752b5ea364d374008f3f04b984a0cb)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | Remove the elements that match a given xpath.
-`public int `[`rmElems`](#class_page_x_m_l_1aa1c5ac267af4aeda9fea84eada6e91db)`(const std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` | 
+`public int `[`rmElems`](#class_page_x_m_l_1a615f87470132c8b50200e86492ffdf4c)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Remove the elements that match a given xpath.
+`public int `[`rmElems`](#class_page_x_m_l_1a1a47165a43b3de66729400c9a318c180)`(const std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`copyElem`](#class_page_x_m_l_1a40dc146d23d3e146ce2332764b1e913a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` | Clone an element and add it relative to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`moveElem`](#class_page_x_m_l_1af214054f7b648086704f7cc0bd3b51e1)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` | Unlink an element and add it relative to a given node.
 `public int `[`moveElems`](#class_page_x_m_l_1ac6320b747e78baa3d2f5753086e54189)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > & elems,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` | Unlink elements and add them relative to a given node.
 `public void `[`setRotation`](#class_page_x_m_l_1afc92cad64293df78c84bc7d8c899cf6f)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const float rotation)` | Sets the rotation angle to a TextRegion node.
@@ -450,7 +453,7 @@ Crops images using its Coords polygon, regions outside the polygon are set to tr
 #### Returns
 An std::vector containing [NamedImage](#struct_named_image) objects of the cropped images.
 
-#### `public int `[`count`](#class_page_x_m_l_1ad4fa4aef07f44a011f154cee73aa6002)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
+#### `public int `[`count`](#class_page_x_m_l_1a4e96a80a41b38f74a9328eab24ed11a0)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 Returns number of matched nodes for a given xpath.
 
@@ -462,9 +465,9 @@ Returns number of matched nodes for a given xpath.
 #### Returns
 Number of matched nodes.
 
-#### `public int `[`count`](#class_page_x_m_l_1a9017068318dd91aead4d39a472ee2a8d)`(std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
+#### `public int `[`count`](#class_page_x_m_l_1a5817463d6e13c9472d1995e964ce28a7)`(std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
-#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a562f6a2af80c35e01a9cfa36afc10435)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
+#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a33d04b764e3a0c853ef7de78ca78cd41)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 Selects nodes given an xpath.
 
@@ -478,21 +481,23 @@ Vector of matched nodes.
 
 #### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1ad1fd441a90b31c4900bb9896185a177f)`(std::string xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ab23937e1762c713c2ca2636de8d1075f)`(const char * xpath,unsigned num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`select`](#class_page_x_m_l_1a6207c5d079018e4daff6de195ddf0512)`(const char * xpath,const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,bool unique)` 
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1a693a2275353703a06ae90427d59e416e)`(const char * xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 Selects the n-th node that matches an xpath.
 
 #### Parameters
 * `xpath` Selector expression. 
 
-* `num` Element number (0-indexed). 
+* `num` Element number (0-indexed), negative from last. 
 
 * `node` XML node for context, set to NULL for root node. 
 
 #### Returns
 Matched node.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1a20ceffc31be1dd670069e57012e5202d)`(std::string xpath,unsigned num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ae29d8b0b92240bc0866064c88c1eb0ab)`(std::string xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectByID`](#class_page_x_m_l_1ace787087add3c5f3016ec837553d48b5)`(const char * id,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
@@ -526,6 +531,18 @@ Retrieves a node value.
 
 #### Parameters
 * `node` Node element. 
+
+#### Returns
+String with the node value.
+
+#### `public std::string `[`getValue`](#class_page_x_m_l_1ae27ba3fb4d85e0ba2cee85125a6eaa54)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+
+Retrieves a node value.
+
+#### Parameters
+* `xpath` Selector for the element to get the value. 
+
+* `node` XML node for context, set to NULL for root node. 
 
 #### Returns
 String with the node value.
@@ -649,7 +666,7 @@ Removes the given element.
 
 #### `public int `[`rmElems`](#class_page_x_m_l_1a58b3870ad811accb8b91a433796fbf6f)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > & nodes)` 
 
-#### `public int `[`rmElems`](#class_page_x_m_l_1a47752b5ea364d374008f3f04b984a0cb)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
+#### `public int `[`rmElems`](#class_page_x_m_l_1a615f87470132c8b50200e86492ffdf4c)`(const char * xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 Remove the elements that match a given xpath.
 
@@ -661,7 +678,21 @@ Remove the elements that match a given xpath.
 #### Returns
 Number of elements removed.
 
-#### `public int `[`rmElems`](#class_page_x_m_l_1aa1c5ac267af4aeda9fea84eada6e91db)`(const std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` basenode)` 
+#### `public int `[`rmElems`](#class_page_x_m_l_1a1a47165a43b3de66729400c9a318c180)`(const std::string xpath,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`copyElem`](#class_page_x_m_l_1a40dc146d23d3e146ce2332764b1e913a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` 
+
+Clone an element and add it relative to a given node.
+
+#### Parameters
+* `elem` Element to clone. 
+
+* `node` Reference element for insertion. 
+
+* `itype` Type of insertion. 
+
+#### Returns
+Pointer to cloned element.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`moveElem`](#class_page_x_m_l_1af214054f7b648086704f7cc0bd3b51e1)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` 
 
