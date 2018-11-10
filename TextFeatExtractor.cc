@@ -10,6 +10,12 @@
 
 #include <chrono>
 
+#if defined (__PAGEXML_IMG_CV__)
+#include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+#define Quantum MagickCore::Quantum
+
 #ifndef FAILURE
 #define FAILURE 1
 #endif
@@ -19,10 +25,10 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace cv;
-using namespace Magick;
-using namespace libconfig;
-using namespace H5;
+//using namespace cv;
+//using namespace Magick;
+//using namespace libconfig;
+//using namespace H5;
 
 const char* TextFeatExtractor::featTypes[] = { "dotm", "raw" };
 const char* TextFeatExtractor::formatNames[] = { "ascii", "htk", "img" };
@@ -46,16 +52,18 @@ const char* TextFeatExtractor::settingNames[] = {
   "fpgram",
   "fcontour",
   "fcontour_dilate",
-  "padding",
-  "slide_shift",
+  "padding"
+  /*"slide_shift",
   "slide_span",
   "sample_width",
   "sample_height",
-  "projfile"
+  "projfile"*/
 };
 
-const Color colorWhite("white");
-const Color colorBlack("black");
+//#if defined (__PAGEXML_IMG_MAGICK__)
+const Magick::Color colorWhite("white");
+const Magick::Color colorBlack("black");
+//#endif
 
 /////////////////////
 /// Class version ///
@@ -74,12 +82,76 @@ char* TextFeatExtractor::version() {
 /// Constructors ///
 ////////////////////
 
+TextFeatExtractor::TextFeatExtractor( int featype,
+                                      int format,
+                                      bool verbose,
+                                      bool procimgs,
+                                      bool stretch,
+                                      float stretch_satu,
+                                      float enh,
+                                      int enh_type,
+                                      int enh_win,
+                                      float enh_slp,
+                                      float enh_prm,
+                                      float enh_prm_randmin,
+                                      float enh_prm_randmax,
+                                      float enh3_prm0,
+                                      float enh3_prm2,
+                                      bool deslope,
+                                      bool deslant,
+                                      float deslant_min,
+                                      float deslant_max,
+                                      float deslant_step,
+                                      int deslant_hsteps,
+                                      float slant_rand,
+                                      float scale_rand,
+                                      int normxheight,
+                                      int normheight,
+                                      bool momentnorm,
+                                      bool compute_fpgram,
+                                      bool compute_fcontour,
+                                      float fcontour_dilate,
+                                      int padding ) {
+  this->featype = featype;
+  this->format = format;
+  this->verbose = verbose;
+  this->procimgs = procimgs;
+  this->stretch = stretch;
+  this->stretch_satu = stretch_satu;
+  this->enh = enh;
+  this->enh_type = enh_type;
+  this->enh_win = enh_win;
+  this->enh_slp = enh_slp;
+  this->enh_prm = enh_prm;
+  this->enh_prm_randmin = enh_prm_randmin;
+  this->enh_prm_randmax = enh_prm_randmax;
+  this->enh3_prm0 = enh3_prm0;
+  this->enh3_prm2 = enh3_prm2;
+  this->deslope = deslope;
+  this->deslant = deslant;
+  this->deslant_min = deslant_min;
+  this->deslant_max = deslant_max;
+  this->deslant_step = deslant_step;
+  this->deslant_hsteps = deslant_hsteps;
+  this->slant_rand = slant_rand;
+  this->scale_rand = scale_rand;
+  this->normxheight = normxheight;
+  this->normheight = normheight;
+  this->momentnorm = momentnorm;
+  this->compute_fpgram = compute_fpgram;
+  this->compute_fcontour = compute_fcontour;
+  this->fcontour_dilate = fcontour_dilate;
+  this->padding = padding;
+}
+
+#if defined (__PAGEXML_LIBCONFIG__)
+
 /**
  * TextFeatExtractor constructor that receives a libconfig Config object.
  *
  * @param config  A libconfig Config object.
  */
-TextFeatExtractor::TextFeatExtractor( const Config& config ) {
+TextFeatExtractor::TextFeatExtractor( const libconfig::Config& config ) {
   loadConf(config);
 }
 
@@ -90,21 +162,25 @@ TextFeatExtractor::TextFeatExtractor( const Config& config ) {
  */
 TextFeatExtractor::TextFeatExtractor( const char* cfgfile ) {
   if( cfgfile != NULL ) {
-    Config config;
+    libconfig::Config config;
     config.readFile(cfgfile);
     loadConf(config);
   }
 }
 
+#endif
+
 /////////////////////
 /// Configuration ///
 /////////////////////
 
+#if defined (__PAGEXML_LIBCONFIG__)
+
 /**
  * Gets a config setting as a double even if it is an int.
  */
-inline static double settingNumber( const Setting& setting ) {
-  return setting.getType() == Setting::Type::TypeInt ?
+inline static double settingNumber( const libconfig::Setting& setting ) {
+  return setting.getType() == libconfig::Setting::Type::TypeInt ?
     (double)((int)setting) :
     (double)setting ;
 }
@@ -112,8 +188,8 @@ inline static double settingNumber( const Setting& setting ) {
 /**
  * Gets a config setting as a bool even if it is a yes/no or true/false string.
  */
-inline static bool settingBoolean( const Setting& setting ) {
-  if( setting.getType() == Setting::Type::TypeString ) {
+inline static bool settingBoolean( const libconfig::Setting& setting ) {
+  if( setting.getType() == libconfig::Setting::Type::TypeString ) {
     if( !strcasecmp("true",setting.c_str()) || !strcasecmp("yes",setting.c_str()) )
       return true;
     else if( !strcasecmp("false",setting.c_str()) || !strcasecmp("no",setting.c_str()) )
@@ -169,15 +245,15 @@ inline static int parseFeatSetting( const char* setting ) {
  *
  * @param config  A libconfig Config object.
  */
-void TextFeatExtractor::loadConf( const Config& config ) {
+void TextFeatExtractor::loadConf( const libconfig::Config& config ) {
   if( ! config.exists("TextFeatExtractor") )
     return;
 
-  const Setting& featcfg = config.getRoot()["TextFeatExtractor"];
+  const libconfig::Setting& featcfg = config.getRoot()["TextFeatExtractor"];
 
   int numsettings = featcfg.getLength();
   for( int i = 0; i < numsettings; i++ ) {
-    const Setting& setting = featcfg[i];
+    const libconfig::Setting& setting = featcfg[i];
     //printf("TextFeatExtractor: setting=%s enum=%d\n",setting.getName(),parseFeatSetting(setting.getName()));
     switch( parseFeatSetting(setting.getName()) ) {
       case TEXTFEAT_SETTING_TYPE:
@@ -211,12 +287,12 @@ void TextFeatExtractor::loadConf( const Config& config ) {
           throw invalid_argument( "TextFeatExtractor: enhancement window width must be > 0" );
         break;
       case TEXTFEAT_SETTING_ENH_PRM:
-        if( setting.getType() == Setting::Type::TypeArray || setting.getLength() == 3 ) {
+        if( setting.getType() == libconfig::Setting::Type::TypeArray || setting.getLength() == 3 ) {
           enh3_prm0 = settingNumber(setting[0]);
           enh_prm = settingNumber(setting[1]);
           enh3_prm2 = settingNumber(setting[2]);
         }
-        else if( setting.getType() == Setting::Type::TypeFloat || setting.getType() == Setting::Type::TypeInt ) {
+        else if( setting.getType() == libconfig::Setting::Type::TypeFloat || setting.getType() == libconfig::Setting::Type::TypeInt ) {
           enh_prm = settingNumber(setting);
           enh3_prm0 = enh3_prm2 = 0.0;
         }
@@ -226,7 +302,7 @@ void TextFeatExtractor::loadConf( const Config& config ) {
           throw invalid_argument( "TextFeatExtractor: enhancement parameter must be >= 0.0" );
         break;
       case TEXTFEAT_SETTING_ENH_PRM_RAND:
-        if( setting.getType() != Setting::Type::TypeArray || setting.getLength() != 2 )
+        if( setting.getType() != libconfig::Setting::Type::TypeArray || setting.getLength() != 2 )
           throw invalid_argument( "TextFeatExtractor: enhancement parameter random must be an array with 2 numbers" );
         enh_prm_randmin = settingNumber(setting[0]);
         enh_prm_randmax = settingNumber(setting[1]);
@@ -265,7 +341,7 @@ void TextFeatExtractor::loadConf( const Config& config ) {
       case TEXTFEAT_SETTING_PADDING:
         padding = (int)settingNumber(setting);
         break;
-      case TEXTFEAT_SETTING_SLIDE_SHIFT:
+      /*case TEXTFEAT_SETTING_SLIDE_SHIFT:
         slide_shift = settingNumber(setting);
         if( slide_shift <= 0.0 )
           throw invalid_argument( "TextFeatExtractor: slide_shift must be > 0.0" );
@@ -288,12 +364,14 @@ void TextFeatExtractor::loadConf( const Config& config ) {
       case TEXTFEAT_SETTING_PROJFILE:
         //if( setting.c_str() != NULL && setting.c_str() != '\0' )
           loadProjection( setting.c_str() );
-        break;
+        break;*/
       default:
         throw invalid_argument( string("TextFeatExtractor: unexpected configuration property: ") + setting.getName() );
     } // switch( parseFeatSetting(setting.getName()) ) {
   }
 }
+
+#endif
 
 /**
  * Prints the current configuration.
@@ -320,12 +398,12 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  fcontour = %s;\n", compute_fcontour ? "true" : "false" );
   fprintf( file, "  fcontour_dilate = %g;\n", fcontour_dilate );
   fprintf( file, "  padding = %d;\n", padding );
-  fprintf( file, "  slide_shift = %g;\n", slide_shift );
+  /*fprintf( file, "  slide_shift = %g;\n", slide_shift );
   fprintf( file, "  slide_span = %g;\n", slide_span );
   fprintf( file, "  sample_width = %d;\n", sample_width );
   fprintf( file, "  sample_height = %d;\n", sample_height );
   if( projbase.rows > 0 )
-    fprintf( file, "  projfile = \"%s\";\n", projfile.c_str() );
+    fprintf( file, "  projfile = \"%s\";\n", projfile.c_str() );*/
   fprintf( file, "}\n" );
 }
 
@@ -339,13 +417,13 @@ void TextFeatExtractor::printConf( FILE* file ) {
  *
  * @param projfile  File from which to read the projection.
  */
-void TextFeatExtractor::loadProjection( const char* projfile ) {
+/*void TextFeatExtractor::loadProjection( const char* projfile ) {
   /// Open HDF5 file handle, read only ///
-  H5File fp(projfile,H5F_ACC_RDONLY);
+  H5::H5File fp(projfile,H5F_ACC_RDONLY);
 
   /// Access projection base ///
-  DataSet dset = fp.openDataSet("/B/value");
-  DataSpace dspace = dset.getSpace();
+  H5::DataSet dset = fp.openDataSet("/B/value");
+  H5::DataSpace dspace = dset.getSpace();
   H5T_class_t type_class = dset.getTypeClass();
   hsize_t dims[2];
   hsize_t rank = dspace.getSimpleExtentDims(dims, NULL);
@@ -354,7 +432,7 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
 
   /// Create opencv matrix with projection matrix ///
   float Bmat[dims[0]*dims[1]];
-  dset.read(Bmat, PredType::NATIVE_FLOAT, dspace);
+  dset.read(Bmat, H5::PredType::NATIVE_FLOAT, dspace);
   projbase = cv::Mat(dims[0], dims[1], CV_32F, &Bmat);
   projbase = projbase.t();
 
@@ -368,14 +446,14 @@ void TextFeatExtractor::loadProjection( const char* projfile ) {
 
   /// Create opencv matrix with mean ///
   float mumat[dims[0]];
-  dset.read(mumat, PredType::NATIVE_FLOAT, dspace);
+  dset.read(mumat, H5::PredType::NATIVE_FLOAT, dspace);
   projmu = cv::Mat(dims[0], dims[1], CV_32F, &mumat);
   projmu = projmu.t();
 
   fp.close();
 
   this->projfile = string(projfile);
-}
+}*/
 
 ///////////////////////
 /// Features output ///
@@ -415,7 +493,7 @@ inline static void print_float( float data, FILE* file ) {
  * @param feats  OpenCV matrix containing the features.
  * @param file   File stream to print the features.
  */
-static void print_features_htk( const Mat& feats, FILE* file ) {
+static void print_features_htk( const cv::Mat& feats, FILE* file ) {
   int nSamples = feats.rows;
   int sampPeriod = 100000; /* 10000000 = 1seg */
   int sampSize = 4*feats.cols;
@@ -439,7 +517,7 @@ static void print_features_htk( const Mat& feats, FILE* file ) {
  * @param feats  OpenCV matrix containing the features.
  * @param file   File stream to print the features.
  */
-static void print_features_ascii( const Mat& feats, FILE* file ) {
+static void print_features_ascii( const cv::Mat& feats, FILE* file ) {
   for( int i=0; i<feats.rows; i++ ) {
     const float *data = feats.ptr<float>(i);
     fprintf( file, "%g", data[0] );
@@ -462,7 +540,7 @@ bool TextFeatExtractor::isImageFormat() {
  * @param feats  OpenCV matrix containing the features.
  * @param file   File stream to print the features.
  */
-void TextFeatExtractor::print( const Mat& feats, FILE* file ) {
+void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
   if( feats.cols == 0 )
     throw runtime_error( "TextFeatExtractor::print: empty features matrix" );
   switch( format ) {
@@ -485,7 +563,7 @@ void TextFeatExtractor::print( const Mat& feats, FILE* file ) {
  * @param feats  OpenCV matrix containing the features.
  * @param file   File name of where to write the features.
  */
-void TextFeatExtractor::write( const Mat& feats, const char* fname ) {
+void TextFeatExtractor::write( const cv::Mat& feats, const char* fname ) {
   if( feats.cols == 0 )
     throw runtime_error( "TextFeatExtractor::write: empty features matrix" );
   if( format == TEXTFEAT_FORMAT_IMAGE ) {
@@ -511,15 +589,15 @@ void TextFeatExtractor::write( const Mat& feats, const char* fname ) {
  * @param image   Magick++ Image object.
  * @param cvimg   OpenCV Mat.
  */
-static void magick2cvmat8u( Image& image, Mat& cvimg ) {
+static void magick2cvmat8u( Magick::Image& image, cv::Mat& cvimg ) {
   CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
   CV_Assert( cvimg.channels() == 1 ); // accept only single channel matrices
-  CV_Assert( image.type() == GrayscaleMatteType || image.type() == GrayscaleType );
+  CV_Assert( image.type() == Magick::GrayscaleMatteType || image.type() == Magick::GrayscaleType );
   CV_Assert( (int)image.columns() == cvimg.cols );
   CV_Assert( (int)image.rows() == cvimg.rows );
 
-  Pixels view(image);
-  const PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view(image);
+  const Magick::PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
 
   for( int y=0, n=0; y<cvimg.rows; y++ ) {
     uchar* ptr = cvimg.ptr<uchar>(y);
@@ -532,18 +610,18 @@ static void magick2cvmat8u( Image& image, Mat& cvimg ) {
   }
 }
 
-static void magick2cvmat8uc3( Image& image, Mat& cvimg ) {
+static void magick2cvmat8uc3( Magick::Image& image, cv::Mat& cvimg ) {
   CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
   CV_Assert( cvimg.channels() == 3 ); // accept only three channel matrices
-  CV_Assert( image.type() == TrueColorMatteType || image.type() == TrueColorType );
+  CV_Assert( image.type() == Magick::TrueColorMatteType || image.type() == Magick::TrueColorType );
   CV_Assert( (int)image.columns() == cvimg.cols );
   CV_Assert( (int)image.rows() == cvimg.rows );
 
-  Pixels view(image);
-  const PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view(image);
+  const Magick::PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
 
   for( int y=0, n=0; y<cvimg.rows; y++ ) {
-    Vec3b *ptr = cvimg.ptr<Vec3b>(y);
+    cv::Vec3b *ptr = cvimg.ptr<cv::Vec3b>(y);
     for( int x=0; x<cvimg.cols; x++, n++ ) {
 #if MAGICKCORE_QUANTUM_DEPTH == 16
       ptr[x][2] = pixs[n].red >> 8;
@@ -565,7 +643,7 @@ static void magick2cvmat8uc3( Image& image, Mat& cvimg ) {
  * @param gimg    Unsigned char matrix (it is allocated if NULL).
  * @param _alpha  Pointer to unsigned char matrix for alpha channel (it is allocated if NULL).
  */
-static void magick2graym( Image& image, gray**& gimg, gray*** _alpha = NULL ) {
+static void magick2graym( Magick::Image& image, gray**& gimg, gray*** _alpha = NULL ) {
   if( gimg == NULL )
     if( malloc_graym(image.columns(),image.rows(),&gimg,false) )
       throw runtime_error( "TextFeatExtractor: unable to reserve memory" );
@@ -578,8 +656,8 @@ static void magick2graym( Image& image, gray**& gimg, gray*** _alpha = NULL ) {
         throw runtime_error( "TextFeatExtractor: unable to reserve memory" );
     *_alpha = alpha;
   }
-  Pixels view(image);
-  const PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view(image);
+  const Magick::PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
   for( int n=image.columns()*image.rows()-1; n>=0; n-- ) {
 #if MAGICKCORE_QUANTUM_DEPTH == 16
     gimg[0][n] = pixs[n].red >> 8;
@@ -611,13 +689,13 @@ inline static int to16bits( int val ) {
  * @param gimg   Unsigned char matrix.
  * @param alpha  Unsigned char matrix for alpha channel.
  */
-static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
-  Geometry page = image.page();
-  Geometry density = image.density();
-  //ResolutionType units = image.resolutionUnits(); // Magick++ bug
-  ResolutionType units = image.image()->units;
+static void graym2magick( Magick::Image& image, gray** gimg, gray** alpha = NULL ) {
+  Magick::Geometry page = image.page();
+  Magick::Geometry density = image.density();
+  //Magick::ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  Magick::ResolutionType units = image.image()->units;
 
-  image = Image( Geometry(image.columns(), image.rows()), colorBlack );
+  image = Magick::Image( Magick::Geometry(image.columns(), image.rows()), colorBlack );
   image.depth(8);
   image.page(page);
   image.density(density);
@@ -625,12 +703,12 @@ static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
 
   //image.modifyImage();
 
-  if( alpha != NULL && image.type() != GrayscaleMatteType )
-    image.type( GrayscaleMatteType );
-  else if( alpha == NULL && image.type() != GrayscaleType )
-    image.type( GrayscaleType );
-  Pixels view(image);
-  PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  if( alpha != NULL && image.type() != Magick::GrayscaleMatteType )
+    image.type( Magick::GrayscaleMatteType );
+  else if( alpha == NULL && image.type() != Magick::GrayscaleType )
+    image.type( Magick::GrayscaleType );
+  Magick::Pixels view(image);
+  Magick::PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
   for( int n=image.columns()*image.rows()-1; n>=0; n-- ) {
 #if MAGICKCORE_QUANTUM_DEPTH == 16
     pixs[n].red = pixs[n].green = pixs[n].blue = to16bits(gimg[0][n]);
@@ -652,23 +730,23 @@ static void graym2magick( Image& image, gray** gimg, gray** alpha = NULL ) {
  * @param gimg   Unsigned char matrix.
  * @param alpha  Unsigned char matrix for alpha channel.
  */
-static void grayms2magick( Image& image, gray** rimg, gray** gimg, gray** bimg, gray** alpha = NULL ) {
-  Geometry page = image.page();
-  Geometry density = image.density();
-  ResolutionType units = image.image()->units;
+static void grayms2magick( Magick::Image& image, gray** rimg, gray** gimg, gray** bimg, gray** alpha = NULL ) {
+  Magick::Geometry page = image.page();
+  Magick::Geometry density = image.density();
+  Magick::ResolutionType units = image.image()->units;
 
-  image = Image( Geometry(image.columns(), image.rows()), colorBlack );
+  image = Magick::Image( Magick::Geometry(image.columns(), image.rows()), colorBlack );
   image.depth(8);
   image.page(page);
   image.density(density);
   image.resolutionUnits(units);
 
-  if( alpha != NULL && image.type() != TrueColorMatteType )
-    image.type( TrueColorMatteType );
-  else if( alpha == NULL && image.type() != TrueColorType )
-    image.type( TrueColorType );
-  Pixels view(image);
-  PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  if( alpha != NULL && image.type() != Magick::TrueColorMatteType )
+    image.type( Magick::TrueColorMatteType );
+  else if( alpha == NULL && image.type() != Magick::TrueColorType )
+    image.type( Magick::TrueColorType );
+  Magick::Pixels view(image);
+  Magick::PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
   for( int n=image.columns()*image.rows()-1; n>=0; n-- ) {
 #if MAGICKCORE_QUANTUM_DEPTH == 16
     pixs[n].red = to16bits(rimg[0][n]);
@@ -694,17 +772,17 @@ static void grayms2magick( Image& image, gray** rimg, gray** gimg, gray** bimg, 
  * @param image   Magick++ Image object.
  * @param cvimg   OpenCV Mat.
  */
-static void cvmat8u2magick( Image& image, Mat& cvimg ) {
+static void cvmat8u2magick( Magick::Image& image, cv::Mat& cvimg ) {
   CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
   CV_Assert( cvimg.channels() == 1 ); // accept only single channel matrices
   CV_Assert( (int)image.columns() == cvimg.cols );
   CV_Assert( (int)image.rows() == cvimg.rows );
 
-  Geometry page = image.page();
-  Geometry density = image.density();
-  //ResolutionType units = image.resolutionUnits(); // Magick++ bug
-  ResolutionType units = image.image()->units;
-  image = Image( Geometry(image.columns(), image.rows()), colorBlack );
+  Magick::Geometry page = image.page();
+  Magick::Geometry density = image.density();
+  //Magick::ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  Magick::ResolutionType units = image.image()->units;
+  image = Magick::Image( Magick::Geometry(image.columns(), image.rows()), colorBlack );
   image.depth(8);
   image.page(page);
   image.density(density);
@@ -712,10 +790,10 @@ static void cvmat8u2magick( Image& image, Mat& cvimg ) {
 
   //image.modifyImage();
 
-  if( image.type() != GrayscaleType )
-    image.type( GrayscaleType );
-  Pixels view(image);
-  PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  if( image.type() != Magick::GrayscaleType )
+    image.type( Magick::GrayscaleType );
+  Magick::Pixels view(image);
+  Magick::PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
   for( int y=0, n=0; y<cvimg.rows; y++ ) {
     uchar* ptr = cvimg.ptr<uchar>(y);
     for( int x=0; x<cvimg.cols; x++, n++ )
@@ -738,7 +816,7 @@ static void cvmat8u2magick( Image& image, Mat& cvimg ) {
  * @param slp    Gray slope parameter.
  * @param type   Enhancement algorithm.
  */
-static void enhance( Image& image, int winW, double prm1, double slp, int type, double prm0 = 0.0, double prm2 = 0.0 ) {
+static void enhance( Magick::Image& image, int winW, double prm1, double slp, int type, double prm0 = 0.0, double prm2 = 0.0 ) {
   gray** gimg = NULL;
   gray** msk = NULL;
   II1** ii1 = NULL;
@@ -969,7 +1047,7 @@ inline static void findMinMax( int size, double* vals, bool* isset, double* _min
  *
  * @todo If alpha channel, do not project transparent
  */
-static double estimateSlant( Image& image, double amin, double amax, double astep, int hsteps = 4, double hfact = 0.7 ) {
+static double estimateSlant( Magick::Image& image, double amin, double amax, double astep, int hsteps = 4, double hfact = 0.7 ) {
   amin *= M_PI/180;
   amax *= M_PI/180;
   astep *= M_PI/180;
@@ -985,8 +1063,8 @@ static double estimateSlant( Image& image, double amin, double amax, double aste
   double maxvar = 0.0;
 #endif
 
-  Pixels view(image);
-  const PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view(image);
+  const Magick::PixelPacket *pixs = view.getConst( 0, 0, image.columns(), image.rows() );
 
 #ifdef __SLANT_PYRAMIDAL__
   /// List angles for pyramidal sampling ///
@@ -1139,7 +1217,7 @@ static double estimateSlant( Image& image, double amin, double amax, double aste
  * @param method    Contour approximation method.
  * @param eps       Epsilon for approxPolyDP, zero to disable.
  */
-void findOuterContours( Image& img, vector< vector<Point> >& contours, int method, double eps = 0.0 ) {
+void findOuterContours( Magick::Image& img, vector< vector<cv::Point> >& contours, int method, double eps = 0.0 ) {
   cv::Mat cvimg( cv::Size(img.columns(),img.rows()), CV_8U );
   magick2cvmat8u( img, cvimg );
 
@@ -1149,7 +1227,7 @@ void findOuterContours( Image& img, vector< vector<Point> >& contours, int metho
   /// Approximate contours ///
   if( eps > 0.0 ) {
     for( size_t n=0; n<contours.size(); n++ ) {
-      vector<Point> approx;
+      vector<cv::Point> approx;
       cv::approxPolyDP( contours[n], approx, eps, true );
       contours[n] = approx;
     }
@@ -1157,11 +1235,11 @@ void findOuterContours( Image& img, vector< vector<Point> >& contours, int metho
 
   /// If no contours, use full image as contour ///
   if( contours.size() == 0 ) {
-    vector<Point> contour;
-    contour.push_back( Point(0,0) );
-    contour.push_back( Point(img.columns()-1,0) );
-    contour.push_back( Point(img.columns()-1,img.rows()-1) );
-    contour.push_back( Point(0,img.rows()-1) );
+    vector<cv::Point> contour;
+    contour.push_back( cv::Point(0,0) );
+    contour.push_back( cv::Point(img.columns()-1,0) );
+    contour.push_back( cv::Point(img.columns()-1,img.rows()-1) );
+    contour.push_back( cv::Point(0,img.rows()-1) );
     contours.push_back(contour);
   }
 
@@ -1183,12 +1261,12 @@ void findOuterContours( Image& img, vector< vector<Point> >& contours, int metho
  *
  * @param image    Magick++ Image object.
  */
-static void joinComponents( Image& img ) {
+static void joinComponents( Magick::Image& img ) {
   cv::Mat cvimg( cv::Size(img.columns(),img.rows()), CV_8U );
   magick2cvmat8u( img, cvimg );
 
   /// Get external contours ///
-  vector< vector<Point> > contours;
+  vector< vector<cv::Point> > contours;
   cv::findContours( cvimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0) );
 
   magick2cvmat8u( img, cvimg );
@@ -1221,7 +1299,7 @@ static void joinComponents( Image& img ) {
       cv::Mat ftest = cv::Mat::zeros( nx, 2, CV_32F );
       for( int xx=0,nn=0; xx<C; xx++ )
         if( x == ccid[xx] ) {
-          vector<Point> contxx = contours[xx];
+          vector<cv::Point> contxx = contours[xx];
           for( size_t n=0; n<contxx.size(); n++,nn++ ) {
             ftest.at<float>(nn,0) = contxx[n].x;
             ftest.at<float>(nn,1) = contxx[n].y;
@@ -1232,7 +1310,7 @@ static void joinComponents( Image& img ) {
       cv::Mat fref = cv::Mat::zeros( N-nx, 2, CV_32F );
       for( int y=0,nn=0; y<C; y++ )
         if( x != ccid[y] ) {
-          vector<Point> conty = contours[y];
+          vector<cv::Point> conty = contours[y];
           for( size_t n=0; n<conty.size(); n++,nn++,ny++ ) {
             fref.at<float>(nn,0) = conty[n].x;
             fref.at<float>(nn,1) = conty[n].y;
@@ -1265,7 +1343,7 @@ static void joinComponents( Image& img ) {
           ccid[xx] = c;
 
       /// Join components with a line ///
-      cv::line( cvimg, Point(ftest.at<float>(i,0),ftest.at<float>(i,1)), Point(fref.at<float>(j,0),fref.at<float>(j,1)), Scalar(255,255,255,0) );
+      cv::line( cvimg, cv::Point(ftest.at<float>(i,0),ftest.at<float>(i,1)), cv::Point(fref.at<float>(j,0),fref.at<float>(j,1)), cv::Scalar(255,255,255,0) );
 
       ftest.release();
       fref.release();
@@ -1290,15 +1368,29 @@ static void joinComponents( Image& img ) {
  * @param image    Image to process.
  * @return         Whether the conversion was performed.
  */
-bool toGrayscale( Image& image ) {
-  if( image.type() == GrayscaleMatteType || image.type() == GrayscaleType )
+#if defined (__PAGEXML_IMG_MAGICK__)
+bool toGrayscale( Magick::Image& image ) {
+  if( image.type() == Magick::GrayscaleMatteType || image.type() == Magick::GrayscaleType )
     return false;
-  if( image.matte() && image.type() != GrayscaleMatteType )
-    image.type( GrayscaleMatteType );
-  else if( ! image.matte() && image.type() != GrayscaleType )
-    image.type( GrayscaleType );
+  if( image.matte() && image.type() != Magick::GrayscaleMatteType )
+    image.type( Magick::GrayscaleMatteType );
+  else if( ! image.matte() && image.type() != Magick::GrayscaleType )
+    image.type( Magick::GrayscaleType );
   return true;
 }
+#elif defined (__PAGEXML_IMG_CV__)
+bool toGrayscale( cv::Mat& image ) {
+  if( image.channels() != 3 && image.channels() != 4 )
+    return false;
+
+  if( image.channels() == 4 )
+    fprintf(stderr,"toGrayscale not preserving alpha\n");
+  cv::Mat grayimage;
+  cv::cvtColor(image, grayimage, cv::COLOR_BGR2GRAY);
+  image = grayimage;
+  return true;
+}
+#endif
 
 /**
  * Removes alpha channel, setting all transparent regions to the background color.
@@ -1307,22 +1399,22 @@ bool toGrayscale( Image& image ) {
  * @param color    Color for the background.
  * @return         Whether flattening was performed.
  */
-bool flattenImage( Image& image, const Color* color = NULL ) {
+bool flattenImage( Magick::Image& image, const Magick::Color* color = NULL ) {
   if( ! image.matte() )
     return false;
 
-  Image clone = Image( Geometry(image.columns(), image.rows()), color == NULL ? colorWhite : *color );
+  Magick::Image clone = Magick::Image( Magick::Geometry(image.columns(), image.rows()), color == NULL ? colorWhite : *color );
   clone.depth(image.depth());
   clone.page(image.page());
   clone.density(image.density());
   //clone.resolutionUnits(image.resolutionUnits()); // Magick++ bug
   clone.resolutionUnits(image.image()->units);
-  clone.type( GrayscaleType );
+  clone.type( Magick::GrayscaleType );
 
-  Pixels view_image(image);
-  PixelPacket *pixs_image = view_image.get( 0, 0, image.columns(), image.rows() );
-  Pixels view_clone(clone);
-  PixelPacket *pixs_clone = view_clone.get( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view_image(image);
+  Magick::PixelPacket *pixs_image = view_image.get( 0, 0, image.columns(), image.rows() );
+  Magick::Pixels view_clone(clone);
+  Magick::PixelPacket *pixs_clone = view_clone.get( 0, 0, image.columns(), image.rows() );
   for( int n=image.columns()*image.rows()-1; n>=0; n-- )
     if( ! pixs_image[n].opacity )
       pixs_clone[n] = pixs_image[n];
@@ -1350,14 +1442,28 @@ bool flattenImage( Image& image, const Color* color = NULL ) {
  * @param _fcontour  Output contour points, set to NULL to skip computation.
  * @param randomize  Whether to do a random perturbation of preprocessing parameters.
  */
-void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool randomize ) {
+#if defined (__PAGEXML_IMG_MAGICK__)
+void TextFeatExtractor::preprocess( Magick::Image& image, vector<cv::Point>* _fcontour, bool randomize ) {
+#elif defined (__PAGEXML_IMG_CV__)
+void TextFeatExtractor::preprocess( PageImage& cvimg, vector<cv::Point>* _fcontour, bool randomize ) {
+#endif
   high_resolution_clock::time_point tm;
 
   /// Convert to grayscale ///
   tm = high_resolution_clock::now();
+#if defined (__PAGEXML_IMG_MAGICK__)
   if( toGrayscale(image) && verbose )
+#elif defined (__PAGEXML_IMG_CV__)
+  if( toGrayscale(cvimg) && verbose )
+#endif
     fprintf(stderr,"gray time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
-  Geometry page = image.page();
+
+#if defined (__PAGEXML_IMG_CV__)
+  Magick::Image image = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
+  cvmat8u2magick( image, cvimg );
+#endif
+
+  Magick::Geometry page = image.page();
   image.strip();
 
   if( procimgs )
@@ -1396,6 +1502,10 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
   else
     flattenImage(image);
 
+#if defined (__PAGEXML_IMG_CV__)
+  magick2cvmat8u( image, cvimg );
+#endif
+
   /// Compute connected components contour polygon ///
   if( compute_fcontour && _fcontour != NULL && ! randomize ) {
     tm = high_resolution_clock::now();
@@ -1404,13 +1514,13 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     int border = fcontour_dilate+1;
 
     /// Binalize image ///
-    Image tmp = image;
+    Magick::Image tmp = image;
     tmp.threshold(QuantumRange-1);
 
     /// Add border ///
     tmp.borderColor( colorWhite );
-    tmp.border( Geometry(border,border) );
-    tmp.page( Geometry(0,0,0,0) );
+    tmp.border( Magick::Geometry(border,border) );
+    tmp.page( Magick::Geometry(0,0,0,0) );
 
     /// Apply RLSA ///
     gray** gimg = NULL;
@@ -1427,10 +1537,10 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
     /// Dilate using disk structural element ///
     char kern[32];
     sprintf( kern, "Disk:%.2g", fcontour_dilate );
-    tmp.morphology( DilateMorphology, string(kern) );
+    tmp.morphology( Magick::DilateMorphology, string(kern) );
 
     /// Get contour coordinates ///
-    vector<vector<Point> > fcontour;
+    vector<vector<cv::Point> > fcontour;
     double eps = fcontour_dilate/2.0;
     //int method = CV_CHAIN_APPROX_TC89_KCOS;
     int method = CV_CHAIN_APPROX_SIMPLE;
@@ -1455,12 +1565,21 @@ void TextFeatExtractor::preprocess( Image& image, vector<Point>* _fcontour, bool
  * @param _slope  Estimated slope angle in degrees.
  * @param _slant  Estimated slant angle in degrees.
  */
-void TextFeatExtractor::estimateAngles( Image& image, float* _slope, float* _slant, float rotate ) {
+#if defined (__PAGEXML_IMG_MAGICK__)
+void TextFeatExtractor::estimateAngles( Magick::Image& image, float* _slope, float* _slant, float rotate ) {
+#elif defined (__PAGEXML_IMG_CV__)
+void TextFeatExtractor::estimateAngles( PageImage& cvimg, float* _slope, float* _slant, float rotate ) {
+#endif
   high_resolution_clock::time_point tm;
+
+#if defined (__PAGEXML_IMG_CV__)
+  Magick::Image image = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
+  cvmat8u2magick( image, cvimg );
+#endif
 
   /// Estimate line slope angle ///
   float vslope = 0.0;
-  Image desloped = image;
+  Magick::Image desloped = image;
 
   if( rotate != 0.0 )
     desloped.rotate(rotate);
@@ -1519,8 +1638,17 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
  * @param randomize  Whether to do a random perturbation of extraction parameters.
  * @return           Features matrix.
  */
-Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, int xheight, vector<Point2f>* _fpgram, bool randomize, float rotate, int direction ) {
+#if defined (__PAGEXML_IMG_MAGICK__)
+cv::Mat TextFeatExtractor::extractFeats( Magick::Image& feaimg, float slope, float slant, int xheight, vector<cv::Point2f>* _fpgram, bool randomize, float rotate, int direction ) {
+#elif defined (__PAGEXML_IMG_CV__)
+cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float slant, int xheight, vector<cv::Point2f>* _fpgram, bool randomize, float rotate, int direction ) {
+#endif
   high_resolution_clock::time_point tm = high_resolution_clock::now();
+
+#if defined (__PAGEXML_IMG_CV__)
+  Magick::Image feaimg = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
+  cvmat8u2magick( feaimg, cvimg );
+#endif
 
   /// Set image transparent zones to white ///
   if( flattenImage(feaimg,&colorWhite) && verbose )
@@ -1547,28 +1675,28 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   double si = sin( slope*deg_to_rad );
   double s = tan( slant*deg_to_rad );
 
-  Matx33d R0( co,  si, 0, -si, co, 0, 0, 0, 1 );
-  Matx33d R1( co, -si, 0,  si, co, 0, 0, 0, 1 );
-  Matx33d S0( 1, 0, 0,  s, 1, 0, 0, 0, 1 );
-  Matx33d S1( 1, 0, 0, -s, 1, 0, 0, 0, 1 );
-  Matx33d A0 = R0*S0;
-  Matx33d A1 = S1*R1;
+  cv::Matx33d R0( co,  si, 0, -si, co, 0, 0, 0, 1 );
+  cv::Matx33d R1( co, -si, 0,  si, co, 0, 0, 0, 1 );
+  cv::Matx33d S0( 1, 0, 0,  s, 1, 0, 0, 0, 1 );
+  cv::Matx33d S1( 1, 0, 0, -s, 1, 0, 0, 0, 1 );
+  cv::Matx33d A0 = R0*S0;
+  cv::Matx33d A1 = S1*R1;
 
-  feaimg.page( Geometry(0,0,0,0) );
+  feaimg.page( Magick::Geometry(0,0,0,0) );
 
   if( slope != 0.0 || slant != 0.0 ) {
     tm = high_resolution_clock::now();
-    feaimg.virtualPixelMethod( WhiteVirtualPixelMethod );
-    //feaimg.interpolate( BilinearInterpolatePixel );
-    //feaimg.interpolate( SplineInterpolatePixel );
-    //feaimg.interpolate( NearestNeighborInterpolatePixel );
-    feaimg.affineTransform( DrawableAffine( A0(0,0), A0(1,1), A0(0,1), A0(1,0), A0(2,0), A0(2,1) ) );
+    feaimg.virtualPixelMethod( Magick::WhiteVirtualPixelMethod );
+    //feaimg.interpolate( Magick::BilinearInterpolatePixel );
+    //feaimg.interpolate( Magick::SplineInterpolatePixel );
+    //feaimg.interpolate( Magick::NearestNeighborInterpolatePixel );
+    feaimg.affineTransform( Magick::DrawableAffine( A0(0,0), A0(1,1), A0(0,1), A0(1,0), A0(2,0), A0(2,1) ) );
     //printf( "affine: %g %g %g %g %g %g\n", A0(0,0), A0(1,1), A0(0,1), A0(1,0), A0(2,0), A0(2,1) );
-    feaimg.shave( Geometry(1,1) );
+    feaimg.shave( Magick::Geometry(1,1) );
     offx = feaimg.page().xNegative() ? -feaimg.page().xOff() : feaimg.page().xOff();
     offy = feaimg.page().yNegative() ? -feaimg.page().yOff() : feaimg.page().yOff();
     //fprintf( stderr, "page_off: %d %d\n", offx, offy );
-    feaimg.page( Geometry(0,0,0,0) );
+    feaimg.page( Magick::Geometry(0,0,0,0) );
     if( verbose )
       fprintf(stderr,"affine time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
     if( procimgs )
@@ -1576,7 +1704,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   }
 
   /// Trim image ///
-  Image trimmed = feaimg;
+  Magick::Image trimmed = feaimg;
   trimmed.trim();
   if( trimmed.columns()+trimmed.rows() > 2 ) {
     feaimg = trimmed;
@@ -1590,10 +1718,10 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   if( momentnorm ) {
     cv::Mat line_img( feaimg.rows(), feaimg.columns(), CV_8UC1, cv::Scalar(0) );
 
-    Image momimg = feaimg;
-    if( momimg.type() != GrayscaleType ) {
-      momimg.type( GrayscaleType );
-      //momimg.quantizeColorSpace( GRAYColorspace ); 
+    Magick::Image momimg = feaimg;
+    if( momimg.type() != Magick::GrayscaleType ) {
+      momimg.type( Magick::GrayscaleType );
+      //momimg.quantizeColorSpace( Magick::GRAYColorspace ); 
       //momimg.quantizeColors( 256 ); 
       //momimg.quantize( );
     }
@@ -1611,7 +1739,7 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     if( line_mnt.m00 != 0.0 ) {
       int mom_height = round( 4*sqrt(line_mnt.mu02/line_mnt.m00) );
       int mom_yoff = round( line_mnt.m01/line_mnt.m00 - 0.5*mom_height );
-      feaimg.extent( Geometry(feaimg.columns(),mom_height,0,mom_yoff), colorWhite );
+      feaimg.extent( Magick::Geometry(feaimg.columns(),mom_height,0,mom_yoff), colorWhite );
       offy += mom_yoff; // @todo Is ths correct?
       //fprintf(stderr,"mom_norm: yoff=%d height=%d\n",mom_yoff,mom_height);
     }
@@ -1624,12 +1752,12 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   if( normxheight > 0 && xheight > 0 ) {
     float fact = 100.0*(float)normxheight/(float)xheight;
     scaling *= 0.01*fact;
-    feaimg.resize( Geometry( (to_string(fact)+"%").c_str() ) );
+    feaimg.resize( Magick::Geometry( (to_string(fact)+"%").c_str() ) );
   }
 
   if( normheight && ! normxheight ) {
     scaling *= (float)normheight/(float)feaimg.rows();
-    feaimg.resize( Geometry( ("x"+to_string(normheight)).c_str() ) );
+    feaimg.resize( Magick::Geometry( ("x"+to_string(normheight)).c_str() ) );
   }
 
   /// Random scaling ///
@@ -1637,14 +1765,14 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     float rnd = 100 + 2*scale_rand*((rand()/(float)RAND_MAX)-0.5);
     if( verbose )
       fprintf(stderr,"random scale: %g%%\n",rnd);
-    feaimg.resize( Geometry( (to_string(rnd)+"%").c_str() ) );
+    feaimg.resize( Magick::Geometry( (to_string(rnd)+"%").c_str() ) );
     scaling *= 0.01*rnd;
   }
 
   /// Add left and right padding ///
   if( padding ) {
     feaimg.borderColor( colorWhite );
-    feaimg.border( Geometry(padding,0) );
+    feaimg.border( Magick::Geometry(padding,0) );
   }
 
   /// Account for reading direction ///
@@ -1669,31 +1797,31 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
     }*/
     //fprintf(stderr,"numFea=%d xmin=%g xmax=%g\n",numFea,xmin,xmax);
 
-    /*Matx43d pts( offx+xmin, offy, 1,
+    /*cv::Matx43d pts( offx+xmin, offy, 1,
                  offx+xmax, offy, 1,
                  offx+xmax, offy+feaimg.rows()-1, 1,
                  offx+xmin, offy+feaimg.rows()-1, 1 );*/
-    Matx43d pts( offx+(1.0/scaling)*xmin, offy, 1,
+    cv::Matx43d pts( offx+(1.0/scaling)*xmin, offy, 1,
                  offx+(1.0/scaling)*xmax, offy, 1,
                  offx+(1.0/scaling)*xmax, offy+(1.0/scaling)*(feaimg.rows()-1), 1,
                  offx+(1.0/scaling)*xmin, offy+(1.0/scaling)*(feaimg.rows()-1), 1 );
-    pts = pts * A1 + Matx43d( bboxoffx, bboxoffy, 0,
+    pts = pts * A1 + cv::Matx43d( bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0,
                               bboxoffx, bboxoffy, 0 );
 
     //fprintf(stderr,"bboxoff=%d,%d off=%d,%d xlim=%g,%g pts=%g,%g\n",bboxoffx,bboxoffy,offx,offy,xmin,xmax,pts(0,0),pts(0,1));
 
-    vector<Point2f> fpgram = { Point2f(pts(0,0),pts(0,1)),
-                               Point2f(pts(1,0),pts(1,1)),
-                               Point2f(pts(2,0),pts(2,1)),
-                               Point2f(pts(3,0),pts(3,1)) };
+    vector<cv::Point2f> fpgram = { cv::Point2f(pts(0,0),pts(0,1)),
+                               cv::Point2f(pts(1,0),pts(1,1)),
+                               cv::Point2f(pts(2,0),pts(2,1)),
+                               cv::Point2f(pts(3,0),pts(3,1)) };
 
     *_fpgram = fpgram;
   }
 
   /// Compute features ///
-  Mat feats;
+  cv::Mat feats;
   //double moment_weight = 1;
   //bool window = true;
   //bool window = false;
@@ -1706,12 +1834,12 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
         fprintf(stderr,"dotmatrix time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
       break;*/
     case TEXTFEAT_TYPE_RAW:
-      if( feaimg.type() == GrayscaleMatteType || feaimg.type() == GrayscaleType ) {
-        feats = Mat( feaimg.rows(), feaimg.columns(), CV_8U );
+      if( feaimg.type() == Magick::GrayscaleMatteType || feaimg.type() == Magick::GrayscaleType ) {
+        feats = cv::Mat( feaimg.rows(), feaimg.columns(), CV_8U );
         magick2cvmat8u( feaimg, feats );
       }
       else {
-        feats = Mat( feaimg.rows(), feaimg.columns(), CV_8UC3 );
+        feats = cv::Mat( feaimg.rows(), feaimg.columns(), CV_8UC3 );
         magick2cvmat8uc3( feaimg, feats );
       }
       break;
@@ -1720,8 +1848,8 @@ Mat TextFeatExtractor::extractFeats( Image& feaimg, float slope, float slant, in
   return feats;
 }
 
-
-Mat TextFeatExtractor::preprocessAndExtract( Image& image, float* _slope, float* _slant, vector<Point2f>* _fpgram, vector<Point>* _fcontour ) {
+/*
+cv::Mat TextFeatExtractor::preprocessAndExtract( Magick::Image& image, float* _slope, float* _slant, vector<cv::Point2f>* _fpgram, vector<cv::Point>* _fcontour ) {
   /// Image cleaning and enhancement ///
   preprocess( image, _fcontour );
 
@@ -1732,8 +1860,9 @@ Mat TextFeatExtractor::preprocessAndExtract( Image& image, float* _slope, float*
   if( _slant != NULL ) *_slant = vslant;
 
   /// Extraction of features ///
-  Image feaimg = image;
-  Mat feats = extractFeats( feaimg, vslope, vslant, 0, _fpgram );
+  Magick::Image feaimg = image;
+  cv::Mat feats = extractFeats( feaimg, vslope, vslant, 0, _fpgram );
 
   return feats;
 }
+*/
