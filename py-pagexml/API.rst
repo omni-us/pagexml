@@ -1,5 +1,5 @@
-pagexml API (version 2018.10.8)
-*******************************
+pagexml API (version 2018.11.10)
+********************************
 
 
 pagexml module
@@ -1452,6 +1452,45 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       self: PageXML *
 
+   loadImage(self, pagenum, fname=None, resize_coords=False, density=0)
+
+      pagenum: int fname: char const * resize_coords: bool const
+      density: int
+
+      loadImage(self, pagenum, fname=None, resize_coords=False)
+
+      pagenum: int fname: char const * resize_coords: bool const
+
+      loadImage(self, pagenum, fname=None)
+
+      pagenum: int fname: char const *
+
+      loadImage(self, pagenum)
+
+      pagenum: int
+
+      loadImage(self, node, fname=None, resize_coords=False,
+      density=0)
+
+      node: xmlNode * fname: char const * resize_coords: bool const
+      density: int
+
+      loadImage(self, node, fname=None, resize_coords=False)
+
+      node: xmlNode * fname: char const * resize_coords: bool const
+
+      loadImage(self, node, fname=None)
+
+      node: xmlNode * fname: char const *
+
+      loadImage(self, node)
+
+      node: xmlNode *
+
+   loadImages(self, resize_coords, density)
+
+      resize_coords: bool const density: int const
+
    loadSchema(self, schema_path)
 
       schema_path: char const *
@@ -1944,8 +1983,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
    static setValidationEnabled(val)
 
       val: bool
-
-   settingNames
 
    simplifyIDs(self) -> int
 

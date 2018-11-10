@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.10.08$
+ * @version $Version: 2018.11.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -24,15 +24,17 @@
 
 using namespace std;
 
+#if defined (__PAGEXML_LIBCONFIG__)
 const char* PageXML::settingNames[] = {
   "indent",
   "pagens",
   "grayimg"
 };
+#endif
 
 char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
 
-#ifdef __PAGEXML_MAGICK__
+#ifdef __PAGEXML_IMG_MAGICK__
 Magick::Color transparent("rgba(0,0,0,0)");
 Magick::Color opaque("rgba(0,0,0,100%)");
 Magick::Color colorWhite("white");
@@ -54,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.10.08";
+static char class_version[] = "Version: 2018.11.10";
 
 /**
  * Returns the class version.
@@ -402,15 +404,15 @@ xmlNodePt PageXML::newXml( const char* creator, const char* image, const int img
   setupXml();
 
   if( imgW <= 0 || imgH <= 0 ) {
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     loadImage( 0, NULL, false );
 #if defined (__PAGEXML_LEPT__)
     int width = pixGetWidth(pagesImage[0]);
     int height = pixGetHeight(pagesImage[0]);
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
     int width = pagesImage[0].columns();
     int height = pagesImage[0].rows();
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
     int width = pagesImage[0].size().width;
     int height = pagesImage[0].size().height;
 #endif
@@ -552,7 +554,7 @@ void PageXML::setupXml() {
   //  sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 }
 
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
 /**
  * Function that creates a temporal file using the mktemp command
@@ -571,7 +573,7 @@ void mktemp( const char* tempbase, char *tempname ) {
   }
 }
 
-#if defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_IMG_MAGICK__)
 
 /**
  * Removes alpha channel, setting all transparent regions to the background color.
@@ -601,7 +603,7 @@ bool listFlattenImage( Magick::Image& image, const Magick::Color* color = NULL )
  * @param resize_coords  If image size differs, resize page XML coordinates.
  * @param density        Load the image at the given density, resizing the page coordinates if required.
  */
-#if defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_LEPT__) && defined (__PAGEXML_MAGICK__)
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density ) {
 #else
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density __attribute__((unused)) ) {
@@ -673,7 +675,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
   }
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
   try {
     if( density )
       pagesImage[pagenum].density(std::to_string(density).c_str());
@@ -686,7 +688,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", e.what() );
     return;
   }
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
   pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
@@ -699,7 +701,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     Pix *orig = pagesImage[pagenum];
     pagesImage[pagenum] = pixConvertRGBToGray(orig,0.0,0.0,0.0);
     pixDestroy(&orig);
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
     if( pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleMatteType )
       pagesImage[pagenum].type( Magick::GrayscaleMatteType );
     else if( ! pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleType )
@@ -710,10 +712,10 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 #if defined (__PAGEXML_LEPT__)
   int imgwidth = pixGetWidth(pagesImage[pagenum]);
   int imgheight = pixGetHeight(pagesImage[pagenum]);
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
   int imgwidth = (int)pagesImage[pagenum].columns();
   int imgheight = (int)pagesImage[pagenum].rows();
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
   int imgwidth = pagesImage[pagenum].size().width;
   int imgheight = pagesImage[pagenum].size().height;
 #endif
@@ -744,7 +746,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     else if ( angle == -90 )
       pagesImage[pagenum] = pixRotateOrth(orig,3);
     pixDestroy(&orig);
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
     int width_orig = pagesImage[pagenum].columns();
     int height_orig = pagesImage[pagenum].rows();
     int width_rot = angle == 180 ? width_orig : height_orig;
@@ -771,7 +773,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     }
     view_rot.sync();
     pagesImage[pagenum] = rotated;
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
     PageImage rotated;
     if ( angle == 90 ) {
       cv::transpose(pagesImage[pagenum], rotated);
@@ -1160,7 +1162,7 @@ std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
   return nodename;
 }
 
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
 /**
  * Crops images using its Coords polygon, regions outside the polygon are set to transparent.
@@ -1215,9 +1217,9 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       height = getPageHeight(page);
       #if defined (__PAGEXML_LEPT__)
         if( pagesImage[pagenum] == NULL )
-      #elif defined (__PAGEXML_MAGICK__)
+      #elif defined (__PAGEXML_IMG_MAGICK__)
         if( pagesImage[pagenum].columns() == 0 )
-      #elif defined (__PAGEXML_CVIMG__)
+      #elif defined (__PAGEXML_IMG_CV__)
         if( ! pagesImage[pagenum].data )
       #endif
           loadImage(pagenum);
@@ -1273,7 +1275,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     BOX* box = boxCreate(cropX, cropY, cropW, cropH);
     Pix* cropimg = pixClipRectangle(pageImage, box, NULL);
     boxDestroy(&box);
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
     Magick::Image cropimg = pageImage;
     try {
       cropimg.crop( Magick::Geometry(cropW,cropH,cropX,cropY) );
@@ -1286,7 +1288,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     //if( cropimg.columns() != cropW || cropimg.rows() != cropH || cropimg.page().xOff() != cropX || cropimg.page().yOff() != cropY )
     //  fprintf(stderr,"warning: modified crop for id=%s, requested: %zux%zu+%d+%d vs. obtained: %zux%zu+%ld+%ld\n", sampid.c_str(), cropW,cropH,cropX,cropY, cropimg.columns(),cropimg.rows(),cropimg.page().xOff(),cropimg.page().yOff() );
 
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
     cv::Rect roi;
     roi.x = cropX;
     roi.y = cropY;
@@ -1304,7 +1306,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       throw_runtime_error( "PageXML.crop: opaque_coords not implemented for __PAGEXML_LEPT__" );
       return images;
 
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
       /// Subtract crop window offset ///
       for( auto&& coord : coords ) {
         coord.x -= cropX;
@@ -1323,11 +1325,11 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       cropimg.draw( Magick::DrawableCompositeImage(0,0,0,0,mask,Magick::CopyOpacityCompositeOp) );
 
       if( transp_xpath != NULL ) {
-        throw_runtime_error( "PageXML.crop: transp_xpath not implemented for __PAGEXML_MAGICK__" );
+        throw_runtime_error( "PageXML.crop: transp_xpath not implemented for __PAGEXML_IMG_MAGICK__" );
         return images;
       }
 
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
       /// Subtract crop window offset and round points ///
       std::vector<cv::Point> rcoods;
       std::vector<std::vector<cv::Point> > polys;
@@ -2965,9 +2967,9 @@ PageImage PageXML::getPageImage( int pagenum ) {
 
 #if defined (__PAGEXML_LEPT__)
   if( pagesImage[pagenum] == NULL )
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
   if( pagesImage[pagenum].columns() == 0 )
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
   if( ! pagesImage[pagenum].data )
 #endif
     loadImage(pagenum);

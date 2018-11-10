@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.10.08$
+ * @version $Version: 2018.11.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -54,9 +54,9 @@ typedef std::shared_ptr<OGRMultiLineString_> OGRMultiLineStringPtr_;
 
 #if defined (__PAGEXML_LEPT__)
 typedef Pix * PageImage;
-#elif defined (__PAGEXML_MAGICK__)
+#elif defined (__PAGEXML_IMG_MAGICK__)
 typedef Magick::Image PageImage;
-#elif defined (__PAGEXML_CVIMG__)
+#elif defined (__PAGEXML_IMG_CV__)
 typedef cv::Mat PageImage;
 #endif
 
@@ -127,7 +127,9 @@ struct NamedImage {
 
 class PageXML {
   public:
+#if defined (__PAGEXML_LIBCONFIG__)
     static const char* settingNames[];
+#endif
     static char* version();
     static void printVersions( FILE* file = stdout );
     static void setValidationEnabled( bool val );
@@ -147,7 +149,7 @@ class PageXML {
     void loadXml( const char* fname, bool validate = true );
     void loadXml( int fnum, bool prevfree = true, bool validate = true );
     void loadXmlString( const char* xml_string, bool validate = true );
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__) || defined (__PAGEXML_CVIMG__)
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     void loadImage( int pagenum, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
     void loadImage( xmlNodePt node, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
     void loadImages( const bool resize_coords, const int density );
