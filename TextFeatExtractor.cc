@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.07.06$
+ * @version $Version: 2018.11.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -32,6 +32,7 @@ using namespace std::chrono;
 
 const char* TextFeatExtractor::featTypes[] = { "dotm", "raw" };
 const char* TextFeatExtractor::formatNames[] = { "ascii", "htk", "img" };
+#if defined (__PAGEXML_LIBCONFIG__)
 const char* TextFeatExtractor::settingNames[] = {
   "type",
   "format",
@@ -59,6 +60,7 @@ const char* TextFeatExtractor::settingNames[] = {
   "sample_height",
   "projfile"*/
 };
+#endif
 
 //#if defined (__PAGEXML_IMG_MAGICK__)
 const Magick::Color colorWhite("white");
@@ -69,7 +71,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.07.06";
+static char class_version[] = "Version: 2018.11.11";
 
 /**
  * Returns the class version.

@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2018.07.06$
+ * @version $Version: 2018.11.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -32,6 +32,7 @@ enum TEXTFEAT_FORMAT {
   TEXTFEAT_FORMAT_IMAGE      // "img"
 };
 
+#if defined (__PAGEXML_LIBCONFIG__)
 enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_TYPE = 0,        // "type"
   TEXTFEAT_SETTING_FORMAT,          // "format"
@@ -59,12 +60,15 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_SAMPLE_HEIGHT,   // "sample_height"
   TEXTFEAT_SETTING_PROJFILE         // "projfile"*/
 };
+#endif
 
 class TextFeatExtractor {
   public:
     static const char* featTypes[];
     static const char* formatNames[];
+#if defined (__PAGEXML_LIBCONFIG__)
     static const char* settingNames[];
+#endif
     static char* version();
     TextFeatExtractor( int featype = TEXTFEAT_TYPE_RAW,
                        int format = TEXTFEAT_FORMAT_IMAGE,
@@ -90,8 +94,8 @@ class TextFeatExtractor {
                        float slant_rand = 0.0,
                        float scale_rand = 0.0,
                        int normxheight = 0,
-                       int normheight = 0,
-                       bool momentnorm = false,
+                       int normheight = 64,
+                       bool momentnorm = true,
                        bool compute_fpgram = true,
                        bool compute_fcontour = true,
                        float fcontour_dilate = 4.0,
@@ -102,7 +106,7 @@ class TextFeatExtractor {
     void loadConf( const libconfig::Config& config );
 #endif
     void printConf( FILE* file );
-    void loadProjection( const char* projfile );
+    //void loadProjection( const char* projfile );
 #if defined (__PAGEXML_IMG_MAGICK__)
     void preprocess( Magick::Image& image, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
     void estimateAngles( Magick::Image& image, float* _slope, float* _slant, float rotate = 0.0 );
@@ -123,7 +127,6 @@ class TextFeatExtractor {
     bool procimgs = false;
     bool stretch = true;
     float stretch_satu = 0.0;
-    //bool enh = true;
     float enh = 1.0;
     int enh_type = ENH_SAUVOLA;
     int enh_win = 20;
