@@ -5,6 +5,7 @@ import subprocess
 import sysconfig
 import sys
 import os
+import re
 
 try:
     from sphinx.setup_command import BuildDoc
@@ -26,7 +27,9 @@ class build(_build):
 
 def pagexml_Extension():
     import pkgconfig
-    libs = ['opencv','libxml-2.0','libxslt','gdal']
+    #libs = ['opencv','libxml-2.0','libxslt','gdal','Magick++']
+    #libs = ['opencv','libxml-2.0','libxslt','gdal']
+    libs = ['libxml-2.0','libxslt','gdal']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
@@ -34,12 +37,17 @@ def pagexml_Extension():
         link_args += pkgconfig.libs(lib).split()
     if not pkgconfig.cflags('opencv'):
         raise FileNotFoundError('pkgconfig did not find opencv development')
+    compile_args += pkgconfig.cflags('opencv').split()
+    cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs')
+    link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
     return Extension('_pagexml',
-                     define_macros = [('__PAGEXML_CVIMG__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     #define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_OGR__',''),('__PAGEXML_MAGICK__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
                      swig_opts = [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
+                     #sources = ['pagexml/PageXML.i','pagexml/PageXML.cc','pagexml/TextFeatExtractor.cc','pagexml/intimg.cc','pagexml/mem.cc'])
                      sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
 
 
@@ -54,8 +62,6 @@ sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', 
 
 
 def pagexml_Version():
-    import re
-    #with open("swig/PageXML.h") as f:
     with open("pagexml/PageXML.h") as f:
         for line in f:
             if 'Version:' in line:

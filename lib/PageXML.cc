@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.10$
+ * @version $Version: 2018.11.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.10";
+static char class_version[] = "Version: 2018.11.11";
 
 /**
  * Returns the class version.
@@ -608,6 +608,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 #else
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density __attribute__((unused)) ) {
 #endif
+  if( pagenum < 0 || pagenum >= (int)pagesImageFilename.size() )
+    throw_runtime_error( "PageXML.loadImage: invalid page number: %d", pagenum );
   string aux;
   string fbase;
   if( fname == NULL ) {
@@ -689,6 +691,31 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     return;
   }
 #elif defined (__PAGEXML_IMG_CV__)
+#if defined (__PAGEXML_MAGICK__)
+  if( std::regex_match(fname, reIsPdf) ) {
+    int ldensity = density;
+    if( ! density ) {
+      if( resize_coords )
+        throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
+      Magick::Image ptmp;
+      ptmp.ping(fname);
+      double Dw = 72.0*getPageWidth(pagenum)/ptmp.columns();
+      double Dh = 72.0*getPageHeight(pagenum)/ptmp.rows();
+      ldensity = std::round(0.5*(Dw+Dh));
+    }
+    Magick::Image tmp;
+    tmp.density(std::to_string(ldensity).c_str());
+    tmp.read(fname);
+    char tmpfname[FILENAME_MAX];
+    std::string tmpbase = std::string("tmp_PageXML_pdf_")+std::to_string(pagenum)+"_XXXXXXXX.png";
+    mktemp( tmpbase.c_str(), tmpfname );
+    tmp.resolutionUnits(MagickCore::ResolutionType::PixelsPerInchResolution);
+    tmp.write( (std::string("png24:")+tmpfname).c_str() );
+    pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(tmpfname);
+    unlink(tmpfname);
+  }
+  else
+#endif
   pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
@@ -811,7 +838,7 @@ void PageXML::loadImages( const bool resize_coords, const int density ) {
 /// Page processing ///
 ///////////////////////
 
-#ifdef __PAGEXML_MAGICK__
+#ifdef __PAGEXML_IMG_MAGICK__
 
 /**
  * Converts an cv vector of points to a Magick++ list of Coordinates.
@@ -1289,11 +1316,13 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     //  fprintf(stderr,"warning: modified crop for id=%s, requested: %zux%zu+%d+%d vs. obtained: %zux%zu+%ld+%ld\n", sampid.c_str(), cropW,cropH,cropX,cropY, cropimg.columns(),cropimg.rows(),cropimg.page().xOff(),cropimg.page().yOff() );
 
 #elif defined (__PAGEXML_IMG_CV__)
-    cv::Rect roi;
-    roi.x = cropX;
-    roi.y = cropY;
-    roi.width = cropW;
-    roi.height = cropH;
+    cv::Rect rect_image(0, 0, width, height);
+    cv::Rect rect_crop(cropX, cropY, cropW, cropH);
+    cv::Rect roi = rect_image & rect_crop;
+    if( roi.area() <= 0 ) {
+      fprintf( stderr, "PageXML.crop: error (%s): crop window completely outside of image region\n", sampname.c_str() );
+      continue;
+    }
     cv::Mat cropimg = pageImage(roi);
 #endif
 

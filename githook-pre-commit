@@ -29,7 +29,7 @@ V=$(date -u +%Y.%m.%d);
 
 check_change_after_staged () {
   [ "${2:1:1}" = "M" ] &&
-    echo "${0##*/}: error: unable to update version due to change after staged: $1" 1>&2 &&
+    echo "${0##*/}: error: aborting due to file change after staged: $1" 1>&2 &&
     exit 1;
 }
 
@@ -60,6 +60,12 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
         update_file_version "${FILES[$n]}";
         [ -e "${FILES[$n]/.h/.cc}" ] &&
           update_file_version "${FILES[$n]/.h/.cc}";
+        ;;
+      *.py )
+        check_change_after_staged "${FILES[$n]}" "${FILES[$((n+1))]}";
+        update_file_version "${FILES[$n]}";
+        echo "${0##*/}: pylint --errors-only ${FILES[$n]}" 1>&2;
+        pylint --errors-only "${FILES[$n]}";
         ;;
     esac
   n=$((n+2));
