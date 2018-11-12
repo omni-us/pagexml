@@ -831,6 +831,122 @@ class pagexml.NamedImage(*args)
 
       self: NamedImage *
 
+class pagexml.NamedImageVector(*args)
+
+   Bases: "object"
+
+   Proxy of C++ std::vector<(NamedImage)> class.
+
+   append(self, x)
+
+      x: std::vector< NamedImage >::value_type const &
+
+   assign(self, n, x)
+
+      n: std::vector< NamedImage >::size_type x: std::vector<
+      NamedImage >::value_type const &
+
+   back(self) -> NamedImage
+
+      self: std::vector< NamedImage > const *
+
+   begin(self) -> std::vector< NamedImage >::iterator
+
+      self: std::vector< NamedImage > *
+
+   capacity(self) -> std::vector< NamedImage >::size_type
+
+      self: std::vector< NamedImage > const *
+
+   clear(self)
+
+      self: std::vector< NamedImage > *
+
+   empty(self) -> bool
+
+      self: std::vector< NamedImage > const *
+
+   end(self) -> std::vector< NamedImage >::iterator
+
+      self: std::vector< NamedImage > *
+
+   erase(self, pos) -> std::vector< NamedImage >::iterator
+
+      pos: std::vector< NamedImage >::iterator
+
+      erase(self, first, last) -> std::vector< NamedImage >::iterator
+
+      first: std::vector< NamedImage >::iterator last: std::vector<
+      NamedImage >::iterator
+
+   front(self) -> NamedImage
+
+      self: std::vector< NamedImage > const *
+
+   get_allocator(self) -> std::vector< NamedImage >::allocator_type
+
+      self: std::vector< NamedImage > const *
+
+   insert(self, pos, x) -> std::vector< NamedImage >::iterator
+
+      pos: std::vector< NamedImage >::iterator x: std::vector<
+      NamedImage >::value_type const &
+
+      insert(self, pos, n, x)
+
+      pos: std::vector< NamedImage >::iterator n: std::vector<
+      NamedImage >::size_type x: std::vector< NamedImage >::value_type
+      const &
+
+   iterator(self) -> SwigPyIterator
+
+      self: std::vector< NamedImage > *
+
+   pop(self) -> NamedImage
+
+      self: std::vector< NamedImage > *
+
+   pop_back(self)
+
+      self: std::vector< NamedImage > *
+
+   push_back(self, x)
+
+      x: std::vector< NamedImage >::value_type const &
+
+   rbegin(self) -> std::vector< NamedImage >::reverse_iterator
+
+      self: std::vector< NamedImage > *
+
+   rend(self) -> std::vector< NamedImage >::reverse_iterator
+
+      self: std::vector< NamedImage > *
+
+   reserve(self, n)
+
+      n: std::vector< NamedImage >::size_type
+
+   resize(self, new_size)
+
+      new_size: std::vector< NamedImage >::size_type
+
+      resize(self, new_size, x)
+
+      new_size: std::vector< NamedImage >::size_type x: std::vector<
+      NamedImage >::value_type const &
+
+   size(self) -> std::vector< NamedImage >::size_type
+
+      self: std::vector< NamedImage > const *
+
+   swap(self, v)
+
+      v: std::vector< NamedImage > &
+
+   thisown
+
+      The membership flag
+
 class pagexml.OGRMultiLineString_(*args)
 
    Bases: "object"
@@ -1145,30 +1261,27 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       xpath: std::string
 
-   crop(self, xpath, margin=None, opaque_coords=True, transp_xpath=None, base_xpath=None) -> std::vector< NamedImage,std::allocator< NamedImage > >
+   crop(self, xpath, margin=None, opaque_coords=True, transp_xpath=None, base_xpath=None) -> NamedImageVector
 
       xpath: char const * margin: cv::Point2f * opaque_coords: bool
       transp_xpath: char const * base_xpath: char const *
 
       crop(self, xpath, margin=None, opaque_coords=True,
-      transp_xpath=None) -> std::vector< NamedImage,std::allocator<
-      NamedImage > >
+      transp_xpath=None) -> NamedImageVector
 
       xpath: char const * margin: cv::Point2f * opaque_coords: bool
       transp_xpath: char const *
 
       crop(self, xpath, margin=None, opaque_coords=True) ->
-      std::vector< NamedImage,std::allocator< NamedImage > >
+      NamedImageVector
 
       xpath: char const * margin: cv::Point2f * opaque_coords: bool
 
-      crop(self, xpath, margin=None) -> std::vector<
-      NamedImage,std::allocator< NamedImage > >
+      crop(self, xpath, margin=None) -> NamedImageVector
 
       xpath: char const * margin: cv::Point2f *
 
-      crop(self, xpath) -> std::vector< NamedImage,std::allocator<
-      NamedImage > >
+      crop(self, xpath) -> NamedImageVector
 
       xpath: char const *
 

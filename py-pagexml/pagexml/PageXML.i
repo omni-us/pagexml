@@ -41,6 +41,7 @@
 %template(cvPoint2fVector) std::vector<cv::Point2f>;
 %template(cvSize2iVector) std::vector<cv::Size2i>;
 %template(xmlNodePtrVector) std::vector<xmlNode*>;
+%template(NamedImageVector) std::vector<NamedImage>;
 
 %include "PageXML.h"
 //%include "TextFeatExtractor.h"

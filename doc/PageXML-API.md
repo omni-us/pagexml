@@ -2,13 +2,113 @@
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
+`define `[`ENH_SAUVOLA`](#intimg_8h_1a191c15bf79ccf7aa9922f22a19c84293)            | Functions related to integral images
+`define `[`ENH_SAUVOLA_SDMAX`](#intimg_8h_1a07f0046107cc20abd6cc4b222f281ea6)            | 
+`define `[`ENH_WOLF`](#intimg_8h_1a07ab3dec0ed4694d064fdf74c97780e3)            | 
+`define `[`TRUE`](#mem_8h_1aa8cecfc5c5c054d2875c03e77b7be15d)            | Functions for allocating memory
+`define `[`FALSE`](#mem_8h_1aa93f0eb578d23995850d61f7d61c55c1)            | 
+`define `[`FAILURE`](#mem_8h_1a6d58f9ac447476b4e084d7ca383f5183)            | 
+`define `[`SUCCESS`](#mem_8h_1aa90cac659d18e8ef6294c7ae337f6b58)            | 
+`define `[`IMGIO_GRAYMAX`](#mem_8h_1aa56ff1a6c96071b1875d2e8f8a95fbfa)            | 
+`define `[`limit_gray`](#mem_8h_1a9434fec731a98af07c7ad299b5ffdff4)            | 
 `define `[`__REUSE_CONTEXT__`](#_page_x_m_l_8cc_1ac9a9b912d159957b6b8712591e950ef4)            | 
 `define `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)            | Header file for the [PageXML](#class_page_x_m_l) class
 `define `[`throw_runtime_error`](#_page_x_m_l_8h_1a950a67fe0e59f7788788db2c2061d2af)            | 
+`define `[`Quantum`](#_text_feat_extractor_8cc_1ad5e97677ea3234923092fa74f9566077)            | [TextFeatExtractor](#class_text_feat_extractor) class
+`define `[`__SLANT_PYRAMIDAL__`](#_text_feat_extractor_8cc_1af18630e65d3f15d3a58e93869519be72)            | 
 `enum `[`PAGEXML_SETTING`](#_page_x_m_l_8h_1a5079ef3d3aefc01672107a1737c12993)            | 
 `enum `[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)            | 
 `enum `[`PAGEXML_READ_DIRECTION`](#_page_x_m_l_8h_1a151afb8ef7c7e05585713fafd180a2ea)            | 
 `enum `[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)            | 
+`enum `[`TEXTFEAT_TYPE`](#_text_feat_extractor_8h_1a9d37f2a5938d536683837a089301e9aa)            | Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
+`enum `[`TEXTFEAT_FORMAT`](#_text_feat_extractor_8h_1ae3b1c3bb02593a1d89768a15b4e3634b)            | 
+`public int `[`malloc_II1`](#intimg_8cc_1a471f925f725ece17a6efa35f2f98f6b9)`(int imW,int imH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _II,char clr)`            | Functions related to integral images
+`public int `[`malloc_II2`](#intimg_8cc_1ad3629bcb2f4c700ed920934c6532b2bf)`(int imW,int imH,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _II,char clr)`            | 
+`public int `[`compII12_graym`](#intimg_8cc_1adc7cc5bb16d72db834ecb5a2362f6678)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt)`            | 
+`public int `[`cropsum_II`](#intimg_8cc_1acc3ff7f72afa513b1740679d55db2c06)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,int xmin,int ymin,int cropW,int cropH)`            | 
+`public int `[`mean_II`](#intimg_8cc_1ad3ab5bdf8d2a2b9a134d7071f02ffe40)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean)`            | 
+`public int `[`sd_II`](#intimg_8cc_1a96130af35be226762469e2da62587abc)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _sd)`            | 
+`public int `[`meanSd_II`](#intimg_8cc_1a7958d9308db69cc012cd487bb7cdb929)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean,float * _sd)`            | 
+`public inline static void `[`meanSdCW_II`](#intimg_8cc_1ac75fcaaa89c36c0cab19487022b20a3a)`(int x,int y,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float * _mean,float * _sd)`            | 
+`public inline static `[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` `[`enhSauvola_single`](#intimg_8cc_1aef02d28e9dd30e13039e3f0eee7d25fa)`(int x,int y,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float prm,float slp,float rng)`            | 
+`public inline static `[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` `[`enhWolf_single`](#intimg_8cc_1a165fabf4b0430f5991cbd70ccba9a4eb)`(int x,int y,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float prm,float slp,float rng,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` minv)`            | 
+`public inline static void `[`minValmaxStd`](#intimg_8cc_1adf98ad8735f94f923d100de7adacddf4)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` * _minval,float * _maxstd)`            | 
+`public int `[`enhLocal_graym`](#intimg_8cc_1afff6015e0086cc7914927371822fb519)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp,int type)`            | 
+`public int `[`enhSauvola_sample_prm_graym`](#intimg_8cc_1a7a2561dbab976c2c533a0264691f43ee)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float slp,double * _prm,int subsamp,float prmthr)`            | 
+`public int `[`malloc_II1`](#intimg_8h_1a7e097d06d25303749d53864fded05b1b)`(int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _II,char clr)`            | Functions related to integral images
+`public int `[`malloc_II2`](#intimg_8h_1a54fcbf20655cb04252b5a3bad5ba5b8e)`(int imgW,int imgH,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _II,char clr)`            | 
+`public int `[`compII12_graym`](#intimg_8h_1adc7cc5bb16d72db834ecb5a2362f6678)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt)`            | 
+`public int `[`cropsum_II`](#intimg_8h_1acc3ff7f72afa513b1740679d55db2c06)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,int xmin,int ymin,int cropW,int cropH)`            | 
+`public int `[`mean_II`](#intimg_8h_1ad3ab5bdf8d2a2b9a134d7071f02ffe40)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean)`            | 
+`public int `[`sd_II`](#intimg_8h_1a96130af35be226762469e2da62587abc)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _sd)`            | 
+`public int `[`meanSd_II`](#intimg_8h_1a7958d9308db69cc012cd487bb7cdb929)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean,float * _sd)`            | 
+`public int `[`enhLocal_graym`](#intimg_8h_1afff6015e0086cc7914927371822fb519)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp,int type)`            | 
+`public int `[`enhSauvola_graym`](#intimg_8h_1a5f6caa9245c41f6693465dabe7c48a6f)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp)`            | 
+`public int `[`enhSauvola_sample_prm_graym`](#intimg_8h_1a7a2561dbab976c2c533a0264691f43ee)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float slp,double * _prm,int subsamp,float prmthr)`            | 
+`public void `[`bfree`](#mem_8cc_1a804251ffbedb2873777b8f7bb9262082)`(void * mat,int brd)`            | Functions for allocating memory
+`public void `[`zeros_I1`](#mem_8cc_1a49f16b6161396edd85a9006ee425aa60)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * vec,int D)`            | 
+`public void `[`zeros_F1`](#mem_8cc_1a8f2ccecabe849edde10175bb5b100372)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * vec,int D)`            | 
+`public void `[`zeros_D1`](#mem_8cc_1ab9ddd5f23ee92bb3a1665859180f41c5)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * vec,int D)`            | 
+`public void `[`copy_I1`](#mem_8cc_1a069c6488219882d4c86bc6d155f7329f)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * src,int D,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * des)`            | 
+`public void `[`copy_F1`](#mem_8cc_1a9452b3c24b7f7f584bb37922255d726b)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * src,int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * des)`            | 
+`public void `[`copy_D1`](#mem_8cc_1adb3199e41aec3c8fbcfde8f5b1308870)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * src,int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * des)`            | 
+`public int `[`clone_graym`](#mem_8cc_1a3e0c8d75adfd2f16828d33b8c03cb6c6)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** mat,int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _clon)`            | 
+`public int `[`clone_pixelm`](#mem_8cc_1a958ca061f262762644f9ee41eddba0df)`(`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** mat,int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _clon)`            | 
+`public int `[`malloc_grayv`](#mem_8cc_1ad1bc5adca691a439bd56741a2964272a)`(int size,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** _vec,char clr)`            | 
+`public int `[`malloc_pixelv`](#mem_8cc_1ac68abe72ef73f3490895a7570fdd4636)`(int size,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** _vec,char clr)`            | 
+`public int `[`malloc_I1v`](#mem_8cc_1a046f54f0ed18566eecf6fdbf78437649)`(int size,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` ** _vec,char clr)`            | 
+`public int `[`malloc_F1v`](#mem_8cc_1a88ffb5a5a57c5265e42778e8558313a9)`(int size,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` ** _vec,char clr)`            | 
+`public int `[`malloc_D1v`](#mem_8cc_1a57402f924698b3e3d8d3626f44f9f7ad)`(int size,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` ** _vec,char clr)`            | 
+`public int `[`malloc_iI1v`](#mem_8cc_1a14fd1e4bf10942088c27448e10f3299b)`(int size,`[`iI1`](#structi_i1)` ** _vec,char clr)`            | 
+`public int `[`malloc_iF1v`](#mem_8cc_1ab350c930bccb1a4aa2f928a77b341a56)`(int size,`[`iF1`](#structi_f1)` ** _vec,char clr)`            | 
+`public int `[`malloc_IV2v`](#mem_8cc_1ab62c4d3385406974a13ad2ce445326ec)`(int size,`[`IV2`](#struct_i_v2)` ** _vec,char clr)`            | 
+`public int `[`malloc_graym`](#mem_8cc_1a467c8f80c6e9b5e5edde9bb95e9e0813)`(int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _im,char clr)`            | 
+`public int `[`malloc_pixelm`](#mem_8cc_1a5af49b10bcac51b8bee89d137094911b)`(int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _im,char clr)`            | 
+`public int `[`malloc_I1m`](#mem_8cc_1a114839923279fad737ba92f892a4a5e2)`(int R,int C,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` *** _mat,char clr)`            | 
+`public int `[`malloc_F1m`](#mem_8cc_1afc96f3520676803230236c84515f4ae9)`(int R,int C,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)`            | 
+`public int `[`malloc_D1m`](#mem_8cc_1ae9ee6ca94e22c18b7d1fc71ecc8984fd)`(int R,int C,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)`            | 
+`public int `[`malloc_F1t`](#mem_8cc_1aaf8a40c7bfea53a05814c3fc7f298881)`(int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)`            | 
+`public int `[`malloc_D1t`](#mem_8cc_1a7bbc91755cbd9ca19c451e9969d1e264)`(int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)`            | 
+`public void `[`nullfree`](#mem_8cc_1a6aebb3bdc6c6c84d19e7938cdda52f28)`(void * ptr)`            | 
+`public int `[`mclone`](#mem_8cc_1af8c488b80769c8ca4860d995b4d45ed6)`(char ** mat,int R,int C,int size,char *** _clon)`            | 
+`public int `[`mem`](#mem_8cc_1ac1447d2f2eb5ed26ed86ac81bbbde0f5)`(int size,char clr,char ** _p)`            | 
+`public int `[`mmem`](#mem_8cc_1aba14ccbeca39769f8e14d99ba73bd1bb)`(int R,int C,int size,char clr,char *** _mat)`            | 
+`public int `[`bmem`](#mem_8cc_1aaeca8c0eda4783d3da8f11e8e952c52e)`(int R,int C,int size,char clr,int brd,char *** _mat)`            | 
+`public int `[`tmem`](#mem_8cc_1a66f4d65fa18163eeafed4deb2865e1c0)`(int D,int size,char clr,char *** _mat)`            | 
+`public void `[`vrmem_index`](#mem_8cc_1a5abb4274279b20e09acbb986f8a570c4)`(int size,int * R,int C,char ** mat)`            | 
+`public int `[`vrmem`](#mem_8cc_1aa410e5fb6c64b8dfdd17cadf346f82aa)`(int size,int tnnz,int * R,int C,char clr,char *** _mat,int ** _R)`            | 
+`public void `[`bfree`](#mem_8h_1a804251ffbedb2873777b8f7bb9262082)`(void * mat,int brd)`            | Functions for allocating memory
+`public void `[`zeros_I1`](#mem_8h_1a49f16b6161396edd85a9006ee425aa60)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * vec,int D)`            | 
+`public void `[`zeros_F1`](#mem_8h_1a8f2ccecabe849edde10175bb5b100372)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * vec,int D)`            | 
+`public void `[`zeros_D1`](#mem_8h_1ab9ddd5f23ee92bb3a1665859180f41c5)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * vec,int D)`            | 
+`public void `[`copy_I1`](#mem_8h_1a069c6488219882d4c86bc6d155f7329f)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * src,int D,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * des)`            | 
+`public void `[`copy_F1`](#mem_8h_1a9452b3c24b7f7f584bb37922255d726b)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * src,int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * des)`            | 
+`public void `[`copy_D1`](#mem_8h_1adb3199e41aec3c8fbcfde8f5b1308870)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * src,int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * des)`            | 
+`public int `[`clone_graym`](#mem_8h_1a3e0c8d75adfd2f16828d33b8c03cb6c6)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** mat,int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _clon)`            | 
+`public int `[`clone_pixelm`](#mem_8h_1a958ca061f262762644f9ee41eddba0df)`(`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** mat,int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _clon)`            | 
+`public int `[`malloc_grayv`](#mem_8h_1ad1bc5adca691a439bd56741a2964272a)`(int size,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** _vec,char clr)`            | 
+`public int `[`malloc_pixelv`](#mem_8h_1ac68abe72ef73f3490895a7570fdd4636)`(int size,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** _vec,char clr)`            | 
+`public int `[`malloc_I1v`](#mem_8h_1a046f54f0ed18566eecf6fdbf78437649)`(int size,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` ** _vec,char clr)`            | 
+`public int `[`malloc_F1v`](#mem_8h_1a88ffb5a5a57c5265e42778e8558313a9)`(int size,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` ** _vec,char clr)`            | 
+`public int `[`malloc_D1v`](#mem_8h_1a57402f924698b3e3d8d3626f44f9f7ad)`(int size,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` ** _vec,char clr)`            | 
+`public int `[`malloc_iI1v`](#mem_8h_1a14fd1e4bf10942088c27448e10f3299b)`(int size,`[`iI1`](#structi_i1)` ** _vec,char clr)`            | 
+`public int `[`malloc_iF1v`](#mem_8h_1ab350c930bccb1a4aa2f928a77b341a56)`(int size,`[`iF1`](#structi_f1)` ** _vec,char clr)`            | 
+`public int `[`malloc_IV2v`](#mem_8h_1ab62c4d3385406974a13ad2ce445326ec)`(int size,`[`IV2`](#struct_i_v2)` ** _vec,char clr)`            | 
+`public int `[`malloc_graym`](#mem_8h_1a467c8f80c6e9b5e5edde9bb95e9e0813)`(int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _im,char clr)`            | 
+`public int `[`malloc_pixelm`](#mem_8h_1a5af49b10bcac51b8bee89d137094911b)`(int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _im,char clr)`            | 
+`public int `[`malloc_I1m`](#mem_8h_1a114839923279fad737ba92f892a4a5e2)`(int R,int C,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` *** _mat,char clr)`            | 
+`public int `[`malloc_F1m`](#mem_8h_1afc96f3520676803230236c84515f4ae9)`(int R,int C,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)`            | 
+`public int `[`malloc_D1m`](#mem_8h_1ae9ee6ca94e22c18b7d1fc71ecc8984fd)`(int R,int C,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)`            | 
+`public int `[`malloc_F1t`](#mem_8h_1aaf8a40c7bfea53a05814c3fc7f298881)`(int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)`            | 
+`public int `[`malloc_D1t`](#mem_8h_1a7bbc91755cbd9ca19c451e9969d1e264)`(int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)`            | 
+`public void `[`nullfree`](#mem_8h_1a6aebb3bdc6c6c84d19e7938cdda52f28)`(void * ptr)`            | 
+`public int `[`mclone`](#mem_8h_1af8c488b80769c8ca4860d995b4d45ed6)`(char ** mat,int R,int C,int size,char *** _clon)`            | 
+`public int `[`mem`](#mem_8h_1ac1447d2f2eb5ed26ed86ac81bbbde0f5)`(int size,char clr,char ** _p)`            | 
+`public int `[`mmem`](#mem_8h_1aba14ccbeca39769f8e14d99ba73bd1bb)`(int R,int C,int size,char clr,char *** _mat)`            | 
+`public int `[`bmem`](#mem_8h_1aaeca8c0eda4783d3da8f11e8e952c52e)`(int R,int C,int size,char clr,int brd,char *** _mat)`            | 
+`public int `[`tmem`](#mem_8h_1a66f4d65fa18163eeafed4deb2865e1c0)`(int D,int size,char clr,char *** _mat)`            | 
+`public void `[`vrmem_index`](#mem_8h_1a5abb4274279b20e09acbb986f8a570c4)`(int size,int * R,int C,char ** mat)`            | 
+`public int `[`vrmem`](#mem_8h_1aa410e5fb6c64b8dfdd17cadf346f82aa)`(int size,int tnnz,int * R,int C,char clr,char *** _mat,int ** _R)`            | 
 `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")`            | 
 `public regex `[`reRotation`](#_page_x_m_l_8cc_1ace361379b17a512eaf8ef91bc8ee0914)`(".*readingOrientation: *([0-9.]+) *;.*")`            | 
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
@@ -25,12 +125,69 @@
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
 `public inline static double `[`IoU_1d`](#_page_x_m_l_8cc_1ac09c1ca85100d59d39f77e7f545eca8d)`(double a1,double a2,double b1,double b2)`            | Computes the 1D intersection over union
 `public double `[`withinSegment`](#_page_x_m_l_8cc_1a01aee68a0af5ee992c2f6b499b4a5558)`(cv::Point2f segm_start,cv::Point2f segm_end,cv::Point2f point)`            | Checks if a point is within a line segment
+`public const Magick::Color `[`colorWhite`](#_text_feat_extractor_8cc_1a1c101d5ae529d47ee2630004d33ed452)`("white")`            | 
+`public const Magick::Color `[`colorBlack`](#_text_feat_extractor_8cc_1a52730ed7e5affa8a15f42e952281b0f5)`("black")`            | 
+`public inline static void `[`print_int`](#_text_feat_extractor_8cc_1ac53eacb3014c40030f7474620c78fbac)`(long data,FILE * file)`            | Loaders ///.
+`public inline static void `[`print_short`](#_text_feat_extractor_8cc_1ac814fb690cd4494501cc3de16c920276)`(int data,FILE * file)`            | Prints an int in binary.
+`public inline static void `[`print_float`](#_text_feat_extractor_8cc_1a2dbcb88814027a8aec1d924775a57737)`(float data,FILE * file)`            | Prints a float in binary.
+`public static void `[`print_features_htk`](#_text_feat_extractor_8cc_1a521b3512933909ece7bd18cf625ad5fe)`(const cv::Mat & feats,FILE * file)`            | Prints features to a file stream using HTK format.
+`public static void `[`print_features_ascii`](#_text_feat_extractor_8cc_1ae3a1fa6530381f534ec5e2ff90495b8e)`(const cv::Mat & feats,FILE * file)`            | Prints features to a file stream using ASCII format.
+`public static void `[`magick2cvmat8u`](#_text_feat_extractor_8cc_1ac0d8f9ed183c953d3ced538c9f1ce002)`(Magick::Image & image,cv::Mat & cvimg)`            | Image processing ///.
+`public static void `[`magick2cvmat8uc3`](#_text_feat_extractor_8cc_1abd4530acf52f35d5ba38b9f3038b0ab1)`(Magick::Image & image,cv::Mat & cvimg)`            | 
+`public static void `[`magick2graym`](#_text_feat_extractor_8cc_1a3033920ea2862f45dfd32ec026fa8088)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` **& gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _alpha)`            | Copies image data from Magick::Image to an unsigned char matrix.
+`public inline static int `[`to16bits`](#_text_feat_extractor_8cc_1a1a811eaff5dda86d249594fe3d992259)`(int val)`            | Converts unsigned char to 16-bits.
+`public static void `[`graym2magick`](#_text_feat_extractor_8cc_1a3d05d264e460dccb52ae7b0512f658f1)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)`            | Copies image data from unsigned char matrix to Magick::Image.
+`public static void `[`grayms2magick`](#_text_feat_extractor_8cc_1a066bfd0260bf6e3dd2ec159f26dfc9c3)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** rimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** bimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)`            | Copies image data from unsigned char matrix to Magick::Image.
+`public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1af1756b455bc263fea7aadde3a4e847ae)`(Magick::Image & image,cv::Mat & cvimg)`            | Copies image data from an OpenCV Mat to Magick::Image.
+`public static void `[`enhance`](#_text_feat_extractor_8cc_1a81f14f6e96fbff1e6d74739c0c93f358)`(Magick::Image & image,int winW,double prm1,double slp,int type,double prm0,double prm2)`            | Does a local enhancement of a text image.
+`public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)`            | 
+`public inline static void `[`findMinMax`](#_text_feat_extractor_8cc_1a83ec3f37e202c24e48620142056dd6ab)`(int size,double * vals,bool * isset,double * _minval,double * _maxval,int * _minidx,int * _maxidx)`            | 
+`public static double `[`estimateSlant`](#_text_feat_extractor_8cc_1af850a209ee624d37c3f427125a67f80e)`(Magick::Image & image,double amin,double amax,double astep,int hsteps,double hfact)`            | Estimates the slant angle of an image containing handwritten text.
+`public void `[`findOuterContours`](#_text_feat_extractor_8cc_1af7639c4a00fe54f47a88eef066ef1a0b)`(Magick::Image & img,vector< vector< cv::Point > > & contours,int method,double eps)`            | Gets outer contour points of connected components in an image, optionally approximating it.
+`public static void `[`joinComponents`](#_text_feat_extractor_8cc_1a4da782c15ab0baee562d0370e6297e02)`(Magick::Image & img)`            | Joints all connected components in an image using 1px thick lines between nearest contour points.
+`public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1ae3fbab64bd08d000033e24b0a4df64e5)`(cv::Mat & image)`            | Converts image to grayscale preserving alpha channel if present.
+`public bool `[`flattenImage`](#_text_feat_extractor_8cc_1ab109c954f49e5729f8adc65382209b34)`(Magick::Image & image,const Magick::Color * color)`            | Removes alpha channel, setting all transparent regions to the background color.
 `class `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string__) | 
 `class `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon__) | 
 `class `[`PageXML`](#class_page_x_m_l) | 
+`class `[`TextFeatExtractor`](#class_text_feat_extractor) | 
+`struct `[`iF1`](#structi_f1) | 
+`struct `[`iI1`](#structi_i1) | 
+`struct `[`IV2`](#struct_i_v2) | 
 `struct `[`NamedImage`](#struct_named_image) | 
+`struct `[`rgb`](#structrgb) | 
 
 ## Members
+
+#### `define `[`ENH_SAUVOLA`](#intimg_8h_1a191c15bf79ccf7aa9922f22a19c84293) 
+
+Functions related to integral images
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `define `[`ENH_SAUVOLA_SDMAX`](#intimg_8h_1a07f0046107cc20abd6cc4b222f281ea6) 
+
+#### `define `[`ENH_WOLF`](#intimg_8h_1a07ab3dec0ed4694d064fdf74c97780e3) 
+
+#### `define `[`TRUE`](#mem_8h_1aa8cecfc5c5c054d2875c03e77b7be15d) 
+
+Functions for allocating memory
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `define `[`FALSE`](#mem_8h_1aa93f0eb578d23995850d61f7d61c55c1) 
+
+#### `define `[`FAILURE`](#mem_8h_1a6d58f9ac447476b4e084d7ca383f5183) 
+
+#### `define `[`SUCCESS`](#mem_8h_1aa90cac659d18e8ef6294c7ae337f6b58) 
+
+#### `define `[`IMGIO_GRAYMAX`](#mem_8h_1aa56ff1a6c96071b1875d2e8f8a95fbfa) 
+
+#### `define `[`limit_gray`](#mem_8h_1a9434fec731a98af07c7ad299b5ffdff4) 
 
 #### `define `[`__REUSE_CONTEXT__`](#_page_x_m_l_8cc_1ac9a9b912d159957b6b8712591e950ef4) 
 
@@ -43,6 +200,16 @@ Version2018.11.11
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
 #### `define `[`throw_runtime_error`](#_page_x_m_l_8h_1a950a67fe0e59f7788788db2c2061d2af) 
+
+#### `define `[`Quantum`](#_text_feat_extractor_8cc_1ad5e97677ea3234923092fa74f9566077) 
+
+[TextFeatExtractor](#class_text_feat_extractor) class
+
+Version2018.11.11
+
+Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `define `[`__SLANT_PYRAMIDAL__`](#_text_feat_extractor_8cc_1af18630e65d3f15d3a58e93869519be72) 
 
 #### `enum `[`PAGEXML_SETTING`](#_page_x_m_l_8h_1a5079ef3d3aefc01672107a1737c12993) 
 
@@ -79,6 +246,225 @@ PAGEXML_OVERLAP_COORDS_ISECT            |
 PAGEXML_OVERLAP_COORDS_IWA            | 
 PAGEXML_OVERLAP_BASELINE_IWA            | 
 PAGEXML_OVERLAP_COORDS_BASELINE_IWA            | 
+
+#### `enum `[`TEXTFEAT_TYPE`](#_text_feat_extractor_8h_1a9d37f2a5938d536683837a089301e9aa) 
+
+ Values                         | Descriptions                                
+--------------------------------|---------------------------------------------
+TEXTFEAT_TYPE_DOTMATRIX            | 
+TEXTFEAT_TYPE_RAW            | 
+
+Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
+
+Version2018.11.11
+
+Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `enum `[`TEXTFEAT_FORMAT`](#_text_feat_extractor_8h_1ae3b1c3bb02593a1d89768a15b4e3634b) 
+
+ Values                         | Descriptions                                
+--------------------------------|---------------------------------------------
+TEXTFEAT_FORMAT_ASCII            | 
+TEXTFEAT_FORMAT_HTK            | 
+TEXTFEAT_FORMAT_IMAGE            | 
+
+#### `public int `[`malloc_II1`](#intimg_8cc_1a471f925f725ece17a6efa35f2f98f6b9)`(int imW,int imH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _II,char clr)` 
+
+Functions related to integral images
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `public int `[`malloc_II2`](#intimg_8cc_1ad3629bcb2f4c700ed920934c6532b2bf)`(int imW,int imH,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _II,char clr)` 
+
+#### `public int `[`compII12_graym`](#intimg_8cc_1adc7cc5bb16d72db834ecb5a2362f6678)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt)` 
+
+#### `public int `[`cropsum_II`](#intimg_8cc_1acc3ff7f72afa513b1740679d55db2c06)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,int xmin,int ymin,int cropW,int cropH)` 
+
+#### `public int `[`mean_II`](#intimg_8cc_1ad3ab5bdf8d2a2b9a134d7071f02ffe40)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean)` 
+
+#### `public int `[`sd_II`](#intimg_8cc_1a96130af35be226762469e2da62587abc)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _sd)` 
+
+#### `public int `[`meanSd_II`](#intimg_8cc_1a7958d9308db69cc012cd487bb7cdb929)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean,float * _sd)` 
+
+#### `public inline static void `[`meanSdCW_II`](#intimg_8cc_1ac75fcaaa89c36c0cab19487022b20a3a)`(int x,int y,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float * _mean,float * _sd)` 
+
+#### `public inline static `[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` `[`enhSauvola_single`](#intimg_8cc_1aef02d28e9dd30e13039e3f0eee7d25fa)`(int x,int y,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float prm,float slp,float rng)` 
+
+#### `public inline static `[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` `[`enhWolf_single`](#intimg_8cc_1a165fabf4b0430f5991cbd70ccba9a4eb)`(int x,int y,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,float prm,float slp,float rng,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` minv)` 
+
+#### `public inline static void `[`minValmaxStd`](#intimg_8cc_1adf98ad8735f94f923d100de7adacddf4)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int winS,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` * _minval,float * _maxstd)` 
+
+#### `public int `[`enhLocal_graym`](#intimg_8cc_1afff6015e0086cc7914927371822fb519)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp,int type)` 
+
+#### `public int `[`enhSauvola_sample_prm_graym`](#intimg_8cc_1a7a2561dbab976c2c533a0264691f43ee)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float slp,double * _prm,int subsamp,float prmthr)` 
+
+#### `public int `[`malloc_II1`](#intimg_8h_1a7e097d06d25303749d53864fded05b1b)`(int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _II,char clr)` 
+
+Functions related to integral images
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `public int `[`malloc_II2`](#intimg_8h_1a54fcbf20655cb04252b5a3bad5ba5b8e)`(int imgW,int imgH,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _II,char clr)` 
+
+#### `public int `[`compII12_graym`](#intimg_8h_1adc7cc5bb16d72db834ecb5a2362f6678)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt)` 
+
+#### `public int `[`cropsum_II`](#intimg_8h_1acc3ff7f72afa513b1740679d55db2c06)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,int xmin,int ymin,int cropW,int cropH)` 
+
+#### `public int `[`mean_II`](#intimg_8h_1ad3ab5bdf8d2a2b9a134d7071f02ffe40)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean)` 
+
+#### `public int `[`sd_II`](#intimg_8h_1a96130af35be226762469e2da62587abc)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _sd)` 
+
+#### `public int `[`meanSd_II`](#intimg_8h_1a7958d9308db69cc012cd487bb7cdb929)`(`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` ** ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` ** cnt,int xmin,int ymin,int cropW,int cropH,float * _mean,float * _sd)` 
+
+#### `public int `[`enhLocal_graym`](#intimg_8h_1afff6015e0086cc7914927371822fb519)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp,int type)` 
+
+#### `public int `[`enhSauvola_graym`](#intimg_8h_1a5f6caa9245c41f6693465dabe7c48a6f)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float prm,float slp)` 
+
+#### `public int `[`enhSauvola_sample_prm_graym`](#intimg_8h_1a7a2561dbab976c2c533a0264691f43ee)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alph,int imgW,int imgH,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _ii1,`[`II2`](#intimg_8h_1aa52d4e13ca6c777cdd680ce7dca84a7f)` *** _ii2,`[`II1`](#intimg_8h_1afd470c7bf8ddd891ce2cb9eb8d87b41a)` *** _cnt,int winW,float slp,double * _prm,int subsamp,float prmthr)` 
+
+#### `public void `[`bfree`](#mem_8cc_1a804251ffbedb2873777b8f7bb9262082)`(void * mat,int brd)` 
+
+Functions for allocating memory
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `public void `[`zeros_I1`](#mem_8cc_1a49f16b6161396edd85a9006ee425aa60)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * vec,int D)` 
+
+#### `public void `[`zeros_F1`](#mem_8cc_1a8f2ccecabe849edde10175bb5b100372)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * vec,int D)` 
+
+#### `public void `[`zeros_D1`](#mem_8cc_1ab9ddd5f23ee92bb3a1665859180f41c5)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * vec,int D)` 
+
+#### `public void `[`copy_I1`](#mem_8cc_1a069c6488219882d4c86bc6d155f7329f)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * src,int D,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * des)` 
+
+#### `public void `[`copy_F1`](#mem_8cc_1a9452b3c24b7f7f584bb37922255d726b)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * src,int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * des)` 
+
+#### `public void `[`copy_D1`](#mem_8cc_1adb3199e41aec3c8fbcfde8f5b1308870)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * src,int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * des)` 
+
+#### `public int `[`clone_graym`](#mem_8cc_1a3e0c8d75adfd2f16828d33b8c03cb6c6)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** mat,int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _clon)` 
+
+#### `public int `[`clone_pixelm`](#mem_8cc_1a958ca061f262762644f9ee41eddba0df)`(`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** mat,int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _clon)` 
+
+#### `public int `[`malloc_grayv`](#mem_8cc_1ad1bc5adca691a439bd56741a2964272a)`(int size,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_pixelv`](#mem_8cc_1ac68abe72ef73f3490895a7570fdd4636)`(int size,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_I1v`](#mem_8cc_1a046f54f0ed18566eecf6fdbf78437649)`(int size,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_F1v`](#mem_8cc_1a88ffb5a5a57c5265e42778e8558313a9)`(int size,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_D1v`](#mem_8cc_1a57402f924698b3e3d8d3626f44f9f7ad)`(int size,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_iI1v`](#mem_8cc_1a14fd1e4bf10942088c27448e10f3299b)`(int size,`[`iI1`](#structi_i1)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_iF1v`](#mem_8cc_1ab350c930bccb1a4aa2f928a77b341a56)`(int size,`[`iF1`](#structi_f1)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_IV2v`](#mem_8cc_1ab62c4d3385406974a13ad2ce445326ec)`(int size,`[`IV2`](#struct_i_v2)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_graym`](#mem_8cc_1a467c8f80c6e9b5e5edde9bb95e9e0813)`(int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _im,char clr)` 
+
+#### `public int `[`malloc_pixelm`](#mem_8cc_1a5af49b10bcac51b8bee89d137094911b)`(int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _im,char clr)` 
+
+#### `public int `[`malloc_I1m`](#mem_8cc_1a114839923279fad737ba92f892a4a5e2)`(int R,int C,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_F1m`](#mem_8cc_1afc96f3520676803230236c84515f4ae9)`(int R,int C,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_D1m`](#mem_8cc_1ae9ee6ca94e22c18b7d1fc71ecc8984fd)`(int R,int C,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_F1t`](#mem_8cc_1aaf8a40c7bfea53a05814c3fc7f298881)`(int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_D1t`](#mem_8cc_1a7bbc91755cbd9ca19c451e9969d1e264)`(int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)` 
+
+#### `public void `[`nullfree`](#mem_8cc_1a6aebb3bdc6c6c84d19e7938cdda52f28)`(void * ptr)` 
+
+#### `public int `[`mclone`](#mem_8cc_1af8c488b80769c8ca4860d995b4d45ed6)`(char ** mat,int R,int C,int size,char *** _clon)` 
+
+#### `public int `[`mem`](#mem_8cc_1ac1447d2f2eb5ed26ed86ac81bbbde0f5)`(int size,char clr,char ** _p)` 
+
+#### `public int `[`mmem`](#mem_8cc_1aba14ccbeca39769f8e14d99ba73bd1bb)`(int R,int C,int size,char clr,char *** _mat)` 
+
+#### `public int `[`bmem`](#mem_8cc_1aaeca8c0eda4783d3da8f11e8e952c52e)`(int R,int C,int size,char clr,int brd,char *** _mat)` 
+
+#### `public int `[`tmem`](#mem_8cc_1a66f4d65fa18163eeafed4deb2865e1c0)`(int D,int size,char clr,char *** _mat)` 
+
+#### `public void `[`vrmem_index`](#mem_8cc_1a5abb4274279b20e09acbb986f8a570c4)`(int size,int * R,int C,char ** mat)` 
+
+#### `public int `[`vrmem`](#mem_8cc_1aa410e5fb6c64b8dfdd17cadf346f82aa)`(int size,int tnnz,int * R,int C,char clr,char *** _mat,int ** _R)` 
+
+#### `public void `[`bfree`](#mem_8h_1a804251ffbedb2873777b8f7bb9262082)`(void * mat,int brd)` 
+
+Functions for allocating memory
+
+Version2017.05.30
+
+Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
+
+#### `public void `[`zeros_I1`](#mem_8h_1a49f16b6161396edd85a9006ee425aa60)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * vec,int D)` 
+
+#### `public void `[`zeros_F1`](#mem_8h_1a8f2ccecabe849edde10175bb5b100372)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * vec,int D)` 
+
+#### `public void `[`zeros_D1`](#mem_8h_1ab9ddd5f23ee92bb3a1665859180f41c5)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * vec,int D)` 
+
+#### `public void `[`copy_I1`](#mem_8h_1a069c6488219882d4c86bc6d155f7329f)`(`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * src,int D,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` * des)` 
+
+#### `public void `[`copy_F1`](#mem_8h_1a9452b3c24b7f7f584bb37922255d726b)`(`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * src,int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` * des)` 
+
+#### `public void `[`copy_D1`](#mem_8h_1adb3199e41aec3c8fbcfde8f5b1308870)`(`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * src,int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` * des)` 
+
+#### `public int `[`clone_graym`](#mem_8h_1a3e0c8d75adfd2f16828d33b8c03cb6c6)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** mat,int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _clon)` 
+
+#### `public int `[`clone_pixelm`](#mem_8h_1a958ca061f262762644f9ee41eddba0df)`(`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** mat,int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _clon)` 
+
+#### `public int `[`malloc_grayv`](#mem_8h_1ad1bc5adca691a439bd56741a2964272a)`(int size,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_pixelv`](#mem_8h_1ac68abe72ef73f3490895a7570fdd4636)`(int size,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_I1v`](#mem_8h_1a046f54f0ed18566eecf6fdbf78437649)`(int size,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_F1v`](#mem_8h_1a88ffb5a5a57c5265e42778e8558313a9)`(int size,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_D1v`](#mem_8h_1a57402f924698b3e3d8d3626f44f9f7ad)`(int size,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_iI1v`](#mem_8h_1a14fd1e4bf10942088c27448e10f3299b)`(int size,`[`iI1`](#structi_i1)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_iF1v`](#mem_8h_1ab350c930bccb1a4aa2f928a77b341a56)`(int size,`[`iF1`](#structi_f1)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_IV2v`](#mem_8h_1ab62c4d3385406974a13ad2ce445326ec)`(int size,`[`IV2`](#struct_i_v2)` ** _vec,char clr)` 
+
+#### `public int `[`malloc_graym`](#mem_8h_1a467c8f80c6e9b5e5edde9bb95e9e0813)`(int imW,int imH,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _im,char clr)` 
+
+#### `public int `[`malloc_pixelm`](#mem_8h_1a5af49b10bcac51b8bee89d137094911b)`(int imW,int imH,`[`pixel`](#mem_8h_1a8d2cd65144e7fb3db3b92889edeb1904)` *** _im,char clr)` 
+
+#### `public int `[`malloc_I1m`](#mem_8h_1a114839923279fad737ba92f892a4a5e2)`(int R,int C,`[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_F1m`](#mem_8h_1afc96f3520676803230236c84515f4ae9)`(int R,int C,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_D1m`](#mem_8h_1ae9ee6ca94e22c18b7d1fc71ecc8984fd)`(int R,int C,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_F1t`](#mem_8h_1aaf8a40c7bfea53a05814c3fc7f298881)`(int D,`[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` *** _mat,char clr)` 
+
+#### `public int `[`malloc_D1t`](#mem_8h_1a7bbc91755cbd9ca19c451e9969d1e264)`(int D,`[`D1`](#mem_8h_1a2b1eb1f0a858719ed4fb6444cc40d791)` *** _mat,char clr)` 
+
+#### `public void `[`nullfree`](#mem_8h_1a6aebb3bdc6c6c84d19e7938cdda52f28)`(void * ptr)` 
+
+#### `public int `[`mclone`](#mem_8h_1af8c488b80769c8ca4860d995b4d45ed6)`(char ** mat,int R,int C,int size,char *** _clon)` 
+
+#### `public int `[`mem`](#mem_8h_1ac1447d2f2eb5ed26ed86ac81bbbde0f5)`(int size,char clr,char ** _p)` 
+
+#### `public int `[`mmem`](#mem_8h_1aba14ccbeca39769f8e14d99ba73bd1bb)`(int R,int C,int size,char clr,char *** _mat)` 
+
+#### `public int `[`bmem`](#mem_8h_1aaeca8c0eda4783d3da8f11e8e952c52e)`(int R,int C,int size,char clr,int brd,char *** _mat)` 
+
+#### `public int `[`tmem`](#mem_8h_1a66f4d65fa18163eeafed4deb2865e1c0)`(int D,int size,char clr,char *** _mat)` 
+
+#### `public void `[`vrmem_index`](#mem_8h_1a5abb4274279b20e09acbb986f8a570c4)`(int size,int * R,int C,char ** mat)` 
+
+#### `public int `[`vrmem`](#mem_8h_1aa410e5fb6c64b8dfdd17cadf346f82aa)`(int size,int tnnz,int * R,int C,char clr,char *** _mat,int ** _R)` 
 
 #### `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")` 
 
@@ -138,6 +524,183 @@ Checks if a point is within a line segment
 
 #### Returns
 0 if within segment, +1 if outside but aligned to the right, -1 if outside but aligned to the left, otherwise NaN.
+
+#### `public const Magick::Color `[`colorWhite`](#_text_feat_extractor_8cc_1a1c101d5ae529d47ee2630004d33ed452)`("white")` 
+
+#### `public const Magick::Color `[`colorBlack`](#_text_feat_extractor_8cc_1a52730ed7e5affa8a15f42e952281b0f5)`("black")` 
+
+#### `public inline static void `[`print_int`](#_text_feat_extractor_8cc_1ac53eacb3014c40030f7474620c78fbac)`(long data,FILE * file)` 
+
+Loaders ///.
+
+Loads the projecton matrix from an hdf5 file.
+
+#### Parameters
+* `projfile` File from which to read the projection.Features output /// Prints a long in binary.
+
+#### `public inline static void `[`print_short`](#_text_feat_extractor_8cc_1ac814fb690cd4494501cc3de16c920276)`(int data,FILE * file)` 
+
+Prints an int in binary.
+
+#### `public inline static void `[`print_float`](#_text_feat_extractor_8cc_1a2dbcb88814027a8aec1d924775a57737)`(float data,FILE * file)` 
+
+Prints a float in binary.
+
+#### `public static void `[`print_features_htk`](#_text_feat_extractor_8cc_1a521b3512933909ece7bd18cf625ad5fe)`(const cv::Mat & feats,FILE * file)` 
+
+Prints features to a file stream using HTK format.
+
+#### Parameters
+* `feats` OpenCV matrix containing the features. 
+
+* `file` File stream to print the features.
+
+#### `public static void `[`print_features_ascii`](#_text_feat_extractor_8cc_1ae3a1fa6530381f534ec5e2ff90495b8e)`(const cv::Mat & feats,FILE * file)` 
+
+Prints features to a file stream using ASCII format.
+
+#### Parameters
+* `feats` OpenCV matrix containing the features. 
+
+* `file` File stream to print the features.
+
+#### `public static void `[`magick2cvmat8u`](#_text_feat_extractor_8cc_1ac0d8f9ed183c953d3ced538c9f1ce002)`(Magick::Image & image,cv::Mat & cvimg)` 
+
+Image processing ///.
+
+Copies image data from Magick::Image to an OpenCV Mat.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `cvimg` OpenCV Mat.
+
+#### `public static void `[`magick2cvmat8uc3`](#_text_feat_extractor_8cc_1abd4530acf52f35d5ba38b9f3038b0ab1)`(Magick::Image & image,cv::Mat & cvimg)` 
+
+#### `public static void `[`magick2graym`](#_text_feat_extractor_8cc_1a3033920ea2862f45dfd32ec026fa8088)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` **& gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _alpha)` 
+
+Copies image data from Magick::Image to an unsigned char matrix.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `gimg` Unsigned char matrix (it is allocated if NULL). 
+
+* `_alpha` Pointer to unsigned char matrix for alpha channel (it is allocated if NULL).
+
+#### `public inline static int `[`to16bits`](#_text_feat_extractor_8cc_1a1a811eaff5dda86d249594fe3d992259)`(int val)` 
+
+Converts unsigned char to 16-bits.
+
+#### `public static void `[`graym2magick`](#_text_feat_extractor_8cc_1a3d05d264e460dccb52ae7b0512f658f1)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)` 
+
+Copies image data from unsigned char matrix to Magick::Image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `gimg` Unsigned char matrix. 
+
+* `alpha` Unsigned char matrix for alpha channel.
+
+#### `public static void `[`grayms2magick`](#_text_feat_extractor_8cc_1a066bfd0260bf6e3dd2ec159f26dfc9c3)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** rimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** bimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)` 
+
+Copies image data from unsigned char matrix to Magick::Image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `gimg` Unsigned char matrix. 
+
+* `alpha` Unsigned char matrix for alpha channel.
+
+#### `public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1af1756b455bc263fea7aadde3a4e847ae)`(Magick::Image & image,cv::Mat & cvimg)` 
+
+Copies image data from an OpenCV Mat to Magick::Image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `cvimg` OpenCV Mat.
+
+#### `public static void `[`enhance`](#_text_feat_extractor_8cc_1a81f14f6e96fbff1e6d74739c0c93f358)`(Magick::Image & image,int winW,double prm1,double slp,int type,double prm0,double prm2)` 
+
+Does a local enhancement of a text image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `winW` Window width for local enhancement. 
+
+* `prm` Enhancement parameter. 
+
+* `slp` Gray slope parameter. 
+
+* `type` Enhancement algorithm.
+
+#### `public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)` 
+
+#### `public inline static void `[`findMinMax`](#_text_feat_extractor_8cc_1a83ec3f37e202c24e48620142056dd6ab)`(int size,double * vals,bool * isset,double * _minval,double * _maxval,int * _minidx,int * _maxidx)` 
+
+#### `public static double `[`estimateSlant`](#_text_feat_extractor_8cc_1af850a209ee624d37c3f427125a67f80e)`(Magick::Image & image,double amin,double amax,double astep,int hsteps,double hfact)` 
+
+Estimates the slant angle of an image containing handwritten text.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `amin` Minimum slant angle in degrees. 
+
+* `amax` Maximum slant angle in degrees. 
+
+* `amin` Slant angle step in degrees. 
+
+#### Returns
+Estimated slant angle in degrees.
+
+> Todo: If alpha channel, do not project transparent
+
+#### `public void `[`findOuterContours`](#_text_feat_extractor_8cc_1af7639c4a00fe54f47a88eef066ef1a0b)`(Magick::Image & img,vector< vector< cv::Point > > & contours,int method,double eps)` 
+
+Gets outer contour points of connected components in an image, optionally approximating it.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `contours` Output array of arrays containing the contours. 
+
+* `method` Contour approximation method. 
+
+* `eps` Epsilon for approxPolyDP, zero to disable.
+
+#### `public static void `[`joinComponents`](#_text_feat_extractor_8cc_1a4da782c15ab0baee562d0370e6297e02)`(Magick::Image & img)` 
+
+Joints all connected components in an image using 1px thick lines between nearest contour points.
+
+#### Parameters
+* `image` Magick++ Image object.
+
+#### `public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1ae3fbab64bd08d000033e24b0a4df64e5)`(cv::Mat & image)` 
+
+Converts image to grayscale preserving alpha channel if present.
+
+#### Parameters
+* `image` Image to process. 
+
+#### Returns
+Whether the conversion was performed.
+
+#### `public bool `[`flattenImage`](#_text_feat_extractor_8cc_1ab109c954f49e5729f8adc65382209b34)`(Magick::Image & image,const Magick::Color * color)` 
+
+Removes alpha channel, setting all transparent regions to the background color.
+
+#### Parameters
+* `image` Image to process. 
+
+* `color` Color for the background. 
+
+#### Returns
+Whether flattening was performed.
 
 # class `OGRMultiLineString_` 
 
@@ -1615,6 +2178,143 @@ Reading order indices.
 
 Returns the XML document pointer.
 
+# class `TextFeatExtractor` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public  `[`TextFeatExtractor`](#class_text_feat_extractor_1a72b4956a0ed1b917664b42d36e4cfb17)`(int featype,int format,bool verbose,bool procimgs,bool stretch,float stretch_satu,float enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` | Constructors ///.
+`public void `[`printConf`](#class_text_feat_extractor_1a558222b13ed377d57c86ba0176cf149f)`(FILE * file)` | Configuration ///.
+`public void `[`preprocess`](#class_text_feat_extractor_1ae861ca4ba44a9d9000f9d90c96b500c8)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,std::vector< cv::Point > * _fcontour,bool randomize)` | Pre-processes a text image, optionally computing the connected components contour.
+`public void `[`estimateAngles`](#class_text_feat_extractor_1aaa88ad10c4a1aba39acb951c46cce460)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,float * _slope,float * _slant,float rotate)` | Estimates slope and slant angles for an image.
+`public cv::Mat `[`extractFeats`](#class_text_feat_extractor_1a5b060ca5dea2c64820702f86d448cd5d)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & feaimg,float slope,float slant,int xheight,std::vector< cv::Point2f > * _fpgram,bool randomize,float rotate,int direction)` | Extracts features for the given image already preprocessed image.
+`public bool `[`isImageFormat`](#class_text_feat_extractor_1abb7da8622bf364ef6bf5513779497d04)`()` | Whether the configured output format is image.
+`public void `[`write`](#class_text_feat_extractor_1aed77454431dd4d5e5c6d666e5cc10bfa)`(const cv::Mat & feats,FILE * file)` | Prints features to a file stream using the configured output format.
+`public void `[`write`](#class_text_feat_extractor_1ad59b31da84822d8f3ca24e80e778b7da)`(const cv::Mat & feats,const char * fname)` | Writes features to a file using the configured output format.
+
+## Members
+
+#### `public  `[`TextFeatExtractor`](#class_text_feat_extractor_1a72b4956a0ed1b917664b42d36e4cfb17)`(int featype,int format,bool verbose,bool procimgs,bool stretch,float stretch_satu,float enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` 
+
+Constructors ///.
+
+#### `public void `[`printConf`](#class_text_feat_extractor_1a558222b13ed377d57c86ba0176cf149f)`(FILE * file)` 
+
+Configuration ///.
+
+Prints the current configuration.
+
+#### Parameters
+* `file` File to print to.
+
+#### `public void `[`preprocess`](#class_text_feat_extractor_1ae861ca4ba44a9d9000f9d90c96b500c8)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,std::vector< cv::Point > * _fcontour,bool randomize)` 
+
+Pre-processes a text image, optionally computing the connected components contour.
+
+#### Parameters
+* `image` Image to process. 
+
+* `_fcontour` Output contour points, set to NULL to skip computation. 
+
+* `randomize` Whether to do a random perturbation of preprocessing parameters.
+
+#### `public void `[`estimateAngles`](#class_text_feat_extractor_1aaa88ad10c4a1aba39acb951c46cce460)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,float * _slope,float * _slant,float rotate)` 
+
+Estimates slope and slant angles for an image.
+
+#### Parameters
+* `image` Image to process. 
+
+* `_slope` Estimated slope angle in degrees. 
+
+* `_slant` Estimated slant angle in degrees.
+
+#### `public cv::Mat `[`extractFeats`](#class_text_feat_extractor_1a5b060ca5dea2c64820702f86d448cd5d)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & feaimg,float slope,float slant,int xheight,std::vector< cv::Point2f > * _fpgram,bool randomize,float rotate,int direction)` 
+
+Extracts features for the given image already preprocessed image.
+
+#### Parameters
+* `feaimg` Image to process. 
+
+* `slope` Slope angle in degrees. 
+
+* `slant` Slant angle in degrees. 
+
+* `_fpgram` Output features parallelogram coordinates. 
+
+* `randomize` Whether to do a random perturbation of extraction parameters. 
+
+#### Returns
+Features matrix.
+
+#### `public bool `[`isImageFormat`](#class_text_feat_extractor_1abb7da8622bf364ef6bf5513779497d04)`()` 
+
+Whether the configured output format is image.
+
+#### `public void `[`write`](#class_text_feat_extractor_1aed77454431dd4d5e5c6d666e5cc10bfa)`(const cv::Mat & feats,FILE * file)` 
+
+Prints features to a file stream using the configured output format.
+
+#### Parameters
+* `feats` OpenCV matrix containing the features. 
+
+* `file` File stream to print the features.
+
+#### `public void `[`write`](#class_text_feat_extractor_1ad59b31da84822d8f3ca24e80e778b7da)`(const cv::Mat & feats,const char * fname)` 
+
+Writes features to a file using the configured output format.
+
+#### Parameters
+* `feats` OpenCV matrix containing the features. 
+
+* `file` File name of where to write the features.
+
+# struct `iF1` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`idx`](#structi_f1_1a856738e8766449fe26d0042c61be9afe) | 
+`public `[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` `[`val`](#structi_f1_1aa9a659909748e7cd0c5f612b521180dd) | 
+
+## Members
+
+#### `public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`idx`](#structi_f1_1a856738e8766449fe26d0042c61be9afe) 
+
+#### `public `[`F1`](#mem_8h_1a65f193e3051f78e9c819cc0d597e19df)` `[`val`](#structi_f1_1aa9a659909748e7cd0c5f612b521180dd) 
+
+# struct `iI1` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`idx`](#structi_i1_1a3933dafa5a6b20181742416cbced8ad1) | 
+`public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`val`](#structi_i1_1ae231892ccf1661192b8acce4b656f128) | 
+
+## Members
+
+#### `public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`idx`](#structi_i1_1a3933dafa5a6b20181742416cbced8ad1) 
+
+#### `public `[`I1`](#mem_8h_1a86a866c8142917799f3c2ee021bff2d8)` `[`val`](#structi_i1_1ae231892ccf1661192b8acce4b656f128) 
+
+# struct `IV2` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public int `[`x`](#struct_i_v2_1a8a4c24e1f19abf99afc565588a2756f2) | 
+`public int `[`y`](#struct_i_v2_1a989614fa593b305982cfca15e02d48d1) | 
+
+## Members
+
+#### `public int `[`x`](#struct_i_v2_1a8a4c24e1f19abf99afc565588a2756f2) 
+
+#### `public int `[`y`](#struct_i_v2_1a989614fa593b305982cfca15e02d48d1) 
+
 # struct `NamedImage` 
 
 ## Summary
@@ -1653,5 +2353,23 @@ Returns the XML document pointer.
 #### `public inline  `[`NamedImage`](#struct_named_image_1a70560cf030f1554b2ebe91e01584d30f)`()` 
 
 #### `public inline  `[`NamedImage`](#struct_named_image_1af33a1269609e69b72d9b1e3425e09309)`(std::string _id,std::string _name,double _rotation,int _direction,int _x,int _y,`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` _image,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` _node)` 
+
+# struct `rgb` 
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public unsigned char `[`r`](#structrgb_1a2e51db126cff93863d52bb429fbc422d) | 
+`public unsigned char `[`g`](#structrgb_1aaa90468fc445cd4003cea65a84dea3e8) | 
+`public unsigned char `[`b`](#structrgb_1ae99e63aa161acf8066058b7af8b3e02c) | 
+
+## Members
+
+#### `public unsigned char `[`r`](#structrgb_1a2e51db126cff93863d52bb429fbc422d) 
+
+#### `public unsigned char `[`g`](#structrgb_1aaa90468fc445cd4003cea65a84dea3e8) 
+
+#### `public unsigned char `[`b`](#structrgb_1ae99e63aa161acf8066058b7af8b3e02c) 
 
 Generated by [Moxygen](https://sourcey.com/moxygen)
