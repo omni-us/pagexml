@@ -25,10 +25,6 @@
 
 using namespace std;
 using namespace std::chrono;
-//using namespace cv;
-//using namespace Magick;
-//using namespace libconfig;
-//using namespace H5;
 
 const char* TextFeatExtractor::featTypes[] = { "dotm", "raw" };
 const char* TextFeatExtractor::formatNames[] = { "ascii", "htk", "img" };
@@ -390,6 +386,8 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  enh_win = %d;\n", enh_win );
   fprintf( file, "  enh_prm = %g;\n", enh_prm );
   fprintf( file, "  enh_prm_rand = [ %g, %g ];\n", enh_prm_randmin, enh_prm_randmax );
+  fprintf( file, "  enh3_prm0 = %g;\n", enh3_prm0 );
+  fprintf( file, "  enh3_prm2 = %g;\n", enh3_prm2 );
   fprintf( file, "  enh_slp = %g;\n", enh_slp );
   fprintf( file, "  deslope = %s;\n", deslope ? "true" : "false" );
   fprintf( file, "  deslant = %s;\n", deslant ? "true" : "false" );
@@ -544,7 +542,7 @@ bool TextFeatExtractor::isImageFormat() {
  */
 void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
   if( feats.cols == 0 )
-    throw runtime_error( "TextFeatExtractor::print: empty features matrix" );
+    throw_runtime_error( "TextFeatExtractor::print: empty features matrix" );
   switch( format ) {
     case TEXTFEAT_FORMAT_ASCII:
       print_features_ascii( feats, file );
@@ -553,9 +551,9 @@ void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
       print_features_htk( feats, file );
       break;
     case TEXTFEAT_FORMAT_IMAGE:
-      throw runtime_error( "TextFeatExtractor::print: print is unsupported for image format" );
+      throw_runtime_error( "TextFeatExtractor::print: print is unsupported for image format" );
     default:
-      throw runtime_error( "TextFeatExtractor::print: unknown output features format" );
+      throw_runtime_error( "TextFeatExtractor::print: unknown output features format" );
   }
 }
 
@@ -567,15 +565,15 @@ void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
  */
 void TextFeatExtractor::write( const cv::Mat& feats, const char* fname ) {
   if( feats.cols == 0 )
-    throw runtime_error( "TextFeatExtractor::write: empty features matrix" );
+    throw_runtime_error( "TextFeatExtractor::write: empty features matrix" );
   if( format == TEXTFEAT_FORMAT_IMAGE ) {
     if( ! imwrite( fname, feats ) )
-      throw runtime_error( string("TextFeatExtractor::write: failed to save image: ") + fname );
+      throw_runtime_error( "TextFeatExtractor::write: failed to save image: %s", fname );
   }
   else {
     FILE *file;
     if( (file=fopen(fname,"wb")) == NULL )
-      throw runtime_error( string("TextFeatExtractor::write: unable to open file: ") + fname );
+      throw_runtime_error( "TextFeatExtractor::write: unable to open file: %s", fname );
     print( feats, file );
     fclose(file);
   }
@@ -648,14 +646,14 @@ static void magick2cvmat8uc3( Magick::Image& image, cv::Mat& cvimg ) {
 static void magick2graym( Magick::Image& image, gray**& gimg, gray*** _alpha = NULL ) {
   if( gimg == NULL )
     if( malloc_graym(image.columns(),image.rows(),&gimg,false) )
-      throw runtime_error( "TextFeatExtractor: unable to reserve memory" );
+      throw_runtime_error( "TextFeatExtractor: unable to reserve memory" );
   bool getalpha = _alpha != NULL && image.matte() ? true : false ;
   gray** alpha = NULL;
   if( getalpha ) {
     alpha = *_alpha;
     if( alpha == NULL )
       if( malloc_graym(image.columns(),image.rows(),&alpha,false) )
-        throw runtime_error( "TextFeatExtractor: unable to reserve memory" );
+        throw_runtime_error( "TextFeatExtractor: unable to reserve memory" );
     *_alpha = alpha;
   }
   Magick::Pixels view(image);
@@ -800,13 +798,116 @@ static void cvmat8u2magick( Magick::Image& image, cv::Mat& cvimg ) {
     uchar* ptr = cvimg.ptr<uchar>(y);
     for( int x=0; x<cvimg.cols; x++, n++ )
 #if MAGICKCORE_QUANTUM_DEPTH == 16
-    pixs[n].red = pixs[n].green = pixs[n].blue = to16bits(ptr[x]);
+      pixs[n].red = pixs[n].green = pixs[n].blue = to16bits(ptr[x]);
 #elif MAGICKCORE_QUANTUM_DEPTH == 8
-    pixs[n].red = pixs[n].green = pixs[n].blue = ptr[x];
+      pixs[n].red = pixs[n].green = pixs[n].blue = ptr[x];
 #endif
   }
   view.sync();
 }
+
+
+#if defined (__PAGEXML_IMG_CV__)
+
+/**
+ * Copies image data from an OpenCV Mat to Magick::Image.
+ *
+ * @param image   Magick++ Image object.
+ * @param cvimg   OpenCV Mat.
+ */
+static void cvmat8uc32magick( Magick::Image& image, cv::Mat& cvimg ) {
+  CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
+  CV_Assert( cvimg.channels() == 3 ); // accept only single channel matrices
+  CV_Assert( (int)image.columns() == cvimg.cols );
+  CV_Assert( (int)image.rows() == cvimg.rows );
+
+  Magick::Geometry page = image.page();
+  Magick::Geometry density = image.density();
+  //Magick::ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  Magick::ResolutionType units = image.image()->units;
+  image = Magick::Image( Magick::Geometry(image.columns(), image.rows()), colorBlack );
+  image.depth(8);
+  image.page(page);
+  image.density(density);
+  image.resolutionUnits(units);
+
+  //image.modifyImage();
+
+  if( image.type() != Magick::TrueColorType )
+    image.type( Magick::TrueColorType );
+  Magick::Pixels view(image);
+  Magick::PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  for( int y=0, n=0; y<cvimg.rows; y++ ) {
+    cv::Vec3b *ptr = cvimg.ptr<cv::Vec3b>(y);
+    for( int x=0; x<cvimg.cols; x++, n++ ) {
+#if MAGICKCORE_QUANTUM_DEPTH == 16
+      pixs[n].red = to16bits(ptr[x][2]);
+      pixs[n].green = to16bits(ptr[x][1]);
+      pixs[n].blue = to16bits(ptr[x][0]);
+#elif MAGICKCORE_QUANTUM_DEPTH == 8
+      pixs[n].red = ptr[x][2];
+      pixs[n].green = ptr[x][1];
+      pixs[n].blue = ptr[x][0];
+#endif
+    }
+  }
+  view.sync();
+}
+
+
+/**
+ * Copies image data from an OpenCV Mat to Magick::Image.
+ *
+ * @param image         Magick++ Image object.
+ * @param cvimg         OpenCV Mat.
+ * @param cvimg_alpha   OpenCV Mat.
+ */
+static void cvmat8u2magick( Magick::Image& image, cv::Mat& cvimg, cv::Mat& cvimg_alpha ) {
+  CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
+  CV_Assert( cvimg.channels() == 1 ); // accept only single channel matrices
+  CV_Assert( (int)image.columns() == cvimg.cols );
+  CV_Assert( (int)image.rows() == cvimg.rows );
+
+  Magick::Geometry page = image.page();
+  Magick::Geometry density = image.density();
+  //Magick::ResolutionType units = image.resolutionUnits(); // Magick++ bug
+  Magick::ResolutionType units = image.image()->units;
+  image = Magick::Image( Magick::Geometry(image.columns(), image.rows()), colorBlack );
+  image.depth(8);
+  image.page(page);
+  image.density(density);
+  image.resolutionUnits(units);
+
+  bool alpha = false;
+  if( cvimg_alpha.cols == cvimg.cols && cvimg_alpha.rows == cvimg.rows ) {
+    image.type( Magick::GrayscaleMatteType );
+    alpha = true;
+  }
+  else if( image.type() != Magick::GrayscaleType )
+    image.type( Magick::GrayscaleType );
+  Magick::Pixels view(image);
+  Magick::PixelPacket *pixs = view.get( 0, 0, image.columns(), image.rows() );
+  for( int y=0, n=0; y<cvimg.rows; y++ ) {
+    uchar* ptr = cvimg.ptr<uchar>(y);
+    uchar* ptr_alpha = NULL;
+    if( alpha )
+      ptr_alpha = cvimg_alpha.ptr<uchar>(y);
+    for( int x=0; x<cvimg.cols; x++, n++ ) {
+#if MAGICKCORE_QUANTUM_DEPTH == 16
+      pixs[n].red = pixs[n].green = pixs[n].blue = to16bits(ptr[x]);
+      if( alpha )
+        pixs[n].opacity = to16bits(ptr_alpha[x]);
+#elif MAGICKCORE_QUANTUM_DEPTH == 8
+      pixs[n].red = pixs[n].green = pixs[n].blue = ptr[x];
+      if( alpha )
+        pixs[n].opacity = ptr_alpha[x];
+#endif
+    }
+  }
+  view.sync();
+}
+
+#endif
 
 
 /**
@@ -1381,14 +1482,18 @@ bool toGrayscale( Magick::Image& image ) {
   return true;
 }
 #elif defined (__PAGEXML_IMG_CV__)
-bool toGrayscale( cv::Mat& image ) {
+bool toGrayscale( cv::Mat& image, cv::Mat& image_alpha ) {
   if( image.channels() != 3 && image.channels() != 4 )
     return false;
 
-  if( image.channels() == 4 )
-    fprintf(stderr,"toGrayscale not preserving alpha\n");
   cv::Mat grayimage;
   cv::cvtColor(image, grayimage, cv::COLOR_BGR2GRAY);
+  if( image.channels() == 4 ) {
+    image_alpha = cv::Mat( image.rows, image.cols, CV_8UC1 );
+    int from_to[] = { 3,0 };
+    cv::mixChannels( &image, 1, &image_alpha, 1, from_to, 1 );
+    image_alpha = 255-image_alpha;
+  }
   image = grayimage;
   return true;
 }
@@ -1456,13 +1561,14 @@ void TextFeatExtractor::preprocess( PageImage& cvimg, vector<cv::Point>* _fconto
 #if defined (__PAGEXML_IMG_MAGICK__)
   if( toGrayscale(image) && verbose )
 #elif defined (__PAGEXML_IMG_CV__)
-  if( toGrayscale(cvimg) && verbose )
+  cv::Mat cvimg_alpha;
+  if( toGrayscale(cvimg, cvimg_alpha) && verbose )
 #endif
     fprintf(stderr,"gray time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
 
 #if defined (__PAGEXML_IMG_CV__)
   Magick::Image image = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
-  cvmat8u2magick( image, cvimg );
+  cvmat8u2magick( image, cvimg, cvimg_alpha );
 #endif
 
   Magick::Geometry page = image.page();
@@ -1494,7 +1600,6 @@ void TextFeatExtractor::preprocess( PageImage& cvimg, vector<cv::Point>* _fconto
     }
 
     tm = high_resolution_clock::now();
-    //enhance( image, enh_win, prm, enh_slp, enh_type );
     enhance( image, enh_win, prm, enh_slp, enh_type, enh3_prm0, enh3_prm2 );
     if( verbose )
       fprintf(stderr,"enhance time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
@@ -1505,7 +1610,12 @@ void TextFeatExtractor::preprocess( PageImage& cvimg, vector<cv::Point>* _fconto
     flattenImage(image);
 
 #if defined (__PAGEXML_IMG_CV__)
-  magick2cvmat8u( image, cvimg );
+  if( image.type() == Magick::GrayscaleType )
+    magick2cvmat8u( image, cvimg );
+  else {
+    cvimg = cv::Mat( image.rows(), image.columns(), CV_8UC3 );
+    magick2cvmat8uc3( image, cvimg );
+  }
 #endif
 
   /// Compute connected components contour polygon ///
@@ -1576,7 +1686,10 @@ void TextFeatExtractor::estimateAngles( PageImage& cvimg, float* _slope, float* 
 
 #if defined (__PAGEXML_IMG_CV__)
   Magick::Image image = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
-  cvmat8u2magick( image, cvimg );
+  if( cvimg.channels() == 1 )
+    cvmat8u2magick( image, cvimg );
+  else
+    cvmat8uc32magick( image, cvimg );
 #endif
 
   /// Estimate line slope angle ///
@@ -1649,7 +1762,10 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
 
 #if defined (__PAGEXML_IMG_CV__)
   Magick::Image feaimg = Magick::Image( Magick::Geometry(cvimg.cols, cvimg.rows), colorBlack );
-  cvmat8u2magick( feaimg, cvimg );
+  if( cvimg.channels() == 1 )
+    cvmat8u2magick( feaimg, cvimg );
+  else
+    cvmat8uc32magick( feaimg, cvimg );
 #endif
 
   /// Set image transparent zones to white ///

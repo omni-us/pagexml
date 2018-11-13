@@ -105,7 +105,7 @@ class TextFeatExtractor {
     TextFeatExtractor( const char* cfgfile );
     void loadConf( const libconfig::Config& config );
 #endif
-    void printConf( FILE* file );
+    void printConf( FILE* file = stdout );
     //void loadProjection( const char* projfile );
 #if defined (__PAGEXML_IMG_MAGICK__)
     void preprocess( Magick::Image& image, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
