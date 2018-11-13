@@ -139,13 +139,15 @@
 `public static void `[`graym2magick`](#_text_feat_extractor_8cc_1a3d05d264e460dccb52ae7b0512f658f1)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)`            | Copies image data from unsigned char matrix to Magick::Image.
 `public static void `[`grayms2magick`](#_text_feat_extractor_8cc_1a066bfd0260bf6e3dd2ec159f26dfc9c3)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** rimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** bimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)`            | Copies image data from unsigned char matrix to Magick::Image.
 `public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1af1756b455bc263fea7aadde3a4e847ae)`(Magick::Image & image,cv::Mat & cvimg)`            | Copies image data from an OpenCV Mat to Magick::Image.
+`public static void `[`cvmat8uc32magick`](#_text_feat_extractor_8cc_1a1bb4e2cb8ba2fa857e784c0dfb6a3761)`(Magick::Image & image,cv::Mat & cvimg)`            | Copies image data from an OpenCV Mat to Magick::Image.
+`public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1accdc54fbd584e586cad5bbdb08035659)`(Magick::Image & image,cv::Mat & cvimg,cv::Mat & cvimg_alpha)`            | Copies image data from an OpenCV Mat to Magick::Image.
 `public static void `[`enhance`](#_text_feat_extractor_8cc_1a81f14f6e96fbff1e6d74739c0c93f358)`(Magick::Image & image,int winW,double prm1,double slp,int type,double prm0,double prm2)`            | Does a local enhancement of a text image.
 `public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)`            | 
 `public inline static void `[`findMinMax`](#_text_feat_extractor_8cc_1a83ec3f37e202c24e48620142056dd6ab)`(int size,double * vals,bool * isset,double * _minval,double * _maxval,int * _minidx,int * _maxidx)`            | 
 `public static double `[`estimateSlant`](#_text_feat_extractor_8cc_1af850a209ee624d37c3f427125a67f80e)`(Magick::Image & image,double amin,double amax,double astep,int hsteps,double hfact)`            | Estimates the slant angle of an image containing handwritten text.
 `public void `[`findOuterContours`](#_text_feat_extractor_8cc_1af7639c4a00fe54f47a88eef066ef1a0b)`(Magick::Image & img,vector< vector< cv::Point > > & contours,int method,double eps)`            | Gets outer contour points of connected components in an image, optionally approximating it.
 `public static void `[`joinComponents`](#_text_feat_extractor_8cc_1a4da782c15ab0baee562d0370e6297e02)`(Magick::Image & img)`            | Joints all connected components in an image using 1px thick lines between nearest contour points.
-`public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1ae3fbab64bd08d000033e24b0a4df64e5)`(cv::Mat & image)`            | Converts image to grayscale preserving alpha channel if present.
+`public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1a360080636b9ecf83ebbf859d652ffedc)`(cv::Mat & image,cv::Mat & image_alpha)`            | Converts image to grayscale preserving alpha channel if present.
 `public bool `[`flattenImage`](#_text_feat_extractor_8cc_1ab109c954f49e5729f8adc65382209b34)`(Magick::Image & image,const Magick::Color * color)`            | Removes alpha channel, setting all transparent regions to the background color.
 `class `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string__) | 
 `class `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon__) | 
@@ -163,7 +165,7 @@
 
 Functions related to integral images
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -175,7 +177,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Functions for allocating memory
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -205,7 +207,7 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.11
+Version2018.11.13
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -256,7 +258,7 @@ TEXTFEAT_TYPE_RAW            |
 
 Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.11
+Version2018.11.13
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -272,7 +274,7 @@ TEXTFEAT_FORMAT_IMAGE            |
 
 Functions related to integral images
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -304,7 +306,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Functions related to integral images
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -330,7 +332,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Functions for allocating memory
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -400,7 +402,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Functions for allocating memory
 
-Version2017.05.30
+Version2018.11.13
 
 Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -623,6 +625,26 @@ Copies image data from an OpenCV Mat to Magick::Image.
 
 * `cvimg` OpenCV Mat.
 
+#### `public static void `[`cvmat8uc32magick`](#_text_feat_extractor_8cc_1a1bb4e2cb8ba2fa857e784c0dfb6a3761)`(Magick::Image & image,cv::Mat & cvimg)` 
+
+Copies image data from an OpenCV Mat to Magick::Image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `cvimg` OpenCV Mat.
+
+#### `public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1accdc54fbd584e586cad5bbdb08035659)`(Magick::Image & image,cv::Mat & cvimg,cv::Mat & cvimg_alpha)` 
+
+Copies image data from an OpenCV Mat to Magick::Image.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `cvimg` OpenCV Mat. 
+
+* `cvimg_alpha` OpenCV Mat.
+
 #### `public static void `[`enhance`](#_text_feat_extractor_8cc_1a81f14f6e96fbff1e6d74739c0c93f358)`(Magick::Image & image,int winW,double prm1,double slp,int type,double prm0,double prm2)` 
 
 Does a local enhancement of a text image.
@@ -680,7 +702,7 @@ Joints all connected components in an image using 1px thick lines between neares
 #### Parameters
 * `image` Magick++ Image object.
 
-#### `public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1ae3fbab64bd08d000033e24b0a4df64e5)`(cv::Mat & image)` 
+#### `public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1a360080636b9ecf83ebbf859d652ffedc)`(cv::Mat & image,cv::Mat & image_alpha)` 
 
 Converts image to grayscale preserving alpha channel if present.
 
@@ -2185,7 +2207,7 @@ Returns the XML document pointer.
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public  `[`TextFeatExtractor`](#class_text_feat_extractor_1a72b4956a0ed1b917664b42d36e4cfb17)`(int featype,int format,bool verbose,bool procimgs,bool stretch,float stretch_satu,float enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` | Constructors ///.
-`public void `[`printConf`](#class_text_feat_extractor_1a558222b13ed377d57c86ba0176cf149f)`(FILE * file)` | Configuration ///.
+`public void `[`printConf`](#class_text_feat_extractor_1a44524c318c2a2eb3e4b38ef0eed4bff5)`(FILE * file)` | Configuration ///.
 `public void `[`preprocess`](#class_text_feat_extractor_1ae861ca4ba44a9d9000f9d90c96b500c8)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,std::vector< cv::Point > * _fcontour,bool randomize)` | Pre-processes a text image, optionally computing the connected components contour.
 `public void `[`estimateAngles`](#class_text_feat_extractor_1aaa88ad10c4a1aba39acb951c46cce460)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,float * _slope,float * _slant,float rotate)` | Estimates slope and slant angles for an image.
 `public cv::Mat `[`extractFeats`](#class_text_feat_extractor_1a5b060ca5dea2c64820702f86d448cd5d)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & feaimg,float slope,float slant,int xheight,std::vector< cv::Point2f > * _fpgram,bool randomize,float rotate,int direction)` | Extracts features for the given image already preprocessed image.
@@ -2199,7 +2221,7 @@ Returns the XML document pointer.
 
 Constructors ///.
 
-#### `public void `[`printConf`](#class_text_feat_extractor_1a558222b13ed377d57c86ba0176cf149f)`(FILE * file)` 
+#### `public void `[`printConf`](#class_text_feat_extractor_1a44524c318c2a2eb3e4b38ef0eed4bff5)`(FILE * file)` 
 
 Configuration ///.
 

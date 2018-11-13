@@ -1,7 +1,7 @@
 /**
  * Functions related to integral images
  *
- * @version $Version: 2017.05.30$
+ * @version $Version: 2018.11.13$
  * @copyright Copyright (c) 2004-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
