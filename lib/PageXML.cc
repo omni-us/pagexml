@@ -4300,20 +4300,24 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
   }
 
   /// Sort groups based on first element original order ///
-  std::vector<int> sval(elem_group_order.size());
-  std::vector<int> sidx(elem_group_order.size());
-  for ( int n=0; n<(int)elem_group_order.size(); n++ )
-    sval[n] = elem_group_order[n][0];
-  cv::sortIdx( sval, sidx, CV_SORT_ASCENDING );
-  std::vector<std::vector<int> > sorted_group_order;
-  std::vector<double> sorted_group_score;
-  for ( int n=0; n<(int)sidx.size(); n++ ) {
-    sorted_group_order.push_back( elem_group_order[sidx[n]] );
-    sorted_group_score.push_back( elem_group_score[sidx[n]] );
+  if ( elem_group_order.size() > 0 ) {
+    std::vector<int> sval(elem_group_order.size());
+    std::vector<int> sidx(elem_group_order.size());
+    for ( int n=0; n<(int)elem_group_order.size(); n++ )
+      sval[n] = elem_group_order[n][0];
+    cv::sortIdx( sval, sidx, CV_SORT_ASCENDING );
+    std::vector<std::vector<int> > sorted_group_order;
+    std::vector<double> sorted_group_score;
+    for ( int n=0; n<(int)sidx.size(); n++ ) {
+      sorted_group_order.push_back( elem_group_order[sidx[n]] );
+      sorted_group_score.push_back( elem_group_score[sidx[n]] );
+    }
+    elem_group_order = sorted_group_order;
+    elem_group_score = sorted_group_score;
   }
 
-  _group_order = sorted_group_order;
-  _group_score = sorted_group_score;
+  _group_order = elem_group_order;
+  _group_score = elem_group_score;
 
   return (int)elem_group_order.size();
 }

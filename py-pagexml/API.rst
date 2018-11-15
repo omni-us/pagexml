@@ -1064,7 +1064,155 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getLeftRightTextContinuationGroups(elems, _group_order, _group_score, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False, recurse_factor=0.9)
 
+      Determines groups of left-right text elem continuations
+      (requires single segment polystripe).
+
+      * *elems* :
+
+           Text elements to test for continuation: TextLines, Words,
+           Glyphs or TextRegions.
+
+      * *_group_order* :
+
+           Join groups line indices (output).
+
+      * *_group_score* :
+
+           Join group scores (output).
+
+      * *max_angle_diff* :
+
+           Maximum baseline angle difference for joining.
+
+      * *max_horiz_iou* :
+
+           Maximum horizontal IoU for joining.
+
+      * *min_prolong_fact* :
+
+           Minimum prolongation factor for joining.
+
+      * *prolong_alpha* :
+
+           Weight for prolongation factors:
+           alpha*bline+(1-alpha)*coords.
+
+      * *fake_baseline* :
+
+           Use bottom line of Coords rectangle as the baseline.
+
+      * *recurse_factor* :
+
+           Multiplication factor for continuation criteria on each
+           recursion.
+
+      Number of join groups, elements per group in order and group
+      scores.
+
+      Get points and compute baseline angles and lengths ///
+
+      Loop through all directed pairs of text elems ///
+
+      Check that baseline angle difference is small ///
+
+      Project baseline limits onto the local horizontal axis ///
+
+      Check that elem n starts before elem m ///
+
+      Check that horizontal IoU is small //
+
+      Compute coords endpoint-startpoint intersection factors ///
+      (both ways, intersection length of prolongated elem 1 and elem 2
+      divided by height of elem 2) /// Todo Possible improvement:
+      coords_fact_xx = isect_1d / min(norm_n,norm_m)
+
+      Compute baseline alignment factors /// (both ways, one minus
+      distance between prolongated baseline 1 and baseline 2 divided
+      by height of elem 2 ) /// Todo Possible improvement: max( 0,
+      1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )
+
+      Overall alignment factor ///
+
+      Add text elem to a group (new or existing) ///
+
+      Check if should be part of existing group ///
+
+      Unique existing group ///
+
+      Two existing groups, thus merge groups ///
+
+      Update groups ///
+
+      Adjust text elem order for groups with more than two text elems
+      ///
+
+      Get horizontal direction ///
+
+      Check if there is high horizontal overlaps within group ///
+
+      If high overlap recurse with stricter criterion ///
+
+      Project baseline centers onto the local horizontal axis ///
+
+      Sort text elems by horizontal center projections ///
+
+      Score as average of scores ///
+
+      Add recursed extra groups ///
+
+      Sort groups based on first element original order ///
+
    getLeftRightTopBottomReadingOrder(elems, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False, recurse_factor=0.9)
+
+      Gets the reading order for a set of text elems (requires single
+      segment polystripe).
+
+      * *elems* :
+
+           Elements to process: TextLines, Words, Glyphs or
+           TextRegions.
+
+      * *max_angle_diff* :
+
+           Maximum baseline angle difference for joining.
+
+      * *max_horiz_iou* :
+
+           Maximum horizontal IoU for joining.
+
+      * *min_prolong_fact* :
+
+           Minimum prolongation factor for joining.
+
+      * *prolong_alpha* :
+
+           Weight for prolongation factors:
+           alpha*bline+(1-alpha)*coords.
+
+      * *fake_baseline* :
+
+           Use bottom line of Coords rectangle as the baseline.
+
+      * *recurse_factor* :
+
+           Multiplication factor for continuation criteria on each
+           recursion.
+
+      Pair of reading order indices and subgroup lengths.
+
+      Get text elem join groups ///
+
+      Get points and compute baseline angles and lengths ///
+
+      Get horizontal direction ///
+
+      Add text elems not in join groups ///
+
+      Get vertical group center projections ///
+
+      Sort groups by vertical center projections ///
+
+      Populate reading order vector ///
 
    getNodeName(node, base_node=None)
 
