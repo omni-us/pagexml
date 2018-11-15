@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.11$
+ * @version $Version: 2018.11.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.11";
+static char class_version[] = "Version: 2018.11.15";
 
 /**
  * Returns the class version.
@@ -1779,7 +1779,7 @@ xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
  */
 xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
   if( elem == NULL || node == NULL )
-    throw_runtime_error( "PageXML.moveElem: received NULL pointer" );
+    throw_runtime_error( "PageXML.moveElem: received NULL pointer (elem=%p, node=%p)", elem, node );
 
   xmlNodePt origelem = elem;
   if( elem->doc == xml )
@@ -4015,30 +4015,31 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
 #endif
 
 /**
- * Tests for text line continuation (requires single segment polystripe).
+ * Determines groups of left-right text elem continuations (requires single segment polystripe).
  *
- * @param lines                 TextLine elements to test for continuation.
- * @param _line_group_order     Join groups line indices (output).
- * @param _line_group_score     Join group scores (output).
+ * @param elems                 Text elements to test for continuation: TextLines, Words, Glyphs or TextRegions.
+ * @param _group_order          Join groups line indices (output).
+ * @param _group_score          Join group scores (output).
  * @param max_angle_diff        Maximum baseline angle difference for joining.
  * @param max_horiz_iou         Maximum horizontal IoU for joining.
  * @param min_prolong_fact      Minimum prolongation factor for joining.
  * @param prolong_alpha         Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
  * @param fake_baseline         Use bottom line of Coords rectangle as the baseline.
- * @return                      Number of join groups.
+ * @param recurse_factor        Multiplication factor for continuation criteria on each recursion.
+ * @return                      Number of join groups, elements per group in order and group scores.
  */
-int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline ) {
+int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, std::vector<std::vector<int> >& _group_order, std::vector<double>& _group_score, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline, double recurse_factor ) {
   /// Get points and compute baseline angles and lengths ///
   std::vector< std::vector<cv::Point2f> > coords;
   std::vector< std::vector<cv::Point2f> > baseline;
   std::vector<double> angle;
   std::vector<double> length;
-  int num_lines = lines.size();
-  for ( int n=0; n<num_lines; n++ ) {
-    coords.push_back( getPoints(lines[n]) );
+  int num_elems = elems.size();
+  for ( int n=0; n<num_elems; n++ ) {
+    coords.push_back( getPoints(elems[n]) );
     if ( fake_baseline ) {
       if ( coords[n].size() != 4 ) {
-        throw_runtime_error( "PageXML.testTextLineContinuation: fake_baseline requires Coords to have exactly 4 points" );
+        throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: fake_baseline requires Coords to have exactly 4 points (id=%s)", getAttr(elems[n],"id").c_str() );
         return -1;
       }
       std::vector<cv::Point2f> baseline_n;
@@ -4047,29 +4048,32 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
       baseline.push_back(baseline_n);
     }
     else
-      baseline.push_back( getPoints(lines[n],"_:Baseline") );
+      baseline.push_back( getPoints(elems[n],"_:Baseline") );
     angle.push_back(getBaselineOrientation(baseline[n]));
     length.push_back(getBaselineLength(baseline[n]));
 
-    if ( ! nodeIs( lines[n], "TextLine" ) ) {
-      throw_runtime_error( "PageXML.testTextLineContinuation: input nodes need to be TextLines" );
+    if ( ! ( nodeIs(elems[n],"TextLine") || nodeIs(elems[n],"Word") || nodeIs(elems[n],"Glyph") || nodeIs(elems[n],"TextRegion") ) ) {
+      throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: input nodes need to be TextLines or Words or Glyphs or TextRegions" );
       return -1;
     }
     // @todo Check for single segment polystripe 
     if ( baseline[n].size() != 2 || coords[n].size() != 4 ) {
-      throw_runtime_error( "PageXML.testTextLineContinuation: Baselines and Coords are required to have exactly 2 and 4 points respectively. For horizontal left-to-right text give fake_baseline=true." );
+      throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: Baselines and Coords are required to have exactly 2 and 4 points respectively. For horizontal left-to-right text give fake_baseline=true. (id=%s, #baseline=%d, #coords=%d)", getAttr(elems[n],"id").c_str(), (int)baseline[n].size(), (int)coords[n].size() );
       return -1;
     }
   }
 
-  std::vector<std::unordered_set<int> > line_groups;
-  std::vector<std::vector<int> > line_group_order;
-  std::vector<std::vector<double> > line_group_scores;
-  std::vector<double> line_group_direct;
+  std::vector<std::unordered_set<int> > elem_groups;
+  std::vector<std::vector<int> > elem_group_order;
+  std::vector<std::vector<double> > elem_group_scores;
+  std::vector<double> elem_group_direct;
+  int group_idx[num_elems];
+  for ( int n=0; n<num_elems; n++ )
+    group_idx[n] = -1;
 
-  /// Loop through all directed pairs of text lines ///
-  for ( int n=0; n<num_lines; n++ )
-    for ( int m=0; m<num_lines; m++ )
+  /// Loop through all directed pairs of text elems ///
+  for ( int n=0; n<num_elems; n++ )
+    for ( int m=0; m<num_elems; m++ )
       if ( n != m ) {
         /// Check that baseline angle difference is small ///
         double angle_diff = fabs(angleDiff(angle[n],angle[m]));
@@ -4086,7 +4090,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         std::vector<double> horiz_n = project_2d_to_1d(baseline[n],horiz);
         std::vector<double> horiz_m = project_2d_to_1d(baseline[m],horiz);
 
-        /// Check that line n starts before line m ///
+        /// Check that elem n starts before elem m ///
         double direct = horiz_n[0] < horiz_n[1] ? 1.0 : -1.0;
         if ( direct*horiz_m[0] < direct*horiz_n[0] )
           continue;
@@ -4097,7 +4101,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
           continue;
 
         /// Compute coords endpoint-startpoint intersection factors ///
-        /// (both ways, intersection length of prolongated line 1 and line 2 divided by height of line 2) ///
+        /// (both ways, intersection length of prolongated elem 1 and elem 2 divided by height of elem 2) ///
         /// @todo Possible improvement: coords_fact_xx = isect_1d / min(norm_n,norm_m)
         std::vector<cv::Point2f> pts_n = coords[n];
         std::vector<cv::Point2f> pts_m = coords[m];
@@ -4117,7 +4121,7 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         double coords_fact_mn = intersection_1d(vert_mn_n[1],vert_mn_n[2],vert_mn_m[0],vert_mn_m[1])/cv::norm(pts_n[2]-pts_n[1]);
 
         /// Compute baseline alignment factors ///
-        /// (both ways, one minus distance between prolongated baseline 1 and baseline 2 divided by height of line 2 ) ///
+        /// (both ways, one minus distance between prolongated baseline 1 and baseline 2 divided by height of elem 2 ) ///
         /// @todo Possible improvement: max( 0, 1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )
         std::vector<cv::Point2f> bline_n = baseline[n];
         std::vector<cv::Point2f> bline_m = baseline[m];
@@ -4134,51 +4138,73 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         if ( prolong_fact < min_prolong_fact )
           continue;
 
-        /// Add text lines to a line group (new or existing) ///
-        std::unordered_set<int> line_group;
+        /// Add text elem to a group (new or existing) ///
+        int k = (int)elem_groups.size();
+        std::unordered_set<int> elem_group;
         std::vector<int> group_order;
         std::vector<double> group_scores;
         std::vector<double> group_direct;
-        int k;
-        for ( k=0; k<(int)line_groups.size(); k++ )
-          if ( line_groups[k].find(n) != line_groups[k].end() || line_groups[k].find(m) != line_groups[k].end() ) {
-            line_group = line_groups[k];
-            group_order = line_group_order[k];
-            group_scores = line_group_scores[k];
-            break;
+
+        /// Check if should be part of existing group ///
+        if ( group_idx[n] != -1 || group_idx[m] != -1 ) {
+
+          /// Unique existing group ///
+          if ( group_idx[n] == -1 || group_idx[m] == -1 || group_idx[n] == group_idx[m] )
+            k = std::max(group_idx[n], group_idx[m]);
+
+          /// Two existing groups, thus merge groups ///
+          else {
+            k = std::min(group_idx[n], group_idx[m]);
+            int kk = std::max(group_idx[n], group_idx[m]);
+            elem_groups[k].insert(elem_groups[kk].begin(), elem_groups[kk].end());
+            elem_group_order[k].insert(elem_group_order[k].end(), elem_group_order[kk].begin(), elem_group_order[kk].end());
+            elem_group_scores[k].insert(elem_group_scores[k].end(), elem_group_scores[kk].begin(), elem_group_scores[kk].end());
+            for ( const auto& e: elem_groups[kk] )
+              group_idx[e] = k;
+            elem_groups.erase(elem_groups.begin() + kk);
+            elem_group_order.erase(elem_group_order.begin() + kk);
+            elem_group_scores.erase(elem_group_scores.begin() + kk);
           }
-        line_group.insert(n);
-        line_group.insert(m);
+
+          elem_group = elem_groups[k];
+          group_order = elem_group_order[k];
+          group_scores = elem_group_scores[k];
+        }
+        group_idx[n] = group_idx[m] = k;
+
+        /// Update groups ///
+        elem_group.insert(n);
+        elem_group.insert(m);
         group_order.push_back(n);
         group_order.push_back(m);
         group_scores.push_back(prolong_fact);
-        if ( k < (int)line_groups.size() ) {
-          line_groups[k] = line_group;
-          line_group_order[k] = group_order;
-          line_group_scores[k] = group_scores;
-          line_group_direct[k] = direct;
+        if ( k < (int)elem_groups.size() ) {
+          elem_groups[k] = elem_group;
+          elem_group_order[k] = group_order;
+          elem_group_scores[k] = group_scores;
+          elem_group_direct[k] = direct;
         }
         else {
-          line_groups.push_back(line_group);
-          line_group_order.push_back(group_order);
-          line_group_scores.push_back(group_scores);
-          line_group_direct.push_back(direct);
+          elem_groups.push_back(elem_group);
+          elem_group_order.push_back(group_order);
+          elem_group_scores.push_back(group_scores);
+          elem_group_direct.push_back(direct);
         }
       }
 
-  /// Adjust text line order for groups with more than two text lines ///
+  /// Adjust text elem order for groups with more than two text elems ///
   std::vector<std::vector<int> > extra_group_order;
   std::vector<double> extra_group_score;
 
-  for ( int k=0; k<(int)line_groups.size(); k++ )
-    if ( line_group_scores[k].size() > 1 ) {
-      int num_group = line_groups[k].size();
+  for ( int k=0; k<(int)elem_groups.size(); k++ )
+    if ( elem_group_scores[k].size() > 1 ) {
+      int num_group = elem_groups[k].size();
 
       /// Get horizontal direction ///
       std::vector<int> idx;
       double totlength = 0.0;
       cv::Point2f horiz(0.0,0.0);
-      for ( auto it = line_groups[k].begin(); it != line_groups[k].end(); it++ ) {
+      for ( auto it = elem_groups[k].begin(); it != elem_groups[k].end(); it++ ) {
         idx.push_back(*it);
         totlength += length[*it];
         cv::Point2f tmp = baseline[*it][1]-baseline[*it][0];
@@ -4186,48 +4212,49 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
       }
       horiz *= 1.0/totlength;
 
-      /// Check that high horizontal overlaps within group ///
+      /// Check if there is high horizontal overlaps within group ///
       std::vector<std::vector<double> > blines;
       for ( int j=0; j<(int)idx.size(); j++ )
         blines.push_back( project_2d_to_1d(baseline[idx[j]],horiz) );
 
+      // @todo Recurse if x-axis iou too low?
       bool recurse = false;
-      for ( int j=0; j<(int)blines.size(); j++ )
-        for ( int i=j+1; i<(int)blines.size(); i++ ) {
-          double iou = IoU_1d(blines[j][0],blines[j][1],blines[i][0],blines[i][1]);
-          if ( iou > max_horiz_iou ) {
-            recurse = true;
-            goto afterRecourseLoop;
+      if ( recurse_factor )
+        for ( int j=0; j<(int)blines.size(); j++ )
+          for ( int i=j+1; i<(int)blines.size(); i++ ) {
+            double iou = IoU_1d(blines[j][0],blines[j][1],blines[i][0],blines[i][1]);
+            if ( iou > max_horiz_iou ) {
+              recurse = true;
+              goto afterRecourseLoop;
+            }
           }
-        }
       afterRecourseLoop:
 
       /// If high overlap recurse with stricter criterion ///
-      double recurse_factor = 0.9;
       if ( recurse ) {
-        std::vector<xmlNodePtr> recurse_lines;
+        std::vector<xmlNodePtr> recurse_elems;
         std::vector<std::vector<int> > recurse_group_order;
         std::vector<double> recurse_group_score;
 
         for ( int j=0; j<(int)idx.size(); j++ )
-          recurse_lines.push_back(lines[idx[j]]);
+          recurse_elems.push_back(elems[idx[j]]);
 
-        testTextLineContinuation( recurse_lines, recurse_group_order, recurse_group_score, max_angle_diff*recurse_factor, max_horiz_iou*recurse_factor, min_prolong_fact/recurse_factor, prolong_alpha, fake_baseline );
+        getLeftRightTextContinuationGroups( recurse_elems, recurse_group_order, recurse_group_score, max_angle_diff*recurse_factor, max_horiz_iou*recurse_factor, min_prolong_fact/recurse_factor, prolong_alpha, fake_baseline );
 
         if ( recurse_group_order.size() == 0 ) {
-          line_groups.erase(line_groups.begin()+k);
-          line_group_order.erase(line_group_order.begin()+k);
-          line_group_scores.erase(line_group_scores.begin()+k);
-          line_group_direct.erase(line_group_direct.begin()+k);
+          elem_groups.erase(elem_groups.begin()+k);
+          elem_group_order.erase(elem_group_order.begin()+k);
+          elem_group_scores.erase(elem_group_scores.begin()+k);
+          elem_group_direct.erase(elem_group_direct.begin()+k);
           k--;
         }
         else {
           for ( int j=0; j<(int)recurse_group_order.size(); j++ )
             for ( int i=0; i<(int)recurse_group_order[j].size(); i++ )
               recurse_group_order[j][i] = idx[recurse_group_order[j][i]];
-          line_group_order[k] = recurse_group_order[0];
-          line_group_scores[k].clear();
-          line_group_scores[k].push_back(recurse_group_score[0]);
+          elem_group_order[k] = recurse_group_order[0];
+          elem_group_scores[k].clear();
+          elem_group_scores[k].push_back(recurse_group_score[0]);
           for ( int j=1; j<(int)recurse_group_order.size(); j++ ) {
             extra_group_order.push_back(recurse_group_order[j]);
             extra_group_score.push_back(recurse_group_score[j]);
@@ -4243,8 +4270,8 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
         cent.push_back(0.5*(baseline[idx[j]][0]+baseline[idx[j]][1]));
       std::vector<double> hpos = project_2d_to_1d(cent,horiz);
 
-      /// Sort text lines by horizontal center projections ///
-      int flags = line_group_direct[k] == 1.0 ? CV_SORT_ASCENDING : CV_SORT_DESCENDING;
+      /// Sort text elems by horizontal center projections ///
+      int flags = elem_group_direct[k] == 1.0 ? CV_SORT_ASCENDING : CV_SORT_DESCENDING;
       std::vector<int> sidx(num_group);
       cv::sortIdx( hpos, sidx, flags );
       std::vector<int> group_order;
@@ -4253,99 +4280,117 @@ int PageXML::testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector
 
       /// Score as average of scores ///
       double score = 0.0;
-      for ( int j=0; j<(int)line_group_scores[k].size(); j++ )
-        score += line_group_scores[k][j];
+      for ( int j=0; j<(int)elem_group_scores[k].size(); j++ )
+        score += elem_group_scores[k][j];
       std::vector<double> group_scores;
-      group_scores.push_back(score/line_group_scores[k].size());
+      group_scores.push_back(score/elem_group_scores[k].size());
 
-      line_group_order[k] = group_order;
-      line_group_scores[k] = group_scores;
+      elem_group_order[k] = group_order;
+      elem_group_scores[k] = group_scores;
     }
 
-  std::vector<double> line_group_score;
-  for ( int k=0; k<(int)line_group_scores.size(); k++ )
-    line_group_score.push_back(line_group_scores[k][0]);
+  std::vector<double> elem_group_score;
+  for ( int k=0; k<(int)elem_group_scores.size(); k++ )
+    elem_group_score.push_back(elem_group_scores[k][0]);
 
+  /// Add recursed extra groups ///
   if ( extra_group_order.size() > 0 ) {
-    line_group_order.insert(line_group_order.end(), extra_group_order.begin(), extra_group_order.end());
-    line_group_score.insert(line_group_score.end(), extra_group_score.begin(), extra_group_score.end());
+    elem_group_order.insert(elem_group_order.end(), extra_group_order.begin(), extra_group_order.end());
+    elem_group_score.insert(elem_group_score.end(), extra_group_score.begin(), extra_group_score.end());
   }
 
-  _line_group_order = line_group_order;
-  _line_group_score = line_group_score;
+  /// Sort groups based on first element original order ///
+  std::vector<int> sval(elem_group_order.size());
+  std::vector<int> sidx(elem_group_order.size());
+  for ( int n=0; n<(int)elem_group_order.size(); n++ )
+    sval[n] = elem_group_order[n][0];
+  cv::sortIdx( sval, sidx, CV_SORT_ASCENDING );
+  std::vector<std::vector<int> > sorted_group_order;
+  std::vector<double> sorted_group_score;
+  for ( int n=0; n<(int)sidx.size(); n++ ) {
+    sorted_group_order.push_back( elem_group_order[sidx[n]] );
+    sorted_group_score.push_back( elem_group_score[sidx[n]] );
+  }
 
-  return (int)line_groups.size();
+  _group_order = sorted_group_order;
+  _group_score = sorted_group_score;
+
+  return (int)elem_group_order.size();
 }
 
 /**
- * Gets the reading order for a set of text lines (requires single segment polystripe).
+ * Gets the reading order for a set of text elems (requires single segment polystripe).
  *
- * @param lines                 TextLine elements to process.
+ * @param elems                 Elements to process: TextLines, Words, Glyphs or TextRegions.
  * @param max_angle_diff        Maximum baseline angle difference for joining.
  * @param max_horiz_iou         Maximum horizontal IoU for joining.
  * @param min_prolong_fact      Minimum prolongation factor for joining.
- * @return                      Reading order indices.
+ * @param prolong_alpha         Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
+ * @param fake_baseline         Use bottom line of Coords rectangle as the baseline.
+ * @param recurse_factor        Multiplication factor for continuation criteria on each recursion.
+ * @return                      Pair of reading order indices and subgroup lengths.
  */
-std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline ) {
+std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline, double recurse_factor ) {
   std::vector<int> reading_order;
-  if ( lines.size() == 0 )
-    return reading_order;
+  std::vector<int> subgroup_lengths;
+  if ( elems.size() == 0 )
+    return std::pair<std::vector<int>, std::vector<int> >(reading_order, subgroup_lengths);
 
-  /// Get text line join groups ///
-  std::vector<std::vector<int> > line_groups;
+  /// Get text elem join groups ///
+  std::vector<std::vector<int> > elem_groups;
   std::vector<double> join_group_score;
-  int num_joins = testTextLineContinuation( lines, line_groups, join_group_score, max_angle_diff, max_horiz_iou, min_prolong_fact, prolong_alpha, fake_baseline );
+  int num_joins = getLeftRightTextContinuationGroups( elems, elem_groups, join_group_score, max_angle_diff, max_horiz_iou, min_prolong_fact, prolong_alpha, fake_baseline, recurse_factor );
 
   /// Get points and compute baseline angles and lengths ///
   std::vector<std::vector<cv::Point2f> > baseline;
   std::vector<double> length;
-  for ( int n=0; n<(int)lines.size(); n++ ) {
+  for ( int n=0; n<(int)elems.size(); n++ ) {
     if ( fake_baseline ) {
-      std::vector<cv::Point2f> coords = getPoints(lines[n]);
+      std::vector<cv::Point2f> coords = getPoints(elems[n]);
       std::vector<cv::Point2f> baseline_n;
       baseline_n.push_back(coords[3]);
       baseline_n.push_back(coords[2]);
       baseline.push_back(baseline_n);
     }
     else
-      baseline.push_back( getPoints(lines[n],"_:Baseline") );
+      baseline.push_back( getPoints(elems[n],"_:Baseline") );
     length.push_back( getBaselineLength(baseline[n]) );
   }
 
   /// Get horizontal direction ///
   double totlength = 0.0;
   cv::Point2f horiz(0.0,0.0);
-  for ( int n=0; n<(int)lines.size(); n++ ) {
+  for ( int n=0; n<(int)elems.size(); n++ ) {
     totlength += length[n];
     cv::Point2f tmp = baseline[n][1]-baseline[n][0];
     horiz += (length[n]/cv::norm(tmp))*tmp;
   }
   horiz *= 1.0/totlength;
 
-  /// Add text lines not in join groups ///
-  for ( int n=0; n<(int)lines.size(); n++ ) {
+  /// Add text elems not in join groups ///
+  for ( int n=0; n<(int)elems.size(); n++ ) {
     bool in_join_group = false;
     for ( int i=0; i<num_joins; i++ )
-      for ( int j=0; j<(int)line_groups[i].size(); j++ )
-        if ( n == line_groups[i][j] ) {
+      for ( int j=0; j<(int)elem_groups[i].size(); j++ )
+        if ( n == elem_groups[i][j] ) {
           in_join_group = true;
           i = num_joins;
           break;
         }
     if ( ! in_join_group ) {
-      std::vector<int> new_line;
-      new_line.push_back(n);
-      line_groups.push_back(new_line);
+      std::vector<int> new_elem;
+      new_elem.push_back(n);
+      elem_groups.push_back(new_elem);
     }
   }
 
   /// Get vertical group center projections ///
   std::vector<cv::Point2f> cent;
-  for ( int i=0; i<(int)line_groups.size(); i++ ) {
+  for ( int i=0; i<(int)elem_groups.size(); i++ ) {
     double totlength = 0.0;
     cv::Point2f gcent(0.0,0.0);
-    for ( int j=0; j<(int)line_groups[i].size(); j++ ) {
-      int n = line_groups[i][j];
+    for ( int j=0; j<(int)elem_groups[i].size(); j++ ) {
+      int n = elem_groups[i][j];
       totlength += length[n];
       gcent += length[n]*0.5*(baseline[n][0]+baseline[n][1]);
     }
@@ -4362,11 +4407,15 @@ std::vector<int> PageXML::getTextLinesReadingOrder( std::vector<xmlNodePt> lines
   /// Populate reading order vector ///
   for ( int ii=0; ii<(int)sidx.size(); ii++ ) {
     int i = sidx[ii];
-    for ( int j=0; j<(int)line_groups[i].size(); j++ )
-      reading_order.push_back(line_groups[i][j]);
+    subgroup_lengths.push_back((int)elem_groups[i].size());
+    for ( int j=0; j<(int)elem_groups[i].size(); j++ )
+      reading_order.push_back(elem_groups[i][j]);
   }
 
-  return reading_order;
+  if( reading_order.size() != elems.size() )
+    throw_runtime_error( "PageXML.getLeftRightTopBottomReadingOrder: implementation bug, obtained reading order size different to number of input elements: %d vs. %d", (int)reading_order.size(), (int)elems.size() );
+
+  return std::pair<std::vector<int>, std::vector<int> >(reading_order, subgroup_lengths);
 }
 
 /**

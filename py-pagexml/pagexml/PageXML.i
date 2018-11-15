@@ -1,11 +1,13 @@
 %module pagexml
 
-%feature("autodoc", "2");
+//%feature("autodoc", "2");
+%include "PageXML_doxy2swig.i"
 
 %include "cpointer.i"
 %include "typemaps.i"
 %include "std_vector.i"
 %include "std_string.i"
+%include "std_pair.i"
 %include "exception.i"
 
 %include "opencv.i"
@@ -42,6 +44,7 @@
 %template(cvSize2iVector) std::vector<cv::Size2i>;
 %template(xmlNodePtrVector) std::vector<xmlNode*>;
 %template(NamedImageVector) std::vector<NamedImage>;
+%template() std::pair<std::vector<int>, std::vector<int> >;
 
 %include "PageXML.h"
 //%include "TextFeatExtractor.h"

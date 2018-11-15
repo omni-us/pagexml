@@ -1,4 +1,4 @@
-pagexml API (version 2018.11.11)
+pagexml API (version 2018.11.15)
 ********************************
 
 
@@ -97,8 +97,6 @@ class pagexml.DataType_bool
 
    Bases: "object"
 
-   Proxy of C++ cv::DataType<(bool)> class.
-
    channels = 1
 
    fmt = 'u'
@@ -112,8 +110,6 @@ class pagexml.DataType_bool
 class pagexml.DataType_char
 
    Bases: "object"
-
-   Proxy of C++ cv::DataType<(char)> class.
 
    channels = 1
 
@@ -129,8 +125,6 @@ class pagexml.DataType_double
 
    Bases: "object"
 
-   Proxy of C++ cv::DataType<(double)> class.
-
    channels = 1
 
    fmt = 'd'
@@ -144,8 +138,6 @@ class pagexml.DataType_double
 class pagexml.DataType_float
 
    Bases: "object"
-
-   Proxy of C++ cv::DataType<(float)> class.
 
    channels = 1
 
@@ -161,8 +153,6 @@ class pagexml.DataType_int
 
    Bases: "object"
 
-   Proxy of C++ cv::DataType<(int)> class.
-
    channels = 1
 
    fmt = 'i'
@@ -176,8 +166,6 @@ class pagexml.DataType_int
 class pagexml.DataType_schar
 
    Bases: "object"
-
-   Proxy of C++ cv::DataType<(schar)> class.
 
    channels = 1
 
@@ -193,8 +181,6 @@ class pagexml.DataType_short
 
    Bases: "object"
 
-   Proxy of C++ cv::DataType<(short)> class.
-
    channels = 1
 
    fmt = 's'
@@ -208,8 +194,6 @@ class pagexml.DataType_short
 class pagexml.DataType_uchar
 
    Bases: "object"
-
-   Proxy of C++ cv::DataType<(uchar)> class.
 
    channels = 1
 
@@ -225,8 +209,6 @@ class pagexml.DataType_ushort
 
    Bases: "object"
 
-   Proxy of C++ cv::DataType<(ushort)> class.
-
    channels = 1
 
    fmt = 'w'
@@ -240,8 +222,6 @@ class pagexml.DataType_ushort
 class pagexml.Mat(*args)
 
    Bases: "object"
-
-   Proxy of C++ cv::Mat class.
 
    AUTO_STEP = 0
 
@@ -257,267 +237,91 @@ class pagexml.Mat(*args)
 
    TYPE_MASK = 4095
 
-   addref(self)
+   addref()
 
-      self: cv::Mat *
+   adjustROI(dtop, dbottom, dleft, dright)
 
-   adjustROI(self, dtop, dbottom, dleft, dright) -> Mat
+   assignTo(m, type=-1)
 
-      dtop: int dbottom: int dleft: int dright: int
+   channels()
 
-   assignTo(self, m, type=-1)
+   checkVector(elemChannels, depth=-1, requireContinuous=True)
 
-      m: cv::Mat & type: int
+   clone()
 
-      assignTo(self, m)
+   col(x)
 
-      m: cv::Mat &
-
-   channels(self) -> int
-
-      self: cv::Mat const *
-
-   checkVector(self, elemChannels, depth=-1, requireContinuous=True) -> int
-
-      elemChannels: int depth: int requireContinuous: bool
-
-      checkVector(self, elemChannels, depth=-1) -> int
-
-      elemChannels: int depth: int
-
-      checkVector(self, elemChannels) -> int
-
-      elemChannels: int
-
-   clone(self) -> Mat
-
-      self: cv::Mat const *
-
-   col(self, x) -> Mat
-
-      x: int
-
-   colRange(self, startcol, endcol) -> Mat
-
-      startcol: int endcol: int
-
-      colRange(self, r) -> Mat
-
-      r: cv::Range const &
+   colRange(*args)
 
    cols
 
-      Mat_cols_get(self) -> int
+   copySize(m)
 
-      self: cv::Mat *
-
-   copySize(self, m)
-
-      m: cv::Mat const &
-
-   create(self, rows, cols, type)
-
-      rows: int cols: int type: int
-
-      create(self, size, type)
-
-      size: cv::Size type: int
-
-      create(self, ndims, sizes, type)
-
-      ndims: int sizes: int const * type: int
+   create(*args)
 
    data
 
-      Mat_data_get(self) -> uchar *
-
-      self: cv::Mat *
-
    dataend
-
-      Mat_dataend_get(self) -> uchar const *
-
-      self: cv::Mat *
 
    datalimit
 
-      Mat_datalimit_get(self) -> uchar const *
-
-      self: cv::Mat *
-
    datastart
 
-      Mat_datastart_get(self) -> uchar const *
+   deallocate()
 
-      self: cv::Mat *
+   depth()
 
-   deallocate(self)
-
-      self: cv::Mat *
-
-   depth(self) -> int
-
-      self: cv::Mat const *
-
-   diag(self, d=0) -> Mat
-
-      d: int
-
-      diag(self) -> Mat
-
-      self: cv::Mat const *
+   diag(d=0)
 
    dims
 
-      Mat_dims_get(self) -> int
+   elemSize()
 
-      self: cv::Mat *
+   elemSize1()
 
-   elemSize(self) -> size_t
-
-      self: cv::Mat const *
-
-   elemSize1(self) -> size_t
-
-      self: cv::Mat const *
-
-   empty(self) -> bool
-
-      self: cv::Mat const *
+   empty()
 
    flags
 
-      Mat_flags_get(self) -> int
-
-      self: cv::Mat *
-
    classmethod from_array(array)
 
-   isContinuous(self) -> bool
+   isContinuous()
 
-      self: cv::Mat const *
+   isSubmatrix()
 
-   isSubmatrix(self) -> bool
+   locateROI(wholeSize, ofs)
 
-      self: cv::Mat const *
+   pop_back(nelems=1)
 
-   locateROI(self, wholeSize, ofs)
+   ptr(*args)
 
-      wholeSize: cv::Size & ofs: cv::Point &
+   push_back(m)
 
-   pop_back(self, nelems=1)
+   push_back_(elem)
 
-      nelems: size_t
+   release()
 
-      pop_back(self)
+   reserve(sz)
 
-      self: cv::Mat *
+   reshape(*args)
 
-   ptr(self, i0=0) -> uchar
+   resize(*args)
 
-      i0: int
+   row(y)
 
-      ptr(self) -> uchar ptr(self, i0=0) -> uchar const
-
-      i0: int
-
-      ptr(self) -> uchar const ptr(self, i0, i1) -> uchar
-
-      i0: int i1: int
-
-      ptr(self, i0, i1) -> uchar const
-
-      i0: int i1: int
-
-      ptr(self, i0, i1, i2) -> uchar
-
-      i0: int i1: int i2: int
-
-      ptr(self, i0, i1, i2) -> uchar const
-
-      i0: int i1: int i2: int
-
-      ptr(self, idx) -> uchar
-
-      idx: int const *
-
-      ptr(self, idx) -> uchar const *
-
-      idx: int const *
-
-   push_back(self, m)
-
-      m: cv::Mat const &
-
-   push_back_(self, elem)
-
-      elem: void const *
-
-   release(self)
-
-      self: cv::Mat *
-
-   reserve(self, sz)
-
-      sz: size_t
-
-   reshape(self, cn, rows=0) -> Mat
-
-      cn: int rows: int
-
-      reshape(self, cn) -> Mat
-
-      cn: int
-
-      reshape(self, cn, newndims, newsz) -> Mat
-
-      cn: int newndims: int newsz: int const *
-
-   resize(self, sz)
-
-      sz: size_t
-
-      resize(self, sz, s)
-
-      sz: size_t s: cv::Scalar const &
-
-   row(self, y) -> Mat
-
-      y: int
-
-   rowRange(self, startrow, endrow) -> Mat
-
-      startrow: int endrow: int
-
-      rowRange(self, r) -> Mat
-
-      r: cv::Range const &
+   rowRange(*args)
 
    rows
 
-      Mat_rows_get(self) -> int
-
-      self: cv::Mat *
-
-   step1(self, i=0) -> size_t
-
-      i: int
-
-      step1(self) -> size_t
-
-      self: cv::Mat const *
+   step1(i=0)
 
    thisown
 
       The membership flag
 
-   total(self) -> size_t
+   total()
 
-      self: cv::Mat const *
-
-   type(self) -> int
-
-      self: cv::Mat const *
+   type()
 
 pagexml.Mat1b
 
@@ -707,8 +511,6 @@ class pagexml.Matx_AddOp
 
    Bases: "object"
 
-   Proxy of C++ cv::Matx_AddOp class.
-
    thisown
 
       The membership flag
@@ -716,8 +518,6 @@ class pagexml.Matx_AddOp
 class pagexml.Matx_DivOp
 
    Bases: "object"
-
-   Proxy of C++ cv::Matx_DivOp class.
 
    thisown
 
@@ -727,8 +527,6 @@ class pagexml.Matx_MatMulOp
 
    Bases: "object"
 
-   Proxy of C++ cv::Matx_MatMulOp class.
-
    thisown
 
       The membership flag
@@ -736,8 +534,6 @@ class pagexml.Matx_MatMulOp
 class pagexml.Matx_MulOp
 
    Bases: "object"
-
-   Proxy of C++ cv::Matx_MulOp class.
 
    thisown
 
@@ -747,8 +543,6 @@ class pagexml.Matx_ScaleOp
 
    Bases: "object"
 
-   Proxy of C++ cv::Matx_ScaleOp class.
-
    thisown
 
       The membership flag
@@ -756,8 +550,6 @@ class pagexml.Matx_ScaleOp
 class pagexml.Matx_SubOp
 
    Bases: "object"
-
-   Proxy of C++ cv::Matx_SubOp class.
 
    thisown
 
@@ -767,8 +559,6 @@ class pagexml.Matx_TOp
 
    Bases: "object"
 
-   Proxy of C++ cv::Matx_TOp class.
-
    thisown
 
       The membership flag
@@ -777,43 +567,19 @@ class pagexml.NamedImage(*args)
 
    Bases: "object"
 
-   Proxy of C++ NamedImage class.
+   C++ includes: PageXML.h
 
    direction
 
-      NamedImage_direction_get(self) -> int
-
-      self: NamedImage *
-
    id
-
-      NamedImage_id_get(self) -> std::string const &
-
-      self: NamedImage *
 
    image
 
-      NamedImage_image_get(self) -> Mat
-
-      self: NamedImage *
-
    name
-
-      NamedImage_name_get(self) -> std::string const &
-
-      self: NamedImage *
 
    node
 
-      NamedImage_node_get(self) -> xmlNode *
-
-      self: NamedImage *
-
    rotation
-
-      NamedImage_rotation_get(self) -> float
-
-      self: NamedImage *
 
    thisown
 
@@ -821,127 +587,55 @@ class pagexml.NamedImage(*args)
 
    x
 
-      NamedImage_x_get(self) -> int
-
-      self: NamedImage *
-
    y
-
-      NamedImage_y_get(self) -> int
-
-      self: NamedImage *
 
 class pagexml.NamedImageVector(*args)
 
    Bases: "object"
 
-   Proxy of C++ std::vector<(NamedImage)> class.
+   append(x)
 
-   append(self, x)
+   assign(n, x)
 
-      x: std::vector< NamedImage >::value_type const &
+   back()
 
-   assign(self, n, x)
+   begin()
 
-      n: std::vector< NamedImage >::size_type x: std::vector<
-      NamedImage >::value_type const &
+   capacity()
 
-   back(self) -> NamedImage
+   clear()
 
-      self: std::vector< NamedImage > const *
+   empty()
 
-   begin(self) -> std::vector< NamedImage >::iterator
+   end()
 
-      self: std::vector< NamedImage > *
+   erase(*args)
 
-   capacity(self) -> std::vector< NamedImage >::size_type
+   front()
 
-      self: std::vector< NamedImage > const *
+   get_allocator()
 
-   clear(self)
+   insert(*args)
 
-      self: std::vector< NamedImage > *
+   iterator()
 
-   empty(self) -> bool
+   pop()
 
-      self: std::vector< NamedImage > const *
+   pop_back()
 
-   end(self) -> std::vector< NamedImage >::iterator
+   push_back(x)
 
-      self: std::vector< NamedImage > *
+   rbegin()
 
-   erase(self, pos) -> std::vector< NamedImage >::iterator
+   rend()
 
-      pos: std::vector< NamedImage >::iterator
+   reserve(n)
 
-      erase(self, first, last) -> std::vector< NamedImage >::iterator
+   resize(*args)
 
-      first: std::vector< NamedImage >::iterator last: std::vector<
-      NamedImage >::iterator
+   size()
 
-   front(self) -> NamedImage
-
-      self: std::vector< NamedImage > const *
-
-   get_allocator(self) -> std::vector< NamedImage >::allocator_type
-
-      self: std::vector< NamedImage > const *
-
-   insert(self, pos, x) -> std::vector< NamedImage >::iterator
-
-      pos: std::vector< NamedImage >::iterator x: std::vector<
-      NamedImage >::value_type const &
-
-      insert(self, pos, n, x)
-
-      pos: std::vector< NamedImage >::iterator n: std::vector<
-      NamedImage >::size_type x: std::vector< NamedImage >::value_type
-      const &
-
-   iterator(self) -> SwigPyIterator
-
-      self: std::vector< NamedImage > *
-
-   pop(self) -> NamedImage
-
-      self: std::vector< NamedImage > *
-
-   pop_back(self)
-
-      self: std::vector< NamedImage > *
-
-   push_back(self, x)
-
-      x: std::vector< NamedImage >::value_type const &
-
-   rbegin(self) -> std::vector< NamedImage >::reverse_iterator
-
-      self: std::vector< NamedImage > *
-
-   rend(self) -> std::vector< NamedImage >::reverse_iterator
-
-      self: std::vector< NamedImage > *
-
-   reserve(self, n)
-
-      n: std::vector< NamedImage >::size_type
-
-   resize(self, new_size)
-
-      new_size: std::vector< NamedImage >::size_type
-
-      resize(self, new_size, x)
-
-      new_size: std::vector< NamedImage >::size_type x: std::vector<
-      NamedImage >::value_type const &
-
-   size(self) -> std::vector< NamedImage >::size_type
-
-      self: std::vector< NamedImage > const *
-
-   swap(self, v)
-
-      v: std::vector< NamedImage > &
+   swap(v)
 
    thisown
 
@@ -951,14 +645,9 @@ class pagexml.OGRMultiLineString_(*args)
 
    Bases: "object"
 
-   Proxy of C++ >>OGRMultiLineString_<< class.
+   C++ includes: PageXML.h
 
    multipolyline
-
-      OGRMultiLineString__multipolyline_get(self) ->
-      OGRMultiLineString *
-
-      self: >>OGRMultiLineString_<< *
 
    thisown
 
@@ -968,13 +657,9 @@ class pagexml.OGRMultiPolygon_(*args)
 
    Bases: "object"
 
-   Proxy of C++ >>OGRMultiPolygon_<< class.
+   C++ includes: PageXML.h
 
    multipolygon
-
-      OGRMultiPolygon__multipolygon_get(self) -> OGRMultiPolygon *
-
-      self: >>OGRMultiPolygon_<< *
 
    thisown
 
@@ -984,1276 +669,1221 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    Bases: "object"
 
-   Proxy of C++ PageXML class.
+   C++ includes: PageXML.h
 
-   addElem(self, name, id, node, itype=PAGEXML_INSERT_APPEND, checkid=False) -> xmlNode
+   addElem(*args)
 
-      name: char const * id: char const * node: xmlNode const * itype:
-      enum PAGEXML_INSERT checkid: bool
+   addGlyph(*args)
 
-      addElem(self, name, id, node, itype=PAGEXML_INSERT_APPEND) ->
-      xmlNode
+      Adds a Glyph to a given xpath.
 
-      name: char const * id: char const * node: xmlNode const * itype:
-      enum PAGEXML_INSERT
+      * *xpath* :
 
-      addElem(self, name, id, node) -> xmlNode
+           Selector for element to set the Glyph.
 
-      name: char const * id: char const * node: xmlNode const *
+      * *id* :
 
-      addElem(self, name, id, xpath, itype=PAGEXML_INSERT_APPEND,
-      checkid=False) -> xmlNode
+           ID for Glyph, if NULL it is selected automatically.
 
-      name: char const * id: char const * xpath: char const * itype:
-      enum PAGEXML_INSERT checkid: bool
+      * *before_id* :
 
-      addElem(self, name, id, xpath, itype=PAGEXML_INSERT_APPEND) ->
-      xmlNode
+           If !=NULL inserts it before the Glyph with this ID.
 
-      name: char const * id: char const * xpath: char const * itype:
-      enum PAGEXML_INSERT
+      Pointer to created element.
 
-      addElem(self, name, id, xpath) -> xmlNode
+   addPage(*args)
 
-      name: char const * id: char const * xpath: char const *
+      Adds a Page to the PcGts node.
 
-      addElem(self, name, id, xpath, itype=PAGEXML_INSERT_APPEND,
-      checkid=False) -> xmlNode
+      * *image* :
 
-      name: std::string const id: std::string const xpath: std::string
-      const itype: enum PAGEXML_INSERT checkid: bool
+           Path to the image file.
 
-      addElem(self, name, id, xpath, itype=PAGEXML_INSERT_APPEND) ->
-      xmlNode
+      * *imgW* :
 
-      name: std::string const id: std::string const xpath: std::string
-      const itype: enum PAGEXML_INSERT
+           Width of image.
 
-      addElem(self, name, id, xpath) -> xmlNode *
+      * *imgH* :
 
-      name: std::string const id: std::string const xpath: std::string
-      const
+           Height of image.
 
-   addGlyph(self, node, id=None, before_id=None) -> xmlNode
+      * *id* :
 
-      node: xmlNode * id: char const * before_id: char const *
+           ID for Page, if NULL it is left unset.
 
-      addGlyph(self, node, id=None) -> xmlNode
+      * *before_node* :
 
-      node: xmlNode * id: char const *
+           If !=NULL inserts it before the provided Page node.
 
-      addGlyph(self, node) -> xmlNode
+      Pointer to created element.
 
-      node: xmlNode *
+   addTextLine(*args)
 
-      addGlyph(self, xpath, id=None, before_id=None) -> xmlNode
+      Adds a TextLine to a given xpath.
 
-      xpath: char const * id: char const * before_id: char const *
+      * *xpath* :
 
-      addGlyph(self, xpath, id=None) -> xmlNode
+           Selector for element to add the TextLine.
 
-      xpath: char const * id: char const *
+      * *id* :
 
-      addGlyph(self, xpath) -> xmlNode *
+           ID for TextLine, if NULL it is selected automatically.
 
-      xpath: char const *
+      * *before_id* :
 
-   addPage(self, image, imgW, imgH, id=None, before_node=None) -> xmlNode
+           If !=NULL inserts it before the TextLine with this ID.
 
-      image: char const * imgW: int const imgH: int const id: char
-      const * before_node: xmlNode *
+      Pointer to created element.
 
-      addPage(self, image, imgW, imgH, id=None) -> xmlNode
+   addTextRegion(*args)
 
-      image: char const * imgW: int const imgH: int const id: char
-      const *
+      Adds new TextRegion to a given xpath.
 
-      addPage(self, image, imgW, imgH) -> xmlNode
+      * *xpath* :
 
-      image: char const * imgW: int const imgH: int const
+           Selector for element to add the TextRegion.
 
-      addPage(self, image, imgW, imgH, id=None, before_node=None) ->
-      xmlNode
+      * *id* :
 
-      image: std::string imgW: int const imgH: int const id: char
-      const * before_node: xmlNode *
+           ID for TextRegion, if NULL it is selected automatically.
 
-      addPage(self, image, imgW, imgH, id=None) -> xmlNode
+      * *before_id* :
 
-      image: std::string imgW: int const imgH: int const id: char
-      const *
+           If !=NULL inserts it before the TextRegion with this ID.
 
-      addPage(self, image, imgW, imgH) -> xmlNode *
+      Pointer to created element.
 
-      image: std::string imgW: int const imgH: int const
+   addWord(*args)
 
-   addTextLine(self, node, id=None, before_id=None) -> xmlNode
+      Adds a Word to a given xpath.
 
-      node: xmlNode * id: char const * before_id: char const *
+      * *xpath* :
 
-      addTextLine(self, node, id=None) -> xmlNode
+           Selector for element to set the Word.
 
-      node: xmlNode * id: char const *
+      * *id* :
 
-      addTextLine(self, node) -> xmlNode
+           ID for Word, if NULL it is selected automatically.
 
-      node: xmlNode *
+      * *before_id* :
 
-      addTextLine(self, xpath, id=None, before_id=None) -> xmlNode
+           If !=NULL inserts it before the Word with this ID.
 
-      xpath: char const * id: char const * before_id: char const *
+      Pointer to created element.
 
-      addTextLine(self, xpath, id=None) -> xmlNode
+   areIDsUnique()
 
-      xpath: char const * id: char const *
+      Verifies that all IDs in page are unique.
 
-      addTextLine(self, xpath) -> xmlNode *
+   closest(name, node)
 
-      xpath: char const *
+      Selects closest node of a given name.
 
-   addTextRegion(self, node, id=None, before_id=None, prepend=False) -> xmlNode
+   computeAreas(polys)
 
-      node: xmlNode * id: char const * before_id: char const *
-      prepend: bool
+      Computes the areas for given polygons.
 
-      addTextRegion(self, node, id=None, before_id=None) -> xmlNode
+      * *polys* :
 
-      node: xmlNode * id: char const * before_id: char const *
+           Polygons to process.
 
-      addTextRegion(self, node, id=None) -> xmlNode
+      The polygon areas.
 
-      node: xmlNode * id: char const *
+   computeBaselineIntersectionsWeightedByArea(poly, polys, areas)
 
-      addTextRegion(self, node) -> xmlNode
+      Computes line-polygon intersections weighted by area.
 
-      node: xmlNode *
+      * *poly* :
 
-      addTextRegion(self, xpath, id=None, before_id=None,
-      prepend=False) -> xmlNode
+           Polyline.
 
-      xpath: char const * id: char const * before_id: char const *
-      prepend: bool
+      * *polys* :
 
-      addTextRegion(self, xpath, id=None, before_id=None) -> xmlNode
+           Polygons to compare with.
 
-      xpath: char const * id: char const * before_id: char const *
+      * *areas* :
 
-      addTextRegion(self, xpath, id=None) -> xmlNode
+           Polygons areas.
 
-      xpath: char const * id: char const *
+      Obtained intersection scores.
 
-      addTextRegion(self, xpath) -> xmlNode *
+      Check input ///
 
-      xpath: char const *
+      Compute intersections ///
 
-   addWord(self, node, id=None, before_id=None) -> xmlNode
+      Return if fewer than 2 intersects ///
 
-      node: xmlNode * id: char const * before_id: char const *
+      Weight by areas ///
 
-      addWord(self, node, id=None) -> xmlNode
+   computeCoordsIntersectionsWeightedByArea(poly, polys, areas)
 
-      node: xmlNode * id: char const *
+      Computes polygon-polygon intersections weighted by area.
 
-      addWord(self, node) -> xmlNode
+      * *poly* :
 
-      node: xmlNode *
+           Polygon.
 
-      addWord(self, xpath, id=None, before_id=None) -> xmlNode
+      * *polys* :
 
-      xpath: char const * id: char const * before_id: char const *
+           Polygons to compare with.
 
-      addWord(self, xpath, id=None) -> xmlNode
+      * *areas* :
 
-      xpath: char const * id: char const *
+           Polygons areas.
 
-      addWord(self, xpath) -> xmlNode *
+      Obtained intersection scores.
 
-      xpath: char const *
+      Check input ///
 
-   areIDsUnique(self) -> bool
+      Compute intersections ///
 
-      self: PageXML *
+      Return if fewer than 2 intersects ///
 
-   closest(self, name, node) -> xmlNode *
+      Weight by areas ///
 
-      name: char const * node: xmlNode *
+   computeIntersectFactor(*args)
 
-   computeAreas(self, polys) -> _doubleArray
+      Computes the intersection factor of one polyline over polygon.
 
-      polys: std::vector< >>OGRMultiPolygonPtr_<<,std::allocator<
-      >>OGRMultiPolygonPtr_<< > >
+      * *poly1* :
 
-   computeBaselineIntersectionsWeightedByArea(self, poly, polys, areas) -> _doubleArray
+           Polyline.
 
-      poly: >>OGRMultiLineStringPtr_<< polys: std::vector<
-      >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
-      > > areas: std::vector< double,std::allocator< double > >
+      * *poly2* :
 
-   computeCoordsIntersectionsWeightedByArea(self, poly, polys, areas) -> _doubleArray
+           Polygon.
 
-      poly: >>OGRMultiPolygonPtr_<< polys: std::vector<
-      >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
-      > > areas: std::vector< double,std::allocator< double > >
+      Factor value.
 
-   computeIntersectFactor(self, poly1, poly2) -> double
+   computeIntersectionPercentage(poly1, poly2)
 
-      poly1: >>OGRMultiPolygonPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+      Computes the intersection percentage of one polygon with respect
+      to another polygons.
 
-      computeIntersectFactor(self, poly1, poly2) -> double
+      * *poly1* :
 
-      poly1: >>OGRMultiLineStringPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+           First polygon.
 
-   computeIntersectionPercentage(self, poly1, poly2) -> double
+      * *poly2* :
 
-      poly1: >>OGRMultiPolygonPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+           Second polygon.
 
-   computeIntersectionPercentages(self, poly, polys) -> _doubleArray
+      Intersection percentage value.
 
-      poly: >>OGRMultiPolygonPtr_<< polys: std::vector<
-      >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
-      > >
+   computeIntersectionPercentages(poly, polys)
 
-   computeIoU(self, poly1, poly2) -> double
+      Computes the intersection percentage of one polygon with respect
+      to other polygons.
 
-      poly1: >>OGRMultiPolygonPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+      * *poly* :
 
-   computeIoUs(self, poly, polys) -> _doubleArray
+           Polygon.
 
-      poly: >>OGRMultiPolygonPtr_<< polys: std::vector<
-      >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
-      > >
+      * *polys* :
 
-   copyElem(self, elem, node, itype=PAGEXML_INSERT_APPEND) -> xmlNode
+           Vector of polygons.
 
-      elem: xmlNode * node: xmlNode const * itype: enum PAGEXML_INSERT
+      Intersection percentage values.
 
-      copyElem(self, elem, node) -> xmlNode *
+   computeIoU(poly1, poly2)
 
-      elem: xmlNode * node: xmlNode const *
+      Computes the intersection over union (IoU) of two polygons.
 
-   copyTextLinesAssignByOverlap(self, pageFrom, overlap_type=PAGEXML_OVERLAP_COORDS_IOU, overlap_fact=0.5) -> int
+      * *poly1* :
 
-      pageFrom: PageXML & overlap_type: enum PAGEXML_OVERLAP
-      overlap_fact: double
+           First polygon.
 
-      copyTextLinesAssignByOverlap(self, pageFrom,
-      overlap_type=PAGEXML_OVERLAP_COORDS_IOU) -> int
+      * *poly2* :
 
-      pageFrom: PageXML & overlap_type: enum PAGEXML_OVERLAP
+           Second polygon.
 
-      copyTextLinesAssignByOverlap(self, pageFrom) -> int
+      IoU value.
 
-      pageFrom: PageXML &
+   computeIoUs(poly, polys)
 
-   count(self, xpath, node=None) -> int
+      Computes the intersection over unions (IoU) of polygons.
 
-      xpath: char const * node: xmlNode *
+      * *poly* :
 
-      count(self, xpath) -> int
+           Polygon.
 
-      xpath: char const *
+      * *polys* :
 
-      count(self, xpath, node=None) -> int
+           Vector of polygons.
 
-      xpath: std::string node: xmlNode *
+      IoU values.
 
-      count(self, xpath) -> int
+   copyElem(elem, node, itype=0)
 
-      xpath: std::string
+      Clone an element and add it relative to a given node.
 
-   crop(self, xpath, margin=None, opaque_coords=True, transp_xpath=None, base_xpath=None) -> NamedImageVector
+      * *elem* :
 
-      xpath: char const * margin: cv::Point2f * opaque_coords: bool
-      transp_xpath: char const * base_xpath: char const *
+           Element to clone.
 
-      crop(self, xpath, margin=None, opaque_coords=True,
-      transp_xpath=None) -> NamedImageVector
+      * *node* :
 
-      xpath: char const * margin: cv::Point2f * opaque_coords: bool
-      transp_xpath: char const *
+           Reference element for insertion.
 
-      crop(self, xpath, margin=None, opaque_coords=True) ->
-      NamedImageVector
+      * *itype* :
 
-      xpath: char const * margin: cv::Point2f * opaque_coords: bool
+           Type of insertion.
 
-      crop(self, xpath, margin=None) -> NamedImageVector
+      Pointer to cloned element.
 
-      xpath: char const * margin: cv::Point2f *
+   copyTextLinesAssignByOverlap(pageFrom, overlap_type=0, overlap_fact=0.5)
 
-      crop(self, xpath) -> NamedImageVector
+      Copies TextLines from one page xml to another assigning to
+      regions based on overlap.
 
-      xpath: char const *
+      * *pageFrom* :
 
-   getAttr(self, node, name) -> std::string
+           PageXML from where to copy TextLines.
 
-      node: xmlNode const * name: char const *
+      * *overlap_type* :
 
-      getAttr(self, xpath, name) -> std::string
+           Type of overlap to use for assigning lines to regions.
 
-      xpath: char const * name: char const *
+      * *overlap_fact* :
 
-      getAttr(self, xpath, name) -> std::string
+           Overlapping factor.
 
-      xpath: std::string const name: std::string const
+      Number of TextLines copied.
 
-   getBaselineLength(self, points) -> double
+      Loop through pages ///
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+      Check that image size is the same in both PageXMLs ///
 
-   getBaselineOrientation(self, elem) -> double
+      Select page region or create one if it does not exist ///
 
-      elem: xmlNode *
+      Select relevant elements ///
 
-      getBaselineOrientation(self, points) -> double
+      Get polygons of regions for IoU computation ///
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+      Loop through lines ///
 
-   getDocPtr(self) -> xmlDocPtr
+      Compute overlap scores ///
 
-      self: PageXML *
+      Clone line and add it to the destination region node ///
 
-   getFpgram(self, node) -> cvPoint2fVector
+      Remove added page region if no TextLine was added to it ///
 
-      node: xmlNode const *
+   count(*args)
 
-   getImageBases(self) -> std::vector< std::string,std::allocator< std::string > >
+   crop(xpath, margin=None, opaque_coords=True, transp_xpath=None, base_xpath=None)
 
-      self: PageXML *
+      Crops images using its Coords polygon, regions outside the
+      polygon are set to transparent.
 
-   getNodeName(self, node, base_node=None) -> std::string
+      * *xpath* :
 
-      node: xmlNode * base_node: xmlNode *
+           Selector for polygons to crop.
 
-      getNodeName(self, node) -> std::string
+      * *margin* :
 
-      node: xmlNode *
+           Margins, if >1.0 pixels, otherwise percentage of maximum of
+           crop width and height.
 
-   getOGRpolygon(self, node, xpath) -> OGRMultiPolygonPtr_
+      * *opaque_coords* :
 
-      node: xmlNode const * xpath: char const *
+           Whether to include an alpha channel with the polygon
+           interior in opaque.
 
-      getOGRpolygon(self, node) -> >>OGRMultiPolygonPtr_<<
+      * *transp_xpath* :
 
-      node: xmlNode const *
+           Selector for semi-transparent elements.
 
-   getOGRpolygonArea(self, poly) -> double
+      An std::vector containing NamedImage objects of the cropped
+      images.
 
-      poly: >>OGRMultiPolygonPtr_<<
+      Get parent node id ///
 
-   getOGRpolygons(self, nodes, xpath) -> std::vector< OGRMultiPolygonPtr_,std::allocator< OGRMultiPolygonPtr_ > >
+      Construct sample name ///
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      xpath: char const *
+      Get coords points ///
 
-      getOGRpolygons(self, nodes) -> std::vector<
-      >>OGRMultiPolygonPtr_<<,std::allocator< >>OGRMultiPolygonPtr_<<
-      > >
+      Get crop window parameters ///
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      Add margin to bounding box ///
 
-   getOGRpolyline(self, node, xpath) -> OGRMultiLineStringPtr_
+      Crop image ///
 
-      node: xmlNode const * xpath: char const *
+      Subtract crop window offset and round points ///
 
-      getOGRpolyline(self, node) -> >>OGRMultiLineStringPtr_<<
+      Draw opaque polygon for Coords ///
 
-      node: xmlNode const *
+      Draw semi-transparent polygons according to xpath ///
 
-   getPageHeight(self, node) -> unsigned int
+      Add alpha channel to image ///
 
-      node: xmlNode *
+      Append crop and related data to list ///
 
-      getPageHeight(self, pagenum) -> unsigned int
+   getAttr(*args)
 
-      pagenum: int
+   getBaselineLength(points)
 
-   getPageImage(self, pagenum) -> Mat
+      Gets the baseline length.
 
-      pagenum: int
+      * *points* :
 
-      getPageImage(self, node) -> Mat
+           Baseline points.
 
-      node: xmlNode *
+      The orientation angle in radians, NaN if unset.
 
-   getPageImageFilename(self, node) -> std::string
+   getBaselineOrientation(*args)
 
-      node: xmlNode *
+      Gets the (average) baseline orientation angle in radians of a
+      given baseline.
 
-      getPageImageFilename(self, pagenum) -> std::string
+      * *points* :
 
-      pagenum: int
+           Baseline points.
 
-   getPageImageOrientation(self, node) -> int
+      The orientation angle in radians, NaN if unset.
 
-      node: xmlNode *
+   getDocPtr()
 
-      getPageImageOrientation(self, pagenum) -> int
+      Returns the XML document pointer.
 
-      pagenum: int
+   getFpgram(node)
 
-   getPageNumber(self, node) -> int
+      Retrieves the features parallelogram (Property[="fpgram"]/) for
+      a given node.
 
-      node: xmlNode *
+      * *node* :
 
-   getPageWidth(self, node) -> unsigned int
+           Base node.
 
-      node: xmlNode *
+      Reference to the points vector.
 
-      getPageWidth(self, pagenum) -> unsigned int
+   getImageBases()
 
-      pagenum: int
+      Gets image bases for all pages in xml.
 
-   getPagesSize(self, pages) -> cvSize2iVector
+      Vector of strings containing the image base names.
 
-      pages: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+   getLeftRightTextContinuationGroups(elems, _group_order, _group_score, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False, recurse_factor=0.9)
 
-      getPagesSize(self, xpath) -> cvSize2iVector
+   getLeftRightTopBottomReadingOrder(elems, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False, recurse_factor=0.9)
 
-      xpath: char const *
+   getNodeName(node, base_node=None)
 
-      getPagesSize(self) -> cvSize2iVector
+      Gets the name of the given node.
 
-      self: PageXML *
+      * *node* :
 
-   getPoints(self, node, xpath) -> cvPoint2fVector
+           XML node.
 
-      node: xmlNode const * xpath: char const *
+      String with the name.
 
-      getPoints(self, node) -> cvPoint2fVector
+   getOGRpolygon(*args)
 
-      node: xmlNode const *
+      Gets an element's Coords as an OGRMultiPolygon.
 
-      getPoints(self, nodes, xpath) -> std::vector< std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > >,std::allocator<
-      std::vector< cv::Point2f,std::allocator< cv::Point2f > > > >
+      * *node* :
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      const xpath: char const *
+           The element from which to extract the Coords points.
 
-      getPoints(self, nodes) -> std::vector< std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > >,std::allocator<
-      std::vector< cv::Point2f,std::allocator< cv::Point2f > > > >
+      * *xpath* :
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      const
+           Selector for the Coords element.
 
-   getPropertyValue(self, node, key) -> std::string
+      Pointer to OGRMultiPolygon element.
 
-      node: xmlNode * key: char const *
+   getOGRpolygonArea(poly)
 
-   getReadingDirection(self, elem) -> int
+      Gets the area of a OGRMultiPolygon.
 
-      elem: xmlNode const *
+      * *poly* :
 
-   getRotation(self, elem) -> double
+           OGRMultiPolygon pointer.
 
-      elem: xmlNode const *
+      Area.
 
-   getTextEquiv(self, node, xpath, separator) -> std::string
+   getOGRpolygons(*args)
 
-      node: xmlNode * xpath: char const * separator: char const *
+      Gets elements' Coords as OGRMultiPolygons.
 
-      getTextEquiv(self, node, xpath) -> std::string
+      * *nodes* :
 
-      node: xmlNode * xpath: char const *
+           Elements from which to extract the Coords points.
 
-      getTextEquiv(self, node) -> std::string
+      * *xpath* :
 
-      node: xmlNode *
+           Selector for the Coords element.
 
-   getTextLinesReadingOrder(self, lines, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False) -> _intArray
+      Vector of OGRMultiPolygon pointer elements.
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
-      double prolong_alpha: double fake_baseline: bool
+   getOGRpolyline(*args)
 
-      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
-      max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8) ->
-      _intArray
+      Gets the element's Baseline as an OGRMultiLineString.
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
-      double prolong_alpha: double
+      * *node* :
 
-      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
-      max_horiz_iou=0.1, min_prolong_fact=0.5) -> _intArray
+           The element from which to extract the Baseline points.
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      max_angle_diff: double max_horiz_iou: double min_prolong_fact:
-      double
+      Pointer to OGRMultiLineString element.
 
-      getTextLinesReadingOrder(self, lines, max_angle_diff=25,
-      max_horiz_iou=0.1) -> _intArray
+   getPageHeight(*args)
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      max_angle_diff: double max_horiz_iou: double
+   getPageImage(*args)
 
-      getTextLinesReadingOrder(self, lines, max_angle_diff=25) ->
-      _intArray
+   getPageImageFilename(*args)
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      max_angle_diff: double
+   getPageImageOrientation(*args)
 
-      getTextLinesReadingOrder(self, lines) -> _intArray
+   getPageNumber(node)
 
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      Gets the page number for the given node.
 
-   getUnionOGRpolygon(self, nodes, xpath) -> OGRMultiPolygonPtr_
+   getPageWidth(*args)
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      xpath: char const *
+   getPagesSize(*args)
 
-      getUnionOGRpolygon(self, nodes) -> >>OGRMultiPolygonPtr_<<
+   getPoints(*args)
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      Retrieves and parses the Coords/ for a given list of base nodes.
 
-   getValue(self, node) -> std::string
+      * *nodes* :
 
-      node: xmlNode *
+           Base nodes.
 
-      getValue(self, xpath, node=None) -> std::string
+      Reference to the points vector.
 
-      xpath: char const * node: xmlNode const *
+   getPropertyValue(node, key)
 
-      getValue(self, xpath) -> std::string
+      Retrieves a Property value.
 
-      xpath: char const *
+      * *node* :
 
-   getXheight(self, node) -> float
+           Node element.
 
-      node: xmlNode const *
+      String with the property value.
 
-      getXheight(self, id) -> float
+   getReadingDirection(elem)
 
-      id: char const *
+      Retrieves the reading direction for a given TextLine or
+      TextRegion node.
 
-   insertElem(self, elem, node, itype) -> xmlNode *
+      * *elem* :
 
-      elem: xmlNode * node: xmlNode const * itype: enum PAGEXML_INSERT
+           Node of the TextLine or TextRegion element.
 
-   intersection(self, line1_point1, line1_point2, line2_point1, line2_point2, _ipoint) -> bool
+      The reading direction, PAGEXML_READ_DIRECTION_LTR if unset.
 
-      line1_point1: cv::Point2f line1_point2: cv::Point2f
-      line2_point1: cv::Point2f line2_point2: cv::Point2f _ipoint:
-      cv::Point2f &
+      If TextLine try to get direction from custom attribute ///
 
-   static isBBox(points) -> bool
+      Otherwise try to get direction from readingDirection attribute
+      ///
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      const &
+   getRotation(elem)
 
-   isPolystripe(self, coords, baseline, height=None, offset=None) -> bool
+      Retrieves the rotation angle for a given TextLine or TextRegion
+      node.
 
-      coords: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      baseline: std::vector< cv::Point2f,std::allocator< cv::Point2f >
-      > height: double * offset: double *
+      * *elem* :
 
-      isPolystripe(self, coords, baseline, height=None) -> bool
+           Node of the TextLine or TextRegion element.
 
-      coords: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      baseline: std::vector< cv::Point2f,std::allocator< cv::Point2f >
-      > height: double *
+      The rotation angle in degrees, 0 if unset.
 
-      isPolystripe(self, coords, baseline) -> bool
+      If TextLine try to get rotation from custom attribute ///
 
-      coords: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      baseline: std::vector< cv::Point2f,std::allocator< cv::Point2f >
-      >
+      Otherwise try to get rotation from readingOrientation attribute
+      ///
 
-   isValid(self) -> bool
+   getTextEquiv(*args)
 
-      self: PageXML *
+      Retrieves the concatenated TextEquivs for a given root node and
+      xpath.
 
-   loadImage(self, pagenum, fname=None, resize_coords=False, density=0)
+      * *node* :
 
-      pagenum: int fname: char const * resize_coords: bool const
-      density: int
+           Root node element.
 
-      loadImage(self, pagenum, fname=None, resize_coords=False)
+      * *xpath* :
 
-      pagenum: int fname: char const * resize_coords: bool const
+           Relative xpath to select the TextEquiv elements.
 
-      loadImage(self, pagenum, fname=None)
+      * *separator* :
 
-      pagenum: int fname: char const *
+           String to add between TextEquivs.
 
-      loadImage(self, pagenum)
+      String with the concatenated TextEquivs.
 
-      pagenum: int
+   getUnionOGRpolygon(*args)
 
-      loadImage(self, node, fname=None, resize_coords=False,
-      density=0)
+      Gets the union of Coords elements as a OGRMultiPolygon.
 
-      node: xmlNode * fname: char const * resize_coords: bool const
-      density: int
+      * *nodes* :
 
-      loadImage(self, node, fname=None, resize_coords=False)
+           Elements from which to extract the Coords points.
 
-      node: xmlNode * fname: char const * resize_coords: bool const
+      * *xpath* :
 
-      loadImage(self, node, fname=None)
+           Selector for the Coords element.
 
-      node: xmlNode * fname: char const *
+      Pointer to OGRMultiPolygon element.
 
-      loadImage(self, node)
+   getValue(*args)
 
-      node: xmlNode *
+      Retrieves a node value.
 
-   loadImages(self, resize_coords, density)
+      * *xpath* :
 
-      resize_coords: bool const density: int const
+           Selector for the element to get the value.
 
-   loadSchema(self, schema_path)
+      * *node* :
 
-      schema_path: char const *
+           XML node for context, set to NULL for root node.
 
-   loadXml(self, fname, validate=True)
+      String with the node value.
 
-      fname: char const * validate: bool
+   getXheight(*args)
 
-      loadXml(self, fname)
+      Retrieves the x-height for a given TextLine id.
 
-      fname: char const *
+      * *id* :
 
-      loadXml(self, fnum, prevfree=True, validate=True)
+           Identifier of the TextLine.
 
-      fnum: int prevfree: bool validate: bool
+      x-height>0 on success, -1 if unset.
 
-      loadXml(self, fnum, prevfree=True)
+   insertElem(elem, node, itype)
 
-      fnum: int prevfree: bool
+      Inserts an element relative to a given node.
 
-      loadXml(self, fnum)
+      * *elem* :
 
-      fnum: int
+           Element to insert.
 
-   loadXmlString(self, xml_string, validate=True)
+      * *node* :
 
-      xml_string: char const * validate: bool
+           Reference element for insertion.
 
-      loadXmlString(self, xml_string)
+      * *itype* :
 
-      xml_string: char const *
+           Type of insertion.
 
-   moveElem(self, elem, node, itype=PAGEXML_INSERT_APPEND) -> xmlNode
+      Pointer to inserted element.
 
-      elem: xmlNode * node: xmlNode const * itype: enum PAGEXML_INSERT
+   intersection(line1_point1, line1_point2, line2_point1, line2_point2, _ipoint)
 
-      moveElem(self, elem, node) -> xmlNode *
+      Finds the intersection point between two lines defined by pairs
+      of points or returns false if no intersection
 
-      elem: xmlNode * node: xmlNode const *
+   static isBBox(points)
 
-   moveElems(self, elems, node, itype=PAGEXML_INSERT_APPEND) -> int
+      Determines whether a vector of points defines a bounding box.
 
-      elems: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      const & node: xmlNode const * itype: enum PAGEXML_INSERT
+      * *points* :
 
-      moveElems(self, elems, node) -> int
+           The vector of points to find the limits.
 
-      elems: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      const & node: xmlNode const *
+      True if bounding box, otherwise false.
 
-   multiPolygonIntersection(self, poly1, poly2) -> OGRMultiPolygonPtr_
+   isPolystripe(coords, baseline, height=None, offset=None)
 
-      poly1: >>OGRMultiPolygonPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+      Checks whether Coords is a poly-stripe for its corresponding
+      baseline.
 
-   multiPolylineIntersection(self, poly1, poly2) -> OGRMultiLineStringPtr_
+      * *coords* :
 
-      poly1: >>OGRMultiLineStringPtr_<< poly2: >>OGRMultiPolygonPtr_<<
+           Coords points.
 
-   newXml(self, creator, image, imgW=0, imgH=0) -> xmlNode
+      * *baseline* :
 
-      creator: char const * image: char const * imgW: int const imgH:
-      int const
+           Baseline points.
 
-      newXml(self, creator, image, imgW=0) -> xmlNode
+      * *offset* :
 
-      creator: char const * image: char const * imgW: int const
+           The offset of the poly-stripe (>=0 && <= 0.5).
 
-      newXml(self, creator, image) -> xmlNode *
+      Pointer to created element.
 
-      creator: char const * image: char const *
+      Check points are collinear ///
 
-   static nodeIs(node, name) -> bool
+      Check lines are parallel ///
 
-      node: xmlNode * name: char const *
+      Check stripe extremes perpendicular to baseline ///
 
-   parent(self, node) -> xmlNode *
+   isValid()
 
-      node: xmlNode const *
+      Validates the currently loaded XML.
 
-   static pointsBBox(points) -> cvPoint2fVector
+   loadImage(*args)
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+   loadImages(resize_coords, density)
+
+   loadSchema(schema_path)
+
+      Loads a schema for xml validation.
+
+      * *schema_path* :
+
+           File name of the XSD file to read.
+
+   loadXml(*args)
+
+      Loads a Page XML from an input stream.
+
+      * *fnum* :
+
+           File number from where to read the XML file.
+
+      * *prevfree* :
+
+           Whether to release resources before loading.
+
+   loadXmlString(xml_string, validate=True)
+
+      Loads a Page XML from a string.
+
+      * *xml_string* :
+
+           The XML content.
+
+   moveElem(elem, node, itype=0)
+
+      Unlink an element and add it relative to a given node.
+
+      * *elem* :
+
+           Element to move.
+
+      * *node* :
+
+           Reference element for insertion.
+
+      * *itype* :
+
+           Type of insertion.
+
+      Pointer to moved element.
+
+   moveElems(elems, node, itype=0)
+
+      Unlink elements and add them relative to a given node.
+
+      * *elem* :
+
+           Element to move.
+
+      * *node* :
+
+           Reference element for insertion.
+
+      * *itype* :
+
+           Type of insertion.
+
+      Pointer to moved element.
+
+   multiPolygonIntersection(poly1, poly2)
+
+      Computes the intersection of two multipolygons.
+
+      * *poly1* :
+
+           First polygon.
+
+      * *poly2* :
+
+           Second polygon.
+
+      Intersection geometry.
+
+   multiPolylineIntersection(poly1, poly2)
+
+      Computes the intersection between a multipolylines and a
+      multipolygon.
+
+      * *poly1* :
+
+           Polyline.
+
+      * *poly2* :
+
+           Polygon.
+
+      Intersection geometry.
+
+   newXml(creator, image, imgW=0, imgH=0)
+
+      Loaders ///.
+
+      Creates a new Page XML.
+
+      * *creator* :
+
+           Info about tool creating the XML.
+
+      * *image* :
+
+           Path to the image file.
+
+      * *imgW* :
+
+           Width of image.
+
+      * *imgH* :
+
+           Height of image.
+
+   static nodeIs(node, name)
+
+      Checks if node is of given name.
+
+      * *node* :
+
+           XML node.
+
+      * *name* :
+
+           String with name to match against.
+
+      True if name matches, otherwise false.
+
+   parent(node)
+
+      Returns the parent of a node.
+
+      * *node* :
+
+           XML node.
+
+      Parent node.
+
+   static pointsBBox(points)
+
+      Generates a vector of 4 points that define the bounding box for
+      a given vector of points.
+
+      * *points* :
+
+           The vector of points to find the limits.
+
+      The 4 points defining the bounding box (top-left clockwise).
 
    static pointsLimits(points, xmin, xmax, ymin, ymax)
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      & xmin: double & xmax: double & ymin: double & ymax: double &
+      Gets the minimum and maximum coordinate values for an array of
+      points.
 
-   pointsToOGRpolygon(self, points) -> OGRMultiPolygonPtr_
+      * *points* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+           The vector of points to find the limits.
 
-   pointsToOGRpolygons(self, points) -> std::vector< OGRMultiPolygonPtr_,std::allocator< OGRMultiPolygonPtr_ > >
+      * *xmin* :
 
-      points: std::vector< std::vector< cv::Point2f,std::allocator<
-      cv::Point2f > >,std::allocator< std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > > > >
+           Minimum x value.
 
-   static pointsToString(points, rounded=False) -> std::string
+      * *xmax* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      rounded: bool
+           Maximum x value.
 
-      pointsToString(points) -> std::string
+      * *ymin* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+           Minimum y value.
 
-      pointsToString(points) -> std::string
+      * *ymax* :
 
-      points: std::vector< cv::Point,std::allocator< cv::Point > >
+           Maximum y value.
 
-   printConf(self, file)
+   pointsToOGRpolygon(points)
 
-      file: FILE *
+      Converts Coords to an OGRMultiPolygon.
 
-      printConf(self)
+      * *points* :
 
-      self: PageXML *
+           Vector of x,y points.
 
-   static printVersions(file)
+      Pointer to OGRMultiPolygon element.
 
-      file: FILE *
+   pointsToOGRpolygons(points)
 
-      printVersions()
+      Converts Coords to OGRMultiPolygons.
 
-   processEnd(self)
+      * *points* :
 
-      self: PageXML *
+           Vectors of x,y points.
 
-   processStart(self, tool, ref=None)
+      Pointer to OGRMultiPolygon element.
 
-      tool: char const * ref: char const *
+   static pointsToString(*args)
 
-      processStart(self, tool)
+   printConf(*args)
 
-      tool: char const *
+      Configuration ///.
 
-   relativizeImageFilename(self, xml_path)
+      Prints the current configuration.
 
-      xml_path: char const *
+      * *file* :
 
-   resize(self, sizes, pages, check_aspect_ratio=True) -> int
+           File to print to.
 
-      sizes: std::vector< cv::Size2i,std::allocator< cv::Size2i > >
-      pages: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      check_aspect_ratio: bool
+   static printVersions(*args)
 
-      resize(self, sizes, pages) -> int
+   processEnd()
 
-      sizes: std::vector< cv::Size2i,std::allocator< cv::Size2i > >
-      pages: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
+      Ends the running process in the Page XML.
 
-      resize(self, sizes, xpath, check_aspect_ratio=True) -> int
+   processStart(tool, ref=None)
 
-      sizes: std::vector< cv::Size2i,std::allocator< cv::Size2i > >
-      xpath: char const * check_aspect_ratio: bool
+      Starts a process in the Page XML.
 
-      resize(self, sizes, xpath) -> int
+      Add Process element ///
 
-      sizes: std::vector< cv::Size2i,std::allocator< cv::Size2i > >
-      xpath: char const *
+      Start time attribute ///
 
-      resize(self, sizes) -> int
+      Tool and ref attributes ///
 
-      sizes: std::vector< cv::Size2i,std::allocator< cv::Size2i > >
+   relativizeImageFilename(xml_path)
 
-      resize(self, size, page, check_aspect_ratio=True) -> int
+      Modifies imageFilename to be a relative path w.r.t. given xml
+      path. Currently just checks prefix directories and removes it.
 
-      size: cv::Size2i page: xmlNode * check_aspect_ratio: bool
+   resize(*args)
 
-      resize(self, size, page) -> int
+      Resizes a page and all respective coordinates.
 
-      size: cv::Size2i page: xmlNode *
+      * *factor* :
 
-      resize(self, fact, xpath) -> int
+           Resizing factor.
 
-      fact: double xpath: char const *
+      * *xpath* :
 
-      resize(self, fact) -> int
+           Selector for Page nodes.
 
-      fact: double
+      Number of pages+points attributes modified.
 
-   rmElem(self, node)
+   rmElem(node)
 
-      node: xmlNode const *
+      Removes the given element.
 
-   rmElems(self, nodes) -> int
+      * *node* :
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      const &
+           Element.
 
-      rmElems(self, xpath, node=None) -> int
+   rmElems(*args)
 
-      xpath: char const * node: xmlNode *
+   select(*args)
 
-      rmElems(self, xpath) -> int
+   selectByID(id, node=None)
 
-      xpath: char const *
+      Selects an element with a given ID.
 
-      rmElems(self, xpath, node=None) -> int
+      * *id* :
 
-      xpath: std::string const node: xmlNode *
+           ID of element to select.
 
-      rmElems(self, xpath) -> int
+      * *node* :
 
-      xpath: std::string const
+           XML node for context, set to NULL for root node.
 
-   select(self, xpath, node=None) -> xmlNodePtrVector
+      Matched node.
 
-      xpath: char const * node: xmlNode const *
+   selectByOverlap(*args)
 
-      select(self, xpath) -> xmlNodePtrVector
+      Selects elements based on overlap to a polygon.
 
-      xpath: char const *
+      * *points* :
 
-      select(self, xpath, node=None) -> xmlNodePtrVector
+           Polygon for selection.
 
-      xpath: std::string node: xmlNode const *
+      * *pagenum* :
 
-      select(self, xpath) -> xmlNodePtrVector
+           Page number for selection.
 
-      xpath: std::string
+      * *xpath* :
 
-      select(self, xpath, nodes, unique=True) -> xmlNodePtrVector
+           xpath for candidate elements for selection.
 
-      xpath: char const * nodes: std::vector< xmlNode
-      >>*<<,std::allocator< xmlNode * > > const unique: bool
+      * *overlap_thr* :
 
-      select(self, xpath, nodes) -> xmlNodePtrVector
+           Overlapping score threshold.
 
-      xpath: char const * nodes: std::vector< xmlNode
-      >>*<<,std::allocator< xmlNode * > > const
+      * *overlap_type* :
 
-   selectByID(self, id, node=None) -> xmlNode
+           Type of overlap to use for selecting.
 
-      id: char const * node: xmlNode const *
+      Number of TextLines copied.
 
-      selectByID(self, id) -> xmlNode *
+   selectNth(*args)
 
-      id: char const *
+   setAttr(*args)
 
-   selectByOverlap(self, points, page, xpath, overlap_thr=0.1, overlap_type=PAGEXML_OVERLAP_COORDS_IWA) -> xmlNodePtrVector
+   setBaseline(*args)
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      page: xmlNode * xpath: char const * overlap_thr: double
-      overlap_type: enum PAGEXML_OVERLAP
+      Adds or modifies (if already exists) a two point Baseline for a
+      given node.
 
-      selectByOverlap(self, points, page, xpath, overlap_thr=0.1) ->
-      xmlNodePtrVector
+      * *node* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      page: xmlNode * xpath: char const * overlap_thr: double
+           The node of element to set the Baseline.
 
-      selectByOverlap(self, points, page, xpath) -> xmlNodePtrVector
+      * *x1* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      page: xmlNode * xpath: char const *
+           x value of first point.
 
-      selectByOverlap(self, points, page) -> xmlNodePtrVector
+      * *y1* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      page: xmlNode *
+           y value of first point.
 
-      selectByOverlap(self, points, pagenum, xpath, overlap_thr=0.1,
-      overlap_type=PAGEXML_OVERLAP_COORDS_IWA) -> xmlNodePtrVector
+      * *x2* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      pagenum: int xpath: char const * overlap_thr: double
-      overlap_type: enum PAGEXML_OVERLAP
+           x value of second point.
 
-      selectByOverlap(self, points, pagenum, xpath, overlap_thr=0.1)
-      -> xmlNodePtrVector
+      * *y2* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      pagenum: int xpath: char const * overlap_thr: double
+           y value of second point.
 
-      selectByOverlap(self, points, pagenum, xpath) ->
-      xmlNodePtrVector
+      * *_conf* :
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      pagenum: int xpath: char const *
+           Pointer to confidence value, NULL for no confidence.
 
-      selectByOverlap(self, points, pagenum) -> xmlNodePtrVector
+      Pointer to created element.
 
-      points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-      pagenum: int
+   setCoords(*args)
 
-   selectNth(self, xpath, num=0, node=None) -> xmlNode
+   setCoordsBBox(node, xmin, ymin, width, height, _conf=None, subone=True)
 
-      xpath: char const * num: int node: xmlNode const *
+      Adds or modifies (if already exists) the Coords as a bounding
+      box for a given node.
 
-      selectNth(self, xpath, num=0) -> xmlNode
+      * *node* :
 
-      xpath: char const * num: int
+           The node of element to set the Coords.
 
-      selectNth(self, xpath) -> xmlNode
+      * *xmin* :
 
-      xpath: char const *
+           Minimum x value of bounding box.
 
-      selectNth(self, xpath, num=0, node=None) -> xmlNode
+      * *ymin* :
 
-      xpath: std::string num: int node: xmlNode const *
+           Minimum y value of bounding box.
 
-      selectNth(self, xpath, num=0) -> xmlNode
+      * *width* :
 
-      xpath: std::string num: int
+           Width of bounding box.
 
-      selectNth(self, xpath) -> xmlNode *
+      * *height* :
 
-      xpath: std::string
+           Height of bounding box.
 
-   setAttr(self, nodes, name, value) -> int
+      * *_conf* :
 
-      nodes: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      name: char const * value: char const *
+           Pointer to confidence value, NULL for no confidence.
 
-      setAttr(self, node, name, value) -> int
+      * *subone* :
 
-      node: xmlNode const * name: char const * value: char const *
+           Whether to subtract 1 when computing xmax and ymax
+           (discrete compatibility).
 
-      setAttr(self, xpath, name, value) -> int
+      Pointer to created element.
 
-      xpath: char const * name: char const * value: char const *
+   setPageImageFilename(*args)
 
-      setAttr(self, xpath, name, value) -> int
+   setPageImageOrientation(*args)
 
-      xpath: std::string const name: std::string const value:
-      std::string const
+   setPolystripe(node, height, offset=0.25, offset_check=True)
 
-   setBaseline(self, node, points, _conf=None) -> xmlNode
+      Sets the Coords of a TextLine as a poly-stripe of the baseline.
 
-      node: xmlNode * points: std::vector< cv::Point2f,std::allocator<
-      cv::Point2f > > const & _conf: double const *
+      * *node* :
 
-      setBaseline(self, node, points) -> xmlNode
+           The node of element to set the Coords.
 
-      node: xmlNode * points: std::vector< cv::Point2f,std::allocator<
-      cv::Point2f > > const &
+      * *height* :
 
-      setBaseline(self, xpath, points, _conf=None) -> xmlNode
+           The height of the poly-stripe in pixels (>0).
 
-      xpath: char const * points: std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > > const & _conf:
-      double const *
+      * *offset* :
 
-      setBaseline(self, xpath, points) -> xmlNode
+           The offset of the poly-stripe (>=0 && <= 0.5).
 
-      xpath: char const * points: std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > > const &
+      Pointer to created element.
 
-      setBaseline(self, node, x1, y1, x2, y2, _conf=None) -> xmlNode
+   setProperty(*args)
 
-      node: xmlNode * x1: double y1: double x2: double y2: double
-      _conf: double const *
+      Sets a Property to a given node.
 
-      setBaseline(self, node, x1, y1, x2, y2) -> xmlNode *
+      * *node* :
 
-      node: xmlNode * x1: double y1: double x2: double y2: double
+           The node of element to set the Property.
 
-   setCoords(self, node, points, _conf=None) -> xmlNode
+      * *key* :
 
-      node: xmlNode * points: std::vector< cv::Point2f,std::allocator<
-      cv::Point2f > > const & _conf: double const *
+           The key for the Property.
 
-      setCoords(self, node, points) -> xmlNode
+      * *val* :
 
-      node: xmlNode * points: std::vector< cv::Point2f,std::allocator<
-      cv::Point2f > > const &
+           Numeric value for the Property.
 
-      setCoords(self, node, points, _conf=None) -> xmlNode
+      * *_conf* :
 
-      node: xmlNode * points: std::vector< cv::Point,std::allocator<
-      cv::Point > > const & _conf: double const *
+           Pointer to confidence value, NULL for no confidence.
 
-      setCoords(self, node, points) -> xmlNode
+      Pointer to created element.
 
-      node: xmlNode * points: std::vector< cv::Point,std::allocator<
-      cv::Point > > const &
+   setReadingDirection(elem, direction)
 
-      setCoords(self, xpath, points, _conf=None) -> xmlNode
+      Sets the reading direction to a TextRegion node.
 
-      xpath: char const * points: std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > > const & _conf:
-      double const *
+      * *node* :
 
-      setCoords(self, xpath, points) -> xmlNode *
+           Node of the TextRegion element.
 
-      xpath: char const * points: std::vector<
-      cv::Point2f,std::allocator< cv::Point2f > > const &
+      * *direction* :
 
-   setCoordsBBox(self, node, xmin, ymin, width, height, _conf=None, subone=True) -> xmlNode
+           Direction to set.
 
-      node: xmlNode * xmin: double ymin: double width: double height:
-      double _conf: double const * subone: bool
+   setRotation(elem, rotation)
 
-      setCoordsBBox(self, node, xmin, ymin, width, height, _conf=None)
-      -> xmlNode
+      Sets the rotation angle to a TextRegion node.
 
-      node: xmlNode * xmin: double ymin: double width: double height:
-      double _conf: double const *
+      * *node* :
 
-      setCoordsBBox(self, node, xmin, ymin, width, height) -> xmlNode
-      *
+           Node of the TextRegion element.
 
-      node: xmlNode * xmin: double ymin: double width: double height:
-      double
+      * *rotation* :
 
-   setPageImageFilename(self, node, image)
+           Rotation angle to set.
 
-      node: xmlNode * image: char const *
+   setTextEquiv(*args)
 
-      setPageImageFilename(self, pagenum, image)
+      Adds or modifies (if already exists) the TextEquiv for a given
+      xpath.
 
-      pagenum: int image: char const *
+      * *xpath* :
 
-   setPageImageOrientation(self, node, angle, _conf=None)
+           Selector for element to set the TextEquiv.
 
-      node: xmlNode * angle: int _conf: double const *
+      * *text* :
 
-      setPageImageOrientation(self, node, angle)
+           The text string.
 
-      node: xmlNode * angle: int
+      * *_conf* :
 
-      setPageImageOrientation(self, pagenum, angle, _conf=None)
+           Pointer to confidence value, NULL for no confidence.
 
-      pagenum: int angle: int _conf: double const *
-
-      setPageImageOrientation(self, pagenum, angle)
-
-      pagenum: int angle: int
-
-   setPolystripe(self, node, height, offset=0.25, offset_check=True) -> xmlNode
-
-      node: xmlNode * height: double offset: double offset_check: bool
-
-      setPolystripe(self, node, height, offset=0.25) -> xmlNode
-
-      node: xmlNode * height: double offset: double
-
-      setPolystripe(self, node, height) -> xmlNode *
-
-      node: xmlNode * height: double
-
-   setProperty(self, node, key, val=None, _conf=None) -> xmlNode
-
-      node: xmlNode * key: char const * val: char const * _conf:
-      double const *
-
-      setProperty(self, node, key, val=None) -> xmlNode
-
-      node: xmlNode * key: char const * val: char const *
-
-      setProperty(self, node, key) -> xmlNode
-
-      node: xmlNode * key: char const *
-
-      setProperty(self, node, key, val, _conf=None) -> xmlNode
-
-      node: xmlNode * key: char const * val: double const _conf:
-      double const *
-
-      setProperty(self, node, key, val) -> xmlNode *
-
-      node: xmlNode * key: char const * val: double const
-
-   setReadingDirection(self, elem, direction)
-
-      elem: xmlNode const * direction: enum PAGEXML_READ_DIRECTION
-
-   setRotation(self, elem, rotation)
-
-      elem: xmlNode const * rotation: float const
-
-   setTextEquiv(self, node, text, _conf=None) -> xmlNode
-
-      node: xmlNode * text: char const * _conf: double const *
-
-      setTextEquiv(self, node, text) -> xmlNode
-
-      node: xmlNode * text: char const *
-
-      setTextEquiv(self, xpath, text, _conf=None) -> xmlNode
-
-      xpath: char const * text: char const * _conf: double const *
-
-      setTextEquiv(self, xpath, text) -> xmlNode *
-
-      xpath: char const * text: char const *
+      Pointer to created element.
 
    static setValidationEnabled(val)
 
-      val: bool
+      Enables/disables schema validation.
 
-   simplifyIDs(self) -> int
+   simplifyIDs()
 
-      self: PageXML *
+      Simplifies IDs by removing imgbase prefixes and replaces invalid
+      characters with _.
 
-   static stringToPoints(spoints) -> cvPoint2fVector
+      Number of IDs simplified.
 
-      spoints: char const *
-
-      stringToPoints(spoints) -> cvPoint2fVector
-
-      spoints: std::string
-
-   testTextLineContinuation(self, lines, _line_group_order, _line_group_score, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & max_angle_diff: double max_horiz_iou: double
-      min_prolong_fact: double prolong_alpha: double fake_baseline:
-      bool
-
-      testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1,
-      min_prolong_fact=0.5, prolong_alpha=0.8) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & max_angle_diff: double max_horiz_iou: double
-      min_prolong_fact: double prolong_alpha: double
-
-      testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1,
-      min_prolong_fact=0.5) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & max_angle_diff: double max_horiz_iou: double
-      min_prolong_fact: double
-
-      testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, max_angle_diff=25, max_horiz_iou=0.1) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & max_angle_diff: double max_horiz_iou: double
-
-      testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score, max_angle_diff=25) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > & max_angle_diff: double
-
-      testTextLineContinuation(self, lines, _line_group_order,
-      _line_group_score) -> int
-
-      lines: std::vector< xmlNode >>*<<,std::allocator< xmlNode * > >
-      _line_group_order: std::vector< std::vector< int,std::allocator<
-      int > >,std::allocator< std::vector< int,std::allocator< int > >
-      > > & _line_group_score: std::vector< double,std::allocator<
-      double > > &
+   static stringToPoints(*args)
 
    thisown
 
       The membership flag
 
-   toString(self, validate=True) -> std::string
+   toString(validate=True)
 
-      validate: bool
+      Creates a string representation of the Page XML.
 
-      toString(self) -> std::string
+   updateLastChange()
 
-      self: PageXML *
+      Updates the last change time stamp.
 
-   updateLastChange(self)
+   static version()
 
-      self: PageXML *
+      Returns the class version.
 
-   static version() -> char *
+   write(*args)
 
-   write(self, fname, validate=True) -> int
+      Output ///.
 
-      fname: char const * validate: bool
+      Writes the current state of the XML to a file using utf-8
+      encoding.
 
-      write(self, fname) -> int
+      * *fname* :
 
-      fname: char const *
+           File name of where the XML file will be written.
 
-      write(self) -> int
+      Number of bytes written.
 
-      self: PageXML *
+pagexml.PageXML_isBBox(points)
 
-pagexml.PageXML_isBBox(points) -> bool
+   Determines whether a vector of points defines a bounding box.
 
-   points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-   const &
+   * *points* :
 
-pagexml.PageXML_nodeIs(node, name) -> bool
+        The vector of points to find the limits.
 
-   node: xmlNode * name: char const *
+   True if bounding box, otherwise false.
 
-pagexml.PageXML_pointsBBox(points) -> cvPoint2fVector
+pagexml.PageXML_nodeIs(node, name)
 
-   points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
+   Checks if node is of given name.
+
+   * *node* :
+
+        XML node.
+
+   * *name* :
+
+        String with name to match against.
+
+   True if name matches, otherwise false.
+
+pagexml.PageXML_pointsBBox(points)
+
+   Generates a vector of 4 points that define the bounding box for a
+   given vector of points.
+
+   * *points* :
+
+        The vector of points to find the limits.
+
+   The 4 points defining the bounding box (top-left clockwise).
 
 pagexml.PageXML_pointsLimits(points, xmin, xmax, ymin, ymax)
 
-   points: std::vector< cv::Point2f,std::allocator< cv::Point2f > > &
-   xmin: double & xmax: double & ymin: double & ymax: double &
+   Gets the minimum and maximum coordinate values for an array of
+   points.
+
+   * *points* :
+
+        The vector of points to find the limits.
+
+   * *xmin* :
+
+        Minimum x value.
+
+   * *xmax* :
+
+        Maximum x value.
+
+   * *ymin* :
+
+        Minimum y value.
+
+   * *ymax* :
+
+        Maximum y value.
 
 pagexml.PageXML_pointsToString(*args)
 
-   pointsToString(points, rounded=False) -> std::string
-
-   points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-   rounded: bool
-
-   pointsToString(points) -> std::string
-
-   points: std::vector< cv::Point2f,std::allocator< cv::Point2f > >
-
-   PageXML_pointsToString(points) -> std::string
-
-   points: std::vector< cv::Point,std::allocator< cv::Point > >
-
 pagexml.PageXML_printVersions(*args)
-
-   printVersions(file)
-
-   file: FILE *
-
-   PageXML_printVersions()
 
 pagexml.PageXML_setValidationEnabled(val)
 
-   val: bool
+   Enables/disables schema validation.
 
 pagexml.PageXML_stringToPoints(*args)
 
-   stringToPoints(spoints) -> cvPoint2fVector
+pagexml.PageXML_version()
 
-   spoints: char const *
-
-   PageXML_stringToPoints(spoints) -> cvPoint2fVector
-
-   spoints: std::string
-
-pagexml.PageXML_version() -> char *
+   Returns the class version.
 
 pagexml.Point
 
@@ -2275,35 +1905,19 @@ class pagexml.Range(*args)
 
    Bases: "object"
 
-   Proxy of C++ cv::Range class.
+   static all()
 
-   static all() -> Range
-
-   empty(self) -> bool
-
-      self: cv::Range const *
+   empty()
 
    end
 
-      Range_end_get(self) -> int
-
-      self: cv::Range *
-
-   size(self) -> int
-
-      self: cv::Range const *
+   size()
 
    start
-
-      Range_start_get(self) -> int
-
-      self: cv::Range *
 
    thisown
 
       The membership flag
-
-pagexml.Range_all() -> Range
 
 pagexml.Size
 
@@ -2325,55 +1939,27 @@ class pagexml.SwigPyIterator(*args, **kwargs)
 
    Bases: "object"
 
-   Proxy of C++ swig::SwigPyIterator class.
+   advance(n)
 
-   advance(self, n) -> SwigPyIterator
+   copy()
 
-      n: ptrdiff_t
+   decr(n=1)
 
-   copy(self) -> SwigPyIterator
+   distance(x)
 
-      self: swig::SwigPyIterator const *
+   equal(x)
 
-   decr(self, n=1) -> SwigPyIterator
+   incr(n=1)
 
-      n: size_t
+   next()
 
-      decr(self) -> SwigPyIterator
-
-      self: swig::SwigPyIterator *
-
-   distance(self, x) -> ptrdiff_t
-
-      x: swig::SwigPyIterator const &
-
-   equal(self, x) -> bool
-
-      x: swig::SwigPyIterator const &
-
-   incr(self, n=1) -> SwigPyIterator
-
-      n: size_t
-
-      incr(self) -> SwigPyIterator
-
-      self: swig::SwigPyIterator *
-
-   next(self) -> PyObject *
-
-      self: swig::SwigPyIterator *
-
-   previous(self) -> PyObject *
-
-      self: swig::SwigPyIterator *
+   previous()
 
    thisown
 
       The membership flag
 
-   value(self) -> PyObject *
-
-      self: swig::SwigPyIterator const *
+   value()
 
 pagexml.Vec2b
 
@@ -2467,114 +2053,49 @@ class pagexml.cvPoint2fVector(*args)
 
    Bases: "object"
 
-   Proxy of C++ std::vector<(cv::Point2f)> class.
+   append(x)
 
-   append(self, x)
+   assign(n, x)
 
-      x: std::vector< cv::Point_< float > >::value_type const &
+   back()
 
-   assign(self, n, x)
+   begin()
 
-      n: std::vector< cv::Point_< float > >::size_type x: std::vector<
-      cv::Point_< float > >::value_type const &
+   capacity()
 
-   back(self) -> _Point__float
+   clear()
 
-      self: std::vector< cv::Point2f > const *
+   empty()
 
-   begin(self) -> std::vector< cv::Point_< float > >::iterator
+   end()
 
-      self: std::vector< cv::Point2f > *
+   erase(*args)
 
-   capacity(self) -> std::vector< cv::Point_< float > >::size_type
+   front()
 
-      self: std::vector< cv::Point2f > const *
+   get_allocator()
 
-   clear(self)
+   insert(*args)
 
-      self: std::vector< cv::Point2f > *
+   iterator()
 
-   empty(self) -> bool
+   pop()
 
-      self: std::vector< cv::Point2f > const *
+   pop_back()
 
-   end(self) -> std::vector< cv::Point_< float > >::iterator
+   push_back(x)
 
-      self: std::vector< cv::Point2f > *
+   rbegin()
 
-   erase(self, pos) -> std::vector< cv::Point_< float > >::iterator
+   rend()
 
-      pos: std::vector< cv::Point_< float > >::iterator
+   reserve(n)
 
-      erase(self, first, last) -> std::vector< cv::Point_< float >
-      >::iterator
+   resize(*args)
 
-      first: std::vector< cv::Point_< float > >::iterator last:
-      std::vector< cv::Point_< float > >::iterator
+   size()
 
-   front(self) -> _Point__float
-
-      self: std::vector< cv::Point2f > const *
-
-   get_allocator(self) -> std::vector< cv::Point_< float > >::allocator_type
-
-      self: std::vector< cv::Point2f > const *
-
-   insert(self, pos, x) -> std::vector< cv::Point_< float > >::iterator
-
-      pos: std::vector< cv::Point_< float > >::iterator x:
-      std::vector< cv::Point_< float > >::value_type const &
-
-      insert(self, pos, n, x)
-
-      pos: std::vector< cv::Point_< float > >::iterator n:
-      std::vector< cv::Point_< float > >::size_type x: std::vector<
-      cv::Point_< float > >::value_type const &
-
-   iterator(self) -> SwigPyIterator
-
-      self: std::vector< cv::Point2f > *
-
-   pop(self) -> _Point__float
-
-      self: std::vector< cv::Point2f > *
-
-   pop_back(self)
-
-      self: std::vector< cv::Point2f > *
-
-   push_back(self, x)
-
-      x: std::vector< cv::Point_< float > >::value_type const &
-
-   rbegin(self) -> std::vector< cv::Point_< float > >::reverse_iterator
-
-      self: std::vector< cv::Point2f > *
-
-   rend(self) -> std::vector< cv::Point_< float > >::reverse_iterator
-
-      self: std::vector< cv::Point2f > *
-
-   reserve(self, n)
-
-      n: std::vector< cv::Point_< float > >::size_type
-
-   resize(self, new_size)
-
-      new_size: std::vector< cv::Point_< float > >::size_type
-
-      resize(self, new_size, x)
-
-      new_size: std::vector< cv::Point_< float > >::size_type x:
-      std::vector< cv::Point_< float > >::value_type const &
-
-   size(self) -> std::vector< cv::Point_< float > >::size_type
-
-      self: std::vector< cv::Point2f > const *
-
-   swap(self, v)
-
-      v: std::vector< cv::Point2f > &
+   swap(v)
 
    thisown
 
@@ -2584,114 +2105,49 @@ class pagexml.cvSize2iVector(*args)
 
    Bases: "object"
 
-   Proxy of C++ std::vector<(cv::Size2i)> class.
+   append(x)
 
-   append(self, x)
+   assign(n, x)
 
-      x: std::vector< cv::Size_< int > >::value_type const &
+   back()
 
-   assign(self, n, x)
+   begin()
 
-      n: std::vector< cv::Size_< int > >::size_type x: std::vector<
-      cv::Size_< int > >::value_type const &
+   capacity()
 
-   back(self) -> _Size__int
+   clear()
 
-      self: std::vector< cv::Size2i > const *
+   empty()
 
-   begin(self) -> std::vector< cv::Size_< int > >::iterator
+   end()
 
-      self: std::vector< cv::Size2i > *
+   erase(*args)
 
-   capacity(self) -> std::vector< cv::Size_< int > >::size_type
+   front()
 
-      self: std::vector< cv::Size2i > const *
+   get_allocator()
 
-   clear(self)
+   insert(*args)
 
-      self: std::vector< cv::Size2i > *
+   iterator()
 
-   empty(self) -> bool
+   pop()
 
-      self: std::vector< cv::Size2i > const *
+   pop_back()
 
-   end(self) -> std::vector< cv::Size_< int > >::iterator
+   push_back(x)
 
-      self: std::vector< cv::Size2i > *
+   rbegin()
 
-   erase(self, pos) -> std::vector< cv::Size_< int > >::iterator
+   rend()
 
-      pos: std::vector< cv::Size_< int > >::iterator
+   reserve(n)
 
-      erase(self, first, last) -> std::vector< cv::Size_< int >
-      >::iterator
+   resize(*args)
 
-      first: std::vector< cv::Size_< int > >::iterator last:
-      std::vector< cv::Size_< int > >::iterator
+   size()
 
-   front(self) -> _Size__int
-
-      self: std::vector< cv::Size2i > const *
-
-   get_allocator(self) -> std::vector< cv::Size_< int > >::allocator_type
-
-      self: std::vector< cv::Size2i > const *
-
-   insert(self, pos, x) -> std::vector< cv::Size_< int > >::iterator
-
-      pos: std::vector< cv::Size_< int > >::iterator x: std::vector<
-      cv::Size_< int > >::value_type const &
-
-      insert(self, pos, n, x)
-
-      pos: std::vector< cv::Size_< int > >::iterator n: std::vector<
-      cv::Size_< int > >::size_type x: std::vector< cv::Size_< int >
-      >::value_type const &
-
-   iterator(self) -> SwigPyIterator
-
-      self: std::vector< cv::Size2i > *
-
-   pop(self) -> _Size__int
-
-      self: std::vector< cv::Size2i > *
-
-   pop_back(self)
-
-      self: std::vector< cv::Size2i > *
-
-   push_back(self, x)
-
-      x: std::vector< cv::Size_< int > >::value_type const &
-
-   rbegin(self) -> std::vector< cv::Size_< int > >::reverse_iterator
-
-      self: std::vector< cv::Size2i > *
-
-   rend(self) -> std::vector< cv::Size_< int > >::reverse_iterator
-
-      self: std::vector< cv::Size2i > *
-
-   reserve(self, n)
-
-      n: std::vector< cv::Size_< int > >::size_type
-
-   resize(self, new_size)
-
-      new_size: std::vector< cv::Size_< int > >::size_type
-
-      resize(self, new_size, x)
-
-      new_size: std::vector< cv::Size_< int > >::size_type x:
-      std::vector< cv::Size_< int > >::value_type const &
-
-   size(self) -> std::vector< cv::Size_< int > >::size_type
-
-      self: std::vector< cv::Size2i > const *
-
-   swap(self, v)
-
-      v: std::vector< cv::Size2i > &
+   swap(v)
 
    thisown
 
@@ -2701,142 +2157,65 @@ class pagexml.ptr_double
 
    Bases: "object"
 
-   Proxy of C++ ptr_double class.
+   assign(value)
 
-   assign(self, value)
+   cast()
 
-      value: double
-
-   cast(self) -> double *
-
-      self: ptr_double *
-
-   static frompointer(t) -> ptr_double
-
-      t: double *
+   static frompointer()
 
    thisown
 
       The membership flag
 
-   value(self) -> double
-
-      self: ptr_double *
-
-pagexml.ptr_double_frompointer(t) -> ptr_double
-
-   t: double *
+   value()
 
 class pagexml.xmlNodePtrVector(*args)
 
    Bases: "object"
 
-   Proxy of C++ std::vector<(p.xmlNode)> class.
+   append(x)
 
-   append(self, x)
+   assign(n, x)
 
-      x: std::vector< xmlNode * >::value_type
+   back()
 
-   assign(self, n, x)
+   begin()
 
-      n: std::vector< xmlNode * >::size_type x: std::vector< xmlNode *
-      >::value_type
+   capacity()
 
-   back(self) -> std::vector< xmlNode * >::value_type
+   clear()
 
-      self: std::vector< xmlNode * > const *
+   empty()
 
-   begin(self) -> std::vector< xmlNode * >::iterator
+   end()
 
-      self: std::vector< xmlNode * > *
+   erase(*args)
 
-   capacity(self) -> std::vector< xmlNode * >::size_type
+   front()
 
-      self: std::vector< xmlNode * > const *
+   get_allocator()
 
-   clear(self)
+   insert(*args)
 
-      self: std::vector< xmlNode * > *
+   iterator()
 
-   empty(self) -> bool
+   pop()
 
-      self: std::vector< xmlNode * > const *
+   pop_back()
 
-   end(self) -> std::vector< xmlNode * >::iterator
+   push_back(x)
 
-      self: std::vector< xmlNode * > *
+   rbegin()
 
-   erase(self, pos) -> std::vector< xmlNode * >::iterator
+   rend()
 
-      pos: std::vector< xmlNode * >::iterator
+   reserve(n)
 
-      erase(self, first, last) -> std::vector< xmlNode * >::iterator
+   resize(*args)
 
-      first: std::vector< xmlNode * >::iterator last: std::vector<
-      xmlNode * >::iterator
+   size()
 
-   front(self) -> std::vector< xmlNode * >::value_type
-
-      self: std::vector< xmlNode * > const *
-
-   get_allocator(self) -> std::vector< xmlNode * >::allocator_type
-
-      self: std::vector< xmlNode * > const *
-
-   insert(self, pos, x) -> std::vector< xmlNode * >::iterator
-
-      pos: std::vector< xmlNode * >::iterator x: std::vector< xmlNode
-      * >::value_type
-
-      insert(self, pos, n, x)
-
-      pos: std::vector< xmlNode * >::iterator n: std::vector< xmlNode
-      * >::size_type x: std::vector< xmlNode * >::value_type
-
-   iterator(self) -> SwigPyIterator
-
-      self: std::vector< xmlNode * > *
-
-   pop(self) -> std::vector< xmlNode * >::value_type
-
-      self: std::vector< xmlNode * > *
-
-   pop_back(self)
-
-      self: std::vector< xmlNode * > *
-
-   push_back(self, x)
-
-      x: std::vector< xmlNode * >::value_type
-
-   rbegin(self) -> std::vector< xmlNode * >::reverse_iterator
-
-      self: std::vector< xmlNode * > *
-
-   rend(self) -> std::vector< xmlNode * >::reverse_iterator
-
-      self: std::vector< xmlNode * > *
-
-   reserve(self, n)
-
-      n: std::vector< xmlNode * >::size_type
-
-   resize(self, new_size)
-
-      new_size: std::vector< xmlNode * >::size_type
-
-      resize(self, new_size, x)
-
-      new_size: std::vector< xmlNode * >::size_type x: std::vector<
-      xmlNode * >::value_type
-
-   size(self) -> std::vector< xmlNode * >::size_type
-
-      self: std::vector< xmlNode * > const *
-
-   swap(self, v)
-
-      v: std::vector< xmlNode * > &
+   swap(v)
 
    thisown
 

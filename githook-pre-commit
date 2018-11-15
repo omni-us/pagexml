@@ -75,10 +75,12 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   ### Update C++ documentation ###
   echo "### Update C++ documentation ###"
   cd lib;
-  doxygen && moxygen -o ../doc/PageXML-API.md xml;
+  doxygen && \
+    moxygen -o ../doc/PageXML-API.md xml && \
+    ../doxy2swig/doxy2swig.py xml/index.xml ../py-pagexml/pagexml/PageXML_doxy2swig.i;
   [ "$?" != "0" ] && exit 1;
   cd ..;
-  git add doc/PageXML-API.md;
+  git add doc/PageXML-API.md py-pagexml/pagexml/PageXML_doxy2swig.i;
 
   ### Test python wrapper and update documentation ###
   echo "### Test python wrapper and update documentation ###"

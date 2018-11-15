@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.11.11$
+ * @version $Version: 2018.11.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -285,8 +285,8 @@ class PageXML {
     std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, int pagenum, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
     int copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IOU, double overlap_fact = 0.5 );
 #endif
-    int testTextLineContinuation( std::vector<xmlNodePt> lines, std::vector<std::vector<int> >& _line_group_order, std::vector<double>& _line_group_score, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false );
-    std::vector<int> getTextLinesReadingOrder( std::vector<xmlNodePt> lines, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false );
+    int getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, std::vector<std::vector<int> >& _group_order, std::vector<double>& _group_score, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
+    std::pair<std::vector<int>, std::vector<int> > getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
     xmlDocPtr getDocPtr();
   private:
     bool indent = true;

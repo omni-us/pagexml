@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.11.11
+Version2018.11.15
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -905,8 +905,8 @@ Whether flattening was performed.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
-`public int `[`testTextLineContinuation`](#class_page_x_m_l_1a55054e5110a05615964f21f1ed43623c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` | Tests for text line continuation (requires single segment polystripe).
-`public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625bbc57abe77b4af02347e4b593c1f4)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` | Gets the reading order for a set of text lines (requires single segment polystripe).
+`public int `[`getLeftRightTextContinuationGroups`](#class_page_x_m_l_1a956e914f402e0414a016d51e5fc5e05c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,std::vector< std::vector< int > > & _group_order,std::vector< double > & _group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Determines groups of left-right text elem continuations (requires single segment polystripe).
+`public std::pair< std::vector< int >, std::vector< int > > `[`getLeftRightTopBottomReadingOrder`](#class_page_x_m_l_1abcae8ac441e73b385d2bc0334bfb3d51)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Gets the reading order for a set of text elems (requires single segment polystripe).
 `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` | Returns the XML document pointer.
 
 ## Members
@@ -2156,16 +2156,16 @@ Copies TextLines from one page xml to another assigning to regions based on over
 #### Returns
 Number of TextLines copied.
 
-#### `public int `[`testTextLineContinuation`](#class_page_x_m_l_1a55054e5110a05615964f21f1ed43623c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,std::vector< std::vector< int > > & _line_group_order,std::vector< double > & _line_group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` 
+#### `public int `[`getLeftRightTextContinuationGroups`](#class_page_x_m_l_1a956e914f402e0414a016d51e5fc5e05c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,std::vector< std::vector< int > > & _group_order,std::vector< double > & _group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` 
 
-Tests for text line continuation (requires single segment polystripe).
+Determines groups of left-right text elem continuations (requires single segment polystripe).
 
 #### Parameters
-* `lines` TextLine elements to test for continuation. 
+* `elems` Text elements to test for continuation: TextLines, Words, Glyphs or TextRegions. 
 
-* `_line_group_order` Join groups line indices (output). 
+* `_group_order` Join groups line indices (output). 
 
-* `_line_group_score` Join group scores (output). 
+* `_group_score` Join group scores (output). 
 
 * `max_angle_diff` Maximum baseline angle difference for joining. 
 
@@ -2177,15 +2177,17 @@ Tests for text line continuation (requires single segment polystripe).
 
 * `fake_baseline` Use bottom line of Coords rectangle as the baseline. 
 
+* `recurse_factor` Multiplication factor for continuation criteria on each recursion. 
+
 #### Returns
-Number of join groups.
+Number of join groups, elements per group in order and group scores.
 
-#### `public std::vector< int > `[`getTextLinesReadingOrder`](#class_page_x_m_l_1a625bbc57abe77b4af02347e4b593c1f4)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > lines,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline)` 
+#### `public std::pair< std::vector< int >, std::vector< int > > `[`getLeftRightTopBottomReadingOrder`](#class_page_x_m_l_1abcae8ac441e73b385d2bc0334bfb3d51)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` 
 
-Gets the reading order for a set of text lines (requires single segment polystripe).
+Gets the reading order for a set of text elems (requires single segment polystripe).
 
 #### Parameters
-* `lines` TextLine elements to process. 
+* `elems` Elements to process: TextLines, Words, Glyphs or TextRegions. 
 
 * `max_angle_diff` Maximum baseline angle difference for joining. 
 
@@ -2193,8 +2195,14 @@ Gets the reading order for a set of text lines (requires single segment polystri
 
 * `min_prolong_fact` Minimum prolongation factor for joining. 
 
+* `prolong_alpha` Weight for prolongation factors: alpha*bline+(1-alpha)*coords. 
+
+* `fake_baseline` Use bottom line of Coords rectangle as the baseline. 
+
+* `recurse_factor` Multiplication factor for continuation criteria on each recursion. 
+
 #### Returns
-Reading order indices.
+Pair of reading order indices and subgroup lengths.
 
 #### `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` 
 
