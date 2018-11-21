@@ -1,4 +1,4 @@
-pagexml API (version 2018.11.15)
+pagexml API (version 2018.11.21)
 ********************************
 
 

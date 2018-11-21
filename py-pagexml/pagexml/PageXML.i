@@ -35,7 +35,6 @@
 
 %{
 #include "PageXML.h"
-//#include "TextFeatExtractor.h"
 %}
 
 %pointer_class(double, ptr_double);
@@ -47,4 +46,3 @@
 %template() std::pair<std::vector<int>, std::vector<int> >;
 
 %include "PageXML.h"
-//%include "TextFeatExtractor.h"

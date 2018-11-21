@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.15$
+ * @version $Version: 2018.11.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.15";
+static char class_version[] = "Version: 2018.11.21";
 
 /**
  * Returns the class version.
@@ -4161,6 +4161,9 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
             elem_group_scores[k].insert(elem_group_scores[k].end(), elem_group_scores[kk].begin(), elem_group_scores[kk].end());
             for ( const auto& e: elem_groups[kk] )
               group_idx[e] = k;
+            for ( int j=(int)elem_groups.size()-1; j>kk; j-- )
+              for ( const auto& e: elem_groups[j] )
+                group_idx[e] = j-1;
             elem_groups.erase(elem_groups.begin() + kk);
             elem_group_order.erase(elem_group_order.begin() + kk);
             elem_group_scores.erase(elem_group_scores.begin() + kk);
