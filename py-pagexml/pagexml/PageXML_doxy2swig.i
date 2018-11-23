@@ -986,9 +986,49 @@ Parameters
 * `key` :  
     The key for the Property.  
 * `val` :  
+    The optional value for the Property.  
+* `conf` :  
+    Confidence value.  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setProperty "
+
+Sets a Property to a given node.  
+
+Parameters
+----------
+* `node` :  
+    The node of element to set the Property.  
+* `key` :  
+    The key for the Property.  
+* `val` :  
     Numeric value for the Property.  
 * `_conf` :  
     Pointer to confidence value, NULL for no confidence.  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setProperty "
+
+Sets a Property to a given node.  
+
+Parameters
+----------
+* `node` :  
+    The node of element to set the Property.  
+* `key` :  
+    The key for the Property.  
+* `val` :  
+    The optional value for the Property.  
+* `conf` :  
+    Confidence value.  
 
 Returns
 -------
@@ -1015,6 +1055,24 @@ Pointer to created element.
 
 %feature("docstring") PageXML::setTextEquiv "
 
+Adds or modifies (if already exists) the TextEquiv for a given node.  
+
+Parameters
+----------
+* `node` :  
+    The node of element to set the TextEquiv.  
+* `text` :  
+    The text string.  
+* `conf` :  
+    Confidence value.  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setTextEquiv "
+
 Adds or modifies (if already exists) the TextEquiv for a given xpath.  
 
 Parameters
@@ -1029,6 +1087,33 @@ Parameters
 Returns
 -------
 Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setTextEquiv "
+
+Adds or modifies (if already exists) the TextEquiv for a given xpath.  
+
+Parameters
+----------
+* `xpath` :  
+    Selector for element to set the TextEquiv.  
+* `text` :  
+    The text string.  
+* `conf` :  
+    Confidence value.  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setCoords "
+";
+
+%feature("docstring") PageXML::setCoords "
+";
+
+%feature("docstring") PageXML::setCoords "
 ";
 
 %feature("docstring") PageXML::setCoords "
@@ -1067,6 +1152,39 @@ Returns
 Pointer to created element.  
 ";
 
+%feature("docstring") PageXML::setCoordsBBox "
+
+Adds or modifies (if already exists) the Coords as a bounding box for a given
+node.  
+
+Parameters
+----------
+* `node` :  
+    The node of element to set the Coords.  
+* `xmin` :  
+    Minimum x value of bounding box.  
+* `ymin` :  
+    Minimum y value of bounding box.  
+* `width` :  
+    Width of bounding box.  
+* `height` :  
+    Height of bounding box.  
+* `conf` :  
+    Confidence value.  
+* `subone` :  
+    Whether to subtract 1 when computing xmax and ymax (discrete compatibility).  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setBaseline "
+";
+
+%feature("docstring") PageXML::setBaseline "
+";
+
 %feature("docstring") PageXML::setBaseline "
 ";
 
@@ -1091,6 +1209,30 @@ Parameters
     y value of second point.  
 * `_conf` :  
     Pointer to confidence value, NULL for no confidence.  
+
+Returns
+-------
+Pointer to created element.  
+";
+
+%feature("docstring") PageXML::setBaseline "
+
+Adds or modifies (if already exists) a two point Baseline for a given node.  
+
+Parameters
+----------
+* `node` :  
+    The node of element to set the Baseline.  
+* `x1` :  
+    x value of first point.  
+* `y1` :  
+    y value of first point.  
+* `x2` :  
+    x value of second point.  
+* `y2` :  
+    y value of second point.  
+* `conf` :  
+    Confidence value.  
 
 Returns
 -------
@@ -1165,6 +1307,45 @@ Parameters
 ";
 
 %feature("docstring") PageXML::setPageImageOrientation "
+
+Sets the image orientation for the given Page node.  
+
+Parameters
+----------
+* `node` :  
+    The page node.  
+* `angle` :  
+    The orientation angle in degrees {0,90,180,-90}.  
+* `conf` :  
+    Confidence value.  
+";
+
+%feature("docstring") PageXML::setPageImageOrientation "
+
+Sets the image orientation for the given Page number.  
+
+Parameters
+----------
+* `pagenum` :  
+    The page number (0-based).  
+* `angle` :  
+    The orientation angle in degrees {0,90,180,-90}.  
+* `_conf` :  
+    Pointer to confidence value, NULL for no confidence.  
+";
+
+%feature("docstring") PageXML::setPageImageOrientation "
+
+Sets the image orientation for the given Page number.  
+
+Parameters
+----------
+* `pagenum` :  
+    The page number (0-based).  
+* `angle` :  
+    The orientation angle in degrees {0,90,180,-90}.  
+* `conf` :  
+    Confidence value.  
 ";
 
 %feature("docstring") PageXML::getPageImageOrientation "
@@ -1182,22 +1363,103 @@ Orientation in degrees.
 ";
 
 %feature("docstring") PageXML::getPageImageOrientation "
+
+Gets the image orientation for the given Page number.  
+
+Parameters
+----------
+* `pagenum` :  
+    The page number (0-based).  
+
+Returns
+-------
+Orientation in degrees.  
 ";
 
 %feature("docstring") PageXML::getPageWidth "
 
-Returns the width of a page.  
+Gets the width of a page (might be different to image width due to the image
+orientation).  
+
+Parameters
+----------
+* `node` :  
+    A node to get its page width.  
+
+Returns
+-------
+The page width.  
 ";
 
 %feature("docstring") PageXML::getPageWidth "
+
+Gets the width of a page (might be different to image width due to the image
+orientation).  
+
+Parameters
+----------
+* `pagenum` :  
+    The page number (0-based).  
+
+Returns
+-------
+The page width.  
 ";
 
 %feature("docstring") PageXML::getPageHeight "
 
-Returns the height of a page.  
+Gets the height of a page (might be different to image width due to the image
+orientation).  
+
+Parameters
+----------
+* `node` :  
+    A node to get its page height.  
+
+Returns
+-------
+The page height.  
 ";
 
 %feature("docstring") PageXML::getPageHeight "
+
+Gets the height of a page (might be different to image width due to the image
+orientation).  
+
+Parameters
+----------
+* `pagenum` :  
+    The page number (0-based).  
+
+Returns
+-------
+The page height.  
+";
+
+%feature("docstring") PageXML::setPageWidth "
+
+Sets the width of a page (actually sets imageWidth accounting for image
+orientation).  
+
+Parameters
+----------
+* `node` :  
+    A node to set its page width.  
+* `width` :  
+    The width to set.  
+";
+
+%feature("docstring") PageXML::setPageHeight "
+
+Sets the height of a page (actually sets imageHeight accounting for image
+orientation).  
+
+Parameters
+----------
+* `node` :  
+    A node to set its page height.  
+* `height` :  
+    The height to set.  
 ";
 
 %feature("docstring") PageXML::getPagesSize "

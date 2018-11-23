@@ -5,11 +5,11 @@ find_package( PkgConfig )
 pkg_check_modules( opencv REQUIRED opencv>=2.4.9 )
 pkg_check_modules( libxslt REQUIRED libxslt )
 pkg_check_modules( gdal REQUIRED gdal )
-#pkg_check_modules( Magick REQUIRED Magick++>=6.8 )
+pkg_check_modules( Magick REQUIRED Magick++>=6.8 )
 
 add_definitions( -D__PAGEXML_IMG_CV__ )
 add_definitions( -D__PAGEXML_OGR__ )
-#add_definitions( -D__PAGEXML_MAGICK__ )
+add_definitions( -D__PAGEXML_MAGICK__ )
 
 file( GLOB lib_SRC "*.cc" )
 add_library( ${lib_NAME} SHARED ${lib_SRC} )

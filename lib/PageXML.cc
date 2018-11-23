@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.21$
+ * @version $Version: 2018.11.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.21";
+static char class_version[] = "Version: 2018.11.23";
 
 /**
  * Returns the class version.
@@ -2324,6 +2324,19 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val
  *
  * @param node  The node of element to set the Property.
  * @param key   The key for the Property.
+ * @param val   The optional value for the Property.
+ * @param conf  Confidence value.
+ * @return      Pointer to created element.
+ */
+xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val, const double conf ) {
+  return setProperty(node,key,val,&conf);
+}
+
+/**
+ * Sets a Property to a given node.
+ *
+ * @param node  The node of element to set the Property.
+ * @param key   The key for the Property.
  * @param val   Numeric value for the Property.
  * @param _conf Pointer to confidence value, NULL for no confidence.
  * @return      Pointer to created element.
@@ -2332,6 +2345,19 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const double va
   char buffer[32];
   snprintf( buffer, sizeof buffer, "%g", val );
   return setProperty(node,key,buffer,_conf);
+}
+
+/**
+ * Sets a Property to a given node.
+ *
+ * @param node  The node of element to set the Property.
+ * @param key   The key for the Property.
+ * @param val   The optional value for the Property.
+ * @param conf  Confidence value.
+ * @return      Pointer to created element.
+ */
+xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const double val, const double conf ) {
+  return setProperty(node,key,val,&conf);
 }
 
 /**
@@ -2366,6 +2392,18 @@ xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double*
 }
 
 /**
+ * Adds or modifies (if already exists) the TextEquiv for a given node.
+ *
+ * @param node   The node of element to set the TextEquiv.
+ * @param text   The text string.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double conf ) {
+  return setTextEquiv( node, text, &conf );
+}
+
+/**
  * Adds or modifies (if already exists) the TextEquiv for a given xpath.
  *
  * @param xpath  Selector for element to set the TextEquiv.
@@ -2381,6 +2419,18 @@ xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const doub
   }
 
   return setTextEquiv( target[0], text, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the TextEquiv for a given xpath.
+ *
+ * @param xpath  Selector for element to set the TextEquiv.
+ * @param text   The text string.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double conf ) {
+  return setTextEquiv( xpath, text, &conf );
 }
 
 /**
@@ -2423,6 +2473,18 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points,
  *
  * @param node   The node of element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points, const double conf ) {
+  return setCoords( node, points, &conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords for a given node.
+ *
+ * @param node   The node of element to set the Coords.
+ * @param points Vector of x,y coordinates for the points attribute.
  * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
  */
@@ -2430,6 +2492,18 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, c
   std::vector<cv::Point2f> points2f;
   cv::Mat(points).convertTo(points2f, cv::Mat(points2f).type());
   return setCoords( node, points2f, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords for a given node.
+ *
+ * @param node   The node of element to set the Coords.
+ * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, const double conf ) {
+  return setCoords( node, points, &conf );
 }
 
 /**
@@ -2448,6 +2522,18 @@ xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poin
   }
 
   return setCoords( target[0], points, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords for a given xpath.
+ *
+ * @param node   Selector for element to set the Coords.
+ * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& points, const double conf ) {
+  return setCoords( xpath, points, &conf );
 }
 
 /**
@@ -2472,6 +2558,22 @@ xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, doub
   bbox.push_back( cv::Point2f(xmin,ymax) );
 
   return setCoords( node, bbox, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Coords as a bounding box for a given node.
+ *
+ * @param node      The node of element to set the Coords.
+ * @param xmin      Minimum x value of bounding box.
+ * @param ymin      Minimum y value of bounding box.
+ * @param width     Width of bounding box.
+ * @param height    Height of bounding box.
+ * @param conf      Confidence value.
+ * @param subone    Whether to subtract 1 when computing xmax and ymax (discrete compatibility).
+ * @return          Pointer to created element.
+ */
+xmlNodePt PageXML::setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double conf, bool subone ) {
+  return setCoordsBBox( node, xmin, ymin, width, height, &conf, subone );
 }
 
 /**
@@ -2515,6 +2617,18 @@ xmlNodePt PageXML::setBaseline( xmlNodePt node, const vector<cv::Point2f>& point
 }
 
 /**
+ * Adds or modifies (if already exists) the Baseline for a given node.
+ *
+ * @param node   The node of element to set the Baseline.
+ * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setBaseline( xmlNodePt node, const vector<cv::Point2f>& points, const double conf ) {
+  return setBaseline( node, points, &conf );
+}
+
+/**
  * Adds or modifies (if already exists) the Baseline for a given xpath.
  *
  * @param xpath  Selector for element to set the Baseline.
@@ -2530,6 +2644,18 @@ xmlNodePt PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& po
   }
 
   return setBaseline( target[0], points, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) the Baseline for a given xpath.
+ *
+ * @param xpath  Selector for element to set the Baseline.
+ * @param points Vector of x,y coordinates for the points attribute.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setBaseline( const char* xpath, const vector<cv::Point2f>& points, const double conf ) {
+  return setBaseline( xpath, points, &conf );
 }
 
 /**
@@ -2549,6 +2675,21 @@ xmlNodePt PageXML::setBaseline( xmlNodePt node, double x1, double y1, double x2,
   pts.push_back( cv::Point2f(x2,y2) );
 
   return setBaseline( node, pts, _conf );
+}
+
+/**
+ * Adds or modifies (if already exists) a two point Baseline for a given node.
+ *
+ * @param node   The node of element to set the Baseline.
+ * @param x1     x value of first point.
+ * @param y1     y value of first point.
+ * @param x2     x value of second point.
+ * @param y2     y value of second point.
+ * @param conf   Confidence value.
+ * @return       Pointer to created element.
+ */
+xmlNodePt PageXML::setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double conf ) {
+  return setBaseline( node, x1, y1, x2, y2, &conf );
 }
 
 /**
@@ -2761,8 +2902,38 @@ void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double* 
     setAttr( orientation, "conf", conf );
   }
 }
+
+/**
+ * Sets the image orientation for the given Page node.
+ *
+ * @param node   The page node.
+ * @param angle  The orientation angle in degrees {0,90,180,-90}.
+ * @param conf   Confidence value.
+ */
+void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double conf ) {
+  setPageImageOrientation( node, angle, &conf );
+}
+
+/**
+ * Sets the image orientation for the given Page number.
+ *
+ * @param pagenum  The page number (0-based).
+ * @param angle    The orientation angle in degrees {0,90,180,-90}.
+ * @param _conf    Pointer to confidence value, NULL for no confidence.
+ */
 void PageXML::setPageImageOrientation( int pagenum, int angle, const double* _conf ) {
   return setPageImageOrientation( selectNth("//_:Page",pagenum), angle, _conf );
+}
+
+/**
+ * Sets the image orientation for the given Page number.
+ *
+ * @param pagenum  The page number (0-based).
+ * @param angle    The orientation angle in degrees {0,90,180,-90}.
+ * @param conf     Confidence value.
+ */
+void PageXML::setPageImageOrientation( int pagenum, int angle, const double conf ) {
+  setPageImageOrientation( pagenum, angle, &conf );
 }
 
 /**
@@ -2785,12 +2956,22 @@ int PageXML::getPageImageOrientation( xmlNodePt node ) {
   string angle = getAttr( node, "angle" );
   return atoi(angle.c_str());
 }
+
+/**
+ * Gets the image orientation for the given Page number.
+ *
+ * @param pagenum  The page number (0-based).
+ * @return         Orientation in degrees.
+ */
 int PageXML::getPageImageOrientation( int pagenum ) {
   return getPageImageOrientation( selectNth("//_:Page",pagenum) );
 }
 
 /**
- * Returns the width of a page.
+ * Gets the width of a page (might be different to image width due to the image orientation).
+ *
+ * @param node   A node to get its page width.
+ * @return       The page width.
  */
 unsigned int PageXML::getPageWidth( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
@@ -2798,15 +2979,26 @@ unsigned int PageXML::getPageWidth( xmlNodePt node ) {
     throw_runtime_error( "PageXML.getPageWidth: node is required to be a Page or descendant of a Page" );
     return 0;
   }
-  string width = getAttr( node, "imageWidth" );
+  int angle = getPageImageOrientation( node );
+  string width = getAttr( node, ( angle == 0 || angle == 180 ) ? "imageWidth" : "imageHeight" );
   return atoi(width.c_str());
 }
+
+/**
+ * Gets the width of a page (might be different to image width due to the image orientation).
+ *
+ * @param pagenum  The page number (0-based).
+ * @return         The page width.
+ */
 unsigned int PageXML::getPageWidth( int pagenum ) {
   return getPageWidth( selectNth("//_:Page",pagenum) );
 }
 
 /**
- * Returns the height of a page.
+ * Gets the height of a page (might be different to image width due to the image orientation).
+ *
+ * @param node   A node to get its page height.
+ * @return       The page height.
  */
 unsigned int PageXML::getPageHeight( xmlNodePt node ) {
   node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
@@ -2814,11 +3006,47 @@ unsigned int PageXML::getPageHeight( xmlNodePt node ) {
     throw_runtime_error( "PageXML.getPageHeight: node is required to be a Page or descendant of a Page" );
     return 0;
   }
-  string height = getAttr( node, "imageHeight" );
+  int angle = getPageImageOrientation( node );
+  string height = getAttr( node, ( angle == 0 || angle == 180 ) ? "imageHeight" : "imageWidth" );
   return atoi(height.c_str());
 }
+
+/**
+ * Gets the height of a page (might be different to image width due to the image orientation).
+ *
+ * @param pagenum  The page number (0-based).
+ * @return         The page height.
+ */
 unsigned int PageXML::getPageHeight( int pagenum ) {
   return getPageHeight( selectNth("//_:Page",pagenum) );
+}
+
+/**
+ * Sets the width of a page (actually sets imageWidth accounting for image orientation).
+ *
+ * @param node   A node to set its page width.
+ * @param width  The width to set.
+ */
+void PageXML::setPageWidth( xmlNodePt node, int width ) {
+  node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+  if( ! nodeIs( node, "Page" ) )
+    throw_runtime_error( "PageXML.setPageWidth: node is required to be a Page or descendant of a Page" );
+  int angle = getPageImageOrientation( node );
+  setAttr( node, ( angle == 0 || angle == 180 ) ? "imageWidth" : "imageHeight", std::to_string(width).c_str() );
+}
+
+/**
+ * Sets the height of a page (actually sets imageHeight accounting for image orientation).
+ *
+ * @param node    A node to set its page height.
+ * @param height  The height to set.
+ */
+void PageXML::setPageHeight( xmlNodePt node, int height ) {
+  node = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
+  if( ! nodeIs( node, "Page" ) )
+    throw_runtime_error( "PageXML.setPageHeight: node is required to be a Page or descendant of a Page" );
+  int angle = getPageImageOrientation( node );
+  setAttr( node, ( angle == 0 || angle == 180 ) ? "imageHeight" : "imageWidth", std::to_string(height).c_str() );
 }
 
 /**
@@ -2879,8 +3107,15 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
   /// For each page update size and resize coords ///
   int updated = 0;
   for ( int n=0; n<(int)pages.size(); n++ ) {
-    setAttr( pages[n], "imageWidth", std::to_string(sizes[n].width).c_str() );
-    setAttr( pages[n], "imageHeight", std::to_string(sizes[n].height).c_str() );
+    int currWidth = getPageWidth(pages[n]);
+    int currHeight = getPageHeight(pages[n]);
+    if ( currWidth == sizes[n].width && currHeight == sizes[n].height )
+      continue;
+
+    setPageWidth( pages[n], sizes[n].width );
+    setPageHeight( pages[n], sizes[n].height );
+    updated++;
+
     double fact_x = (double)sizes[n].width/orig_sizes[n].width;
     double fact_y = (double)sizes[n].height/orig_sizes[n].height;
 
@@ -2909,7 +3144,7 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
     updated += coords.size()+fpgram.size();
   }
 
-  return updated+pages.size();
+  return updated;
 }
 
 /**
@@ -3936,7 +4171,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
         std::string pageregid = std::string("page")+std::to_string(npage+1)+(num?"_cnt"+std::to_string(num):"");
         if ( ! selectByID(pageregid.c_str()) ) {
           pageRegTo = addTextRegion( pgsTo[npage], pageregid.c_str(), NULL, true );
-          setCoordsBBox( pageRegTo, 0, 0, toImW, toImH, NULL, true );
+          setCoordsBBox( pageRegTo, 0, 0, toImW, toImH, nullptr, true );
           pageregadded = true;
           break;
         }

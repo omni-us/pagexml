@@ -49,20 +49,15 @@ A doxygen+moxygen generated API documentation for the C++ PageXML library can be
     height = 200
     pxml.newXml("name-and-version-of-tool", file, width, height)
 
-    # Initialize object for setting confidence values
-    conf = pagexml.ptr_double()
-
     # Add a text region to the Page
     page = pxml.selectNth("//_:Page",0)
     reg = pxml.addTextRegion(page)
 
     # Set text region bounding box with a confidence
-    conf.assign(0.8)
-    pxml.setCoordsBBox( reg, 10, 20, 80, 60, conf )
+    pxml.setCoordsBBox( reg, 10, 20, 80, 60, 0.8 )
 
-    # Set the text for the text region
-    conf.assign(0.9)
-    pxml.setTextEquiv( reg, "lorem ipsum", conf )
+    # Set the text for the text region with a confidence
+    pxml.setTextEquiv( reg, "lorem ipsum", 0.9 )
 
     # Add property to text region
     pxml.setProperty( reg, "key", "value" )

@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.11.21$
+ * @version $Version: 2018.11.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -216,28 +216,43 @@ class PageXML {
     void updateLastChange();
     std::string getPropertyValue( xmlNodePt node, const char* key );
     xmlNodePt setProperty( xmlNodePt node, const char* key, const char* val = NULL, const double* _conf = NULL );
+    xmlNodePt setProperty( xmlNodePt node, const char* key, const char* val, const double conf );
     xmlNodePt setProperty( xmlNodePt node, const char* key, const double val, const double* _conf = NULL );
-    xmlNodePt setTextEquiv( xmlNodePt node,   const char* text, const double* _conf = NULL );
+    xmlNodePt setProperty( xmlNodePt node, const char* key, const double val, const double conf );
+    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double* _conf = NULL );
+    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double conf );
     xmlNodePt setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
+    xmlNodePt setTextEquiv( const char* xpath, const char* text, const double conf );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double conf );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,   const double* _conf = NULL );
+    xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,    const double conf );
     xmlNodePt setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePt setCoords( const char* xpath, const std::vector<cv::Point2f>& points,  const double conf );
     xmlNodePt setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf = NULL, bool subone = true );
+    xmlNodePt setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double conf, bool subone = true );
     xmlNodePt setBaseline( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePt setBaseline( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double conf );
     xmlNodePt setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
+    xmlNodePt setBaseline( const char* xpath, const std::vector<cv::Point2f>& points, const double conf );
     xmlNodePt setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double* _conf = NULL );
+    xmlNodePt setBaseline( xmlNodePt node, double x1, double y1, double x2, double y2, const double conf );
     bool intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point2f line2_point1, cv::Point2f line2_point2, cv::Point2f& _ipoint );
     bool isPolystripe( std::vector<cv::Point2f> coords, std::vector<cv::Point2f> baseline, double* height = NULL, double* offset = NULL );
     xmlNodePt setPolystripe( xmlNodePt node, double height, double offset = 0.25, bool offset_check = true );
     int getPageNumber( xmlNodePt node );
     void setPageImageOrientation( xmlNodePt node, int angle, const double* _conf = NULL );
-    void setPageImageOrientation( int pagenum,     int angle, const double* _conf = NULL );
+    void setPageImageOrientation( xmlNodePt node, int angle, const double conf );
+    void setPageImageOrientation( int pagenum,    int angle, const double* _conf = NULL );
+    void setPageImageOrientation( int pagenum,    int angle, const double conf );
     int getPageImageOrientation( xmlNodePt node );
     int getPageImageOrientation( int pagenum );
     unsigned int getPageWidth( xmlNodePt node );
     unsigned int getPageWidth( int pagenum );
     unsigned int getPageHeight( xmlNodePt node );
     unsigned int getPageHeight( int pagenum );
+    void setPageWidth( xmlNodePt node, int width );
+    void setPageHeight( xmlNodePt node, int height );
     std::vector<cv::Size2i> getPagesSize( std::vector<xmlNodePt> pages );
     std::vector<cv::Size2i> getPagesSize( const char* xpath = "//_:Page" );
     int resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio = true );

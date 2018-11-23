@@ -1,4 +1,4 @@
-pagexml API (version 2018.11.21)
+pagexml API (version 2018.11.23)
 ********************************
 
 
@@ -1794,7 +1794,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    setCoords(*args)
 
-   setCoordsBBox(node, xmin, ymin, width, height, _conf=None, subone=True)
+   setCoordsBBox(*args)
 
       Adds or modifies (if already exists) the Coords as a bounding
       box for a given node.
@@ -1830,9 +1830,13 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to created element.
 
+   setPageHeight(node, height)
+
    setPageImageFilename(*args)
 
    setPageImageOrientation(*args)
+
+   setPageWidth(node, width)
 
    setPolystripe(node, height, offset=0.25, offset_check=True)
 

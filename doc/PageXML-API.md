@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.11.21
+Version2018.11.23
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -838,28 +838,43 @@ Whether flattening was performed.
 `public void `[`updateLastChange`](#class_page_x_m_l_1a99bc8c45fae21207bb608e69609dedcd)`()` | Updates the last change time stamp.
 `public std::string `[`getPropertyValue`](#class_page_x_m_l_1ab4d79c28bc94086d1d379f0ea73ff899)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key)` | Retrieves a Property value.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1af6e80d30313f63054228fcb15305db31)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double * _conf)` | Sets a Property to a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1aa05ac4ccd18740e84e8566f5f07ed876)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double conf)` | Sets a Property to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a82ffe7a5366736034a3e4514b43ab389)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double * _conf)` | Sets a Property to a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a8acc4a27f30da3f3d75c93baf5280a6d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double conf)` | Sets a Property to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a65f380acfc400de2a6dc59eb1ee22904)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a3d01bccae1af691fc5cc60e720d1659b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf)` | Adds or modifies (if already exists) the TextEquiv for a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ae7938084955a0668bc44f24307ad77ba)`(const char * xpath,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1aeaad48fa1ad577caa032534960e955f0)`(const char * xpath,const char * text,const double conf)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a8d92328ba656b8e8e847bf2ad3607a46)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1acf4d9ee3ef34fc928e4b3b0e53221284)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a626847a8aac3c4bc650d0b27f3ce042b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double * _conf)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a65dd07db2a1b0babba52c5d3423557e6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a1038c674a0522759ea3004bac9cac5f2)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1afbbded5bbdd2b5716782604aa5b22297)`(const char * xpath,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1ac42051db4e4f1feb754401e78f5cb53d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf,bool subone)` | Adds or modifies (if already exists) the Coords as a bounding box for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1a2e4028e182c73058112b3d1009925c65)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double conf,bool subone)` | Adds or modifies (if already exists) the Coords as a bounding box for a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a2a85dc0b7eb35ac29780551a642a3e51)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a0d9eaff78f737a19fafe17b09c6b87fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a12a577c21cf6109f30843336bbdaba8d)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` | 
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a9b2b8f89080a44663008d011c118801c)`(const char * xpath,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a489cf14031d07454f538a048e4b48c03)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double * _conf)` | Adds or modifies (if already exists) a two point Baseline for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1af8a1bedc13b1c70a7bb6f249b8e34f52)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double conf)` | Adds or modifies (if already exists) a two point Baseline for a given node.
 `public bool `[`intersection`](#class_page_x_m_l_1a37da0ed1fb708b374e7d83e6b22cbb23)`(cv::Point2f line1_point1,cv::Point2f line1_point2,cv::Point2f line2_point1,cv::Point2f line2_point2,cv::Point2f & _ipoint)` | Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
 `public bool `[`isPolystripe`](#class_page_x_m_l_1a61c1b6597c7bcf7b65dc195e95ef7ab4)`(std::vector< cv::Point2f > coords,std::vector< cv::Point2f > baseline,double * height,double * offset)` | Checks whether Coords is a poly-stripe for its corresponding baseline.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setPolystripe`](#class_page_x_m_l_1ab97470a0132a3e497c80f26e061aba28)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double height,double offset,bool offset_check)` | Sets the Coords of a TextLine as a poly-stripe of the baseline.
 `public int `[`getPageNumber`](#class_page_x_m_l_1ae660a692143a9983406bba434037e78c)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Gets the page number for the given node.
 `public void `[`setPageImageOrientation`](#class_page_x_m_l_1a7f89e6da35429f37f6d887b36510772c)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int angle,const double * _conf)` | Sets the image orientation for the given Page node.
-`public void `[`setPageImageOrientation`](#class_page_x_m_l_1a94c03640c38f7ddd743b9c0423c71342)`(int pagenum,int angle,const double * _conf)` | 
+`public void `[`setPageImageOrientation`](#class_page_x_m_l_1ae2e91ca140cb87bd3fe4420fcab890fe)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int angle,const double conf)` | Sets the image orientation for the given Page node.
+`public void `[`setPageImageOrientation`](#class_page_x_m_l_1a94c03640c38f7ddd743b9c0423c71342)`(int pagenum,int angle,const double * _conf)` | Sets the image orientation for the given Page number.
+`public void `[`setPageImageOrientation`](#class_page_x_m_l_1ab08bc018507912fef86910f9f4822551)`(int pagenum,int angle,const double conf)` | Sets the image orientation for the given Page number.
 `public int `[`getPageImageOrientation`](#class_page_x_m_l_1a3f776930d7d1be6239497c49f6ea6b9a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Gets the image orientation for the given node.
-`public int `[`getPageImageOrientation`](#class_page_x_m_l_1acd1a1b7bbe14a6c8e14e3ef5afccd3cf)`(int pagenum)` | 
-`public unsigned int `[`getPageWidth`](#class_page_x_m_l_1a7746613d3800267f27d7bef2240ec827)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the width of a page.
-`public unsigned int `[`getPageWidth`](#class_page_x_m_l_1aa1b7155d7ae5b37710310b7891d1c314)`(int pagenum)` | 
-`public unsigned int `[`getPageHeight`](#class_page_x_m_l_1ab96562c1fe4d95706778507ed2e8b57d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the height of a page.
-`public unsigned int `[`getPageHeight`](#class_page_x_m_l_1a80e90205b325157f3d1fd680f7ebc108)`(int pagenum)` | 
+`public int `[`getPageImageOrientation`](#class_page_x_m_l_1acd1a1b7bbe14a6c8e14e3ef5afccd3cf)`(int pagenum)` | Gets the image orientation for the given Page number.
+`public unsigned int `[`getPageWidth`](#class_page_x_m_l_1a7746613d3800267f27d7bef2240ec827)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Gets the width of a page (might be different to image width due to the image orientation).
+`public unsigned int `[`getPageWidth`](#class_page_x_m_l_1aa1b7155d7ae5b37710310b7891d1c314)`(int pagenum)` | Gets the width of a page (might be different to image width due to the image orientation).
+`public unsigned int `[`getPageHeight`](#class_page_x_m_l_1ab96562c1fe4d95706778507ed2e8b57d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Gets the height of a page (might be different to image width due to the image orientation).
+`public unsigned int `[`getPageHeight`](#class_page_x_m_l_1a80e90205b325157f3d1fd680f7ebc108)`(int pagenum)` | Gets the height of a page (might be different to image width due to the image orientation).
+`public void `[`setPageWidth`](#class_page_x_m_l_1a4887c81a8f839015ff4643ba09193355)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int width)` | Sets the width of a page (actually sets imageWidth accounting for image orientation).
+`public void `[`setPageHeight`](#class_page_x_m_l_1acdd80beebd7ba3a38459ad46e103761e)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int height)` | Sets the height of a page (actually sets imageHeight accounting for image orientation).
 `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1a525354fa982782061b40718607b960dd)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages)` | Retrieves pages size.
 `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1aab0456c928c85b694387acf75339c02f)`(const char * xpath)` | 
 `public int `[`resize`](#class_page_x_m_l_1a81f6aa2af3574985f268959662ac4c2b)`(std::vector< cv::Size2i > sizes,std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages,bool check_aspect_ratio)` | Resizes pages and all respective coordinates.
@@ -1477,6 +1492,22 @@ Sets a Property to a given node.
 #### Returns
 Pointer to created element.
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1aa05ac4ccd18740e84e8566f5f07ed876)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double conf)` 
+
+Sets a Property to a given node.
+
+#### Parameters
+* `node` The node of element to set the Property. 
+
+* `key` The key for the Property. 
+
+* `val` The optional value for the Property. 
+
+* `conf` Confidence value. 
+
+#### Returns
+Pointer to created element.
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a82ffe7a5366736034a3e4514b43ab389)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double * _conf)` 
 
 Sets a Property to a given node.
@@ -1489,6 +1520,22 @@ Sets a Property to a given node.
 * `val` Numeric value for the Property. 
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
+
+#### Returns
+Pointer to created element.
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a8acc4a27f30da3f3d75c93baf5280a6d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double conf)` 
+
+Sets a Property to a given node.
+
+#### Parameters
+* `node` The node of element to set the Property. 
+
+* `key` The key for the Property. 
+
+* `val` The optional value for the Property. 
+
+* `conf` Confidence value. 
 
 #### Returns
 Pointer to created element.
@@ -1507,6 +1554,20 @@ Adds or modifies (if already exists) the TextEquiv for a given node.
 #### Returns
 Pointer to created element.
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a3d01bccae1af691fc5cc60e720d1659b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf)` 
+
+Adds or modifies (if already exists) the TextEquiv for a given node.
+
+#### Parameters
+* `node` The node of element to set the TextEquiv. 
+
+* `text` The text string. 
+
+* `conf` Confidence value. 
+
+#### Returns
+Pointer to created element.
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ae7938084955a0668bc44f24307ad77ba)`(const char * xpath,const char * text,const double * _conf)` 
 
 Adds or modifies (if already exists) the TextEquiv for a given xpath.
@@ -1521,11 +1582,31 @@ Adds or modifies (if already exists) the TextEquiv for a given xpath.
 #### Returns
 Pointer to created element.
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1aeaad48fa1ad577caa032534960e955f0)`(const char * xpath,const char * text,const double conf)` 
+
+Adds or modifies (if already exists) the TextEquiv for a given xpath.
+
+#### Parameters
+* `xpath` Selector for element to set the TextEquiv. 
+
+* `text` The text string. 
+
+* `conf` Confidence value. 
+
+#### Returns
+Pointer to created element.
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a8d92328ba656b8e8e847bf2ad3607a46)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` 
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1acf4d9ee3ef34fc928e4b3b0e53221284)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double conf)` 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a626847a8aac3c4bc650d0b27f3ce042b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double * _conf)` 
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a65dd07db2a1b0babba52c5d3423557e6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double conf)` 
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a1038c674a0522759ea3004bac9cac5f2)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` 
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1afbbded5bbdd2b5716782604aa5b22297)`(const char * xpath,const std::vector< cv::Point2f > & points,const double conf)` 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1ac42051db4e4f1feb754401e78f5cb53d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double * _conf,bool subone)` 
 
@@ -1549,9 +1630,35 @@ Adds or modifies (if already exists) the Coords as a bounding box for a given no
 #### Returns
 Pointer to created element.
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoordsBBox`](#class_page_x_m_l_1a2e4028e182c73058112b3d1009925c65)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double xmin,double ymin,double width,double height,const double conf,bool subone)` 
+
+Adds or modifies (if already exists) the Coords as a bounding box for a given node.
+
+#### Parameters
+* `node` The node of element to set the Coords. 
+
+* `xmin` Minimum x value of bounding box. 
+
+* `ymin` Minimum y value of bounding box. 
+
+* `width` Width of bounding box. 
+
+* `height` Height of bounding box. 
+
+* `conf` Confidence value. 
+
+* `subone` Whether to subtract 1 when computing xmax and ymax (discrete compatibility). 
+
+#### Returns
+Pointer to created element.
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a2a85dc0b7eb35ac29780551a642a3e51)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` 
 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a0d9eaff78f737a19fafe17b09c6b87fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double conf)` 
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a12a577c21cf6109f30843336bbdaba8d)`(const char * xpath,const std::vector< cv::Point2f > & points,const double * _conf)` 
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a9b2b8f89080a44663008d011c118801c)`(const char * xpath,const std::vector< cv::Point2f > & points,const double conf)` 
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a489cf14031d07454f538a048e4b48c03)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double * _conf)` 
 
@@ -1569,6 +1676,26 @@ Adds or modifies (if already exists) a two point Baseline for a given node.
 * `y2` y value of second point. 
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
+
+#### Returns
+Pointer to created element.
+
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1af8a1bedc13b1c70a7bb6f249b8e34f52)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double conf)` 
+
+Adds or modifies (if already exists) a two point Baseline for a given node.
+
+#### Parameters
+* `node` The node of element to set the Baseline. 
+
+* `x1` x value of first point. 
+
+* `y1` y value of first point. 
+
+* `x2` x value of second point. 
+
+* `y2` y value of second point. 
+
+* `conf` Confidence value. 
 
 #### Returns
 Pointer to created element.
@@ -1620,7 +1747,38 @@ Sets the image orientation for the given Page node.
 
 * `_conf` Pointer to confidence value, NULL for no confidence.
 
+#### `public void `[`setPageImageOrientation`](#class_page_x_m_l_1ae2e91ca140cb87bd3fe4420fcab890fe)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int angle,const double conf)` 
+
+Sets the image orientation for the given Page node.
+
+#### Parameters
+* `node` The page node. 
+
+* `angle` The orientation angle in degrees {0,90,180,-90}. 
+
+* `conf` Confidence value.
+
 #### `public void `[`setPageImageOrientation`](#class_page_x_m_l_1a94c03640c38f7ddd743b9c0423c71342)`(int pagenum,int angle,const double * _conf)` 
+
+Sets the image orientation for the given Page number.
+
+#### Parameters
+* `pagenum` The page number (0-based). 
+
+* `angle` The orientation angle in degrees {0,90,180,-90}. 
+
+* `_conf` Pointer to confidence value, NULL for no confidence.
+
+#### `public void `[`setPageImageOrientation`](#class_page_x_m_l_1ab08bc018507912fef86910f9f4822551)`(int pagenum,int angle,const double conf)` 
+
+Sets the image orientation for the given Page number.
+
+#### Parameters
+* `pagenum` The page number (0-based). 
+
+* `angle` The orientation angle in degrees {0,90,180,-90}. 
+
+* `conf` Confidence value.
 
 #### `public int `[`getPageImageOrientation`](#class_page_x_m_l_1a3f776930d7d1be6239497c49f6ea6b9a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
@@ -1634,17 +1792,71 @@ Orientation in degrees.
 
 #### `public int `[`getPageImageOrientation`](#class_page_x_m_l_1acd1a1b7bbe14a6c8e14e3ef5afccd3cf)`(int pagenum)` 
 
+Gets the image orientation for the given Page number.
+
+#### Parameters
+* `pagenum` The page number (0-based). 
+
+#### Returns
+Orientation in degrees.
+
 #### `public unsigned int `[`getPageWidth`](#class_page_x_m_l_1a7746613d3800267f27d7bef2240ec827)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
-Returns the width of a page.
+Gets the width of a page (might be different to image width due to the image orientation).
+
+#### Parameters
+* `node` A node to get its page width. 
+
+#### Returns
+The page width.
 
 #### `public unsigned int `[`getPageWidth`](#class_page_x_m_l_1aa1b7155d7ae5b37710310b7891d1c314)`(int pagenum)` 
 
+Gets the width of a page (might be different to image width due to the image orientation).
+
+#### Parameters
+* `pagenum` The page number (0-based). 
+
+#### Returns
+The page width.
+
 #### `public unsigned int `[`getPageHeight`](#class_page_x_m_l_1ab96562c1fe4d95706778507ed2e8b57d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
-Returns the height of a page.
+Gets the height of a page (might be different to image width due to the image orientation).
+
+#### Parameters
+* `node` A node to get its page height. 
+
+#### Returns
+The page height.
 
 #### `public unsigned int `[`getPageHeight`](#class_page_x_m_l_1a80e90205b325157f3d1fd680f7ebc108)`(int pagenum)` 
+
+Gets the height of a page (might be different to image width due to the image orientation).
+
+#### Parameters
+* `pagenum` The page number (0-based). 
+
+#### Returns
+The page height.
+
+#### `public void `[`setPageWidth`](#class_page_x_m_l_1a4887c81a8f839015ff4643ba09193355)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int width)` 
+
+Sets the width of a page (actually sets imageWidth accounting for image orientation).
+
+#### Parameters
+* `node` A node to set its page width. 
+
+* `width` The width to set.
+
+#### `public void `[`setPageHeight`](#class_page_x_m_l_1acdd80beebd7ba3a38459ad46e103761e)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int height)` 
+
+Sets the height of a page (actually sets imageHeight accounting for image orientation).
+
+#### Parameters
+* `node` A node to set its page height. 
+
+* `height` The height to set.
 
 #### `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1a525354fa982782061b40718607b960dd)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages)` 
 
