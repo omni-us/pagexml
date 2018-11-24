@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.23$
+ * @version $Version: 2018.11.24$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.23";
+static char class_version[] = "Version: 2018.11.24";
 
 /**
  * Returns the class version.
@@ -617,6 +617,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     fname = aux.c_str();
   }
 
+  /// Get image number for multipage files ///
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__)
   int imgnum = 0;
 #endif
@@ -632,11 +633,12 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 #endif
 
 #if defined (__PAGEXML_LEPT__)
-  if( pagesImage[pagenum] == NULL ) {
+  if( pagesImage[pagenum] != NULL ) {
     pixDestroy(&(pagesImage[pagenum]));
     pagesImage[pagenum] = NULL;
   }
 #if defined (__PAGEXML_MAGICK__)
+  /// Leptonica load pdf page ///
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -661,6 +663,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #endif
   if( pagesImage[pagenum] == NULL ) {
+    /// Leptonica load tiff page ///
     if( std::regex_match(fname, reIsTiff) ) {
       PIXA* tiffimage = pixaReadMultipageTiff( fbase.c_str() );
       if( tiffimage == NULL || tiffimage->n == 0 )
@@ -670,6 +673,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
       pagesImage[pagenum] = pixClone(tiffimage->pix[imgnum]);
       pixaDestroy(&tiffimage);
     }
+    /// Leptonica load other image formats ///
     else
       pagesImage[pagenum] = pixRead(fname);
   }
@@ -678,6 +682,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     return;
   }
 #elif defined (__PAGEXML_IMG_MAGICK__)
+  /// ImageMagick load image ///
   try {
     if( density )
       pagesImage[pagenum].density(std::to_string(density).c_str());
@@ -692,6 +697,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #elif defined (__PAGEXML_IMG_CV__)
 #if defined (__PAGEXML_MAGICK__)
+  /// OpenCV load pdf page ///
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -716,6 +722,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
   else
 #endif
+  /// OpenCV load other image formats ///
   pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
@@ -723,6 +730,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #endif
 
+  /// Convert to grayscale: Leptonica or ImageMagick ///
   if( grayimg ) {
 #if defined (__PAGEXML_LEPT__)
     Pix *orig = pagesImage[pagenum];
@@ -746,11 +754,23 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   int imgwidth = pagesImage[pagenum].size().width;
   int imgheight = pagesImage[pagenum].size().height;
 #endif
+#if defined (__PAGEXML_IMG_MAGICK__)
+  int imgwidth_orig = imgwidth;
+  int imgheight_orig = imgheight;
+#endif
+  int angle = getPageImageOrientation( pagenum );
+  if ( angle == 90 || angle == 180 )
+    std::swap(imgwidth, imgheight);
   int width = getPageWidth(pagenum);
   int height = getPageHeight(pagenum);
 
   /// Resize XML coords if required ///
   if( ( width != imgwidth || height != imgheight ) && resize_coords ) {
+    double ratio_diff = imgwidth < imgheight ?
+      (double)imgwidth/imgheight - (double)width/height:
+      (double)imgheight/imgwidth - (double)height/width;
+    if ( fabs(ratio_diff) > 1e-2 )
+      throw_runtime_error( "PageXML.loadImage: aspect ratio too different for page %d (%ux%u vs. %ux%u)", pagenum, width, height, imgwidth, imgheight );
     xmlNodePt page = selectNth("//_:Page",pagenum);
     resize( cv::Size2i(imgwidth,imgheight), page, true );
     width = getPageWidth(page);
@@ -762,7 +782,6 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size (%dx%d vs. %dx%d): %s", imgwidth, imgheight, width, height, fname );
 
   /// Check image orientation and rotate accordingly ///
-  int angle = getPageImageOrientation( pagenum );
   if ( angle ) {
 #if defined (__PAGEXML_LEPT__)
     Pix *orig = pagesImage[pagenum];
@@ -774,32 +793,30 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
       pagesImage[pagenum] = pixRotateOrth(orig,3);
     pixDestroy(&orig);
 #elif defined (__PAGEXML_IMG_MAGICK__)
-    int width_orig = pagesImage[pagenum].columns();
-    int height_orig = pagesImage[pagenum].rows();
-    int width_rot = angle == 180 ? width_orig : height_orig;
-    int height_rot = angle == 180 ? height_orig : width_orig;
-    Magick::Image rotated( Magick::Geometry(width_rot, height_rot), Magick::Color("black") );
-    Magick::Pixels view_orig(pagesImage[pagenum]);
-    Magick::Pixels view_rot(rotated);
-    const Magick::PixelPacket *pixs_orig = view_orig.getConst( 0, 0, width_orig, height_orig );
-    Magick::PixelPacket *pixs_rot = view_rot.get( 0, 0, width_rot, height_rot );
-    if ( angle == 90 ) {
-      for( int y=0, n=0; y<height_orig; y++ )
-        for( int x=0; x<width_orig; x++, n++ )
-          pixs_rot[x*width_rot+(width_rot-1-y)] = pixs_orig[n];
+    if( angle != 0 ) {
+      Magick::Image rotated( Magick::Geometry(imgwidth, imgheight), Magick::Color("black") );
+      Magick::Pixels view_orig(pagesImage[pagenum]);
+      Magick::Pixels view_rot(rotated);
+      const Magick::PixelPacket *pixs_orig = view_orig.getConst( 0, 0, imgwidth_orig, imgheight_orig );
+      Magick::PixelPacket *pixs_rot = view_rot.get( 0, 0, imgwidth, imgheight );
+      if ( angle == 90 ) {
+        for( int y=0, n=0; y<imgheight_orig; y++ )
+          for( int x=0; x<imgwidth_orig; x++, n++ )
+            pixs_rot[x*imgwidth+(imgwidth-1-y)] = pixs_orig[n];
+      }
+      else if ( angle == 180 ) {
+        for( int y=0, n=0; y<imgheight_orig; y++ )
+          for( int x=0; x<imgwidth_orig; x++, n++ )
+            pixs_rot[(imgheight-1-y)*imgwidth+(imgwidth-1-x)] = pixs_orig[n];
+      }
+      else if ( angle == -90 ) {
+        for( int y=0, n=0; y<imgheight_orig; y++ )
+          for( int x=0; x<imgwidth_orig; x++, n++ )
+            pixs_rot[(imgheight-1-x)*imgwidth+y] = pixs_orig[n];
+      }
+      view_rot.sync();
+      pagesImage[pagenum] = rotated;
     }
-    else if ( angle == 180 ) {
-      for( int y=0, n=0; y<height_orig; y++ )
-        for( int x=0; x<width_orig; x++, n++ )
-          pixs_rot[(height_rot-1-y)*width_rot+(width_rot-1-x)] = pixs_orig[n];
-    }
-    else if ( angle == -90 ) {
-      for( int y=0, n=0; y<height_orig; y++ )
-        for( int x=0; x<width_orig; x++, n++ )
-          pixs_rot[(height_rot-1-x)*width_rot+y] = pixs_orig[n];
-    }
-    view_rot.sync();
-    pagesImage[pagenum] = rotated;
 #elif defined (__PAGEXML_IMG_CV__)
     PageImage rotated;
     if ( angle == 90 ) {
@@ -1454,6 +1471,18 @@ std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
 }
 
 /**
+ * Sets a node value.
+ *
+ * @param node       Node element.
+ * @return           String with the node value.
+ */
+void PageXML::setValue( xmlNodePt node, const char* value ) {
+  if( node == NULL || value == NULL )
+    throw_runtime_error( "PageXML.setValue: received NULL pointer (node=%p, value=%p)", node, value );
+  xmlNodeSetContent( node, (xmlChar*)value );
+}
+
+/**
  * Gets an attribute value from an xml node.
  *
  * @param node   XML node.
@@ -1574,9 +1603,10 @@ int PageXML::setAttr( const string xpath, const string name, const string value 
  * @return       Pointer to inserted element.
  */
 xmlNodePt PageXML::insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
-  if( elem == NULL )
+  if( elem == NULL ) {
     throw_runtime_error( "PageXML.insertElem: received NULL pointer" );
-
+    return NULL;
+  }
   if( node->doc != xml ) {
     throw_runtime_error( "PageXML.insertElem: node is required to be a child of this PageXML object" );
     return NULL;
@@ -1751,8 +1781,14 @@ int PageXML::rmElems( const string xpath, xmlNodePt node ) {
  * @return       Pointer to cloned element.
  */
 xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
-  if( elem == NULL || node == NULL )
-    throw_runtime_error( "PageXML.copyElem: received NULL pointer" );
+  if( elem == NULL || node == NULL ) {
+    throw_runtime_error( "PageXML.copyElem: received NULL pointer (elem=%p, node=%p)", elem, node );
+    return NULL;
+  }
+  if( node->doc != xml ) {
+    throw_runtime_error( "PageXML.copyElem: node is required to be a child of this PageXML object" );
+    return NULL;
+  }
 
   xmlNodePt elemcopy = NULL;
   if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, elem, &elemcopy, xml, NULL, 1, 0 ) ||
@@ -1765,7 +1801,8 @@ xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
   }
   catch( exception& e ) {
     xmlFreeNode(elemcopy);
-    throw e;
+    throw_runtime_error( "PageXML.copyElem: problems inserting element" );
+    return NULL;
   }
 }
 
@@ -1778,35 +1815,33 @@ xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
  * @return       Pointer to moved element.
  */
 xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
-  if( elem == NULL || node == NULL )
+  if( elem == NULL || node == NULL ) {
     throw_runtime_error( "PageXML.moveElem: received NULL pointer (elem=%p, node=%p)", elem, node );
-
-  xmlNodePt origelem = elem;
-  if( elem->doc == xml )
-    xmlUnlinkNode(elem);
-  else {
-    if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, origelem, &elem, xml, NULL, 1, 0 ) ||
-        elem == NULL ) {
-      throw_runtime_error( "PageXML.moveElem: problems cloning node" );
-      return NULL;
-    }
-    xmlUnlinkNode(origelem);
-    xmlFreeNode(origelem);
+    return NULL;
   }
+  if( node->doc != xml ) {
+    throw_runtime_error( "PageXML.moveElem: node is required to be a child of this PageXML object" );
+    return NULL;
+  }
+
+  xmlNodePt elemcopy = NULL;
   try {
-    return insertElem( elem, node, itype );
+    elemcopy = copyElem( elem, node, itype );
   }
   catch( exception& e ) {
-    if( elem != origelem )
-      xmlFreeNode(elem);
-    throw e;
+    throw_runtime_error( "PageXML.moveElem: problems moving element: %s", e.what() );
+    return NULL;
   }
+  xmlUnlinkNode(elem);
+  xmlFreeNode(elem);
+
+  return elemcopy;
 }
 
 /**
  * Unlink elements and add them relative to a given node.
  *
- * @param elem   Element to move.
+ * @param elems  Elements to move.
  * @param node   Reference element for insertion.
  * @param itype  Type of insertion.
  * @return       Pointer to moved element.
@@ -2882,10 +2917,16 @@ void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double* 
     throw_runtime_error( "PageXML.setPageImageOrientation: node is required to be a Page" );
     return;
   }
-  if( angle != 0 && angle != 90 && angle != 180 && angle != -90 ) {
-    throw_runtime_error( "PageXML.setPageImageOrientation: the only accepted angle values are: 0, 90, 180 or -90" );
+  if( angle % 90 != 0 ) {
+    throw_runtime_error( "PageXML.setPageImageOrientation: only angles multiple of 90 are accepted" );
     return;
   }
+
+  /// Normalize angle between [-90,180] ///
+  angle = ( angle + 90 ) % 360;
+  if ( angle < 0 )
+    angle += 360;
+  angle -= 90;
 
   rmElems( "_:ImageOrientation", node );
 
@@ -3067,8 +3108,79 @@ std::vector<cv::Size2i> PageXML::getPagesSize( std::vector<xmlNodePt> pages ) {
   }
   return sizes;
 }
+
+/**
+ * Retrieves pages size.
+ *
+ * @param xpath      Selector for Page nodes.
+ * @return           Vector of page sizes.
+ */
 std::vector<cv::Size2i> PageXML::getPagesSize( const char* xpath ) {
   return getPagesSize( select(xpath) );
+}
+
+/**
+ * Resizes pages and all respective coordinates.
+ *
+ * @param sizes               Page sizes to resize to.
+ * @param pages               Page nodes.
+ * @param check_aspect_ratio  Whether to check that the aspect ratio is properly preserved.
+ * @return                    Number of pages+points attributes modified.
+ */
+int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientation, const double* _conf ) {
+  if( angle % 90 != 0 ) {
+    throw_runtime_error( "PageXML.rotatePage: only angles multiple of 90 are accepted" );
+    return 0;
+  }
+
+  /// Normalize angle between [-90,180] ///
+  angle = ( angle + 90 ) % 360;
+  if ( angle < 0 )
+    angle += 360;
+  angle -= 90;
+
+  int pageWidth = getPageWidth(page);
+  int pageHeight = getPageHeight(page);
+
+  /// Set image orientation ///
+  int num = 0;
+  if ( update_image_orientation ) {
+    setPageImageOrientation( page, getPageImageOrientation(page)-angle, _conf );
+    num++;
+  }
+  if ( angle == 0 )
+    return num;
+
+  /// Select all elements with coordinates ///
+  std::vector<xmlNodePt> points = select(".//@points", page);
+  std::vector<xmlNodePt> fpgrams = select(".//_:Property[@key='fpgram']/@value", page);
+  points.insert(points.end(), fpgrams.begin(), fpgrams.end());
+
+  /// Rotate all coordinates ///
+  for ( int n=(int)points.size()-1; n>=0; n-- ) {
+    std::vector<cv::Point2f> pts = stringToPoints(getValue(points[n]));
+    if ( angle == -90 )
+      for ( int m=(int)pts.size()-1; m>=0; m-- ) {
+        double x = pts[m].x;
+        pts[m].x = pageHeight-1-pts[m].y;
+        pts[m].y = x;
+      }
+    else if ( angle == 90 )
+      for ( int m=(int)pts.size()-1; m>=0; m-- ) {
+        double x = pts[m].x;
+        pts[m].x = pts[m].y;
+        pts[m].y = pageWidth-1-x;
+      }
+    else if ( angle == 180 )
+      for ( int m=(int)pts.size()-1; m>=0; m-- ) {
+        pts[m].x = pageWidth-1-pts[m].x;
+        pts[m].y = pageHeight-1-pts[m].y;
+      }
+    setValue( points[n], pointsToString(pts).c_str() );
+    num++;
+  }
+
+  return num;
 }
 
 /**

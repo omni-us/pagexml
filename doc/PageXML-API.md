@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.11.23
+Version2018.11.24
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -802,6 +802,7 @@ Whether flattening was performed.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`parent`](#class_page_x_m_l_1a8ac32174f32b120caf595ec3a82e57d1)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the parent of a node.
 `public std::string `[`getValue`](#class_page_x_m_l_1a806731e1825cfbfa406ddf3e6978d747)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves a node value.
 `public std::string `[`getValue`](#class_page_x_m_l_1ae27ba3fb4d85e0ba2cee85125a6eaa54)`(const char * xpath,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves a node value.
+`public void `[`setValue`](#class_page_x_m_l_1a67163afa48565eafd017cb134a324e6b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * value)` | Sets a node value.
 `public std::string `[`getAttr`](#class_page_x_m_l_1a23e16f7c70950b4fe990b8c22a2e1ce5)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * name)` | Gets an attribute value from an xml node.
 `public std::string `[`getAttr`](#class_page_x_m_l_1abef00c0a3b59143989b8d29beaeb14bf)`(const char * xpath,const char * name)` | Gets an attribute value for a given xpath.
 `public std::string `[`getAttr`](#class_page_x_m_l_1a057bb3cecf33b3cd2e621d56095a4716)`(const std::string xpath,const std::string name)` | 
@@ -876,7 +877,8 @@ Whether flattening was performed.
 `public void `[`setPageWidth`](#class_page_x_m_l_1a4887c81a8f839015ff4643ba09193355)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int width)` | Sets the width of a page (actually sets imageWidth accounting for image orientation).
 `public void `[`setPageHeight`](#class_page_x_m_l_1acdd80beebd7ba3a38459ad46e103761e)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,int height)` | Sets the height of a page (actually sets imageHeight accounting for image orientation).
 `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1a525354fa982782061b40718607b960dd)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages)` | Retrieves pages size.
-`public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1aab0456c928c85b694387acf75339c02f)`(const char * xpath)` | 
+`public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1aab0456c928c85b694387acf75339c02f)`(const char * xpath)` | Retrieves pages size.
+`public int `[`rotatePage`](#class_page_x_m_l_1afd756366f58bb47b0f1961fce3dcbe71)`(int angle,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool update_image_orientation,const double * _conf)` | Resizes pages and all respective coordinates.
 `public int `[`resize`](#class_page_x_m_l_1a81f6aa2af3574985f268959662ac4c2b)`(std::vector< cv::Size2i > sizes,std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages,bool check_aspect_ratio)` | Resizes pages and all respective coordinates.
 `public int `[`resize`](#class_page_x_m_l_1a8b24748e08ccb010eb709a9d91c711cc)`(std::vector< cv::Size2i > sizes,const char * xpath,bool check_aspect_ratio)` | Resizes pages and all respective coordinates.
 `public int `[`resize`](#class_page_x_m_l_1ae9772185b88e2e12e26025effc2c39c7)`(cv::Size2i size,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool check_aspect_ratio)` | Resizes a page and all respective coordinates.
@@ -1147,6 +1149,16 @@ Retrieves a node value.
 #### Returns
 String with the node value.
 
+#### `public void `[`setValue`](#class_page_x_m_l_1a67163afa48565eafd017cb134a324e6b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * value)` 
+
+Sets a node value.
+
+#### Parameters
+* `node` Node element. 
+
+#### Returns
+String with the node value.
+
 #### `public std::string `[`getAttr`](#class_page_x_m_l_1a23e16f7c70950b4fe990b8c22a2e1ce5)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * name)` 
 
 Gets an attribute value from an xml node.
@@ -1313,7 +1325,7 @@ Pointer to moved element.
 Unlink elements and add them relative to a given node.
 
 #### Parameters
-* `elem` Element to move. 
+* `elems` Elements to move. 
 
 * `node` Reference element for insertion. 
 
@@ -1869,6 +1881,28 @@ Retrieves pages size.
 Vector of page sizes.
 
 #### `public std::vector< cv::Size2i > `[`getPagesSize`](#class_page_x_m_l_1aab0456c928c85b694387acf75339c02f)`(const char * xpath)` 
+
+Retrieves pages size.
+
+#### Parameters
+* `xpath` Selector for Page nodes. 
+
+#### Returns
+Vector of page sizes.
+
+#### `public int `[`rotatePage`](#class_page_x_m_l_1afd756366f58bb47b0f1961fce3dcbe71)`(int angle,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,bool update_image_orientation,const double * _conf)` 
+
+Resizes pages and all respective coordinates.
+
+#### Parameters
+* `sizes` Page sizes to resize to. 
+
+* `pages` Page nodes. 
+
+* `check_aspect_ratio` Whether to check that the aspect ratio is properly preserved. 
+
+#### Returns
+Number of pages+points attributes modified.
 
 #### `public int `[`resize`](#class_page_x_m_l_1a81f6aa2af3574985f268959662ac4c2b)`(std::vector< cv::Size2i > sizes,std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > pages,bool check_aspect_ratio)` 
 

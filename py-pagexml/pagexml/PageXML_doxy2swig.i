@@ -502,6 +502,20 @@ Returns
 String with the node value.  
 ";
 
+%feature("docstring") PageXML::setValue "
+
+Sets a node value.  
+
+Parameters
+----------
+* `node` :  
+    Node element.  
+
+Returns
+-------
+String with the node value.  
+";
+
 %feature("docstring") PageXML::getAttr "
 
 Gets an attribute value from an xml node.  
@@ -718,8 +732,8 @@ Unlink elements and add them relative to a given node.
 
 Parameters
 ----------
-* `elem` :  
-    Element to move.  
+* `elems` :  
+    Elements to move.  
 * `node` :  
     Reference element for insertion.  
 * `itype` :  
@@ -1304,6 +1318,8 @@ Parameters
     The orientation angle in degrees {0,90,180,-90}.  
 * `_conf` :  
     Pointer to confidence value, NULL for no confidence.  
+
+Normalize angle between [-90,180] ///  
 ";
 
 %feature("docstring") PageXML::setPageImageOrientation "
@@ -1477,6 +1493,43 @@ Vector of page sizes.
 ";
 
 %feature("docstring") PageXML::getPagesSize "
+
+Retrieves pages size.  
+
+Parameters
+----------
+* `xpath` :  
+    Selector for Page nodes.  
+
+Returns
+-------
+Vector of page sizes.  
+";
+
+%feature("docstring") PageXML::rotatePage "
+
+Resizes pages and all respective coordinates.  
+
+Parameters
+----------
+* `sizes` :  
+    Page sizes to resize to.  
+* `pages` :  
+    Page nodes.  
+* `check_aspect_ratio` :  
+    Whether to check that the aspect ratio is properly preserved.  
+
+Returns
+-------
+Number of pages+points attributes modified.  
+
+Normalize angle between [-90,180] ///  
+
+Set image orientation ///  
+
+Select all elements with coordinates ///  
+
+Rotate all coordinates ///  
 ";
 
 %feature("docstring") PageXML::resize "

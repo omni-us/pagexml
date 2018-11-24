@@ -1,4 +1,4 @@
-pagexml API (version 2018.11.23)
+pagexml API (version 2018.11.24)
 ********************************
 
 
@@ -1274,11 +1274,28 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getPageHeight(*args)
 
+      Gets the height of a page (might be different to image width due
+      to the image orientation).
+
+      * *pagenum* :
+
+           The page number (0-based).
+
+      The page height.
+
    getPageImage(*args)
 
    getPageImageFilename(*args)
 
    getPageImageOrientation(*args)
+
+      Gets the image orientation for the given Page number.
+
+      * *pagenum* :
+
+           The page number (0-based).
+
+      Orientation in degrees.
 
    getPageNumber(node)
 
@@ -1286,7 +1303,24 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getPageWidth(*args)
 
+      Gets the width of a page (might be different to image width due
+      to the image orientation).
+
+      * *pagenum* :
+
+           The page number (0-based).
+
+      The page width.
+
    getPagesSize(*args)
+
+      Retrieves pages size.
+
+      * *xpath* :
+
+           Selector for Page nodes.
+
+      Vector of page sizes.
 
    getPoints(*args)
 
@@ -1513,9 +1547,9 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Unlink elements and add them relative to a given node.
 
-      * *elem* :
+      * *elems* :
 
-           Element to move.
+           Elements to move.
 
       * *node* :
 
@@ -1715,6 +1749,33 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    rmElems(*args)
 
+   rotatePage(angle, page, update_image_orientation=True, _conf=None)
+
+      Resizes pages and all respective coordinates.
+
+      * *sizes* :
+
+           Page sizes to resize to.
+
+      * *pages* :
+
+           Page nodes.
+
+      * *check_aspect_ratio* :
+
+           Whether to check that the aspect ratio is properly
+           preserved.
+
+      Number of pages+points attributes modified.
+
+      Normalize angle between [-90,180] ///
+
+      Set image orientation ///
+
+      Select all elements with coordinates ///
+
+      Rotate all coordinates ///
+
    select(*args)
 
    selectByID(id, node=None)
@@ -1786,9 +1847,9 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
            y value of second point.
 
-      * *_conf* :
+      * *conf* :
 
-           Pointer to confidence value, NULL for no confidence.
+           Confidence value.
 
       Pointer to created element.
 
@@ -1819,9 +1880,9 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
            Height of bounding box.
 
-      * *_conf* :
+      * *conf* :
 
-           Pointer to confidence value, NULL for no confidence.
+           Confidence value.
 
       * *subone* :
 
@@ -1832,11 +1893,47 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    setPageHeight(node, height)
 
+      Sets the height of a page (actually sets imageHeight accounting
+      for image orientation).
+
+      * *node* :
+
+           A node to set its page height.
+
+      * *height* :
+
+           The height to set.
+
    setPageImageFilename(*args)
 
    setPageImageOrientation(*args)
 
+      Sets the image orientation for the given Page number.
+
+      * *pagenum* :
+
+           The page number (0-based).
+
+      * *angle* :
+
+           The orientation angle in degrees {0,90,180,-90}.
+
+      * *conf* :
+
+           Confidence value.
+
    setPageWidth(node, width)
+
+      Sets the width of a page (actually sets imageWidth accounting
+      for image orientation).
+
+      * *node* :
+
+           A node to set its page width.
+
+      * *width* :
+
+           The width to set.
 
    setPolystripe(node, height, offset=0.25, offset_check=True)
 
@@ -1870,11 +1967,11 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       * *val* :
 
-           Numeric value for the Property.
+           The optional value for the Property.
 
-      * *_conf* :
+      * *conf* :
 
-           Pointer to confidence value, NULL for no confidence.
+           Confidence value.
 
       Pointer to created element.
 
@@ -1915,15 +2012,25 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
            The text string.
 
-      * *_conf* :
+      * *conf* :
 
-           Pointer to confidence value, NULL for no confidence.
+           Confidence value.
 
       Pointer to created element.
 
    static setValidationEnabled(val)
 
       Enables/disables schema validation.
+
+   setValue(node, value)
+
+      Sets a node value.
+
+      * *node* :
+
+           Node element.
+
+      String with the node value.
 
    simplifyIDs()
 
