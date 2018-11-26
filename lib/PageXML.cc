@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.24$
+ * @version $Version: 2018.11.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.24";
+static char class_version[] = "Version: 2018.11.26";
 
 /**
  * Returns the class version.
@@ -3120,12 +3120,26 @@ std::vector<cv::Size2i> PageXML::getPagesSize( const char* xpath ) {
 }
 
 /**
- * Resizes pages and all respective coordinates.
+ * Rotates a page.
  *
- * @param sizes               Page sizes to resize to.
- * @param pages               Page nodes.
- * @param check_aspect_ratio  Whether to check that the aspect ratio is properly preserved.
- * @return                    Number of pages+points attributes modified.
+ * @param angle                     Angle to rotate in degrees {0,90,180,-90}.
+ * @param page                      The Page node.
+ * @param update_image_orientation  Whether to update the ImageOrientation element.
+ * @param conf                      Confidence value.
+ * @return                          Number of elements modified.
+ */
+int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientation, const double conf ) {
+  return rotatePage( angle, page, update_image_orientation, &conf );
+}
+
+/**
+ * Rotates a page.
+ *
+ * @param angle                     Angle to rotate in degrees {0,90,180,-90}.
+ * @param page                      The Page node.
+ * @param update_image_orientation  Whether to check that the aspect ratio is properly preserved.
+ * @param _conf                     Pointer to confidence value, NULL for no confidence.
+ * @return                          Number of elements modified.
  */
 int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientation, const double* _conf ) {
   if( angle % 90 != 0 ) {

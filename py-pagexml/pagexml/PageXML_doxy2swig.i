@@ -1508,20 +1508,42 @@ Vector of page sizes.
 
 %feature("docstring") PageXML::rotatePage "
 
-Resizes pages and all respective coordinates.  
+Rotates a page.  
 
 Parameters
 ----------
-* `sizes` :  
-    Page sizes to resize to.  
-* `pages` :  
-    Page nodes.  
-* `check_aspect_ratio` :  
-    Whether to check that the aspect ratio is properly preserved.  
+* `angle` :  
+    Angle to rotate in degrees {0,90,180,-90}.  
+* `page` :  
+    The Page node.  
+* `update_image_orientation` :  
+    Whether to update the ImageOrientation element.  
+* `conf` :  
+    Confidence value.  
 
 Returns
 -------
-Number of pages+points attributes modified.  
+Number of elements modified.  
+";
+
+%feature("docstring") PageXML::rotatePage "
+
+Rotates a page.  
+
+Parameters
+----------
+* `angle` :  
+    Angle to rotate in degrees {0,90,180,-90}.  
+* `page` :  
+    The Page node.  
+* `update_image_orientation` :  
+    Whether to check that the aspect ratio is properly preserved.  
+* `_conf` :  
+    Pointer to confidence value, NULL for no confidence.  
+
+Returns
+-------
+Number of elements modified.  
 
 Normalize angle between [-90,180] ///  
 

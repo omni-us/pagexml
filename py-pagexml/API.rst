@@ -1,4 +1,4 @@
-pagexml API (version 2018.11.24)
+pagexml API (version 2018.11.26)
 ********************************
 
 
@@ -1749,24 +1749,28 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    rmElems(*args)
 
-   rotatePage(angle, page, update_image_orientation=True, _conf=None)
+   rotatePage(*args)
 
-      Resizes pages and all respective coordinates.
+      Rotates a page.
 
-      * *sizes* :
+      * *angle* :
 
-           Page sizes to resize to.
+           Angle to rotate in degrees {0,90,180,-90}.
 
-      * *pages* :
+      * *page* :
 
-           Page nodes.
+           The Page node.
 
-      * *check_aspect_ratio* :
+      * *update_image_orientation* :
 
            Whether to check that the aspect ratio is properly
            preserved.
 
-      Number of pages+points attributes modified.
+      * *_conf* :
+
+           Pointer to confidence value, NULL for no confidence.
+
+      Number of elements modified.
 
       Normalize angle between [-90,180] ///
 

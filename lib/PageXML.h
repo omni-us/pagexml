@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.11.24$
+ * @version $Version: 2018.11.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -256,6 +256,7 @@ class PageXML {
     void setPageHeight( xmlNodePt node, int height );
     std::vector<cv::Size2i> getPagesSize( std::vector<xmlNodePt> pages );
     std::vector<cv::Size2i> getPagesSize( const char* xpath = "//_:Page" );
+    int rotatePage( int angle, xmlNodePt page, bool update_image_orientation, const double conf );
     int rotatePage( int angle, xmlNodePt page, bool update_image_orientation = true, const double* _conf = NULL );
     int resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio = true );
     int resize( std::vector<cv::Size2i> sizes, const char* xpath = "//_:Page", bool check_aspect_ratio = true );
