@@ -207,7 +207,7 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.13
+Version2018.11.30
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -258,7 +258,7 @@ TEXTFEAT_TYPE_RAW            |
 
 Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.13
+Version2018.11.30
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -2554,7 +2554,7 @@ Prints features to a file stream using the configured output format.
 #### Parameters
 * `feats` OpenCV matrix containing the features. 
 
-* `file` File stream to print the features.
+* `file` File stream to write the features.
 
 #### `public void `[`write`](#class_text_feat_extractor_1ad59b31da84822d8f3ca24e80e778b7da)`(const cv::Mat & feats,const char * fname)` 
 

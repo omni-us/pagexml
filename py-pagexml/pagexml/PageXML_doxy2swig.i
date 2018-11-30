@@ -2540,7 +2540,7 @@ Parameters
 * `feats` :  
     OpenCV matrix containing the features.  
 * `file` :  
-    File stream to print the features.  
+    File stream to write the features.  
 ";
 
 %feature("docstring") TextFeatExtractor::write "

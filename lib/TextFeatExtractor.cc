@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.11.13$
+ * @version $Version: 2018.11.30$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.13";
+static char class_version[] = "Version: 2018.11.30";
 
 /**
  * Returns the class version.
@@ -538,11 +538,11 @@ bool TextFeatExtractor::isImageFormat() {
  * Prints features to a file stream using the configured output format.
  *
  * @param feats  OpenCV matrix containing the features.
- * @param file   File stream to print the features.
+ * @param file   File stream to write the features.
  */
 void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
   if( feats.cols == 0 )
-    throw_runtime_error( "TextFeatExtractor::print: empty features matrix" );
+    throw_runtime_error( "TextFeatExtractor::write: empty features matrix" );
   switch( format ) {
     case TEXTFEAT_FORMAT_ASCII:
       print_features_ascii( feats, file );
@@ -551,9 +551,9 @@ void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
       print_features_htk( feats, file );
       break;
     case TEXTFEAT_FORMAT_IMAGE:
-      throw_runtime_error( "TextFeatExtractor::print: print is unsupported for image format" );
+      throw_runtime_error( "TextFeatExtractor::write: print is unsupported for image format" );
     default:
-      throw_runtime_error( "TextFeatExtractor::print: unknown output features format" );
+      throw_runtime_error( "TextFeatExtractor::write: unknown output features format" );
   }
 }
 
@@ -574,7 +574,7 @@ void TextFeatExtractor::write( const cv::Mat& feats, const char* fname ) {
     FILE *file;
     if( (file=fopen(fname,"wb")) == NULL )
       throw_runtime_error( "TextFeatExtractor::write: unable to open file: %s", fname );
-    print( feats, file );
+    write( feats, file );
     fclose(file);
   }
 }
