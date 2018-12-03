@@ -99,6 +99,8 @@ class pagexml.DataType_bool
 
    channels = 1
 
+   depth = 0
+
    fmt = 'u'
 
    generic_type = 0
@@ -107,11 +109,15 @@ class pagexml.DataType_bool
 
       The membership flag
 
+   type = 0
+
 class pagexml.DataType_char
 
    Bases: "object"
 
    channels = 1
+
+   depth = 1
 
    fmt = 'c'
 
@@ -121,11 +127,15 @@ class pagexml.DataType_char
 
       The membership flag
 
+   type = 1
+
 class pagexml.DataType_double
 
    Bases: "object"
 
    channels = 1
+
+   depth = 6
 
    fmt = 'd'
 
@@ -135,11 +145,15 @@ class pagexml.DataType_double
 
       The membership flag
 
+   type = 6
+
 class pagexml.DataType_float
 
    Bases: "object"
 
    channels = 1
+
+   depth = 5
 
    fmt = 'f'
 
@@ -149,11 +163,15 @@ class pagexml.DataType_float
 
       The membership flag
 
+   type = 5
+
 class pagexml.DataType_int
 
    Bases: "object"
 
    channels = 1
+
+   depth = 4
 
    fmt = 'i'
 
@@ -163,11 +181,15 @@ class pagexml.DataType_int
 
       The membership flag
 
+   type = 4
+
 class pagexml.DataType_schar
 
    Bases: "object"
 
    channels = 1
+
+   depth = 1
 
    fmt = 'c'
 
@@ -177,11 +199,15 @@ class pagexml.DataType_schar
 
       The membership flag
 
+   type = 1
+
 class pagexml.DataType_short
 
    Bases: "object"
 
    channels = 1
+
+   depth = 3
 
    fmt = 's'
 
@@ -191,11 +217,15 @@ class pagexml.DataType_short
 
       The membership flag
 
+   type = 3
+
 class pagexml.DataType_uchar
 
    Bases: "object"
 
    channels = 1
+
+   depth = 0
 
    fmt = 'u'
 
@@ -205,11 +235,15 @@ class pagexml.DataType_uchar
 
       The membership flag
 
+   type = 0
+
 class pagexml.DataType_ushort
 
    Bases: "object"
 
    channels = 1
+
+   depth = 2
 
    fmt = 'w'
 
@@ -219,6 +253,8 @@ class pagexml.DataType_ushort
 
       The membership flag
 
+   type = 2
+
 class pagexml.Mat(*args)
 
    Bases: "object"
@@ -227,15 +263,9 @@ class pagexml.Mat(*args)
 
    CONTINUOUS_FLAG = 16384
 
-   DEPTH_MASK = 7
-
-   MAGIC_MASK = -65536
-
    MAGIC_VAL = 1124007936
 
    SUBMATRIX_FLAG = 32768
-
-   TYPE_MASK = 4095
 
    addref()
 
@@ -298,6 +328,8 @@ class pagexml.Mat(*args)
    push_back(m)
 
    push_back_(elem)
+
+   refcount
 
    release()
 
@@ -508,14 +540,6 @@ pagexml.Matx81i
    alias of "pagexml._Matx_int_8_1"
 
 class pagexml.Matx_AddOp
-
-   Bases: "object"
-
-   thisown
-
-      The membership flag
-
-class pagexml.Matx_DivOp
 
    Bases: "object"
 

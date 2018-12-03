@@ -27,7 +27,7 @@ class build(_build):
 
 def textfeat_Extension():
     import pkgconfig
-    libs = ['Magick++','libxml-2.0']
+    libs = ['opencv','Magick++','libxml-2.0']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
@@ -35,9 +35,9 @@ def textfeat_Extension():
         link_args += pkgconfig.libs(lib).split()
     if not pkgconfig.cflags('opencv'):
         raise FileNotFoundError('pkgconfig did not find opencv development')
-    compile_args += pkgconfig.cflags('opencv').split()
-    cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_flann')
-    link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
+    #compile_args += pkgconfig.cflags('opencv').split()
+    #cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_flann')
+    #link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
     return Extension('_textfeat',
                      define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_MAGICK__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
