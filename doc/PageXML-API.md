@@ -207,7 +207,7 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.30
+Version2018.12.04
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -258,7 +258,7 @@ TEXTFEAT_TYPE_RAW            |
 
 Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.11.30
+Version2018.12.04
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 

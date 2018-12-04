@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.11.30$
+ * @version $Version: 2018.12.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.30";
+static char class_version[] = "Version: 2018.12.04";
 
 /**
  * Returns the class version.
@@ -1823,8 +1823,13 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
 
   /// Trim image ///
   Magick::Image trimmed = feaimg;
-  trimmed.trim();
-  if( trimmed.columns()+trimmed.rows() > 2 ) {
+  bool trim_success = true;
+  try {
+    trimmed.trim();
+  } catch( const std::exception& e ) {
+    trim_success = false;
+  }
+  if( trim_success && trimmed.columns()+trimmed.rows() > 2 ) {
     feaimg = trimmed;
     offx += feaimg.page().xOff();
     offy += feaimg.page().yOff();
