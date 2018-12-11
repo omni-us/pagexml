@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.11.26$
+ * @version $Version: 2018.12.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -211,7 +211,7 @@ class PageXML {
     std::vector<cv::Point2f> getFpgram( const xmlNodePt node );
     std::vector<cv::Point2f> getPoints( const xmlNodePt node, const char* xpath = "_:Coords" );
     std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
-    std::string getTextEquiv( xmlNodePt node, const char* xpath = ".", const char* separator = " " );
+    std::string getTextEquiv( xmlNodePt node, const char* xpath = "_:TextEquiv/_:Unicode", const char* separator = " " );
     void processStart( const char* tool, const char* ref = NULL );
     void processEnd();
     void updateLastChange();

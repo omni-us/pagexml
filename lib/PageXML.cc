@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.11.26$
+ * @version $Version: 2018.12.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.11.26";
+static char class_version[] = "Version: 2018.12.11";
 
 /**
  * Returns the class version.
@@ -2212,7 +2212,7 @@ std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xml
  * @return           String with the concatenated TextEquivs.
  */
 std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char* separator ) {
-  std::vector<xmlNodePt> nodes = select( std::string(xpath)+"/_:TextEquiv/_:Unicode", node );
+  std::vector<xmlNodePt> nodes = select( xpath, node );
   std::string text;
   for ( int n=0; n<(int)nodes.size(); n++ ) {
     xmlChar* t = xmlNodeGetContent(nodes[n]);

@@ -112,11 +112,11 @@
 `public regex `[`reXheight`](#_page_x_m_l_8cc_1a726c6cc001ee5d420a795decf8fd680d)`(".*x-height: *([0-9.]+) *px;.*")`            | 
 `public regex `[`reRotation`](#_page_x_m_l_8cc_1ace361379b17a512eaf8ef91bc8ee0914)`(".*readingOrientation: *([0-9.]+) *;.*")`            | 
 `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")`            | 
-`public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")`            | 
+`public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")`            | 
 `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")`            | 
-`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)`            | 
-`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1adb4a58725a9b20db4f7d0b1245fc0bc4)`(".+\\.pdf(\\[[0-9]+\\]){0,1}$",std::regex::icase)`            | 
-`public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a0afd08bf76f3dd2ae86d48a89f80c57d)`(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase)`            | 
+`public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)`            | 
+`public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac72179235a1c7e62570ea65b1055be4c)`(".+\f(\-9]+\0,1}$",std::regex::icase)`            | 
+`public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a192ae590965b3d04d774f30aff3088bd)`(".+\f{1,2}(\-9]+\0,1}$",std::regex::icase)`            | 
 `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
 `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.11.26
+Version2018.12.11
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -474,15 +474,15 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 #### `public regex `[`reDirection`](#_page_x_m_l_8cc_1a3eab4de6fb9cae3e28f0fc041a4da1cb)`(".*readingDirection: *([lrt]t[rlb]) *;.*")` 
 
-#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1a459740e4dc280acefcffaa5cb8971eac)`("\\.+$")` 
+#### `public regex `[`reFileExt`](#_page_x_m_l_8cc_1ad5282dbd2e59128edd3d72ba918edaac)`("\")` 
 
 #### `public regex `[`reInvalidBaseChars`](#_page_x_m_l_8cc_1aa7ad44cbc1ef82ed4fcadaec999ed6ad)`(" ")` 
 
-#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a976a19d24d088777ff392917ede71cf9)`("(.*)\\+)` 
+#### `public regex `[`reImagePageNum`](#_page_x_m_l_8cc_1a4714abac484a975e267fc6c240351a20)`("(.*)\0-9]+)\)` 
 
-#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1adb4a58725a9b20db4f7d0b1245fc0bc4)`(".+\\.pdf(\\[[0-9]+\\]){0,1}$",std::regex::icase)` 
+#### `public regex `[`reIsPdf`](#_page_x_m_l_8cc_1ac72179235a1c7e62570ea65b1055be4c)`(".+\f(\-9]+\0,1}$",std::regex::icase)` 
 
-#### `public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a0afd08bf76f3dd2ae86d48a89f80c57d)`(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase)` 
+#### `public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a192ae590965b3d04d774f30aff3088bd)`(".+\f{1,2}(\-9]+\0,1}$",std::regex::icase)` 
 
 #### `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)` 
 
@@ -833,7 +833,7 @@ Whether flattening was performed.
 `public std::vector< cv::Point2f > `[`getFpgram`](#class_page_x_m_l_1a0425df4d97b66a7f259cfb1fae847667)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the features parallelogram (Property[="fpgram"]/) for a given node.
 `public std::vector< cv::Point2f > `[`getPoints`](#class_page_x_m_l_1aba7be6cf9e66f1395c84f0880ca2a069)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Retrieves and parses the Coords/ for a given base node.
 `public std::vector< std::vector< cv::Point2f > > `[`getPoints`](#class_page_x_m_l_1a41e062ef2c08e4c3212c39d4ec48b2fa)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Retrieves and parses the Coords/ for a given list of base nodes.
-`public std::string `[`getTextEquiv`](#class_page_x_m_l_1aede7f24b63a9ca5acfbfe21e9343b977)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` | Retrieves the concatenated TextEquivs for a given root node and xpath.
+`public std::string `[`getTextEquiv`](#class_page_x_m_l_1a00ab0efcf9edb0224208962c807e465f)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` | Retrieves the concatenated TextEquivs for a given root node and xpath.
 `public void `[`processStart`](#class_page_x_m_l_1a3eeffa37a2ace0dc732405e81cb49e4d)`(const char * tool,const char * ref)` | Starts a process in the Page XML.
 `public void `[`processEnd`](#class_page_x_m_l_1a29d780f46c1f14b241f48665d835394c)`()` | Ends the running process in the Page XML.
 `public void `[`updateLastChange`](#class_page_x_m_l_1a99bc8c45fae21207bb608e69609dedcd)`()` | Updates the last change time stamp.
@@ -1453,7 +1453,7 @@ Retrieves and parses the Coords/ for a given list of base nodes.
 #### Returns
 Reference to the points vector.
 
-#### `public std::string `[`getTextEquiv`](#class_page_x_m_l_1aede7f24b63a9ca5acfbfe21e9343b977)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` 
+#### `public std::string `[`getTextEquiv`](#class_page_x_m_l_1a00ab0efcf9edb0224208962c807e465f)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` 
 
 Retrieves the concatenated TextEquivs for a given root node and xpath.
 
