@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.12.11$
+ * @version $Version: 2018.12.13$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.12.11";
+static char class_version[] = "Version: 2018.12.13";
 
 /**
  * Returns the class version.
@@ -988,7 +988,12 @@ string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
   char val[64];
   string str("");
   for( size_t n=0; n<points.size(); n++ ) {
-    sprintf( val, rounded ? "%.0f,%.0f" : "%g,%g", points[n].x, points[n].y );
+    if( rounded )
+      sprintf( val, "%.0f,%.0f", points[n].x, points[n].y );
+    else
+      sprintf( val, "%g,%g",
+        fabs(points[n].x) < 1e-4 ? 0.0 : points[n].x,
+        fabs(points[n].y) < 1e-4 ? 0.0 : points[n].y );
     str += ( n == 0 ? "" : " " ) + string(val);
   }
   return str;
