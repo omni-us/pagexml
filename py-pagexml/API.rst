@@ -1,4 +1,4 @@
-pagexml API (version 2018.12.13)
+pagexml API (version 2018.12.15)
 ********************************
 
 
@@ -1464,6 +1464,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       True if bounding box, otherwise false.
 
+   isPageImageLoaded(*args)
+
    isPolystripe(coords, baseline, height=None, offset=None)
 
       Checks whether Coords is a poly-stripe for its corresponding
@@ -1495,7 +1497,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    loadImage(*args)
 
-   loadImages(resize_coords, density)
+   loadImages(resize_coords=False, density=0)
 
    loadSchema(schema_path)
 
@@ -1724,6 +1726,10 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Modifies imageFilename to be a relative path w.r.t. given xml
       path. Currently just checks prefix directories and removes it.
+
+   releaseImage(*args)
+
+   releaseImages()
 
    resize(*args)
 

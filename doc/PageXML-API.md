@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.12.13
+Version2018.12.15
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -781,9 +781,12 @@ Whether flattening was performed.
 `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` | Loads a Page XML from a file.
 `public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` | Loads a Page XML from an input stream.
 `public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` | Loads a Page XML from a string.
+`public void `[`releaseImage`](#class_page_x_m_l_1a42af7ec35f05910aa3fa322f053240be)`(int pagenum)` | Releases an already loaded image.
+`public void `[`releaseImage`](#class_page_x_m_l_1a7ae389bfa05769d488568131fa4a49fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
+`public void `[`releaseImages`](#class_page_x_m_l_1ae8f1b698bf3abeee79a84d79dc877b7d)`()` | 
 `public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` | 
 `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` | 
-`public void `[`loadImages`](#class_page_x_m_l_1a8c3f3f964ef4039094e0a81a73f679a0)`(const bool resize_coords,const int density)` | 
+`public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` | 
 `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` | Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
 `public void `[`relativizeImageFilename`](#class_page_x_m_l_1a3c43349d7cff78cea6d1ba7b01f023b3)`(const char * xml_path)` | Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
 `public std::vector< std::string > `[`getImageBases`](#class_page_x_m_l_1a3c43f4e51877f674f29af7a421fa973b)`()` | Gets image bases for all pages in xml.
@@ -888,6 +891,8 @@ Whether flattening was performed.
 `public void `[`setPageImageFilename`](#class_page_x_m_l_1a1f6225549414316c7b42d466f37ea9ae)`(int pagenum,const char * image)` | 
 `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ab6670ff942eeb850d64cb87a9932be58)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the imageFilename of a page.
 `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ac6fe17760af6634bf781b82831f6145b)`(int pagenum)` | 
+`public bool `[`isPageImageLoaded`](#class_page_x_m_l_1a5c2c180d3f973cccf9c2a19ce2966d54)`(int pagenum)` | Checks whether a page image is loaded.
+`public bool `[`isPageImageLoaded`](#class_page_x_m_l_1aba6d1e7beb4eb3fb419c4f8dc625e8a3)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` | Returns the image for the given page.
 `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1abf54fa39f33ca21661e87528136b00b6)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addGlyph`](#class_page_x_m_l_1a0814aa1518e897289014c38c441a8bf1)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * id,const char * before_id)` | Adds a Glyph to a given node.
@@ -1002,11 +1007,22 @@ Loads a Page XML from a string.
 #### Parameters
 * `xml_string` The XML content.
 
+#### `public void `[`releaseImage`](#class_page_x_m_l_1a42af7ec35f05910aa3fa322f053240be)`(int pagenum)` 
+
+Releases an already loaded image.
+
+#### Parameters
+* `pagenum` The number of the page for which to release the image.
+
+#### `public void `[`releaseImage`](#class_page_x_m_l_1a7ae389bfa05769d488568131fa4a49fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
+
+#### `public void `[`releaseImages`](#class_page_x_m_l_1ae8f1b698bf3abeee79a84d79dc877b7d)`()` 
+
 #### `public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` 
 
 #### `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` 
 
-#### `public void `[`loadImages`](#class_page_x_m_l_1a8c3f3f964ef4039094e0a81a73f679a0)`(const bool resize_coords,const int density)` 
+#### `public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` 
 
 #### `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` 
 
@@ -1988,6 +2004,12 @@ Sets the imageFilename of a page.
 Returns the imageFilename of a page.
 
 #### `public std::string `[`getPageImageFilename`](#class_page_x_m_l_1ac6fe17760af6634bf781b82831f6145b)`(int pagenum)` 
+
+#### `public bool `[`isPageImageLoaded`](#class_page_x_m_l_1a5c2c180d3f973cccf9c2a19ce2966d54)`(int pagenum)` 
+
+Checks whether a page image is loaded.
+
+#### `public bool `[`isPageImageLoaded`](#class_page_x_m_l_1aba6d1e7beb4eb3fb419c4f8dc625e8a3)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 #### `public `[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` `[`getPageImage`](#class_page_x_m_l_1acc09b01d19dfafb3ccd43b0099313045)`(int pagenum)` 
 

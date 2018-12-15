@@ -278,6 +278,22 @@ Parameters
     The XML content.  
 ";
 
+%feature("docstring") PageXML::releaseImage "
+
+Releases an already loaded image.  
+
+Parameters
+----------
+* `pagenum` :  
+    The number of the page for which to release the image.  
+";
+
+%feature("docstring") PageXML::releaseImage "
+";
+
+%feature("docstring") PageXML::releaseImages "
+";
+
 %feature("docstring") PageXML::loadImage "
 ";
 
@@ -1648,6 +1664,14 @@ Returns the imageFilename of a page.
 ";
 
 %feature("docstring") PageXML::getPageImageFilename "
+";
+
+%feature("docstring") PageXML::isPageImageLoaded "
+
+Checks whether a page image is loaded.  
+";
+
+%feature("docstring") PageXML::isPageImageLoaded "
 ";
 
 %feature("docstring") PageXML::getPageImage "

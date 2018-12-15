@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2018.12.13$
+ * @version $Version: 2018.12.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -150,9 +150,12 @@ class PageXML {
     void loadXml( int fnum, bool prevfree = true, bool validate = true );
     void loadXmlString( const char* xml_string, bool validate = true );
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
+    void releaseImage( int pagenum );
+    void releaseImage( xmlNodePt node );
+    void releaseImages();
     void loadImage( int pagenum, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
     void loadImage( xmlNodePt node, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
-    void loadImages( const bool resize_coords, const int density );
+    void loadImages( const bool resize_coords = false, const int density = 0 );
 #endif
     int simplifyIDs();
     void relativizeImageFilename( const char* xml_path );
@@ -266,6 +269,8 @@ class PageXML {
     void setPageImageFilename( int pagenum, const char* image );
     std::string getPageImageFilename( xmlNodePt node );
     std::string getPageImageFilename( int pagenum );
+    bool isPageImageLoaded( int pagenum );
+    bool isPageImageLoaded( xmlNodePt node );
     PageImage getPageImage( int pagenum );
     PageImage getPageImage( xmlNodePt node );
     xmlNodePt addGlyph( xmlNodePt node, const char* id = NULL, const char* before_id = NULL );

@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.12.13$
+ * @version $Version: 2018.12.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.12.13";
+static char class_version[] = "Version: 2018.12.15";
 
 /**
  * Returns the class version.
@@ -102,9 +102,8 @@ void PageXML::freeXML() {
     xmlXPathFreeContext(context);
   context = NULL;
   xmlDir = string("");
-#if defined (__PAGEXML_LEPT__)
-  for( int n=0; n<(int)pagesImage.size(); n++ )
-    pixDestroy(&(pagesImage[n]));
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
+  releaseImages();
 #endif
   pagesImage = std::vector<PageImage>();
   pagesImageFilename = std::vector<std::string>();
@@ -596,6 +595,35 @@ bool listFlattenImage( Magick::Image& image, const Magick::Color* color = NULL )
 #endif
 
 /**
+ * Releases an already loaded image.
+ *
+ * @param pagenum        The number of the page for which to release the image.
+ */
+void PageXML::releaseImage( int pagenum ) {
+  if( pagenum < 0 || pagenum >= (int)pagesImageFilename.size() )
+    throw_runtime_error( "PageXML.releaseImage: invalid page number: %d", pagenum );
+
+#if defined (__PAGEXML_LEPT__)
+  if ( pagesImage[pagenum] != NULL ) {
+    pixDestroy(&(pagesImage[pagenum]));
+    pagesImage[pagenum] = NULL;
+  }
+#elif defined (__PAGEXML_IMG_MAGICK__)
+  pagesImage[pagenum] = Magick::Image();
+#elif defined (__PAGEXML_IMG_CV__)
+  pagesImage[pagenum] = cv::Mat();
+#endif
+}
+void PageXML::releaseImage( xmlNodePt node ) {
+  return releaseImage( getPageNumber(node) );
+}
+
+void PageXML::releaseImages() {
+  for( int n=(int)pagesImageFilename.size()-1; n>=0; n-- )
+    releaseImage( n );
+}
+
+/**
  * Loads an image for a Page in the XML.
  *
  * @param pagenum        The number of the page for which to load the image.
@@ -632,11 +660,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #endif
 
+  releaseImage(pagenum);
 #if defined (__PAGEXML_LEPT__)
-  if( pagesImage[pagenum] != NULL ) {
-    pixDestroy(&(pagesImage[pagenum]));
-    pagesImage[pagenum] = NULL;
-  }
 #if defined (__PAGEXML_MAGICK__)
   /// Leptonica load pdf page ///
   if( std::regex_match(fname, reIsPdf) ) {
@@ -3351,6 +3376,25 @@ string PageXML::getPageImageFilename( int pagenum ) {
 }
 
 /**
+ * Checks whether a page image is loaded.
+ */
+bool PageXML::isPageImageLoaded( int pagenum ) {
+  bool loaded = true;
+#if defined (__PAGEXML_LEPT__)
+  if( pagesImage[pagenum] == NULL )
+#elif defined (__PAGEXML_IMG_MAGICK__)
+  if( pagesImage[pagenum].columns() == 0 )
+#elif defined (__PAGEXML_IMG_CV__)
+  if( ! pagesImage[pagenum].data )
+#endif
+    loaded = false;
+  return loaded;
+}
+bool PageXML::isPageImageLoaded( xmlNodePt node ) {
+  return isPageImageLoaded( getPageNumber(node) );
+}
+
+/**
  * Returns the image for the given page.
  */
 PageImage PageXML::getPageImage( int pagenum ) {
@@ -3360,13 +3404,7 @@ PageImage PageXML::getPageImage( int pagenum ) {
     return pageImage;
   }
 
-#if defined (__PAGEXML_LEPT__)
-  if( pagesImage[pagenum] == NULL )
-#elif defined (__PAGEXML_IMG_MAGICK__)
-  if( pagesImage[pagenum].columns() == 0 )
-#elif defined (__PAGEXML_IMG_CV__)
-  if( ! pagesImage[pagenum].data )
-#endif
+  if( ! isPageImageLoaded(pagenum) )
     loadImage(pagenum);
 
   return pagesImage[pagenum];
@@ -3686,7 +3724,11 @@ xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char*
 xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, const char* id, xmlNodePt before_node ) {
   xmlNodePt page;
 
+#if defined (__PAGEXML_LEPT__)
+  PageImage pageImage = NULL;
+#else
   PageImage pageImage;
+#endif
   string imageFilename;
   string imageBase;
 
@@ -3709,6 +3751,9 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
       pagesImageFilename[n] = pagesImageFilename[n-1];
       pagesImageBase[n] = pagesImageBase[n-1];
     }
+    pagesImage[page_num] = pageImage;
+    pagesImageFilename[page_num] = imageFilename;
+    pagesImageBase[page_num] = imageBase;
   }
   else {
     xmlNodePt pcgts = selectNth("/_:PcGts",0);
