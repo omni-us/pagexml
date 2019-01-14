@@ -784,9 +784,24 @@ Parameters
     Direction to set.  
 ";
 
+%feature("docstring") PageXML::getDominantBaselinesOrientation "
+
+Gets the dominant orientation angle for a set of baselines.  
+
+Parameters
+----------
+* `elems` :  
+    Nodes of the TextLine elements.  
+
+Returns
+-------
+The dominant orientation angle in radians, NaN if unset.  
+";
+
 %feature("docstring") PageXML::getBaselineOrientation "
 
-Gets the (average) baseline orientation angle in radians of a given text line.  
+Gets the baseline orientation angle (weighted average over polyline segments) of
+a given text line.  
 
 Parameters
 ----------
@@ -798,9 +813,10 @@ Returns
 The orientation angle in radians, NaN if unset.  
 ";
 
-%feature("docstring") PageXML::getBaselineOrientation "
+%feature("docstring") PageXML::getPolylineOrientation "
 
-Gets the (average) baseline orientation angle in radians of a given baseline.  
+Gets the baseline orientation angle (weighted average over polyline segments) in
+radians of a given baseline.  
 
 Parameters
 ----------
@@ -812,7 +828,7 @@ Returns
 The orientation angle in radians, NaN if unset.  
 ";
 
-%feature("docstring") PageXML::getBaselineLength "
+%feature("docstring") PageXML::getPolylineLength "
 
 Gets the baseline length.  
 

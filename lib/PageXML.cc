@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2018.12.15$
+ * @version $Version: 2019.01.14$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.12.15";
+static char class_version[] = "Version: 2019.01.14";
 
 /**
  * Returns the class version.
@@ -1988,7 +1988,43 @@ double static inline IoU_1d( double a1, double a2, double b1, double b2 ) {
 }
 
 /**
- * Gets the (average) baseline orientation angle in radians of a given text line.
+ * Gets the dominant orientation angle for a set of baselines.
+ *
+ * @param elems  Nodes of the TextLine elements.
+ * @return       The dominant orientation angle in radians, NaN if unset.
+ */
+double PageXML::getDominantBaselinesOrientation( std::vector<xmlNodePt> elems ) {
+  if ( elems.size() == 0 )
+    throw_runtime_error( "PageXML.getDominantBaselinesOrientation: received zero elements" );
+
+  double x = 0.0;
+  double y = 0.0;
+  double totlength = 0.0;
+
+  for ( int n=elems.size()-1; n>=0; n-- ) {
+    // @todo Add fake_baseline parameter, creating function to get the fake since used in several places.
+    std::vector<cv::Point2f> baseline = getPoints(elems[n],"_:Baseline");
+    if ( baseline.size() == 0 )
+      throw_runtime_error( "PageXML.getDominantBaselinesOrientation: unable to get baseline points for element %d", n+1 );
+
+    double angle = getPolylineOrientation(baseline);
+    if ( elems.size() == 1 )
+      return angle;
+    double length = getPolylineLength(baseline);
+
+    x += length * cos(angle);
+    y += length * sin(angle);
+    totlength += length;
+  }
+
+  x /= totlength;
+  y /= totlength;
+
+  return -atan2(y,x);
+}
+
+/**
+ * Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.
  *
  * @param elem   Node of the TextLine element.
  * @return       The orientation angle in radians, NaN if unset.
@@ -1999,37 +2035,45 @@ double PageXML::getBaselineOrientation( xmlNodePt elem ) {
     return std::numeric_limits<double>::quiet_NaN();
   }
   std::vector<cv::Point2f> points = getPoints( elem, "_:Baseline" );
-  return getBaselineOrientation(points);
+  return getPolylineOrientation(points);
 }
 
 /**
- * Gets the (average) baseline orientation angle in radians of a given baseline.
+ * Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.
  *
  * @param points  Baseline points.
  * @return        The orientation angle in radians, NaN if unset.
  */
-double PageXML::getBaselineOrientation( std::vector<cv::Point2f> points ) {
+double PageXML::getPolylineOrientation( std::vector<cv::Point2f> points ) {
   if ( points.size() == 0 )
     return std::numeric_limits<double>::quiet_NaN();
 
-  double avgAngle = 0.0;
+  //double angle1st = 0.0;
+  //double avgAngle = 0.0;
+  double x = 0.0;
+  double y = 0.0;
   double totlgth = 0.0;
-  double angle1st = 0.0;
 
   for ( int n = 1; n < (int)points.size(); n++ ) {
     double lgth = cv::norm(points[n]-points[n-1]);
     totlgth += lgth;
     double angle = -atan2( points[n].y-points[n-1].y, points[n].x-points[n-1].x );
-    if ( n == 1 ) {
-      angle1st = angle;
-      avgAngle += lgth*angle;
-    }
-    else {
-      avgAngle += lgth*(angle1st+angleDiff(angle,angle1st));
-    }
+    x += lgth * cos(angle);
+    y += lgth * sin(angle);
+    //if ( n == 1 ) {
+    //  angle1st = angle;
+    //  avgAngle += lgth*angle;
+    //}
+    //else {
+    //  avgAngle += lgth*(angle1st+angleDiff(angle,angle1st));
+    //}
   }
 
-  return avgAngle/totlgth;
+  x /= totlgth;
+  y /= totlgth;
+
+  return -atan2(y,x);
+  //return avgAngle/totlgth;
 }
 
 /**
@@ -2038,7 +2082,7 @@ double PageXML::getBaselineOrientation( std::vector<cv::Point2f> points ) {
  * @param points  Baseline points.
  * @return        The orientation angle in radians, NaN if unset.
  */
-double PageXML::getBaselineLength( std::vector<cv::Point2f> points ) {
+double PageXML::getPolylineLength( std::vector<cv::Point2f> points ) {
   double totlgth = 0.0;
   for ( int n = 1; n < (int)points.size(); n++ )
     totlgth += cv::norm(points[n]-points[n-1]);
@@ -4460,8 +4504,8 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
     }
     else
       baseline.push_back( getPoints(elems[n],"_:Baseline") );
-    angle.push_back(getBaselineOrientation(baseline[n]));
-    length.push_back(getBaselineLength(baseline[n]));
+    angle.push_back(getPolylineOrientation(baseline[n]));
+    length.push_back(getPolylineLength(baseline[n]));
 
     if ( ! ( nodeIs(elems[n],"TextLine") || nodeIs(elems[n],"Word") || nodeIs(elems[n],"Glyph") || nodeIs(elems[n],"TextRegion") ) ) {
       throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: input nodes need to be TextLines or Words or Glyphs or TextRegions" );
@@ -4772,7 +4816,7 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
     }
     else
       baseline.push_back( getPoints(elems[n],"_:Baseline") );
-    length.push_back( getBaselineLength(baseline[n]) );
+    length.push_back( getPolylineLength(baseline[n]) );
   }
 
   /// Get horizontal direction ///

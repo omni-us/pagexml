@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2018.12.15
+Version2019.01.14
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -826,9 +826,10 @@ Whether flattening was performed.
 `public int `[`moveElems`](#class_page_x_m_l_1ac6320b747e78baa3d2f5753086e54189)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > & elems,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)` itype)` | Unlink elements and add them relative to a given node.
 `public void `[`setRotation`](#class_page_x_m_l_1afc92cad64293df78c84bc7d8c899cf6f)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,const float rotation)` | Sets the rotation angle to a TextRegion node.
 `public void `[`setReadingDirection`](#class_page_x_m_l_1af1eef0ce8e1ff941b79430db6802e51a)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem,`[`PAGEXML_READ_DIRECTION`](#_page_x_m_l_8h_1a151afb8ef7c7e05585713fafd180a2ea)` direction)` | Sets the reading direction to a TextRegion node.
-`public double `[`getBaselineOrientation`](#class_page_x_m_l_1a01d20d4333c5011f80bf83fe246ac76b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` | Gets the (average) baseline orientation angle in radians of a given text line.
-`public double `[`getBaselineOrientation`](#class_page_x_m_l_1afe1e54530f0f34624339ebd3fc6aae49)`(std::vector< cv::Point2f > points)` | Gets the (average) baseline orientation angle in radians of a given baseline.
-`public double `[`getBaselineLength`](#class_page_x_m_l_1af10f6f194ad7eed3f9924544b54e1c09)`(std::vector< cv::Point2f > points)` | Gets the baseline length.
+`public double `[`getDominantBaselinesOrientation`](#class_page_x_m_l_1ace699f89ee2dedc3304b2a7acf2c5135)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems)` | Gets the dominant orientation angle for a set of baselines.
+`public double `[`getBaselineOrientation`](#class_page_x_m_l_1a01d20d4333c5011f80bf83fe246ac76b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` | Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.
+`public double `[`getPolylineOrientation`](#class_page_x_m_l_1a3b765fd1a88f7c36eac75b68e87dd010)`(std::vector< cv::Point2f > points)` | Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.
+`public double `[`getPolylineLength`](#class_page_x_m_l_1a234aa0cc97d29a247cc4b6f08d912206)`(std::vector< cv::Point2f > points)` | Gets the baseline length.
 `public double `[`getRotation`](#class_page_x_m_l_1a6e68136a69dd82168bbc28c64bff45e4)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` | Retrieves the rotation angle for a given TextLine or TextRegion node.
 `public int `[`getReadingDirection`](#class_page_x_m_l_1acc2adc9d4408836ea87d8056e2d522f6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` | Retrieves the reading direction for a given TextLine or TextRegion node.
 `public float `[`getXheight`](#class_page_x_m_l_1a6d7cd4ada93f19226e3723d6c41a9ebf)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the x-height for a given TextLine node.
@@ -1369,9 +1370,19 @@ Sets the reading direction to a TextRegion node.
 
 * `direction` Direction to set.
 
+#### `public double `[`getDominantBaselinesOrientation`](#class_page_x_m_l_1ace699f89ee2dedc3304b2a7acf2c5135)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems)` 
+
+Gets the dominant orientation angle for a set of baselines.
+
+#### Parameters
+* `elems` Nodes of the TextLine elements. 
+
+#### Returns
+The dominant orientation angle in radians, NaN if unset.
+
 #### `public double `[`getBaselineOrientation`](#class_page_x_m_l_1a01d20d4333c5011f80bf83fe246ac76b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` 
 
-Gets the (average) baseline orientation angle in radians of a given text line.
+Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.
 
 #### Parameters
 * `elem` Node of the TextLine element. 
@@ -1379,9 +1390,9 @@ Gets the (average) baseline orientation angle in radians of a given text line.
 #### Returns
 The orientation angle in radians, NaN if unset.
 
-#### `public double `[`getBaselineOrientation`](#class_page_x_m_l_1afe1e54530f0f34624339ebd3fc6aae49)`(std::vector< cv::Point2f > points)` 
+#### `public double `[`getPolylineOrientation`](#class_page_x_m_l_1a3b765fd1a88f7c36eac75b68e87dd010)`(std::vector< cv::Point2f > points)` 
 
-Gets the (average) baseline orientation angle in radians of a given baseline.
+Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.
 
 #### Parameters
 * `points` Baseline points. 
@@ -1389,7 +1400,7 @@ Gets the (average) baseline orientation angle in radians of a given baseline.
 #### Returns
 The orientation angle in radians, NaN if unset.
 
-#### `public double `[`getBaselineLength`](#class_page_x_m_l_1af10f6f194ad7eed3f9924544b54e1c09)`(std::vector< cv::Point2f > points)` 
+#### `public double `[`getPolylineLength`](#class_page_x_m_l_1a234aa0cc97d29a247cc4b6f08d912206)`(std::vector< cv::Point2f > points)` 
 
 Gets the baseline length.
 

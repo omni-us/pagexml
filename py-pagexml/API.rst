@@ -1,5 +1,5 @@
-pagexml API (version 2018.12.15)
-********************************
+pagexml API (version 2019.1.14)
+*******************************
 
 
 pagexml module
@@ -1020,17 +1020,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getAttr(*args)
 
-   getBaselineLength(points)
-
-      Gets the baseline length.
-
-      * *points* :
-
-           Baseline points.
-
-      The orientation angle in radians, NaN if unset.
-
-   getBaselineOrientation(*args)
+   getBaselineOrientation(elem)
 
       Gets the (average) baseline orientation angle in radians of a
       given baseline.
@@ -1044,6 +1034,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
    getDocPtr()
 
       Returns the XML document pointer.
+
+   getDominantBaselinesOrientation(elems)
 
    getFpgram(node)
 
@@ -1331,6 +1323,10 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
            Base nodes.
 
       Reference to the points vector.
+
+   getPolylineLength(points)
+
+   getPolylineOrientation(points)
 
    getPropertyValue(node, key)
 
