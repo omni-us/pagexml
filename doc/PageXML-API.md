@@ -207,7 +207,7 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.12.04
+Version2019.01.21
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -258,7 +258,7 @@ TEXTFEAT_TYPE_RAW            |
 
 Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2018.12.04
+Version2019.01.21
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -2512,7 +2512,7 @@ Returns the XML document pointer.
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public  `[`TextFeatExtractor`](#class_text_feat_extractor_1a72b4956a0ed1b917664b42d36e4cfb17)`(int featype,int format,bool verbose,bool procimgs,bool stretch,float stretch_satu,float enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` | Constructors ///.
+`public  `[`TextFeatExtractor`](#class_text_feat_extractor_1abe07fda5dc6d2ad0fb6b371fdfc8b4ba)`(int featype,int format,bool verbose,bool procimgs,bool stretch,bool enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` | Constructors ///.
 `public void `[`printConf`](#class_text_feat_extractor_1a44524c318c2a2eb3e4b38ef0eed4bff5)`(FILE * file)` | Configuration ///.
 `public void `[`preprocess`](#class_text_feat_extractor_1ae861ca4ba44a9d9000f9d90c96b500c8)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,std::vector< cv::Point > * _fcontour,bool randomize)` | Pre-processes a text image, optionally computing the connected components contour.
 `public void `[`estimateAngles`](#class_text_feat_extractor_1aaa88ad10c4a1aba39acb951c46cce460)`(`[`PageImage`](#_page_x_m_l_8h_1ac50a58a5d388d3de0e068f1ac3f90cb9)` & cvimg,float * _slope,float * _slant,float rotate)` | Estimates slope and slant angles for an image.
@@ -2523,7 +2523,7 @@ Returns the XML document pointer.
 
 ## Members
 
-#### `public  `[`TextFeatExtractor`](#class_text_feat_extractor_1a72b4956a0ed1b917664b42d36e4cfb17)`(int featype,int format,bool verbose,bool procimgs,bool stretch,float stretch_satu,float enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` 
+#### `public  `[`TextFeatExtractor`](#class_text_feat_extractor_1abe07fda5dc6d2ad0fb6b371fdfc8b4ba)`(int featype,int format,bool verbose,bool procimgs,bool stretch,bool enh,int enh_type,int enh_win,float enh_slp,float enh_prm,float enh_prm_randmin,float enh_prm_randmax,float enh3_prm0,float enh3_prm2,bool deslope,bool deslant,float deslant_min,float deslant_max,float deslant_step,int deslant_hsteps,float slant_rand,float scale_rand,int normxheight,int normheight,bool momentnorm,bool compute_fpgram,bool compute_fcontour,float fcontour_dilate,int padding)` 
 
 Constructors ///.
 

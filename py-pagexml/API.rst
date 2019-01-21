@@ -1022,12 +1022,12 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getBaselineOrientation(elem)
 
-      Gets the (average) baseline orientation angle in radians of a
-      given baseline.
+      Gets the baseline orientation angle (weighted average over
+      polyline segments) of a given text line.
 
-      * *points* :
+      * *elem* :
 
-           Baseline points.
+           Node of the TextLine element.
 
       The orientation angle in radians, NaN if unset.
 
@@ -1036,6 +1036,14 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Returns the XML document pointer.
 
    getDominantBaselinesOrientation(elems)
+
+      Gets the dominant orientation angle for a set of baselines.
+
+      * *elems* :
+
+           Nodes of the TextLine elements.
+
+      The dominant orientation angle in radians, NaN if unset.
 
    getFpgram(node)
 
@@ -1326,7 +1334,24 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getPolylineLength(points)
 
+      Gets the baseline length.
+
+      * *points* :
+
+           Baseline points.
+
+      The orientation angle in radians, NaN if unset.
+
    getPolylineOrientation(points)
+
+      Gets the baseline orientation angle (weighted average over
+      polyline segments) in radians of a given baseline.
+
+      * *points* :
+
+           Baseline points.
+
+      The orientation angle in radians, NaN if unset.
 
    getPropertyValue(node, key)
 

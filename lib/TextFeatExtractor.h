@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2018.12.04$
+ * @version $Version: 2019.01.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -39,7 +39,7 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_VERBOSE,         // "verbose"
   TEXTFEAT_SETTING_PROCIMGS,        // "procimgs"
   TEXTFEAT_SETTING_STRETCH,         // "stretch"
-  TEXTFEAT_SETTING_STRETCH_SATU,    // "stretch_satu"
+  //TEXTFEAT_SETTING_STRETCH_SATU,    // "stretch_satu"
   TEXTFEAT_SETTING_ENH,             // "enh"
   TEXTFEAT_SETTING_ENH_WIN,         // "enh_win"
   TEXTFEAT_SETTING_ENH_PRM,         // "enh_prm"
@@ -75,8 +75,8 @@ class TextFeatExtractor {
                        bool verbose = false,
                        bool procimgs = false,
                        bool stretch = true,
-                       float stretch_satu = 0.0,
-                       float enh = 1.0,
+                       //float stretch_satu = 0.0,
+                       bool enh = true,
                        int enh_type = ENH_SAUVOLA,
                        int enh_win = 20,
                        float enh_slp = 0.5,
@@ -126,8 +126,8 @@ class TextFeatExtractor {
     bool verbose = false;
     bool procimgs = false;
     bool stretch = true;
-    float stretch_satu = 0.0;
-    float enh = 1.0;
+    //float stretch_satu = 0.0;
+    float enh = true;
     int enh_type = ENH_SAUVOLA;
     int enh_win = 20;
     float enh_slp = 0.5;

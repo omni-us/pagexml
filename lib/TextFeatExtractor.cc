@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2018.12.04$
+ * @version $Version: 2019.01.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -35,7 +35,7 @@ const char* TextFeatExtractor::settingNames[] = {
   "verbose",
   "procimgs",
   "stretch",
-  "stretch_satu",
+  //"stretch_satu",
   "enh",
   "enh_win",
   "enh_prm",
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2018.12.04";
+static char class_version[] = "Version: 2019.01.21";
 
 /**
  * Returns the class version.
@@ -85,8 +85,8 @@ TextFeatExtractor::TextFeatExtractor( int featype,
                                       bool verbose,
                                       bool procimgs,
                                       bool stretch,
-                                      float stretch_satu,
-                                      float enh,
+                                      //float stretch_satu,
+                                      bool enh,
                                       int enh_type,
                                       int enh_win,
                                       float enh_slp,
@@ -115,7 +115,7 @@ TextFeatExtractor::TextFeatExtractor( int featype,
   this->verbose = verbose;
   this->procimgs = procimgs;
   this->stretch = stretch;
-  this->stretch_satu = stretch_satu;
+  //this->stretch_satu = stretch_satu;
   this->enh = enh;
   this->enh_type = enh_type;
   this->enh_win = enh_win;
@@ -273,11 +273,11 @@ void TextFeatExtractor::loadConf( const libconfig::Config& config ) {
       case TEXTFEAT_SETTING_STRETCH:
         stretch = settingBoolean(setting);
         break;
-      case TEXTFEAT_SETTING_STRETCH_SATU:
-        stretch_satu = settingNumber(setting);
-        break;
+      //case TEXTFEAT_SETTING_STRETCH_SATU:
+      //  stretch_satu = settingNumber(setting);
+      //  break;
       case TEXTFEAT_SETTING_ENH:
-        enh = settingNumber(setting);
+        enh = settingBoolean(setting);
         break;
       case TEXTFEAT_SETTING_ENH_WIN:
         enh_win = (int)setting;
@@ -382,7 +382,7 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  format = \"%s\";\n", formatNames[format] );
   fprintf( file, "  stretch = %s;\n", stretch ? "true" : "false" );
   //fprintf( file, "  stretch_satu = %g;\n", stretch_satu );
-  fprintf( file, "  enh = %g;\n", enh );
+  fprintf( file, "  enh = %s;\n", enh ? "true" : "false" );
   fprintf( file, "  enh_win = %d;\n", enh_win );
   fprintf( file, "  enh_prm = %g;\n", enh_prm );
   fprintf( file, "  enh_prm_rand = [ %g, %g ];\n", enh_prm_randmin, enh_prm_randmax );
