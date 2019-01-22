@@ -972,9 +972,17 @@ static void enhance( Magick::Image& image, int winW, double prm1, double slp, in
 }
 
 
-
-
-
+/**
+ * Four directional RLSA algorithm.
+ *
+ * @param img       Unsigned char matrix of input image.
+ * @param imgW      Image width.
+ * @param imgH      Image height.
+ * @param op        Directions enabled (bit0 '-', bit1 '|', bit2 '/', bit3 '\').
+ * @param lengths   RLSA lengths for each direction.
+ * @param negate    Whether to negate imput.
+ * @param res       Unsigned char matrix of output image.
+ */
 int rlsa4_graym(gray** img, int imgW, int imgH, char op, int* lengths, bool negate, gray** res) {
   int n;
   if( negate )

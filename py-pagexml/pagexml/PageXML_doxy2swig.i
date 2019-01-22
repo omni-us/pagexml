@@ -3175,6 +3175,25 @@ Parameters
 ";
 
 %feature("docstring") std::chrono::rlsa4_graym "
+
+Four directional RLSA algorithm.  
+
+Parameters
+----------
+* `img` :  
+    Unsigned char matrix of input image.  
+* `imgW` :  
+    Image width.  
+* `imgH` :  
+    Image height.  
+* `op` :  
+    Directions enabled (bit0 '-', bit1 '|', bit2 '/', bit3 '\\').  
+* `lengths` :  
+    RLSA lengths for each direction.  
+* `negate` :  
+    Whether to negate imput.  
+* `res` :  
+    Unsigned char matrix of output image.  
 ";
 
 %feature("docstring") std::chrono::findMinMax "

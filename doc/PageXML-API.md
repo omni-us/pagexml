@@ -142,7 +142,7 @@
 `public static void `[`cvmat8uc32magick`](#_text_feat_extractor_8cc_1a1bb4e2cb8ba2fa857e784c0dfb6a3761)`(Magick::Image & image,cv::Mat & cvimg)`            | Copies image data from an OpenCV Mat to Magick::Image.
 `public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1accdc54fbd584e586cad5bbdb08035659)`(Magick::Image & image,cv::Mat & cvimg,cv::Mat & cvimg_alpha)`            | Copies image data from an OpenCV Mat to Magick::Image.
 `public static void `[`enhance`](#_text_feat_extractor_8cc_1a81f14f6e96fbff1e6d74739c0c93f358)`(Magick::Image & image,int winW,double prm1,double slp,int type,double prm0,double prm2)`            | Does a local enhancement of a text image.
-`public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)`            | 
+`public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)`            | Four directional RLSA algorithm.
 `public inline static void `[`findMinMax`](#_text_feat_extractor_8cc_1a83ec3f37e202c24e48620142056dd6ab)`(int size,double * vals,bool * isset,double * _minval,double * _maxval,int * _minidx,int * _maxidx)`            | 
 `public static double `[`estimateSlant`](#_text_feat_extractor_8cc_1af850a209ee624d37c3f427125a67f80e)`(Magick::Image & image,double amin,double amax,double astep,int hsteps,double hfact)`            | Estimates the slant angle of an image containing handwritten text.
 `public void `[`findOuterContours`](#_text_feat_extractor_8cc_1af7639c4a00fe54f47a88eef066ef1a0b)`(Magick::Image & img,vector< vector< cv::Point > > & contours,int method,double eps)`            | Gets outer contour points of connected components in an image, optionally approximating it.
@@ -676,6 +676,23 @@ Does a local enhancement of a text image.
 * `prm2` Enhancement parameter to store in channel 2 (set to 0.0 for single channel output).
 
 #### `public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)` 
+
+Four directional RLSA algorithm.
+
+#### Parameters
+* `img` Unsigned char matrix of input image. 
+
+* `imgW` Image width. 
+
+* `imgH` Image height. 
+
+* `op` Directions enabled (bit0 '-', bit1 '|', bit2 '/', bit3 '\'). 
+
+* `lengths` RLSA lengths for each direction. 
+
+* `negate` Whether to negate imput. 
+
+* `res` Unsigned char matrix of output image.
 
 #### `public inline static void `[`findMinMax`](#_text_feat_extractor_8cc_1a83ec3f37e202c24e48620142056dd6ab)`(int size,double * vals,bool * isset,double * _minval,double * _maxval,int * _minidx,int * _maxidx)` 
 
