@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.01.14$
+ * @version $Version: 2019.01.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.01.14";
+static char class_version[] = "Version: 2019.01.22";
 
 /**
  * Returns the class version.
@@ -2478,6 +2478,11 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const double va
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double* _conf ) {
+  if( node == NULL ) {
+    throw_runtime_error( "PageXML.setTextEquiv: received NULL node pointer" );
+    return NULL;
+  }
+
   rmElems( select( "_:TextEquiv", node ) );
 
   xmlNodePt textequiv = addElem( "TextEquiv", NULL, node );

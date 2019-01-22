@@ -2,9 +2,12 @@
 
 import os
 import tempfile
+from collections import namedtuple
 from subprocess import Popen, PIPE, STDOUT
 from distutils.version import StrictVersion
 import cv2
+
+NamedImage = namedtuple('NamedImage', 'id name image')
 
 def keep_temp_dir(tempdir):
     """Renames a temporal directory adding a '_kept' suffix to prevent its automatic deletion."""
@@ -110,13 +113,14 @@ class LegacyTextFeatExtractor:
             keep_temp_dir(featdir)
             raise Exception('textFeats command returned non-zero code :: '+proc_err.decode('utf-8'))
 
-        feats = {}
+        feats = []
 
         for fname in [s.strip() for s in proc_out.decode('utf-8').splitlines()]:
             try:
-                img = cv2.imread(fname)
-                samp = os.path.splitext(os.path.basename(fname))[0]
-                feats[samp] = img
+                image = cv2.imread(fname)
+                name = os.path.splitext(os.path.basename(fname))[0]
+                feat = NamedImage(id=name.split('.',1)[-1], name=name, image=image)
+                feats.append(feat)
             except:
                 raise Exception('Problems reading features image '+fname)
 
