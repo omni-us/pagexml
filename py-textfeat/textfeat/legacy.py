@@ -119,7 +119,7 @@ class LegacyTextFeatExtractor:
             try:
                 image = cv2.imread(fname)
                 name = os.path.splitext(os.path.basename(fname))[0]
-                feat = NamedImage(id=name.split('.',1)[-1], name=name, image=image)
+                feat = NamedImage(id=name.rsplit('.', 1)[1], name=name, image=image)
                 feats.append(feat)
             except:
                 raise Exception('Problems reading features image '+fname)
