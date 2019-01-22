@@ -133,7 +133,7 @@
 `public static void `[`print_features_htk`](#_text_feat_extractor_8cc_1a521b3512933909ece7bd18cf625ad5fe)`(const cv::Mat & feats,FILE * file)`            | Prints features to a file stream using HTK format.
 `public static void `[`print_features_ascii`](#_text_feat_extractor_8cc_1ae3a1fa6530381f534ec5e2ff90495b8e)`(const cv::Mat & feats,FILE * file)`            | Prints features to a file stream using ASCII format.
 `public static void `[`magick2cvmat8u`](#_text_feat_extractor_8cc_1ac0d8f9ed183c953d3ced538c9f1ce002)`(Magick::Image & image,cv::Mat & cvimg)`            | Image processing ///.
-`public static void `[`magick2cvmat8uc3`](#_text_feat_extractor_8cc_1abd4530acf52f35d5ba38b9f3038b0ab1)`(Magick::Image & image,cv::Mat & cvimg)`            | 
+`public static void `[`magick2cvmat8uc3`](#_text_feat_extractor_8cc_1abd4530acf52f35d5ba38b9f3038b0ab1)`(Magick::Image & image,cv::Mat & cvimg)`            | Copies image data from Magick::Image to an OpenCV Mat.
 `public static void `[`magick2graym`](#_text_feat_extractor_8cc_1a3033920ea2862f45dfd32ec026fa8088)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` **& gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _alpha)`            | Copies image data from Magick::Image to an unsigned char matrix.
 `public inline static int `[`to16bits`](#_text_feat_extractor_8cc_1a1a811eaff5dda86d249594fe3d992259)`(int val)`            | Converts unsigned char to 16-bits.
 `public static void `[`graym2magick`](#_text_feat_extractor_8cc_1a3d05d264e460dccb52ae7b0512f658f1)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** alpha)`            | Copies image data from unsigned char matrix to Magick::Image.
@@ -207,7 +207,7 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2019.01.21
+Version2019.01.22
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -258,7 +258,7 @@ TEXTFEAT_TYPE_RAW            |
 
 Header file for the [TextFeatExtractor](#class_text_feat_extractor) class
 
-Version2019.01.21
+Version2019.01.22
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -579,6 +579,13 @@ Copies image data from Magick::Image to an OpenCV Mat.
 
 #### `public static void `[`magick2cvmat8uc3`](#_text_feat_extractor_8cc_1abd4530acf52f35d5ba38b9f3038b0ab1)`(Magick::Image & image,cv::Mat & cvimg)` 
 
+Copies image data from Magick::Image to an OpenCV Mat.
+
+#### Parameters
+* `image` Magick++ Image object. 
+
+* `cvimg` OpenCV Mat.
+
 #### `public static void `[`magick2graym`](#_text_feat_extractor_8cc_1a3033920ea2862f45dfd32ec026fa8088)`(Magick::Image & image,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` **& gimg,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` *** _alpha)` 
 
 Copies image data from Magick::Image to an unsigned char matrix.
@@ -612,9 +619,13 @@ Copies image data from unsigned char matrix to Magick::Image.
 #### Parameters
 * `image` Magick++ Image object. 
 
-* `gimg` Unsigned char matrix. 
+* `rimg` Unsigned char matrix of read channel. 
 
-* `alpha` Unsigned char matrix for alpha channel.
+* `gimg` Unsigned char matrix of green channel. 
+
+* `bimg` Unsigned char matrix of blue channel. 
+
+* `alpha` Unsigned char matrix of alpha channel.
 
 #### `public static void `[`cvmat8u2magick`](#_text_feat_extractor_8cc_1af1756b455bc263fea7aadde3a4e847ae)`(Magick::Image & image,cv::Mat & cvimg)` 
 
@@ -654,11 +665,15 @@ Does a local enhancement of a text image.
 
 * `winW` Window width for local enhancement. 
 
-* `prm` Enhancement parameter. 
+* `prm1` Enhancement parameter. 
 
 * `slp` Gray slope parameter. 
 
-* `type` Enhancement algorithm.
+* `type` Enhancement algorithm. 
+
+* `prm0` Enhancement parameter to store in channel 0 (set to 0.0 for single channel output). 
+
+* `prm2` Enhancement parameter to store in channel 2 (set to 0.0 for single channel output).
 
 #### `public int `[`rlsa4_graym`](#_text_feat_extractor_8cc_1a3b1901a411f56afa5aad0b3fe0d5b5f0)`(`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** img,int imgW,int imgH,char op,int * lengths,bool negate,`[`gray`](#mem_8h_1ab4acb9d5bd7df088fccd3055f89b8279)` ** res)` 
 
@@ -2596,7 +2611,7 @@ Writes features to a file using the configured output format.
 #### Parameters
 * `feats` OpenCV matrix containing the features. 
 
-* `file` File name of where to write the features.
+* `fname` File name of where to write the features.
 
 # struct `iF1` 
 

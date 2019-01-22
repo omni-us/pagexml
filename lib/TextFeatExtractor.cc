@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2019.01.21$
+ * @version $Version: 2019.01.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.01.21";
+static char class_version[] = "Version: 2019.01.22";
 
 /**
  * Returns the class version.
@@ -561,7 +561,7 @@ void TextFeatExtractor::write( const cv::Mat& feats, FILE* file ) {
  * Writes features to a file using the configured output format.
  *
  * @param feats  OpenCV matrix containing the features.
- * @param file   File name of where to write the features.
+ * @param fname  File name of where to write the features.
  */
 void TextFeatExtractor::write( const cv::Mat& feats, const char* fname ) {
   if( feats.cols == 0 )
@@ -610,6 +610,12 @@ static void magick2cvmat8u( Magick::Image& image, cv::Mat& cvimg ) {
   }
 }
 
+/**
+ * Copies image data from Magick::Image to an OpenCV Mat.
+ *
+ * @param image   Magick++ Image object.
+ * @param cvimg   OpenCV Mat.
+ */
 static void magick2cvmat8uc3( Magick::Image& image, cv::Mat& cvimg ) {
   CV_Assert( cvimg.depth() == CV_8U ); // accept only char type matrices
   CV_Assert( cvimg.channels() == 3 ); // accept only three channel matrices
@@ -727,8 +733,10 @@ static void graym2magick( Magick::Image& image, gray** gimg, gray** alpha = NULL
  * Copies image data from unsigned char matrix to Magick::Image.
  *
  * @param image  Magick++ Image object.
- * @param gimg   Unsigned char matrix.
- * @param alpha  Unsigned char matrix for alpha channel.
+ * @param rimg   Unsigned char matrix of read channel.
+ * @param gimg   Unsigned char matrix of green channel.
+ * @param bimg   Unsigned char matrix of blue channel.
+ * @param alpha  Unsigned char matrix of alpha channel.
  */
 static void grayms2magick( Magick::Image& image, gray** rimg, gray** gimg, gray** bimg, gray** alpha = NULL ) {
   Magick::Geometry page = image.page();
@@ -915,9 +923,11 @@ static void cvmat8u2magick( Magick::Image& image, cv::Mat& cvimg, cv::Mat& cvimg
  *
  * @param image  Magick++ Image object.
  * @param winW   Window width for local enhancement.
- * @param prm    Enhancement parameter.
+ * @param prm1   Enhancement parameter.
  * @param slp    Gray slope parameter.
  * @param type   Enhancement algorithm.
+ * @param prm0   Enhancement parameter to store in channel 0 (set to 0.0 for single channel output).
+ * @param prm2   Enhancement parameter to store in channel 2 (set to 0.0 for single channel output).
  */
 static void enhance( Magick::Image& image, int winW, double prm1, double slp, int type, double prm0 = 0.0, double prm2 = 0.0 ) {
   gray** gimg = NULL;

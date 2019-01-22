@@ -2591,7 +2591,7 @@ Parameters
 ----------
 * `feats` :  
     OpenCV matrix containing the features.  
-* `file` :  
+* `fname` :  
     File name of where to write the features.  
 ";
 
@@ -3050,6 +3050,15 @@ Parameters
 ";
 
 %feature("docstring") std::chrono::magick2cvmat8uc3 "
+
+Copies image data from Magick::Image to an OpenCV Mat.  
+
+Parameters
+----------
+* `image` :  
+    Magick++ Image object.  
+* `cvimg` :  
+    OpenCV Mat.  
 ";
 
 %feature("docstring") std::chrono::magick2graym "
@@ -3093,10 +3102,14 @@ Parameters
 ----------
 * `image` :  
     Magick++ Image object.  
+* `rimg` :  
+    Unsigned char matrix of read channel.  
 * `gimg` :  
-    Unsigned char matrix.  
+    Unsigned char matrix of green channel.  
+* `bimg` :  
+    Unsigned char matrix of blue channel.  
 * `alpha` :  
-    Unsigned char matrix for alpha channel.  
+    Unsigned char matrix of alpha channel.  
 ";
 
 %feature("docstring") std::chrono::cvmat8u2magick "
@@ -3147,12 +3160,18 @@ Parameters
     Magick++ Image object.  
 * `winW` :  
     Window width for local enhancement.  
-* `prm` :  
+* `prm1` :  
     Enhancement parameter.  
 * `slp` :  
     Gray slope parameter.  
 * `type` :  
     Enhancement algorithm.  
+* `prm0` :  
+    Enhancement parameter to store in channel 0 (set to 0.0 for single channel
+    output).  
+* `prm2` :  
+    Enhancement parameter to store in channel 2 (set to 0.0 for single channel
+    output).  
 ";
 
 %feature("docstring") std::chrono::rlsa4_graym "
