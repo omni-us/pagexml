@@ -5,7 +5,10 @@ import tempfile
 from collections import namedtuple
 from subprocess import Popen, PIPE, STDOUT
 from distutils.version import StrictVersion
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = False
 
 NamedImage = namedtuple('NamedImage', 'id name image')
 
@@ -22,6 +25,7 @@ class LegacyTextFeatExtractor:
 
     def __init__(self,
                  keeptmp = False,
+                 savexml = False,
                  verbose = False,
                  procimgs = False,
                  stretch = True,
@@ -41,6 +45,9 @@ class LegacyTextFeatExtractor:
                  fcontour_dilate = 4.0,
                  padding = 12):
 
+        if not cv2:
+            raise Exception('opencv-python required but not available.')
+
         proc = Popen(['which', 'textFeats'], shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
         proc_out, proc_err = proc.communicate()
         if proc.returncode != 0:
@@ -58,6 +65,7 @@ class LegacyTextFeatExtractor:
         if textfeat_version == '' or StrictVersion(textfeat_version) < StrictVersion(textfeat_version_min):
             raise Exception('textFeat version required to be at least '+textfeat_version_min+' but installed is '+textfeat_version)
 
+        self.savexml = savexml
         self.keeptmp = keeptmp
         self.tempdir = tempfile.TemporaryDirectory(prefix='textfeat_legacy_')
         self.tempdirname = self.tempdir.name
@@ -105,8 +113,10 @@ class LegacyTextFeatExtractor:
 
         featdir = tempfile.TemporaryDirectory(prefix='extraction_', dir=self.tempdirname)
 
-        cmd = [self.textfeat, '--cfg', self.cfgfile, '--outdir', featdir.name, '--featlist', '--xpath', xpath, fxml]
-        proc = Popen(cmd, shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+        cmd = [self.textfeat, '--cfg', self.cfgfile, '--outdir', featdir.name, '--featlist', '--xpath', xpath]
+        if self.savexml:
+            cmd.append('--savexml='+self.savexml)
+        proc = Popen(cmd+[fxml], shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
         proc_out, proc_err = proc.communicate()
         proc_rc = proc.returncode
         if proc.returncode != 0:

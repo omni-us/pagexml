@@ -2443,6 +2443,38 @@ class pagexml.cvSize2iVector(*args)
 
       The membership flag
 
+class pagexml.ptr_cvPoint2fVector
+
+   Bases: "object"
+
+   assign(value)
+
+   cast()
+
+   static frompointer()
+
+   thisown
+
+      The membership flag
+
+   value()
+
+class pagexml.ptr_cvPointVector
+
+   Bases: "object"
+
+   assign(value)
+
+   cast()
+
+   static frompointer()
+
+   thisown
+
+      The membership flag
+
+   value()
+
 class pagexml.ptr_double
 
    Bases: "object"

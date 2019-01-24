@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages, Extension, Command
 import subprocess
+from glob import glob
 import sysconfig
 import sys
 import os
@@ -81,6 +82,15 @@ if BuildDoc:
     CMDCLASS['build_sphinx'] = BuildDocTextFeatExtractor
 
 
+def get_runtime_requirements():
+    """Returns a list of required packages filtered to include only the ones necessary at runtime."""
+    with open('requirements.txt') as f:
+        requirements = f.readlines()
+    requirements = [x.strip() for x in requirements]
+    regex = re.compile(r'^coverage|^Sphinx|^pkgconfig')
+    return [x for x in requirements if not regex.match(x)]
+
+
 setup(name=NAME,
       version=__version__,
       description=DESCRIPTION,
@@ -91,6 +101,8 @@ setup(name=NAME,
       license='MIT',
       cmdclass=CMDCLASS,
       packages=find_packages(),
+      scripts=[x for x in glob(NAME+'/bin/*.py') if not x.endswith('__.py')],
+      install_requires=get_runtime_requirements(),
       ext_modules=[textfeat_Extension()],
       command_options={
           'build_sphinx': {

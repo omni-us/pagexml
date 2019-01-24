@@ -37,12 +37,14 @@
 #include "PageXML.h"
 %}
 
-%pointer_class(double, ptr_double);
-
 %template(cvPoint2fVector) std::vector<cv::Point2f>;
 %template(cvSize2iVector) std::vector<cv::Size2i>;
 %template(xmlNodePtrVector) std::vector<xmlNode*>;
 %template(NamedImageVector) std::vector<NamedImage>;
 %template() std::pair<std::vector<int>, std::vector<int> >;
+
+%pointer_class(double, ptr_double);
+%pointer_class(std::vector<cv::Point>, ptr_cvPointVector);
+%pointer_class(std::vector<cv::Point2f>, ptr_cvPoint2fVector);
 
 %include "PageXML.h"

@@ -64,8 +64,8 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
       *.py )
         check_change_after_staged "${FILES[$n]}" "${FILES[$((n+1))]}";
         update_file_version "${FILES[$n]}";
-        echo "${0##*/}: pylint --errors-only ${FILES[$n]}" 1>&2;
-        pylint --errors-only "${FILES[$n]}";
+        echo "${0##*/}: pylint --errors-only --extension-pkg-whitelist=cv2 ${FILES[$n]}" 1>&2;
+        pylint --errors-only --extension-pkg-whitelist=cv2 "${FILES[$n]}";
         [ "$?" != 0 ] && exit 1;
         ;;
     esac
@@ -84,7 +84,7 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   git add doc/PageXML-API.md py-pagexml/pagexml/PageXML_doxy2swig.i;
 
   ### Test python wrapper and update documentation ###
-  echo "### Test python wrapper and update documentation ###"
+  echo "### Test pagexml python wrapper and update documentation ###"
   cd py-pagexml;
   python setup.py test;
   [ "$?" != "0" ] && exit 1;
@@ -94,6 +94,17 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   sed -i 's|pagexml\.pagexml|pagexml|g' API.rst;
   cd ..;
   git add py-pagexml/API.rst;
+
+  echo "### Test textfeat python wrapper and update documentation ###"
+  cd py-textfeat;
+  python setup.py test;
+  [ "$?" != "0" ] && exit 1;
+  python setup.py build_sphinx --quiet --builder text &&
+    cp -p docs/_build/text/textfeat.txt API.rst;
+  [ "$?" != "0" ] && exit 1;
+  sed -i 's|textfeat\.textfeat|textfeat|g' API.rst;
+  cd ..;
+  git add py-textfeat/API.rst;
 fi
 
 exit 0;

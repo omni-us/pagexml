@@ -1,0 +1,4 @@
+Sphinx>=1.7.9
+pkgconfig>=1.1.0
+opencv-python
+pagexml>=2019.1.22

@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2019.01.23$
+ * @version $Version: 2019.01.24$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.01.22";
+static char class_version[] = "Version: 2019.01.24";
 
 /**
  * Returns the class version.
