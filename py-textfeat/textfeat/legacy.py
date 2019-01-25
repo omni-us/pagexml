@@ -25,6 +25,7 @@ class LegacyTextFeatExtractor:
 
     def __init__(self,
                  keeptmp = False,
+                 threads = 1,
                  savexml = False,
                  verbose = False,
                  procimgs = False,
@@ -65,6 +66,7 @@ class LegacyTextFeatExtractor:
         if textfeat_version == '' or StrictVersion(textfeat_version) < StrictVersion(textfeat_version_min):
             raise Exception('textFeat version required to be at least '+textfeat_version_min+' but installed is '+textfeat_version)
 
+        self.threads = str(threads)
         self.savexml = savexml
         self.keeptmp = keeptmp
         self.tempdir = tempfile.TemporaryDirectory(prefix='textfeat_legacy_')
@@ -113,7 +115,7 @@ class LegacyTextFeatExtractor:
 
         featdir = tempfile.TemporaryDirectory(prefix='extraction_', dir=self.tempdirname)
 
-        cmd = [self.textfeat, '--cfg', self.cfgfile, '--outdir', featdir.name, '--featlist', '--xpath', xpath]
+        cmd = [self.textfeat, '--threads', self.threads, '--cfg', self.cfgfile, '--outdir', featdir.name, '--featlist', '--xpath', xpath]
         if self.savexml:
             cmd.append('--savexml='+self.savexml)
         proc = Popen(cmd+[fxml], shell=False, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)

@@ -15,13 +15,15 @@
 %cv_point_instantiate_defaults
 %cv_size_instantiate_defaults
 
-%define PageImage cv::Mat
-%enddef
+//%define PageImage Magick::Image
+//%define PageImage cv::Mat
+//%enddef
 
-%define __PAGEXML_IMG_CV__
-%enddef
-%define __PAGEXML_OGR__
-%enddef
+//%define __PAGEXML_OGR__
+//%enddef
+//%define __PAGEXML_IMG_MAGICK__
+//%define __PAGEXML_IMG_CV__
+//%enddef
 //%define __PAGEXML_MAGICK__
 //%enddef
 

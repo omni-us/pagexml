@@ -641,30 +641,6 @@ class pagexml.NamedImageVector(*args)
 
       The membership flag
 
-class pagexml.OGRMultiLineString_(*args)
-
-   Bases: "object"
-
-   C++ includes: PageXML.h
-
-   multipolyline
-
-   thisown
-
-      The membership flag
-
-class pagexml.OGRMultiPolygon_(*args)
-
-   Bases: "object"
-
-   C++ includes: PageXML.h
-
-   multipolygon
-
-   thisown
-
-      The membership flag
-
 class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    Bases: "object"
@@ -779,140 +755,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Selects closest node of a given name.
 
-   computeAreas(polys)
-
-      Computes the areas for given polygons.
-
-      * *polys* :
-
-           Polygons to process.
-
-      The polygon areas.
-
-   computeBaselineIntersectionsWeightedByArea(poly, polys, areas)
-
-      Computes line-polygon intersections weighted by area.
-
-      * *poly* :
-
-           Polyline.
-
-      * *polys* :
-
-           Polygons to compare with.
-
-      * *areas* :
-
-           Polygons areas.
-
-      Obtained intersection scores.
-
-      Check input ///
-
-      Compute intersections ///
-
-      Return if fewer than 2 intersects ///
-
-      Weight by areas ///
-
-   computeCoordsIntersectionsWeightedByArea(poly, polys, areas)
-
-      Computes polygon-polygon intersections weighted by area.
-
-      * *poly* :
-
-           Polygon.
-
-      * *polys* :
-
-           Polygons to compare with.
-
-      * *areas* :
-
-           Polygons areas.
-
-      Obtained intersection scores.
-
-      Check input ///
-
-      Compute intersections ///
-
-      Return if fewer than 2 intersects ///
-
-      Weight by areas ///
-
-   computeIntersectFactor(*args)
-
-      Computes the intersection factor of one polyline over polygon.
-
-      * *poly1* :
-
-           Polyline.
-
-      * *poly2* :
-
-           Polygon.
-
-      Factor value.
-
-   computeIntersectionPercentage(poly1, poly2)
-
-      Computes the intersection percentage of one polygon with respect
-      to another polygons.
-
-      * *poly1* :
-
-           First polygon.
-
-      * *poly2* :
-
-           Second polygon.
-
-      Intersection percentage value.
-
-   computeIntersectionPercentages(poly, polys)
-
-      Computes the intersection percentage of one polygon with respect
-      to other polygons.
-
-      * *poly* :
-
-           Polygon.
-
-      * *polys* :
-
-           Vector of polygons.
-
-      Intersection percentage values.
-
-   computeIoU(poly1, poly2)
-
-      Computes the intersection over union (IoU) of two polygons.
-
-      * *poly1* :
-
-           First polygon.
-
-      * *poly2* :
-
-           Second polygon.
-
-      IoU value.
-
-   computeIoUs(poly, polys)
-
-      Computes the intersection over unions (IoU) of polygons.
-
-      * *poly* :
-
-           Polygon.
-
-      * *polys* :
-
-           Vector of polygons.
-
-      IoU values.
-
    copyElem(elem, node, itype=0)
 
       Clone an element and add it relative to a given node.
@@ -930,43 +772,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
            Type of insertion.
 
       Pointer to cloned element.
-
-   copyTextLinesAssignByOverlap(pageFrom, overlap_type=0, overlap_fact=0.5)
-
-      Copies TextLines from one page xml to another assigning to
-      regions based on overlap.
-
-      * *pageFrom* :
-
-           PageXML from where to copy TextLines.
-
-      * *overlap_type* :
-
-           Type of overlap to use for assigning lines to regions.
-
-      * *overlap_fact* :
-
-           Overlapping factor.
-
-      Number of TextLines copied.
-
-      Loop through pages ///
-
-      Check that image size is the same in both PageXMLs ///
-
-      Select page region or create one if it does not exist ///
-
-      Select relevant elements ///
-
-      Get polygons of regions for IoU computation ///
-
-      Loop through lines ///
-
-      Compute overlap scores ///
-
-      Clone line and add it to the destination region node ///
-
-      Remove added page region if no TextLine was added to it ///
 
    count(*args)
 
@@ -1224,54 +1029,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       String with the name.
 
-   getOGRpolygon(*args)
-
-      Gets an element's Coords as an OGRMultiPolygon.
-
-      * *node* :
-
-           The element from which to extract the Coords points.
-
-      * *xpath* :
-
-           Selector for the Coords element.
-
-      Pointer to OGRMultiPolygon element.
-
-   getOGRpolygonArea(poly)
-
-      Gets the area of a OGRMultiPolygon.
-
-      * *poly* :
-
-           OGRMultiPolygon pointer.
-
-      Area.
-
-   getOGRpolygons(*args)
-
-      Gets elements' Coords as OGRMultiPolygons.
-
-      * *nodes* :
-
-           Elements from which to extract the Coords points.
-
-      * *xpath* :
-
-           Selector for the Coords element.
-
-      Vector of OGRMultiPolygon pointer elements.
-
-   getOGRpolyline(*args)
-
-      Gets the element's Baseline as an OGRMultiLineString.
-
-      * *node* :
-
-           The element from which to extract the Baseline points.
-
-      Pointer to OGRMultiLineString element.
-
    getPageHeight(*args)
 
       Gets the height of a page (might be different to image width due
@@ -1413,20 +1170,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
            String to add between TextEquivs.
 
       String with the concatenated TextEquivs.
-
-   getUnionOGRpolygon(*args)
-
-      Gets the union of Coords elements as a OGRMultiPolygon.
-
-      * *nodes* :
-
-           Elements from which to extract the Coords points.
-
-      * *xpath* :
-
-           Selector for the Coords element.
-
-      Pointer to OGRMultiPolygon element.
 
    getValue(*args)
 
@@ -1584,35 +1327,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to moved element.
 
-   multiPolygonIntersection(poly1, poly2)
-
-      Computes the intersection of two multipolygons.
-
-      * *poly1* :
-
-           First polygon.
-
-      * *poly2* :
-
-           Second polygon.
-
-      Intersection geometry.
-
-   multiPolylineIntersection(poly1, poly2)
-
-      Computes the intersection between a multipolylines and a
-      multipolygon.
-
-      * *poly1* :
-
-           Polyline.
-
-      * *poly2* :
-
-           Polygon.
-
-      Intersection geometry.
-
    newXml(creator, image, imgW=0, imgH=0)
 
       Loaders ///.
@@ -1694,26 +1408,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       * *ymax* :
 
            Maximum y value.
-
-   pointsToOGRpolygon(points)
-
-      Converts Coords to an OGRMultiPolygon.
-
-      * *points* :
-
-           Vector of x,y points.
-
-      Pointer to OGRMultiPolygon element.
-
-   pointsToOGRpolygons(points)
-
-      Converts Coords to OGRMultiPolygons.
-
-      * *points* :
-
-           Vectors of x,y points.
-
-      Pointer to OGRMultiPolygon element.
 
    static pointsToString(*args)
 
@@ -1822,32 +1516,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
            XML node for context, set to NULL for root node.
 
       Matched node.
-
-   selectByOverlap(*args)
-
-      Selects elements based on overlap to a polygon.
-
-      * *points* :
-
-           Polygon for selection.
-
-      * *pagenum* :
-
-           Page number for selection.
-
-      * *xpath* :
-
-           xpath for candidate elements for selection.
-
-      * *overlap_thr* :
-
-           Overlapping score threshold.
-
-      * *overlap_type* :
-
-           Type of overlap to use for selecting.
-
-      Number of TextLines copied.
 
    selectNth(*args)
 

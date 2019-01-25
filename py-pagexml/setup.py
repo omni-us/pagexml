@@ -25,29 +25,37 @@ class build(_build):
                     ('build_scripts', _build.has_scripts)]
 
 
-def pagexml_Extension():
+from setuptools import Distribution as _Distribution
+class Distribution(_Distribution):
+    global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
+
+
+def pagexml_Extension(magick):
     import pkgconfig
-    #libs = ['opencv','libxml-2.0','libxslt','gdal','Magick++']
-    #libs = ['opencv','libxml-2.0','libxslt','gdal']
     libs = ['opencv','libxml-2.0','libxslt','gdal']
+    if magick:
+        libs += ['Magick++']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
+        if not pkgconfig.exists(lib):
+            raise FileNotFoundError('pkgconfig did not find '+lib)
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
-    if not pkgconfig.cflags('opencv'):
-        raise FileNotFoundError('pkgconfig did not find opencv development')
     #compile_args += pkgconfig.cflags('opencv').split()
     #cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_highgui')
     #link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
+    defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
+    pageimage = 'Magick::Image' if magick else 'cv::Mat'
+    define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
+    swig_opts = ['-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
+    print('pagexml_Extension configured with '+defimage)
     return Extension('_pagexml',
-                     #define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_OGR__',''),('__PAGEXML_MAGICK__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
-                     define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_OGR__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
-                     #sources = ['pagexml/PageXML.i','pagexml/PageXML.cc','pagexml/TextFeatExtractor.cc','pagexml/intimg.cc','pagexml/mem.cc'])
+                     swig_opts = swig_opts + [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
                      sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
 
 
@@ -104,7 +112,7 @@ if BuildDoc:
 
     CMDCLASS['build_sphinx'] = BuildDocPageXML
 
-setup(name=NAME,
+setup(name=NAME+('_magick' if '--magick' in sys.argv else ''),
       version=__version__,
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
@@ -116,7 +124,8 @@ setup(name=NAME,
       test_suite=NAME+'_tests',
       cmdclass=CMDCLASS,
       packages=find_packages(),
-      ext_modules=[pagexml_Extension()],
+      distclass=Distribution,
+      ext_modules=[pagexml_Extension(True if '--magick' in sys.argv else False)],
       package_data={NAME: ['xsd/*.xsd']},
       command_options={
           'build_sphinx': {

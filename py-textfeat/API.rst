@@ -1,4 +1,4 @@
-textfeat API (version 2019.1.24)
+textfeat API (version 2019.1.25)
 ********************************
 
 

@@ -26,25 +26,35 @@ class build(_build):
                     ('build_scripts', _build.has_scripts)]
 
 
-def textfeat_Extension():
+from setuptools import Distribution as _Distribution
+class Distribution(_Distribution):
+    global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
+
+
+def textfeat_Extension(magick=False):
     import pkgconfig
-    libs = ['opencv','Magick++','libxml-2.0']
+    libs = ['opencv','libxml-2.0','Magick++']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
+        if not pkgconfig.exists(lib):
+            raise FileNotFoundError('pkgconfig did not find '+lib)
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
-    if not pkgconfig.cflags('opencv'):
-        raise FileNotFoundError('pkgconfig did not find opencv development')
     #compile_args += pkgconfig.cflags('opencv').split()
     #cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_flann')
     #link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
     cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
+    defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
+    pageimage = 'Magick::Image' if magick else 'cv::Mat'
+    define_macros = [(defimage,''),('__PAGEXML_MAGICK__','')]
+    swig_opts = ['-D'+defimage,'-DPageImage='+pageimage,'-D__PAGEXML_MAGICK__']
+    print('textfeat_Extension configured with '+defimage)
     return Extension('_textfeat',
-                     define_macros = [('__PAGEXML_IMG_CV__',''),('__PAGEXML_MAGICK__',''),('SWIG_PYTHON_SILENT_MEMLEAK','')],
+                     define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = [cvinc,'-modern','-keyword','-c++'],
+                     swig_opts = swig_opts + [cvinc,'-modern','-keyword','-c++'],
                      sources = ['textfeat/TextFeatExtractor.i','textfeat/TextFeatExtractor.cc','textfeat/intimg.cc','textfeat/mem.cc'])
 
 
@@ -87,11 +97,14 @@ def get_runtime_requirements():
     with open('requirements.txt') as f:
         requirements = f.readlines()
     requirements = [x.strip() for x in requirements]
+    if '--magick' in sys.argv:
+        regex = re.compile(r'^pagexml>')
+        requirements = [re.sub(regex, 'pagexml-magick>', x) if regex.match(x) else x for x in requirements]
     regex = re.compile(r'^coverage|^Sphinx|^pkgconfig')
     return [x for x in requirements if not regex.match(x)]
 
 
-setup(name=NAME,
+setup(name=NAME+('_magick' if '--magick' in sys.argv else ''),
       version=__version__,
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
@@ -103,7 +116,8 @@ setup(name=NAME,
       packages=find_packages(),
       scripts=[x for x in glob(NAME+'/bin/*.py') if not x.endswith('__.py')],
       install_requires=get_runtime_requirements(),
-      ext_modules=[textfeat_Extension()],
+      distclass=Distribution,
+      ext_modules=[textfeat_Extension(True if '--magick' in sys.argv else False)],
       command_options={
           'build_sphinx': {
               'project': ('setup.py', NAME),

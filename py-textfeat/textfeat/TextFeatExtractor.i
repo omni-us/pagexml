@@ -8,13 +8,15 @@
 %include "std_string.i"
 %include "exception.i"
 
-%define PageImage cv::Mat
-%enddef
+//%define PageImage Magick::Image
+//%define PageImage cv::Mat
+//%enddef
 
-%define __PAGEXML_IMG_CV__
-%enddef
-%define __PAGEXML_MAGICK__
-%enddef
+//%define __PAGEXML_IMG_MAGICK__
+//%define __PAGEXML_IMG_CV__
+//%enddef
+//%define __PAGEXML_MAGICK__
+//%enddef
 
 %exception {
   try {
