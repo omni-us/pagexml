@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.01.22$
+ * @version $Version: 2019.02.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.01.22";
+static char class_version[] = "Version: 2019.02.04";
 
 /**
  * Returns the class version.
@@ -3489,7 +3489,7 @@ xmlNodePt PageXML::addGlyph( xmlNodePt node, const char* id, const char* before_
     }
     int n = select( "_:Glyph", node ).size();
     while( true ) {
-      if( select( string("*[@id='")+wid+"_g"+to_string(++n)+"']", node ).size() == 0 ) {
+      if( selectByID( (wid+"_g"+to_string(++n)).c_str() ) == NULL ) {
         gid = wid+"_g"+to_string(n);
         break;
       }
@@ -3501,12 +3501,12 @@ xmlNodePt PageXML::addGlyph( xmlNodePt node, const char* id, const char* before_
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
-    if( sel.size() == 0 ) {
+    xmlNodePt sel = selectByID( before_id, node );
+    if( sel == NULL ) {
       throw_runtime_error( "PageXML.addGlyph: unable to find id=%s", before_id );
       return NULL;
     }
-    glyph = addElem( "Glyph", gid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    glyph = addElem( "Glyph", gid.c_str(), sel, PAGEXML_INSERT_PREVSIB, true );
   }
   else {
     vector<xmlNodePt> sel = select( "_:TextEquiv", node );
@@ -3564,7 +3564,7 @@ xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_i
     }
     int n = select( "_:Word", node ).size();
     while( true ) {
-      if( select( string("*[@id='")+lid+"_w"+to_string(++n)+"']", node ).size() == 0 ) {
+      if( selectByID( (lid+"_w"+to_string(++n)).c_str() ) == NULL ) {
         wid = lid+"_w"+to_string(n);
         break;
       }
@@ -3576,12 +3576,12 @@ xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_i
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
-    if( sel.size() == 0 ) {
+    xmlNodePt sel = selectByID( before_id, node );
+    if( sel == NULL ) {
       throw_runtime_error( "PageXML.addWord: unable to find id=%s", before_id );
       return NULL;
     }
-    word = addElem( "Word", wid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    word = addElem( "Word", wid.c_str(), sel, PAGEXML_INSERT_PREVSIB, true );
   }
   else {
     vector<xmlNodePt> sel = select( "_:TextEquiv", node );
@@ -3639,7 +3639,7 @@ xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* befo
     }
     int n = select( "_:TextLine", node ).size();
     while( true ) {
-      if( select( string("*[@id='")+rid+"_l"+to_string(++n)+"']", node ).size() == 0 ) {
+      if( selectByID( (rid+"_l"+to_string(++n)).c_str() ) == NULL ) {
         lid = rid+"_l"+to_string(n);
         break;
       }
@@ -3651,12 +3651,12 @@ xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* befo
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
-    if( sel.size() == 0 ) {
+    xmlNodePt sel = selectByID( before_id, node );
+    if( sel == NULL ) {
       throw_runtime_error( "PageXML.addTextLine: unable to find id=%s", before_id );
       return NULL;
     }
-    textline = addElem( "TextLine", lid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    textline = addElem( "TextLine", lid.c_str(), sel, PAGEXML_INSERT_PREVSIB, true );
   }
   else {
     vector<xmlNodePt> sel = select( "_:TextEquiv", node );
@@ -3710,7 +3710,7 @@ xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* be
   else {
     int n = select( "*/_:TextRegion", node->parent ).size();
     while( true ) {
-      if( select( string("*/*[@id='t")+to_string(++n)+"']", node->parent ).size() == 0 ) {
+      if( selectByID( (string("t")+to_string(++n)).c_str() ) == NULL ) {
         rid = string("t")+to_string(n);
         break;
       }
@@ -3722,12 +3722,12 @@ xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* be
   }
 
   if( before_id != NULL ) {
-    vector<xmlNodePt> sel = select( string("*[@id='")+before_id+"']", node );
-    if( sel.size() == 0 ) {
+    xmlNodePt sel = selectByID( before_id, node );
+    if( sel == NULL ) {
       throw_runtime_error( "PageXML.addTextRegion: unable to find id=%s", before_id );
       return NULL;
     }
-    textreg = addElem( "TextRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    textreg = addElem( "TextRegion", rid.c_str(), sel, PAGEXML_INSERT_PREVSIB, true );
   }
   else {
     vector<xmlNodePt> sel = select( prepend ? "*[local-name()='TextEquiv' or local-name()='TextRegion']" : "_:TextEquiv", node );

@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.01.22
+Version2019.02.04
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
