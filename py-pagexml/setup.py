@@ -49,7 +49,7 @@ def pagexml_Extension(magick):
     defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
     pageimage = 'Magick::Image' if magick else 'cv::Mat'
     define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
-    swig_opts = ['-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
+    swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
     print('pagexml_Extension configured with '+defimage)
     return Extension('_pagexml',
                      define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
