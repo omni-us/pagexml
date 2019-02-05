@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.4)
+pagexml API (version 2019.2.5)
 ******************************
 
 

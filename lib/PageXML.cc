@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.04$
+ * @version $Version: 2019.02.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -34,7 +34,7 @@ const char* PageXML::settingNames[] = {
 
 char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
 
-#ifdef __PAGEXML_IMG_MAGICK__
+#ifdef __PAGEXML_MAGICK__
 Magick::Color transparent("rgba(0,0,0,0)");
 Magick::Color opaque("rgba(0,0,0,100%)");
 Magick::Color colorWhite("white");
@@ -56,7 +56,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.04";
+static char class_version[] = "Version: 2019.02.05";
 
 /**
  * Returns the class version.
@@ -572,7 +572,7 @@ void mktemp( const char* tempbase, char *tempname ) {
   }
 }
 
-#if defined (__PAGEXML_IMG_MAGICK__)
+#if defined (__PAGEXML_MAGICK__)
 
 /**
  * Removes alpha channel, setting all transparent regions to the background color.
@@ -678,6 +678,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     Magick::Image tmp;
     tmp.density(std::to_string(ldensity).c_str());
     tmp.read(fname);
+    listFlattenImage(tmp);
     char tmpfname[FILENAME_MAX];
     std::string tmpbase = std::string("tmp_PageXML_pdf_")+std::to_string(pagenum)+"_XXXXXXXX.png";
     mktemp( tmpbase.c_str(), tmpfname );
