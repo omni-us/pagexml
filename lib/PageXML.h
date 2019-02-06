@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.02.05$
+ * @version $Version: 2019.02.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -143,7 +143,7 @@ class PageXML {
     PageXML( const char* pagexml_path = NULL, const char* schema_path = NULL );
 #endif
     void loadSchema( const char* schema_path );
-    bool isValid();
+    bool isValid( xmlDocPtr xml_to_validate = NULL );
     void printConf( FILE* file = stdout );
     xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
     void loadXml( const char* fname, bool validate = true );

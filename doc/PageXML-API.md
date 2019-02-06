@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.05
+Version2019.02.06
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -807,7 +807,7 @@ Whether flattening was performed.
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
 `public  `[`PageXML`](#class_page_x_m_l_1a0b930b74d48fe26bdfbfee7cde0df960)`(const char * pagexml_path,const char * schema_path)` | Constructors ///.
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
-`public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` | Validates the currently loaded XML.
+`public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` | Validates the currently loaded XML.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a95f40947e6da8415578a4dcaf7a8eea3)`(const char * creator,const char * image,const int imgW,const int imgH)` | Loaders ///.
 `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` | Loads a Page XML from a file.
@@ -989,7 +989,7 @@ Loads a schema for xml validation.
 #### Parameters
 * `schema_path` File name of the XSD file to read.
 
-#### `public bool `[`isValid`](#class_page_x_m_l_1a3ae4157e63f4252bae130e20f63181f7)`()` 
+#### `public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` 
 
 Validates the currently loaded XML.
 

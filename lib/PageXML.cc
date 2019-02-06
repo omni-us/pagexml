@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.05$
+ * @version $Version: 2019.02.06$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,13 +50,15 @@ regex reIsTiff(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 
 xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 
+xsltStylesheetPtr sortelem = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:_=\"http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15\" xmlns=\"http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:strip-space elements=\"*\"/><xsl:template match=\"@* | node()\"><xsl:copy><xsl:apply-templates select=\"@* | node()\"/></xsl:copy></xsl:template><xsl:template match=\"_:PcGts\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"_:Metadata\"/><xsl:apply-templates select=\"_:Property\"/><xsl:apply-templates select=\"_:Page\"/><xsl:apply-templates select=\"node()[not(contains(' Metadata Property Page ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template><xsl:template match=\"*[_:Coords or _:Baseline or _:TextEquiv]\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"_:ImageOrientation\"/><xsl:apply-templates select=\"_:Property\"/><xsl:apply-templates select=\"_:Coords\"/><xsl:apply-templates select=\"_:Baseline\"/><xsl:apply-templates select=\"_:TextLine | _:Word | _:Glyph\"/><xsl:apply-templates select=\"_:TextEquiv\"/><xsl:apply-templates select=\"node()[not(contains(' ImageOrientation Property Coords Baseline TextLine Word Glyph TextEquiv ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template></xsl:stylesheet>" ) );
+
 bool validation_enabled = true;
 
 /////////////////////
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.05";
+static char class_version[] = "Version: 2019.02.06";
 
 /**
  * Returns the class version.
@@ -83,9 +85,6 @@ void PageXML::printVersions( FILE* file ) {
 void PageXML::release() {
   freeXML();
   freeSchema();
-  //if( sortattr != NULL )
-  //  xsltFreeStylesheet(sortattr);
-  //sortattr = NULL;
 }
 
 /**
@@ -242,10 +241,12 @@ void PageXML::loadSchema( const char *schema_path ) {
 /**
  * Validates the currently loaded XML.
  */
-bool PageXML::isValid() {
-  if( xml == NULL || valid_context == NULL || ! validation_enabled )
+bool PageXML::isValid( xmlDocPtr xml_to_validate ) {
+  if( xml_to_validate == NULL )
+    xml_to_validate = xml;
+  if( xml_to_validate == NULL || valid_context == NULL || ! validation_enabled )
     return true;
-  return xmlSchemaValidateDoc(valid_context, xml) ? false : true;
+  return xmlSchemaValidateDoc(valid_context, xml_to_validate) ? false : true;
 }
 
 /**
@@ -267,11 +268,15 @@ void PageXML::setValidationEnabled( bool val ) {
  * @return       Number of bytes written.
  */
 int PageXML::write( const char* fname, bool validate ) {
-  if( validate && ! isValid() )
-    throw_runtime_error( "PageXML.write: aborted write of invalid PageXML" );
   if ( process_running )
     processEnd();
-  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, xml, NULL );
+  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
+  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, sortedElemXml, NULL );
+  xmlFreeDoc(sortedElemXml);
+  if( validate && ! isValid(sortedXml) ) {
+    xmlFreeDoc(sortedXml);
+    throw_runtime_error( "PageXML.write: aborted write of invalid PageXML" );
+  }
   int bytes = xmlSaveFormatFileEnc( fname, sortedXml, "utf-8", indent );
   xmlFreeDoc(sortedXml);
   return bytes;
@@ -281,12 +286,18 @@ int PageXML::write( const char* fname, bool validate ) {
  * Creates a string representation of the Page XML.
  */
 string PageXML::toString( bool validate ) {
-  if( validate && ! isValid() )
-    throw_runtime_error( "PageXML.toString: aborted serialization of invalid PageXML" );
+  if ( process_running )
+    processEnd();
   string sxml;
   xmlChar *cxml;
   int size;
-  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, xml, NULL );
+  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
+  xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, sortedElemXml, NULL );
+  xmlFreeDoc(sortedElemXml);
+  if( validate && ! isValid(sortedXml) ) {
+    xmlFreeDoc(sortedXml);
+    throw_runtime_error( "PageXML.toString: aborted conversion to string of invalid PageXML" );
+  }
   xmlDocDumpMemory(sortedXml, &cxml, &size);
   xmlFreeDoc(sortedXml);
   if ( cxml == NULL ) {
@@ -548,9 +559,6 @@ void PageXML::setupXml() {
 
   if( xmlDir.empty() )
     xmlDir = string(".");
-
-  //if( sortattr == NULL )
-  //  sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 }
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)

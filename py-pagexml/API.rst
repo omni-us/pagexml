@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.5)
+pagexml API (version 2019.2.6)
 ******************************
 
 
@@ -1512,7 +1512,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Check stripe extremes perpendicular to baseline ///
 
-   isValid()
+   isValid(xml_to_validate=0)
 
       Validates the currently loaded XML.
 
