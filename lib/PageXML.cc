@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.06$
+ * @version $Version: 2019.02.07$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -58,7 +58,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.06";
+static char class_version[] = "Version: 2019.02.07";
 
 /**
  * Returns the class version.
@@ -2934,11 +2934,11 @@ xmlNodePt PageXML::setPolystripe( xmlNodePt node, double height, double offset, 
     return NULL;
   }
   if ( height <= 0 ) {
-    throw_runtime_error( "PageXML.setPolystripe: unexpected height" );
+    throw_runtime_error( "PageXML.setPolystripe: unexpected height: %g", height );
     return NULL;
   }
   if ( offset_check && ( offset < 0 || offset > 0.5 ) ) {
-    throw_runtime_error( "PageXML.setPolystripe: unexpected offset" );
+    throw_runtime_error( "PageXML.setPolystripe: unexpected offset: %g", offset );
     return NULL;
   }
 
@@ -4144,8 +4144,12 @@ double PageXML::computeIoU( OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2
  */
 std::vector<double> PageXML::computeIoUs( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys ) {
   std::vector<double> ious;
-  for ( int n=0; n<(int)polys.size(); n++ )
-    ious.push_back( computeIoU(poly,polys[n]) );
+  if ( getOGRpolygonArea(poly) == 0.0 )
+    for ( int n=0; n<(int)polys.size(); n++ )
+      ious.push_back(0.0);
+  else
+    for ( int n=0; n<(int)polys.size(); n++ )
+      ious.push_back( computeIoU(poly,polys[n]) );
   return ious;
 }
 
@@ -4212,6 +4216,11 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
 
   /// Compute intersections ///
   double poly_area = getOGRpolygonArea(poly);
+  if ( poly_area == 0.0 ) {
+    for ( int n=0; n<(int)polys.size(); n++ )
+      scores.push_back(0.0);
+    return scores;
+  }
   double sum_areas = 0.0;
   int isect_count = 0;
   for ( int n=0; n<(int)polys.size(); n++ ) {
