@@ -1,5 +1,5 @@
-pagexml API (version 2019.2.7)
-******************************
+pagexml API (version 2019.2.15)
+*******************************
 
 
 pagexml module

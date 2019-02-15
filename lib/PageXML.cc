@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.07$
+ * @version $Version: 2019.02.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -58,7 +58,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.07";
+static char class_version[] = "Version: 2019.02.15";
 
 /**
  * Returns the class version.
@@ -3254,7 +3254,7 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
     return num;
 
   /// Select all elements with coordinates ///
-  std::vector<xmlNodePt> points = select(".//@points", page);
+  std::vector<xmlNodePt> points = select(".//@points[.!=\"0,0 0,0\"]", page);
   std::vector<xmlNodePt> fpgrams = select(".//_:Property[@key='fpgram']/@value", page);
   points.insert(points.end(), fpgrams.begin(), fpgrams.end());
 
