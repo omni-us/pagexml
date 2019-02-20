@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.15$
+ * @version $Version: 2019.02.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -58,7 +58,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.15";
+static char class_version[] = "Version: 2019.02.20";
 
 /**
  * Returns the class version.
@@ -1192,6 +1192,23 @@ xmlNodePt PageXML::selectNth( string xpath, int num, const xmlNodePt node ) {
 xmlNodePt PageXML::selectByID( const char* id, const xmlNodePt node ) {
   vector<xmlNodePt> sel = select( (string(".//*[@id='")+id+"']").c_str(), node );
   return sel.size() == 0 ? NULL : sel[0];
+}
+
+/**
+ * Filters a vector of xml nodes given an xpath.
+ *
+ * @param xpath  Filtering expression.
+ * @param elems  Vector of nodes to filter.
+ * @return       Vector of filtered nodes.
+ */
+std::vector<xmlNodePt> PageXML::filter( const char* xpath, const std::vector<xmlNodePt> elems ) {
+  std::vector<xmlNodePt> filtered;
+  for ( int n=0; n<elems.size(); n++ ) {
+    std::vector<xmlNodePt> sel = select( xpath, elems[n]->parent );
+    if ( std::find(sel.begin(), sel.end(), elems[n]) != sel.end() )
+      filtered.push_back(elems[n]);
+  }
+  return filtered;
 }
 
 /**

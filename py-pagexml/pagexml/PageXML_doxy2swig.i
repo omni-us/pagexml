@@ -469,6 +469,22 @@ Returns
 Matched node.  
 ";
 
+%feature("docstring") PageXML::filter "
+
+Filters a vector of xml nodes given an xpath.  
+
+Parameters
+----------
+* `xpath` :  
+    Filtering expression.  
+* `elems` :  
+    Vector of nodes to filter.  
+
+Returns
+-------
+Vector of filtered nodes.  
+";
+
 %feature("docstring") PageXML::closest "
 
 Selects closest node of a given name.  

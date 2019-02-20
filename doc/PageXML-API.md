@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.15
+Version2019.02.20
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -833,6 +833,7 @@ Whether flattening was performed.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1a693a2275353703a06ae90427d59e416e)`(const char * xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects the n-th node that matches an xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ae29d8b0b92240bc0866064c88c1eb0ab)`(std::string xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectByID`](#class_page_x_m_l_1ace787087add3c5f3016ec837553d48b5)`(const char * id,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects an element with a given ID.
+`public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`filter`](#class_page_x_m_l_1a4fd13a5fac680321187fb601d40a43e3)`(const char * xpath,const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems)` | Filters a vector of xml nodes given an xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`closest`](#class_page_x_m_l_1a089e2ca706141bf750b301fd34595fc1)`(const char * name,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Selects closest node of a given name.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`parent`](#class_page_x_m_l_1a8ac32174f32b120caf595ec3a82e57d1)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Returns the parent of a node.
 `public std::string `[`getValue`](#class_page_x_m_l_1a806731e1825cfbfa406ddf3e6978d747)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves a node value.
@@ -1162,6 +1163,18 @@ Selects an element with a given ID.
 
 #### Returns
 Matched node.
+
+#### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`filter`](#class_page_x_m_l_1a4fd13a5fac680321187fb601d40a43e3)`(const char * xpath,const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems)` 
+
+Filters a vector of xml nodes given an xpath.
+
+#### Parameters
+* `xpath` Filtering expression. 
+
+* `elems` Vector of nodes to filter. 
+
+#### Returns
+Vector of filtered nodes.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`closest`](#class_page_x_m_l_1a089e2ca706141bf750b301fd34595fc1)`(const char * name,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 

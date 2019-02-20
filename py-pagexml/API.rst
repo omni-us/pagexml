@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.15)
+pagexml API (version 2019.2.20)
 *******************************
 
 
@@ -1017,6 +1017,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Add alpha channel to image ///
 
       Append crop and related data to list ///
+
+   filter(xpath, elems)
 
    getAttr(*args)
 

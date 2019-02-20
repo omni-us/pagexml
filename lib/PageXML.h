@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.02.15$
+ * @version $Version: 2019.02.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -178,6 +178,7 @@ class PageXML {
     xmlNodePt selectNth( const char* xpath, int num = 0, const xmlNodePt node = NULL );
     xmlNodePt selectNth( std::string xpath, int num = 0, const xmlNodePt node = NULL );
     xmlNodePt selectByID( const char* id, const xmlNodePt node = NULL );
+    std::vector<xmlNodePt> filter( const char* xpath, const std::vector<xmlNodePt> elems );
     xmlNodePt closest( const char* name, xmlNodePt node );
     xmlNodePt parent( const xmlNodePt node );
     static bool nodeIs( xmlNodePt node, const char* name );
