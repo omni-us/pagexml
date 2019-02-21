@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.20)
+pagexml API (version 2019.2.21)
 *******************************
 
 
@@ -931,7 +931,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to cloned element.
 
-   copyTextLinesAssignByOverlap(pageFrom, overlap_type=0, overlap_fact=0.5)
+   copyTextLinesAssignByOverlap(pageFrom, overlap_thr=1.0, overlap_type=0, comb_alpha=0.5, verbose=False)
 
       Copies TextLines from one page xml to another assigning to
       regions based on overlap.
@@ -1019,6 +1019,18 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Append crop and related data to list ///
 
    filter(xpath, elems)
+
+      Filters a vector of xml nodes given an xpath.
+
+      * *xpath* :
+
+           Filtering expression.
+
+      * *elems* :
+
+           Vector of nodes to filter.
+
+      Vector of filtered nodes.
 
    getAttr(*args)
 
@@ -1430,6 +1442,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to OGRMultiPolygon element.
 
+   getUniqueID(prefix, suffix=None, count_start=1, count_max=100000)
+
    getValue(*args)
 
       Retrieves a node value.
@@ -1744,6 +1758,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Start time attribute ///
 
       Tool and ref attributes ///
+
+   relabelChildIDs(node, include_self=False)
 
    relativizeImageFilename(xml_path)
 

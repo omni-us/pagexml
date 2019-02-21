@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.20$
+ * @version $Version: 2019.02.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -58,7 +58,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.20";
+static char class_version[] = "Version: 2019.02.21";
 
 /**
  * Returns the class version.
@@ -1203,7 +1203,7 @@ xmlNodePt PageXML::selectByID( const char* id, const xmlNodePt node ) {
  */
 std::vector<xmlNodePt> PageXML::filter( const char* xpath, const std::vector<xmlNodePt> elems ) {
   std::vector<xmlNodePt> filtered;
-  for ( int n=0; n<elems.size(); n++ ) {
+  for ( int n=0; n<(int)elems.size(); n++ ) {
     std::vector<xmlNodePt> sel = select( xpath, elems[n]->parent );
     if ( std::find(sel.begin(), sel.end(), elems[n]) != sel.end() )
       filtered.push_back(elems[n]);
@@ -3956,6 +3956,77 @@ void PageXML::relativizeImageFilename( const char* xml_path ) {
   }
 }
 
+/**
+ * Gets a unique id.
+ *
+ * @param prefix      Prefix for id.
+ * @param suffix      Suffix for id.
+ * @param count_start Counter start to place between prefix and suffix.
+ * @param count_max   Maximum count to test.
+ * @return            The generated unique id.
+ */
+std::string PageXML::getUniqueID( const char* prefix, const char* suffix, int count_start, int count_max ) {
+  std::string ssuffix = std::string(suffix == NULL ? "" : suffix);
+  std::string id;
+  int n;
+  for ( n=count_start; n<=count_max; n++ ) {
+    if( selectByID( (std::string(prefix)+std::to_string(n)+ssuffix).c_str() ) == NULL ) {
+      id = std::string(prefix)+std::to_string(n)+ssuffix;
+      break;
+    }
+  }
+  if( n > count_max )
+    throw_runtime_error( "PageXML.getUniqueID: unable to get unique id" );
+  return id;
+}
+
+/**
+ * Relabels IDs of child elements.
+ *
+ * @param node         Base node.
+ * @param include_self Whether to also relabel the base node.
+ * @return             Number of IDs affected.
+ */
+int PageXML::relabelChildIDs( xmlNodePt node, bool include_self ) {
+  int n, cnt = 0;
+  if ( include_self ) {
+    std::string id;
+    if( nodeIs( node, "Page") )
+      id = getUniqueID( "pg" );
+    else if( nodeIs( node, "TextRegion") ) {
+      std::string pgid = getAttr(node->parent,"id");
+      id = getUniqueID( pgid.empty() ? "r" : (pgid+"_r").c_str() );
+    }
+    else if( nodeIs( node, "TextLine") )
+      id = getUniqueID( (getAttr(node->parent,"id")+"_l").c_str() );
+    else if( nodeIs( node, "Word") )
+      id = getUniqueID( (getAttr(node->parent,"id")+"_w").c_str() );
+    else if( nodeIs( node, "Glyph") )
+      id = getUniqueID( (getAttr(node->parent,"id")+"_g").c_str() );
+    else
+      throw_runtime_error( "PageXML.relabelChildIDs: unsupported node type" );
+    setAttr(node, "id", id.c_str());
+    cnt++;
+  }
+
+  std::vector<xmlNodePt> lines = select(".//_:TextLine", node);
+  for ( n=0; n<(int)lines.size(); n++ )
+    setAttr(lines[n], "id", (getAttr(lines[n]->parent,"id")+"_l"+std::to_string(n+1)).c_str());
+  cnt += lines.size();
+
+  std::vector<xmlNodePt> words = select(".//_:Word", node);
+  for ( n=0; n<(int)words.size(); n++ )
+    setAttr(words[n], "id", (getAttr(words[n]->parent,"id")+"_w"+std::to_string(n+1)).c_str());
+  cnt += words.size();
+
+  std::vector<xmlNodePt> glyphs = select(".//_:Glyph", node);
+  for ( n=0; n<(int)glyphs.size(); n++ )
+    setAttr(glyphs[n], "id", (getAttr(glyphs[n]->parent,"id")+"_g"+std::to_string(n+1)).c_str());
+  cnt += glyphs.size();
+
+  return cnt;
+}
+
 
 #if defined (__PAGEXML_OGR__)
 
@@ -4390,11 +4461,12 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
  * Copies TextLines from one page xml to another assigning to regions based on overlap.
  *
  * @param pageFrom      PageXML from where to copy TextLines.
+ * @param overlap_thr   Overlapping score threshold for copying.
  * @param overlap_type  Type of overlap to use for assigning lines to regions.
- * @param overlap_fact  Overlapping factor.
+ * @param comb_alpha    Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for PAGEXML_OVERLAP_COORDS_BASELINE_IWA.
  * @return              Number of TextLines copied.
  */
-int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP overlap_type, double overlap_fact ) {
+int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr, PAGEXML_OVERLAP overlap_type, double comb_alpha, bool verbose ) {
   xmlDocPtr docToPtr = getDocPtr();
   std::vector<xmlNodePt> pgsFrom = pageFrom.select("//_:Page");
   std::vector<xmlNodePt> pgsTo = select("//_:Page");
@@ -4455,7 +4527,8 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
     std::vector<xmlNodePt> linesAdded;
     for ( int n=0; n<(int)linesFrom.size(); n++ ) {
       if ( overlap_type != PAGEXML_OVERLAP_BASELINE_IWA && getPoints(linesFrom[n]).size() < 4 ) {
-        fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
+        if ( verbose )
+          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
         continue;
       }
       /// Compute overlap scores ///
@@ -4478,23 +4551,35 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, PAGEXML_OVERLAP ov
           overlap = computeBaselineIntersectionsWeightedByArea( pageFrom.getOGRpolyline(linesFrom[n]), regs_poly, reg_areas );
           overlap2 = computeCoordsIntersectionsWeightedByArea( pageFrom.getOGRpolygon(linesFrom[n]), regs_poly, reg_areas );
           for ( int m=0; m<(int)overlap.size(); m++ )
-            overlap[m] = overlap_fact*overlap[m]+(1-overlap_fact)*overlap2[m];
+            overlap[m] = comb_alpha*overlap[m]+(1-comb_alpha)*overlap2[m];
           break;
       }
 
+      /// Check if TextLine should be copied ///
+      int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
+      if ( overlap[max_idx] == 0.0 ) {
+        if ( verbose )
+          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: TextLine does not overlap with any region, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
+        continue;
+      }
+      if ( overlap[max_idx] < overlap_thr ) {
+        if ( verbose )
+          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: overlap below threshold (%g < %g), skipping copy of id=%s\n", overlap[max_idx], overlap_thr, getAttr(linesFrom[n],"id").c_str() );
+        continue;
+      }
       /// Clone line and add it to the destination region node ///
+      std::string lid = getUniqueID( "cp", (std::string("_")+getAttr( linesFrom[n], "id" )).c_str() );
       xmlNodePt lineclone = NULL;
       if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, linesFrom[n], &lineclone, docToPtr, NULL, 1, 0 ) ||
           lineclone == NULL ) {
         throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: problems cloning TextLine node" );
         return 0;
       }
-      int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
-      if ( overlap[max_idx] == 0.0 ) {
-        fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: TextLine does not overlap with any region, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
-        continue;
-      }
+      setAttr(lineclone, "id", lid.c_str());
+      relabelChildIDs(lineclone);
       xmlAddChild(regsTo[max_idx],lineclone);
+      if ( verbose )
+        fprintf(stderr,"PageXML.copyTextLinesAssignByOverlap: TextLine %s copied to TextRegion %s, overlap=%g\n", getAttr(linesFrom[n],"id").c_str(), getAttr(regsTo[max_idx],"id").c_str(), overlap[max_idx] );
     }
 
     /// Remove added page region if no TextLine was added to it ///

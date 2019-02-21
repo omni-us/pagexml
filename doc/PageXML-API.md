@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.20
+Version2019.02.21
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -821,6 +821,8 @@ Whether flattening was performed.
 `public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` | 
 `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` | Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
 `public void `[`relativizeImageFilename`](#class_page_x_m_l_1a3c43349d7cff78cea6d1ba7b01f023b3)`(const char * xml_path)` | Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
+`public std::string `[`getUniqueID`](#class_page_x_m_l_1af5e856c0759ff2c980c70b97ac366b73)`(const char * prefix,const char * suffix,int count_start,int count_max)` | Gets a unique id.
+`public int `[`relabelChildIDs`](#class_page_x_m_l_1a6c08789d2be11b751baf5c4039889032)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,bool include_self)` | Relabels IDs of child elements.
 `public std::vector< std::string > `[`getImageBases`](#class_page_x_m_l_1a3c43f4e51877f674f29af7a421fa973b)`()` | Gets image bases for all pages in xml.
 `public bool `[`areIDsUnique`](#class_page_x_m_l_1aeb8f1e60e4e2521c2bb50fe495327648)`()` | Verifies that all IDs in page are unique.
 `public std::string `[`getNodeName`](#class_page_x_m_l_1a8e8ded73daa9edf93b02d75bac16b9de)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` base_node)` | Gets the name of the given node.
@@ -961,7 +963,7 @@ Whether flattening was performed.
 `public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a1fdc1df063018096d26a9dc34ce0faad)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` | Computes line-polygon intersections weighted by area.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
-`public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
+`public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a6577771c3d9dedabd2b3102be34e4581)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
 `public int `[`getLeftRightTextContinuationGroups`](#class_page_x_m_l_1a956e914f402e0414a016d51e5fc5e05c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,std::vector< std::vector< int > > & _group_order,std::vector< double > & _group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Determines groups of left-right text elem continuations (requires single segment polystripe).
 `public std::pair< std::vector< int >, std::vector< int > > `[`getLeftRightTopBottomReadingOrder`](#class_page_x_m_l_1abcae8ac441e73b385d2bc0334bfb3d51)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Gets the reading order for a set of text elems (requires single segment polystripe).
 `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` | Returns the XML document pointer.
@@ -1068,6 +1070,34 @@ Number of IDs simplified.
 #### `public void `[`relativizeImageFilename`](#class_page_x_m_l_1a3c43349d7cff78cea6d1ba7b01f023b3)`(const char * xml_path)` 
 
 Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
+
+#### `public std::string `[`getUniqueID`](#class_page_x_m_l_1af5e856c0759ff2c980c70b97ac366b73)`(const char * prefix,const char * suffix,int count_start,int count_max)` 
+
+Gets a unique id.
+
+#### Parameters
+* `prefix` Prefix for id. 
+
+* `suffix` Suffix for id. 
+
+* `count_start` Counter start to place between prefix and suffix. 
+
+* `count_max` Maximum count to test. 
+
+#### Returns
+The generated unique id.
+
+#### `public int `[`relabelChildIDs`](#class_page_x_m_l_1a6c08789d2be11b751baf5c4039889032)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,bool include_self)` 
+
+Relabels IDs of child elements.
+
+#### Parameters
+* `node` Base node. 
+
+* `include_self` Whether to also relabel the base node. 
+
+#### Returns
+Number of IDs affected.
 
 #### `public std::vector< std::string > `[`getImageBases`](#class_page_x_m_l_1a3c43f4e51877f674f29af7a421fa973b)`()` 
 
@@ -2485,16 +2515,18 @@ Selects elements based on overlap to a polygon.
 #### Returns
 Number of TextLines copied.
 
-#### `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1ae4b049403a387f9455bc0cc3026a7b76)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double overlap_fact)` 
+#### `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a6577771c3d9dedabd2b3102be34e4581)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` 
 
 Copies TextLines from one page xml to another assigning to regions based on overlap.
 
 #### Parameters
 * `pageFrom` [PageXML](#class_page_x_m_l) from where to copy TextLines. 
 
+* `overlap_thr` Overlapping score threshold for copying. 
+
 * `overlap_type` Type of overlap to use for assigning lines to regions. 
 
-* `overlap_fact` Overlapping factor. 
+* `comb_alpha` Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for PAGEXML_OVERLAP_COORDS_BASELINE_IWA. 
 
 #### Returns
 Number of TextLines copied.

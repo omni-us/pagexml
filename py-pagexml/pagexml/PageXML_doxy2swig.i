@@ -319,6 +319,42 @@ Modifies imageFilename to be a relative path w.r.t. given xml path. Currently
 just checks prefix directories and removes it.  
 ";
 
+%feature("docstring") PageXML::getUniqueID "
+
+Gets a unique id.  
+
+Parameters
+----------
+* `prefix` :  
+    Prefix for id.  
+* `suffix` :  
+    Suffix for id.  
+* `count_start` :  
+    Counter start to place between prefix and suffix.  
+* `count_max` :  
+    Maximum count to test.  
+
+Returns
+-------
+The generated unique id.  
+";
+
+%feature("docstring") PageXML::relabelChildIDs "
+
+Relabels IDs of child elements.  
+
+Parameters
+----------
+* `node` :  
+    Base node.  
+* `include_self` :  
+    Whether to also relabel the base node.  
+
+Returns
+-------
+Number of IDs affected.  
+";
+
 %feature("docstring") PageXML::getImageBases "
 
 Gets image bases for all pages in xml.  
@@ -2288,10 +2324,13 @@ Parameters
 ----------
 * `pageFrom` :  
     PageXML from where to copy TextLines.  
+* `overlap_thr` :  
+    Overlapping score threshold for copying.  
 * `overlap_type` :  
     Type of overlap to use for assigning lines to regions.  
-* `overlap_fact` :  
-    Overlapping factor.  
+* `comb_alpha` :  
+    Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for
+    PAGEXML_OVERLAP_COORDS_BASELINE_IWA.  
 
 Returns
 -------
@@ -2310,6 +2349,8 @@ Get polygons of regions for IoU computation ///
 Loop through lines ///  
 
 Compute overlap scores ///  
+
+Check if TextLine should be copied ///  
 
 Clone line and add it to the destination region node ///  
 
