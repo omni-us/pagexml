@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.21$
+ * @version $Version: 2019.02.22$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -58,7 +58,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.21";
+static char class_version[] = "Version: 2019.02.22";
 
 /**
  * Returns the class version.
@@ -4461,7 +4461,7 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
  * Copies TextLines from one page xml to another assigning to regions based on overlap.
  *
  * @param pageFrom      PageXML from where to copy TextLines.
- * @param overlap_thr   Overlapping score threshold for copying.
+ * @param overlap_thr   Overlapping score threshold. If overlap below threshold, TextLine is copied to the page region.
  * @param overlap_type  Type of overlap to use for assigning lines to regions.
  * @param comb_alpha    Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for PAGEXML_OVERLAP_COORDS_BASELINE_IWA.
  * @return              Number of TextLines copied.
@@ -4562,11 +4562,6 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
           fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: TextLine does not overlap with any region, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
         continue;
       }
-      if ( overlap[max_idx] < overlap_thr ) {
-        if ( verbose )
-          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: overlap below threshold (%g < %g), skipping copy of id=%s\n", overlap[max_idx], overlap_thr, getAttr(linesFrom[n],"id").c_str() );
-        continue;
-      }
       /// Clone line and add it to the destination region node ///
       std::string lid = getUniqueID( "cp", (std::string("_")+getAttr( linesFrom[n], "id" )).c_str() );
       xmlNodePt lineclone = NULL;
@@ -4577,9 +4572,16 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
       }
       setAttr(lineclone, "id", lid.c_str());
       relabelChildIDs(lineclone);
-      xmlAddChild(regsTo[max_idx],lineclone);
-      if ( verbose )
-        fprintf(stderr,"PageXML.copyTextLinesAssignByOverlap: TextLine %s copied to TextRegion %s, overlap=%g\n", getAttr(linesFrom[n],"id").c_str(), getAttr(regsTo[max_idx],"id").c_str(), overlap[max_idx] );
+      if ( overlap[max_idx] < overlap_thr ) {
+        xmlAddChild(pageRegTo,lineclone);
+        if ( verbose )
+          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: TextLine %s copied to background TextRegion %s since overlap below threshold (%g < %g)\n", getAttr(linesFrom[n],"id").c_str(), getAttr(pageRegTo,"id").c_str(), overlap[max_idx], overlap_thr );
+      }
+      else {
+        xmlAddChild(regsTo[max_idx],lineclone);
+        if ( verbose )
+          fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: TextLine %s copied to TextRegion %s, overlap=%g\n", getAttr(linesFrom[n],"id").c_str(), getAttr(regsTo[max_idx],"id").c_str(), overlap[max_idx] );
+      }
     }
 
     /// Remove added page region if no TextLine was added to it ///

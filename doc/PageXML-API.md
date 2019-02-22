@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.21
+Version2019.02.22
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -963,7 +963,7 @@ Whether flattening was performed.
 `public std::vector< double > `[`computeBaselineIntersectionsWeightedByArea`](#class_page_x_m_l_1a1fdc1df063018096d26a9dc34ce0faad)`(`[`OGRMultiLineStringPtr_`](#_page_x_m_l_8h_1a71f1fd7c15891a3cdd6da77bedcf1779)` poly,std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > polys,std::vector< double > areas)` | Computes line-polygon intersections weighted by area.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a3718a39284bb9e947e19af32b75a00cb)`(std::vector< cv::Point2f > points,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` page,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
 `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`selectByOverlap`](#class_page_x_m_l_1a5f355663308e4f139495d06015a4854f)`(std::vector< cv::Point2f > points,int pagenum,const char * xpath,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type)` | Selects elements based on overlap to a polygon.
-`public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a6577771c3d9dedabd2b3102be34e4581)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
+`public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a76accc4e5e103d77e10641141c060d39)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` | Copies TextLines from one page xml to another assigning to regions based on overlap.
 `public int `[`getLeftRightTextContinuationGroups`](#class_page_x_m_l_1a956e914f402e0414a016d51e5fc5e05c)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,std::vector< std::vector< int > > & _group_order,std::vector< double > & _group_score,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Determines groups of left-right text elem continuations (requires single segment polystripe).
 `public std::pair< std::vector< int >, std::vector< int > > `[`getLeftRightTopBottomReadingOrder`](#class_page_x_m_l_1abcae8ac441e73b385d2bc0334bfb3d51)`(std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems,double max_angle_diff,double max_horiz_iou,double min_prolong_fact,double prolong_alpha,bool fake_baseline,double recurse_factor)` | Gets the reading order for a set of text elems (requires single segment polystripe).
 `public xmlDocPtr `[`getDocPtr`](#class_page_x_m_l_1a279bbf7b7641aa329f9fd5607cdde52c)`()` | Returns the XML document pointer.
@@ -2515,14 +2515,14 @@ Selects elements based on overlap to a polygon.
 #### Returns
 Number of TextLines copied.
 
-#### `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a6577771c3d9dedabd2b3102be34e4581)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` 
+#### `public int `[`copyTextLinesAssignByOverlap`](#class_page_x_m_l_1a76accc4e5e103d77e10641141c060d39)`(`[`PageXML`](#class_page_x_m_l)` & pageFrom,double overlap_thr,`[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)` overlap_type,double comb_alpha,bool verbose)` 
 
 Copies TextLines from one page xml to another assigning to regions based on overlap.
 
 #### Parameters
 * `pageFrom` [PageXML](#class_page_x_m_l) from where to copy TextLines. 
 
-* `overlap_thr` Overlapping score threshold for copying. 
+* `overlap_thr` Overlapping score threshold. If overlap below threshold, TextLine is copied to the page region. 
 
 * `overlap_type` Type of overlap to use for assigning lines to regions. 
 

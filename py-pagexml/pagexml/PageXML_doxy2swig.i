@@ -2325,7 +2325,8 @@ Parameters
 * `pageFrom` :  
     PageXML from where to copy TextLines.  
 * `overlap_thr` :  
-    Overlapping score threshold for copying.  
+    Overlapping score threshold. If overlap below threshold, TextLine is copied
+    to the page region.  
 * `overlap_type` :  
     Type of overlap to use for assigning lines to regions.  
 * `comb_alpha` :  

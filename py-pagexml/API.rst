@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.21)
+pagexml API (version 2019.2.22)
 *******************************
 
 
@@ -931,7 +931,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to cloned element.
 
-   copyTextLinesAssignByOverlap(pageFrom, overlap_thr=1.0, overlap_type=0, comb_alpha=0.5, verbose=False)
+   copyTextLinesAssignByOverlap(pageFrom, overlap_thr=0.0, overlap_type=0, comb_alpha=0.5, verbose=False)
 
       Copies TextLines from one page xml to another assigning to
       regions based on overlap.
@@ -940,13 +940,18 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
            PageXML from where to copy TextLines.
 
+      * *overlap_thr* :
+
+           Overlapping score threshold for copying.
+
       * *overlap_type* :
 
            Type of overlap to use for assigning lines to regions.
 
-      * *overlap_fact* :
+      * *comb_alpha* :
 
-           Overlapping factor.
+           Weight for overlap factors: alpha*bline+(1-alpha)*coords.
+           Only for PAGEXML_OVERLAP_COORDS_BASELINE_IWA.
 
       Number of TextLines copied.
 
@@ -963,6 +968,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Loop through lines ///
 
       Compute overlap scores ///
+
+      Check if TextLine should be copied ///
 
       Clone line and add it to the destination region node ///
 
@@ -1444,6 +1451,26 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    getUniqueID(prefix, suffix=None, count_start=1, count_max=100000)
 
+      Gets a unique id.
+
+      * *prefix* :
+
+           Prefix for id.
+
+      * *suffix* :
+
+           Suffix for id.
+
+      * *count_start* :
+
+           Counter start to place between prefix and suffix.
+
+      * *count_max* :
+
+           Maximum count to test.
+
+      The generated unique id.
+
    getValue(*args)
 
       Retrieves a node value.
@@ -1760,6 +1787,18 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Tool and ref attributes ///
 
    relabelChildIDs(node, include_self=False)
+
+      Relabels IDs of child elements.
+
+      * *node* :
+
+           Base node.
+
+      * *include_self* :
+
+           Whether to also relabel the base node.
+
+      Number of IDs affected.
 
    relativizeImageFilename(xml_path)
 
