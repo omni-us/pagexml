@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.22$
+ * @version $Version: 2019.02.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -26,7 +26,6 @@ using namespace std;
 
 #if defined (__PAGEXML_LIBCONFIG__)
 const char* PageXML::settingNames[] = {
-  "indent",
   "pagens",
   "grayimg"
 };
@@ -58,7 +57,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.22";
+static char class_version[] = "Version: 2019.02.25";
 
 /**
  * Returns the class version.
@@ -173,6 +172,10 @@ PageXML::PageXML( const char* pagexml_path, const char* schema_path ) {
 
 #endif
 
+void PageXML::setXmlBaseDir( std::string xmlBaseDir ) {
+  xmlDir = xmlBaseDir;
+}
+
 
 /////////////////////////
 /// Schema validation ///
@@ -264,10 +267,12 @@ void PageXML::setValidationEnabled( bool val ) {
 /**
  * Writes the current state of the XML to a file using utf-8 encoding.
  *
- * @param fname  File name of where the XML file will be written.
- * @return       Number of bytes written.
+ * @param fname     File name of where the XML file will be written.
+ * @param indent    Whether to indent the XML.
+ * @param validate  Whether the Page XML should be validated before writing.
+ * @return          Number of bytes written.
  */
-int PageXML::write( const char* fname, bool validate ) {
+int PageXML::write( const char* fname, bool indent, bool validate ) {
   if ( process_running )
     processEnd();
   xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
@@ -284,8 +289,12 @@ int PageXML::write( const char* fname, bool validate ) {
 
 /**
  * Creates a string representation of the Page XML.
+ *
+ * @param indent    Whether to indent the XML.
+ * @param validate  Whether the Page XML should be validated before writing.
+ * @return          The Page XML string.
  */
-string PageXML::toString( bool validate ) {
+string PageXML::toString( bool indent, bool validate ) {
   if ( process_running )
     processEnd();
   string sxml;
@@ -298,7 +307,7 @@ string PageXML::toString( bool validate ) {
     xmlFreeDoc(sortedXml);
     throw_runtime_error( "PageXML.toString: aborted conversion to string of invalid PageXML" );
   }
-  xmlDocDumpMemory(sortedXml, &cxml, &size);
+  xmlDocDumpFormatMemoryEnc(sortedXml, &cxml, &size, "utf-8", indent);
   xmlFreeDoc(sortedXml);
   if ( cxml == NULL ) {
     throw_runtime_error( "PageXML.toString: problem dumping to memory" );
@@ -346,9 +355,6 @@ void PageXML::loadConf( const libconfig::Config& config ) {
     const libconfig::Setting& setting = pagecfg[i];
     //printf("PageXML: setting=%s enum=%d\n",setting.getName(),parsePageSetting(setting.getName()));
     switch( parsePageSetting(setting.getName()) ) {
-      case PAGEXML_SETTING_INDENT:
-        indent = (bool)setting;
-        break;
       case PAGEXML_SETTING_PAGENS:
         if( pagens != NULL && pagens != default_pagens )
           free(pagens);
@@ -372,7 +378,6 @@ void PageXML::loadConf( const libconfig::Config& config ) {
  */
 void PageXML::printConf( FILE* file ) {
   fprintf( file, "PageXML: {\n" );
-  fprintf( file, "  indent = %s;\n", indent ? "true" : "false" );
   fprintf( file, "  pagens = \"%s\";\n", pagens );
   fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
   fprintf( file, "}\n" );

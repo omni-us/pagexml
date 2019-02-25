@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.02.22$
+ * @version $Version: 2019.02.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -61,7 +61,6 @@ typedef cv::Mat PageImage;
 #endif
 
 enum PAGEXML_SETTING {
-  PAGEXML_SETTING_INDENT = 0,      // "indent"
   PAGEXML_SETTING_PAGENS,          // "pagens"
   PAGEXML_SETTING_GRAYIMG          // "grayimg"
 };
@@ -142,6 +141,7 @@ class PageXML {
 #else
     PageXML( const char* pagexml_path = NULL, const char* schema_path = NULL );
 #endif
+    void setXmlBaseDir( std::string xmlBaseDir );
     void loadSchema( const char* schema_path );
     bool isValid( xmlDocPtr xml_to_validate = NULL );
     void printConf( FILE* file = stdout );
@@ -287,8 +287,8 @@ class PageXML {
     xmlNodePt addTextRegion( const char* xpath, const char* id = NULL, const char* before_id = NULL, bool prepend = false );
     xmlNodePt addPage( const char* image, const int imgW, const int imgH, const char* id = NULL, xmlNodePt before_node = NULL );
     xmlNodePt addPage( std::string image, const int imgW, const int imgH, const char* id = NULL, xmlNodePt before_node = NULL );
-    int write( const char* fname = "-", bool validate = true );
-    std::string toString( bool validate = true );
+    int write( const char* fname = "-", bool indent = true, bool validate = true );
+    std::string toString( bool indent = false, bool validate = true );
 #if defined (__PAGEXML_OGR__)
     OGRMultiPolygonPtr_ pointsToOGRpolygon( std::vector<cv::Point2f> points );
     std::vector<OGRMultiPolygonPtr_> pointsToOGRpolygons( std::vector<std::vector<cv::Point2f> > points );
@@ -316,7 +316,6 @@ class PageXML {
     std::pair<std::vector<int>, std::vector<int> > getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
     xmlDocPtr getDocPtr();
   private:
-    bool indent = true;
     bool grayimg = false;
     char* pagens = NULL;
     xmlNsPtr rpagens = NULL;

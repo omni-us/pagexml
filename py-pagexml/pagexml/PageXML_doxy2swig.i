@@ -201,6 +201,9 @@ Parameters
     Path to the XSD file to read.  
 ";
 
+%feature("docstring") PageXML::setXmlBaseDir "
+";
+
 %feature("docstring") PageXML::loadSchema "
 
 Loads a schema for xml validation.  
@@ -1950,6 +1953,10 @@ Parameters
 ----------
 * `fname` :  
     File name of where the XML file will be written.  
+* `indent` :  
+    Whether to indent the XML.  
+* `validate` :  
+    Whether the Page XML should be validated before writing.  
 
 Returns
 -------
@@ -1959,6 +1966,17 @@ Number of bytes written.
 %feature("docstring") PageXML::toString "
 
 Creates a string representation of the Page XML.  
+
+Parameters
+----------
+* `indent` :  
+    Whether to indent the XML.  
+* `validate` :  
+    Whether the Page XML should be validated before writing.  
+
+Returns
+-------
+The Page XML string.  
 ";
 
 %feature("docstring") PageXML::pointsToOGRpolygon "

@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.22)
+pagexml API (version 2019.2.25)
 *******************************
 
 
@@ -942,7 +942,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       * *overlap_thr* :
 
-           Overlapping score threshold for copying.
+           Overlapping score threshold. If overlap below threshold,
+           TextLine is copied to the page region.
 
       * *overlap_type* :
 
@@ -2120,6 +2121,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       String with the node value.
 
+   setXmlBaseDir(xmlBaseDir)
+
    simplifyIDs()
 
       Simplifies IDs by removing imgbase prefixes and replaces invalid
@@ -2133,9 +2136,19 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       The membership flag
 
-   toString(validate=True)
+   toString(indent=False, validate=True)
 
       Creates a string representation of the Page XML.
+
+      * *indent* :
+
+           Whether to indent the XML.
+
+      * *validate* :
+
+           Whether the Page XML should be validated before writing.
+
+      The Page XML string.
 
    updateLastChange()
 
@@ -2155,6 +2168,14 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       * *fname* :
 
            File name of where the XML file will be written.
+
+      * *indent* :
+
+           Whether to indent the XML.
+
+      * *validate* :
+
+           Whether the Page XML should be validated before writing.
 
       Number of bytes written.
 

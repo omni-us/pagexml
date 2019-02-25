@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.22
+Version2019.02.25
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -217,7 +217,6 @@ Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
  Values                         | Descriptions                                
 --------------------------------|---------------------------------------------
-PAGEXML_SETTING_INDENT            | 
 PAGEXML_SETTING_PAGENS            | 
 PAGEXML_SETTING_GRAYIMG            | 
 
@@ -806,6 +805,7 @@ Whether flattening was performed.
 --------------------------------|---------------------------------------------
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
 `public  `[`PageXML`](#class_page_x_m_l_1a0b930b74d48fe26bdfbfee7cde0df960)`(const char * pagexml_path,const char * schema_path)` | Constructors ///.
+`public void `[`setXmlBaseDir`](#class_page_x_m_l_1a660dc85d307e02dd19c6546eb84b15fb)`(std::string xmlBaseDir)` | 
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
 `public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` | Validates the currently loaded XML.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
@@ -941,8 +941,8 @@ Whether flattening was performed.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addTextRegion`](#class_page_x_m_l_1afd831d3d6a2a33cc53feae4e4c3b4662)`(const char * xpath,const char * id,const char * before_id,bool prepend)` | Adds new TextRegion to a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1a99fbe6075faea2c881f8a5bbb2d68f0e)`(const char * image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`addPage`](#class_page_x_m_l_1ad7c0aed4a410245017724a7cefc40654)`(std::string image,const int imgW,const int imgH,const char * id,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` before_node)` | Adds a Page to the PcGts node.
-`public int `[`write`](#class_page_x_m_l_1a0c4b94eb5f607e85d8ae27a93e571f5f)`(const char * fname,bool validate)` | Output ///.
-`public std::string `[`toString`](#class_page_x_m_l_1af19593957ab5019cfa2e606d31b000e2)`(bool validate)` | Creates a string representation of the Page XML.
+`public int `[`write`](#class_page_x_m_l_1ae29837b09ef14b6f0f6a4a21cad7e53d)`(const char * fname,bool indent,bool validate)` | Output ///.
+`public std::string `[`toString`](#class_page_x_m_l_1a7db9c564298284cfe2b43d934c3e46bc)`(bool indent,bool validate)` | Creates a string representation of the Page XML.
 `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`pointsToOGRpolygon`](#class_page_x_m_l_1a4748cef2a547bb364d5a5e0bc15ccbc7)`(std::vector< cv::Point2f > points)` | Converts Coords to an OGRMultiPolygon.
 `public std::vector< `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` > `[`pointsToOGRpolygons`](#class_page_x_m_l_1a1655a09ca1b847b129db72d6b5b56d0b)`(std::vector< std::vector< cv::Point2f > > points)` | Converts Coords to OGRMultiPolygons.
 `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`getOGRpolygon`](#class_page_x_m_l_1a3e9e0aa471f8e86c1653386205e372c6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Gets an element's Coords as an OGRMultiPolygon.
@@ -984,6 +984,8 @@ Constructors ///.
 * `pagexml_path` Path to the XML file to read. 
 
 * `schema_path` Path to the XSD file to read.
+
+#### `public void `[`setXmlBaseDir`](#class_page_x_m_l_1a660dc85d307e02dd19c6546eb84b15fb)`(std::string xmlBaseDir)` 
 
 #### `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` 
 
@@ -2253,7 +2255,7 @@ Adds a Page to the PcGts node.
 #### Returns
 Pointer to created element.
 
-#### `public int `[`write`](#class_page_x_m_l_1a0c4b94eb5f607e85d8ae27a93e571f5f)`(const char * fname,bool validate)` 
+#### `public int `[`write`](#class_page_x_m_l_1ae29837b09ef14b6f0f6a4a21cad7e53d)`(const char * fname,bool indent,bool validate)` 
 
 Output ///.
 
@@ -2262,12 +2264,24 @@ Writes the current state of the XML to a file using utf-8 encoding.
 #### Parameters
 * `fname` File name of where the XML file will be written. 
 
+* `indent` Whether to indent the XML. 
+
+* `validate` Whether the Page XML should be validated before writing. 
+
 #### Returns
 Number of bytes written.
 
-#### `public std::string `[`toString`](#class_page_x_m_l_1af19593957ab5019cfa2e606d31b000e2)`(bool validate)` 
+#### `public std::string `[`toString`](#class_page_x_m_l_1a7db9c564298284cfe2b43d934c3e46bc)`(bool indent,bool validate)` 
 
 Creates a string representation of the Page XML.
+
+#### Parameters
+* `indent` Whether to indent the XML. 
+
+* `validate` Whether the Page XML should be validated before writing. 
+
+#### Returns
+The Page XML string.
 
 #### `public `[`OGRMultiPolygonPtr_`](#_page_x_m_l_8h_1a217bb76bfe8145c889b9a5ae8927a11c)` `[`pointsToOGRpolygon`](#class_page_x_m_l_1a4748cef2a547bb364d5a5e0bc15ccbc7)`(std::vector< cv::Point2f > points)` 
 
