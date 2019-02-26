@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.25
+Version2019.02.26
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -805,7 +805,11 @@ Whether flattening was performed.
 --------------------------------|---------------------------------------------
 `public  `[`~PageXML`](#class_page_x_m_l_1accc94a5c0375b71fd2f058abc04ca25e)`()` | [PageXML](#class_page_x_m_l) object destructor.
 `public  `[`PageXML`](#class_page_x_m_l_1a0b930b74d48fe26bdfbfee7cde0df960)`(const char * pagexml_path,const char * schema_path)` | Constructors ///.
-`public void `[`setXmlBaseDir`](#class_page_x_m_l_1a660dc85d307e02dd19c6546eb84b15fb)`(std::string xmlBaseDir)` | 
+`public `[`PageXML`](#class_page_x_m_l)` `[`clone`](#class_page_x_m_l_1a0ec8906a2715dd0d66ee3931dc6c5526)`()` | 
+`public void `[`setImagesBaseDir`](#class_page_x_m_l_1aab54dca4ef46c0a0f9a27c0058e590b8)`(std::string imgBaseDir)` | 
+`public void `[`setXmlFilePath`](#class_page_x_m_l_1a44b282647485a35f3a7dcd0bde8d0a21)`(std::string xmlFilePath)` | 
+`public std::string `[`getImagesBaseDir`](#class_page_x_m_l_1ad00ca7a5056350186befac17ff04b1ea)`()` | 
+`public std::string `[`getXmlFilePath`](#class_page_x_m_l_1ae24c226a9dbb8853f67ba78747057239)`()` | 
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
 `public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` | Validates the currently loaded XML.
 `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
@@ -985,7 +989,15 @@ Constructors ///.
 
 * `schema_path` Path to the XSD file to read.
 
-#### `public void `[`setXmlBaseDir`](#class_page_x_m_l_1a660dc85d307e02dd19c6546eb84b15fb)`(std::string xmlBaseDir)` 
+#### `public `[`PageXML`](#class_page_x_m_l)` `[`clone`](#class_page_x_m_l_1a0ec8906a2715dd0d66ee3931dc6c5526)`()` 
+
+#### `public void `[`setImagesBaseDir`](#class_page_x_m_l_1aab54dca4ef46c0a0f9a27c0058e590b8)`(std::string imgBaseDir)` 
+
+#### `public void `[`setXmlFilePath`](#class_page_x_m_l_1a44b282647485a35f3a7dcd0bde8d0a21)`(std::string xmlFilePath)` 
+
+#### `public std::string `[`getImagesBaseDir`](#class_page_x_m_l_1ad00ca7a5056350186befac17ff04b1ea)`()` 
+
+#### `public std::string `[`getXmlFilePath`](#class_page_x_m_l_1ae24c226a9dbb8853f67ba78747057239)`()` 
 
 #### `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` 
 

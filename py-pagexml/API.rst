@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.25)
+pagexml API (version 2019.2.26)
 *******************************
 
 
@@ -775,6 +775,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Verifies that all IDs in page are unique.
 
+   clone()
+
    closest(name, node)
 
       Selects closest node of a given name.
@@ -1083,6 +1085,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Gets image bases for all pages in xml.
 
       Vector of strings containing the image base names.
+
+   getImagesBaseDir()
 
    getLeftRightTextContinuationGroups(elems, _group_order, _group_score, max_angle_diff=25, max_horiz_iou=0.1, min_prolong_fact=0.5, prolong_alpha=0.8, fake_baseline=False, recurse_factor=0.9)
 
@@ -1495,6 +1499,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
            Identifier of the TextLine.
 
       x-height>0 on success, -1 if unset.
+
+   getXmlFilePath()
 
    insertElem(elem, node, itype)
 
@@ -1980,6 +1986,8 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Pointer to created element.
 
+   setImagesBaseDir(imgBaseDir)
+
    setPageHeight(node, height)
 
       Sets the height of a page (actually sets imageHeight accounting
@@ -2121,7 +2129,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       String with the node value.
 
-   setXmlBaseDir(xmlBaseDir)
+   setXmlFilePath(xmlFilePath)
 
    simplifyIDs()
 

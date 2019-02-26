@@ -201,7 +201,19 @@ Parameters
     Path to the XSD file to read.  
 ";
 
-%feature("docstring") PageXML::setXmlBaseDir "
+%feature("docstring") PageXML::clone "
+";
+
+%feature("docstring") PageXML::setImagesBaseDir "
+";
+
+%feature("docstring") PageXML::setXmlFilePath "
+";
+
+%feature("docstring") PageXML::getImagesBaseDir "
+";
+
+%feature("docstring") PageXML::getXmlFilePath "
 ";
 
 %feature("docstring") PageXML::loadSchema "

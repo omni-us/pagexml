@@ -10,11 +10,19 @@ _PageXML = PageXML
 
 PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
 
-class PageXML(_PageXML):
+class PageXML(_PageXML): #pylint: disable=function-redefined
     def __init__(self, *args, **kwargs):
         if 'schema_path' not in kwargs:
             kwargs['schema_path'] = PAGE_XSD
         super(PageXML, self).__init__(*args, **kwargs)
+
+    def clone(self):
+        # The c++ clone gives error, so reimplemented it in python
+        pxml = PageXML()
+        pxml.loadXmlString( self.toString(), False )
+        pxml.setImagesBaseDir( self.getImagesBaseDir() )
+        pxml.setXmlFilePath( self.getXmlFilePath() )
+        return pxml
 
 
 def imwrite(filename, img, params=[]):

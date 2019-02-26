@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.02.25$
+ * @version $Version: 2019.02.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -141,7 +141,11 @@ class PageXML {
 #else
     PageXML( const char* pagexml_path = NULL, const char* schema_path = NULL );
 #endif
-    void setXmlBaseDir( std::string xmlBaseDir );
+    PageXML clone();
+    void setImagesBaseDir( std::string imgBaseDir );
+    void setXmlFilePath( std::string xmlFilePath );
+    std::string getImagesBaseDir();
+    std::string getXmlFilePath();
     void loadSchema( const char* schema_path );
     bool isValid( xmlDocPtr xml_to_validate = NULL );
     void printConf( FILE* file = stdout );
@@ -319,7 +323,8 @@ class PageXML {
     bool grayimg = false;
     char* pagens = NULL;
     xmlNsPtr rpagens = NULL;
-    std::string xmlDir;
+    std::string imgDir;
+    std::string xmlPath;
     std::vector<PageImage> pagesImage;
     std::vector<std::string> pagesImageFilename;
     std::vector<std::string> pagesImageBase;

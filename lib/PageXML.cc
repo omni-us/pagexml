@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.25$
+ * @version $Version: 2019.02.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -57,7 +57,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.25";
+static char class_version[] = "Version: 2019.02.26";
 
 /**
  * Returns the class version.
@@ -99,7 +99,8 @@ void PageXML::freeXML() {
   if( context != NULL )
     xmlXPathFreeContext(context);
   context = NULL;
-  xmlDir = string("");
+  imgDir = string("");
+  xmlPath = string("");
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
   releaseImages();
 #endif
@@ -172,8 +173,28 @@ PageXML::PageXML( const char* pagexml_path, const char* schema_path ) {
 
 #endif
 
-void PageXML::setXmlBaseDir( std::string xmlBaseDir ) {
-  xmlDir = xmlBaseDir;
+PageXML PageXML::clone() {
+  PageXML pxml;
+  pxml.loadXmlString( toString().c_str(), false );
+  pxml.setImagesBaseDir( std::string(imgDir) );
+  pxml.setXmlFilePath( std::string(xmlPath) );
+  return pxml;
+}
+
+void PageXML::setImagesBaseDir( std::string imgBaseDir ) {
+  imgDir = imgBaseDir;
+}
+
+void PageXML::setXmlFilePath( std::string xmlFilePath ) {
+  xmlPath = xmlFilePath;
+}
+
+std::string PageXML::getImagesBaseDir() {
+  return imgDir;
+}
+
+std::string PageXML::getXmlFilePath() {
+  return xmlPath;
 }
 
 
@@ -273,6 +294,8 @@ void PageXML::setValidationEnabled( bool val ) {
  * @return          Number of bytes written.
  */
 int PageXML::write( const char* fname, bool indent, bool validate ) {
+  if ( ! xml )
+    throw_runtime_error( "PageXML.write: no Page XML loaded" );
   if ( process_running )
     processEnd();
   xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
@@ -284,6 +307,8 @@ int PageXML::write( const char* fname, bool indent, bool validate ) {
   }
   int bytes = xmlSaveFormatFileEnc( fname, sortedXml, "utf-8", indent );
   xmlFreeDoc(sortedXml);
+  if ( strcmp("-",fname) )
+    setXmlFilePath(std::string(fname));
   return bytes;
 }
 
@@ -295,6 +320,8 @@ int PageXML::write( const char* fname, bool indent, bool validate ) {
  * @return          The Page XML string.
  */
 string PageXML::toString( bool indent, bool validate ) {
+  if ( ! xml )
+    throw_runtime_error( "PageXML.toString: no Page XML loaded" );
   if ( process_running )
     processEnd();
   string sxml;
@@ -457,7 +484,7 @@ void PageXML::loadXml( const char* fname, bool validate ) {
   }
 
   size_t slash_pos = string(fname).find_last_of("/");
-  xmlDir = slash_pos == string::npos ?
+  imgDir = slash_pos == string::npos ?
     string(""):
     string(fname).substr(0,slash_pos);
 
@@ -467,6 +494,7 @@ void PageXML::loadXml( const char* fname, bool validate ) {
     return;
   }
   loadXml( fileno(file), false, validate );
+  setXmlFilePath(std::string(fname));
   fclose(file);
 }
 
@@ -562,8 +590,8 @@ void PageXML::setupXml() {
   for( int n=0; n<(int)elem_page.size(); n++ )
     parsePageImage(n);
 
-  if( xmlDir.empty() )
-    xmlDir = string(".");
+  if( imgDir.empty() )
+    imgDir = string(".");
 }
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
@@ -654,7 +682,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   string aux;
   string fbase;
   if( fname == NULL ) {
-    aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (xmlDir+'/'+pagesImageFilename[pagenum]);
+    aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (imgDir+'/'+pagesImageFilename[pagenum]);
     fname = aux.c_str();
   }
 
