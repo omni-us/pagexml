@@ -1,4 +1,4 @@
-pagexml API (version 2019.2.26)
+pagexml API (version 2019.3.20)
 *******************************
 
 
@@ -1663,7 +1663,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Intersection geometry.
 
-   newXml(creator, image, imgW=0, imgH=0)
+   newXml(*args)
 
       Loaders ///.
 
@@ -1766,16 +1766,6 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Pointer to OGRMultiPolygon element.
 
    static pointsToString(*args)
-
-   printConf(*args)
-
-      Configuration ///.
-
-      Prints the current configuration.
-
-      * *file* :
-
-           File to print to.
 
    static printVersions(*args)
 

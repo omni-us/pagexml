@@ -16,7 +16,6 @@
 `define `[`throw_runtime_error`](#_page_x_m_l_8h_1a950a67fe0e59f7788788db2c2061d2af)            | 
 `define `[`Quantum`](#_text_feat_extractor_8cc_1ad5e97677ea3234923092fa74f9566077)            | [TextFeatExtractor](#class_text_feat_extractor) class
 `define `[`__SLANT_PYRAMIDAL__`](#_text_feat_extractor_8cc_1af18630e65d3f15d3a58e93869519be72)            | 
-`enum `[`PAGEXML_SETTING`](#_page_x_m_l_8h_1a5079ef3d3aefc01672107a1737c12993)            | 
 `enum `[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b)            | 
 `enum `[`PAGEXML_READ_DIRECTION`](#_page_x_m_l_8h_1a151afb8ef7c7e05585713fafd180a2ea)            | 
 `enum `[`PAGEXML_OVERLAP`](#_page_x_m_l_8h_1a8606ef3ee6c75085c7c5d97b79132c50)            | 
@@ -119,6 +118,7 @@
 `public regex `[`reIsTiff`](#_page_x_m_l_8cc_1a192ae590965b3d04d774f30aff3088bd)`(".+\f{1,2}(\-9]+\0,1}$",std::regex::icase)`            | 
 `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
 `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
+`public std::string `[`getDefaultNamespace`](#_page_x_m_l_8cc_1a9daf721cba86bc6907aab1c5b223e072)`(xmlDocPtr doc)`            | Gets the default namespace of a document.
 `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.02.26
+Version2019.03.20
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -212,13 +212,6 @@ Version2019.01.25
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
 #### `define `[`__SLANT_PYRAMIDAL__`](#_text_feat_extractor_8cc_1af18630e65d3f15d3a58e93869519be72) 
-
-#### `enum `[`PAGEXML_SETTING`](#_page_x_m_l_8h_1a5079ef3d3aefc01672107a1737c12993) 
-
- Values                         | Descriptions                                
---------------------------------|---------------------------------------------
-PAGEXML_SETTING_PAGENS            | 
-PAGEXML_SETTING_GRAYIMG            | 
 
 #### `enum `[`PAGEXML_INSERT`](#_page_x_m_l_8h_1adfd6b61039753caee671c2667b7b2b4b) 
 
@@ -488,6 +481,10 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 Schema validation ///.
 
 #### `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)` 
+
+#### `public std::string `[`getDefaultNamespace`](#_page_x_m_l_8cc_1a9daf721cba86bc6907aab1c5b223e072)`(xmlDocPtr doc)` 
+
+Gets the default namespace of a document.
 
 #### `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)` 
 
@@ -812,8 +809,7 @@ Whether flattening was performed.
 `public std::string `[`getXmlFilePath`](#class_page_x_m_l_1ae24c226a9dbb8853f67ba78747057239)`()` | 
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
 `public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` | Validates the currently loaded XML.
-`public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` | Configuration ///.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a95f40947e6da8415578a4dcaf7a8eea3)`(const char * creator,const char * image,const int imgW,const int imgH)` | Loaders ///.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a439127dfb448376a7cb11a95f18f062e)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` | Loaders ///.
 `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` | Loads a Page XML from a file.
 `public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` | Loads a Page XML from an input stream.
 `public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` | Loads a Page XML from a string.
@@ -1010,16 +1006,7 @@ Loads a schema for xml validation.
 
 Validates the currently loaded XML.
 
-#### `public void `[`printConf`](#class_page_x_m_l_1a2f243e564f59e0e86be34fb3641526e0)`(FILE * file)` 
-
-Configuration ///.
-
-Prints the current configuration.
-
-#### Parameters
-* `file` File to print to.
-
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a95f40947e6da8415578a4dcaf7a8eea3)`(const char * creator,const char * image,const int imgW,const int imgH)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a439127dfb448376a7cb11a95f18f062e)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` 
 
 Loaders ///.
 

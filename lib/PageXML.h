@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.02.26$
+ * @version $Version: 2019.03.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -20,10 +20,6 @@
 #include <opencv2/opencv.hpp>
 
 #define xmlNodePt xmlNode*
-
-#if defined (__PAGEXML_LIBCONFIG__)
-#include <libconfig.h++>
-#endif
 
 #if defined (__PAGEXML_LEPT__)
 #include <../leptonica/allheaders.h>
@@ -59,11 +55,6 @@ typedef Magick::Image PageImage;
 #elif defined (__PAGEXML_IMG_CV__)
 typedef cv::Mat PageImage;
 #endif
-
-enum PAGEXML_SETTING {
-  PAGEXML_SETTING_PAGENS,          // "pagens"
-  PAGEXML_SETTING_GRAYIMG          // "grayimg"
-};
 
 enum PAGEXML_INSERT {
   PAGEXML_INSERT_APPEND = 0,
@@ -126,21 +117,11 @@ struct NamedImage {
 
 class PageXML {
   public:
-#if defined (__PAGEXML_LIBCONFIG__)
-    static const char* settingNames[];
-#endif
     static char* version();
     static void printVersions( FILE* file = stdout );
     static void setValidationEnabled( bool val );
     ~PageXML();
-#if defined (__PAGEXML_LIBCONFIG__)
-    PageXML();
-    PageXML( const libconfig::Config& config );
-    PageXML( const char* cfgfile );
-    void loadConf( const libconfig::Config& config );
-#else
     PageXML( const char* pagexml_path = NULL, const char* schema_path = NULL );
-#endif
     PageXML clone();
     void setImagesBaseDir( std::string imgBaseDir );
     void setXmlFilePath( std::string xmlFilePath );
@@ -148,8 +129,7 @@ class PageXML {
     std::string getXmlFilePath();
     void loadSchema( const char* schema_path );
     bool isValid( xmlDocPtr xml_to_validate = NULL );
-    void printConf( FILE* file = stdout );
-    xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0 );
+    xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0, const char* pagens = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15" );
     void loadXml( const char* fname, bool validate = true );
     void loadXml( int fnum, bool prevfree = true, bool validate = true );
     void loadXmlString( const char* xml_string, bool validate = true );
@@ -320,8 +300,6 @@ class PageXML {
     std::pair<std::vector<int>, std::vector<int> > getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
     xmlDocPtr getDocPtr();
   private:
-    bool grayimg = false;
-    char* pagens = NULL;
     xmlNsPtr rpagens = NULL;
     std::string imgDir;
     std::string xmlPath;
@@ -337,6 +315,7 @@ class PageXML {
     xmlSchemaParserCtxtPtr valid_parser = NULL;
     xmlSchemaPtr valid_schema = NULL;
     xmlSchemaValidCtxtPtr valid_context = NULL;
+    std::string schema_namespace;
     void release();
     void freeXML();
     void freeSchema();

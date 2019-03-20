@@ -231,18 +231,6 @@ Parameters
 Validates the currently loaded XML.  
 ";
 
-%feature("docstring") PageXML::printConf "
-
-Configuration ///.  
-
-Prints the current configuration.  
-
-Parameters
-----------
-* `file` :  
-    File to print to.  
-";
-
 %feature("docstring") PageXML::newXml "
 
 Loaders ///.  
@@ -3008,6 +2996,11 @@ Schema validation ///.
 ";
 
 %feature("docstring") std::validationWarningFunc "
+";
+
+%feature("docstring") std::getDefaultNamespace "
+
+Gets the default namespace of a document.  
 ";
 
 %feature("docstring") std::mktemp "

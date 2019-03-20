@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.02.26$
+ * @version $Version: 2019.03.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -19,19 +19,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <libxml/xpathInternals.h>
-//#include <libxslt/xslt.h>
 #include <libxslt/xsltconfig.h>
 
 using namespace std;
-
-#if defined (__PAGEXML_LIBCONFIG__)
-const char* PageXML::settingNames[] = {
-  "pagens",
-  "grayimg"
-};
-#endif
-
-char default_pagens[] = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15";
 
 #ifdef __PAGEXML_MAGICK__
 Magick::Color transparent("rgba(0,0,0,0)");
@@ -49,7 +39,7 @@ regex reIsTiff(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 
 xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 
-xsltStylesheetPtr sortelem = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:_=\"http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15\" xmlns=\"http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:strip-space elements=\"*\"/><xsl:template match=\"@* | node()\"><xsl:copy><xsl:apply-templates select=\"@* | node()\"/></xsl:copy></xsl:template><xsl:template match=\"_:PcGts\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"_:Metadata\"/><xsl:apply-templates select=\"_:Property\"/><xsl:apply-templates select=\"_:Page\"/><xsl:apply-templates select=\"node()[not(contains(' Metadata Property Page ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template><xsl:template match=\"*[_:Coords or _:Baseline or _:TextEquiv]\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"_:ImageOrientation\"/><xsl:apply-templates select=\"_:Property\"/><xsl:apply-templates select=\"_:Coords\"/><xsl:apply-templates select=\"_:Baseline\"/><xsl:apply-templates select=\"_:TextLine | _:Word | _:Glyph\"/><xsl:apply-templates select=\"_:TextEquiv\"/><xsl:apply-templates select=\"node()[not(contains(' ImageOrientation Property Coords Baseline TextLine Word Glyph TextEquiv ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template></xsl:stylesheet>" ) );
+xsltStylesheetPtr sortelem = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:strip-space elements=\"*\"/><xsl:template match=\"@* | node()\"><xsl:copy><xsl:apply-templates select=\"@* | node()\"/></xsl:copy></xsl:template><xsl:template match=\"*[local-name()='PcGts']\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='Metadata']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Page']\"/><xsl:apply-templates select=\"node()[not(contains(' Metadata Property Page ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template><xsl:template match=\"*[*[local-name()='Coords' or local-name()='Baseline' or local-name()='TextEquiv']]\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='ImageOrientation']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Coords']\"/><xsl:apply-templates select=\"*[local-name()='Baseline']\"/><xsl:apply-templates select=\"*[local-name()='TextLine' or local-name()='Word' or local-name()='Glyph']\"/><xsl:apply-templates select=\"*[local-name()='TextEquiv']\"/><xsl:apply-templates select=\"node()[not(contains(' ImageOrientation Property Coords Baseline TextLine Word Glyph TextEquiv ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template></xsl:stylesheet>" ) );
 
 bool validation_enabled = true;
 
@@ -57,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.02.26";
+static char class_version[] = "Version: 2019.03.20";
 
 /**
  * Returns the class version.
@@ -121,41 +111,6 @@ PageXML::~PageXML() {
 /// Constructors ///
 ////////////////////
 
-#if defined (__PAGEXML_LIBCONFIG__)
-
-PageXML::PageXML() {
-  if( pagens == NULL )
-    pagens = default_pagens;
-}
-
-/**
- * PageXML constructor that receives a libconfig Config object.
- *
- * @param config  A libconfig Config object.
- */
-PageXML::PageXML( const libconfig::Config& config ) {
-  loadConf(config);
-  if( pagens == NULL )
-    pagens = default_pagens;
-}
-
-/**
- * PageXML constructor that receives a configuration file name.
- *
- * @param cfgfile  Configuration file to use.
- */
-PageXML::PageXML( const char* cfgfile ) {
-  if( cfgfile != NULL ) {
-    libconfig::Config config;
-    config.readFile(cfgfile);
-    loadConf(config);
-  }
-  if( pagens == NULL )
-    pagens = default_pagens;
-}
-
-#else
-
 /**
  * PageXML constructor that receives a file name to load.
  *
@@ -163,15 +118,11 @@ PageXML::PageXML( const char* cfgfile ) {
  * @param schema_path   Path to the XSD file to read.
  */
 PageXML::PageXML( const char* pagexml_path, const char* schema_path ) {
-  if( pagens == NULL )
-    pagens = default_pagens;
   if( schema_path != NULL )
     loadSchema( schema_path );
   if( pagexml_path != NULL )
     loadXml( pagexml_path );
 }
-
-#endif
 
 PageXML PageXML::clone() {
   PageXML pxml;
@@ -224,6 +175,7 @@ static void validationWarningFunc( void* ctx __attribute__((unused)), const char
  * Releases schema related resources.
  */
 void PageXML::freeSchema() {
+  schema_namespace = std::string("");
   if( valid_context ) {
     xmlSchemaFreeValidCtxt(valid_context);
     valid_context = NULL;
@@ -240,6 +192,22 @@ void PageXML::freeSchema() {
     xmlFreeDoc(valid_doc);
     valid_doc = NULL;
   }
+}
+
+/**
+ * Gets the default namespace of a document.
+ */
+std::string getDefaultNamespace( xmlDocPtr doc ) {
+  xmlXPathContextPtr ctxt = xmlXPathNewContext(doc);
+  xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)"//namespace::*[name()='']", ctxt );
+  if( xsel == NULL || xmlXPathNodeSetIsEmpty(xsel->nodesetval) || xsel->nodesetval->nodeNr < 1 )
+    throw_runtime_error( "getDefaultNamespace: problems retrieving default namespace" );
+  xmlChar* cnamespace = xmlNodeGetContent(xsel->nodesetval->nodeTab[0]);
+  std::string snamespace((char*)cnamespace);
+  xmlFree(cnamespace);
+  xmlXPathFreeObject(xsel);
+  xmlXPathFreeContext(ctxt);
+  return snamespace;
 }
 
 /**
@@ -260,6 +228,7 @@ void PageXML::loadSchema( const char *schema_path ) {
   if( ! (valid_context = xmlSchemaNewValidCtxt(valid_schema)) )
     throw_runtime_error( "PageXML.loadSchema: problems creating validation context: %s", schema_path );
   xmlSchemaSetValidErrors( valid_context, &validationErrorFunc, &validationWarningFunc, NULL );
+  schema_namespace = getDefaultNamespace(valid_doc);
 }
 
 /**
@@ -346,71 +315,6 @@ string PageXML::toString( bool indent, bool validate ) {
 }
 
 
-/////////////////////
-/// Configuration ///
-/////////////////////
-
-#if defined (__PAGEXML_LIBCONFIG__)
-
-/**
- * Gets the enum value for a configuration setting name, or -1 if unknown.
- *
- * @param format  String containing setting name.
- * @return        Enum format value.
- */
-inline static int parsePageSetting( const char* setting ) {
-  int settings = sizeof(PageXML::settingNames) / sizeof(PageXML::settingNames[0]);
-  for( int n=0; n<settings; n++ )
-    if( ! strcmp(PageXML::settingNames[n],setting) )
-      return n;
-  return -1;
-}
-
-/**
- * Applies configuration options to the PageXML instance.
- *
- * @param config  A libconfig Config object.
- */
-void PageXML::loadConf( const libconfig::Config& config ) {
-  if( ! config.exists("PageXML") )
-    return;
-
-  const libconfig::Setting& pagecfg = config.getRoot()["PageXML"];
-
-  int numsettings = pagecfg.getLength();
-  for( int i = 0; i < numsettings; i++ ) {
-    const libconfig::Setting& setting = pagecfg[i];
-    //printf("PageXML: setting=%s enum=%d\n",setting.getName(),parsePageSetting(setting.getName()));
-    switch( parsePageSetting(setting.getName()) ) {
-      case PAGEXML_SETTING_PAGENS:
-        if( pagens != NULL && pagens != default_pagens )
-          free(pagens);
-        pagens = strdup(setting.c_str());
-        break;
-      case PAGEXML_SETTING_GRAYIMG:
-        grayimg = (bool)setting;
-        break;
-      default:
-        throw invalid_argument( string("PageXML.loadConf: unexpected configuration property: ") + setting.getName() );
-    }
-  }
-}
-
-#endif
-
-/**
- * Prints the current configuration.
- *
- * @param file  File to print to.
- */
-void PageXML::printConf( FILE* file ) {
-  fprintf( file, "PageXML: {\n" );
-  fprintf( file, "  pagens = \"%s\";\n", pagens );
-  fprintf( file, "  grayimg = %s;\n", grayimg ? "true" : "false" );
-  fprintf( file, "}\n" );
-}
-
-
 ///////////////
 /// Loaders ///
 ///////////////
@@ -423,7 +327,7 @@ void PageXML::printConf( FILE* file ) {
  * @param imgW     Width of image.
  * @param imgH     Height of image.
  */
-xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH ) {
+xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH, const char* pagens ) {
   freeXML();
 
   time_t now;
@@ -570,12 +474,13 @@ void PageXML::setupXml() {
     throw_runtime_error( "PageXML.setupXml: unable create xpath context" );
     return;
   }
-  if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
+  std::string pagens = getDefaultNamespace(xml);
+  if( xmlXPathRegisterNs( context, (xmlChar*)"_", (xmlChar*)pagens.c_str() ) != 0 ) {
     throw_runtime_error( "PageXML.setupXml: unable to register namespace" );
     return;
   }
   rootnode = xmlDocGetRootElement(xml);
-  rpagens = xmlSearchNsByHref(xml,rootnode,(xmlChar*)pagens);
+  rpagens = xmlSearchNsByHref(xml,rootnode,(xmlChar*)pagens.c_str());
 
   vector<xmlNodePt> elem_page = select( "//_:Page" );
   if( elem_page.size() == 0 ) {
@@ -784,32 +689,18 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     mktemp( tmpbase.c_str(), tmpfname );
     tmp.resolutionUnits(MagickCore::ResolutionType::PixelsPerInchResolution);
     tmp.write( (std::string("png24:")+tmpfname).c_str() );
-    pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(tmpfname);
+    pagesImage[pagenum] = cv::imread(tmpfname);
     unlink(tmpfname);
   }
   else
 #endif
   /// OpenCV load other image formats ///
-  pagesImage[pagenum] = grayimg ? cv::imread(fname,CV_LOAD_IMAGE_GRAYSCALE) : cv::imread(fname);
+  pagesImage[pagenum] = cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
   }
 #endif
-
-  /// Convert to grayscale: Leptonica or ImageMagick ///
-  if( grayimg ) {
-#if defined (__PAGEXML_LEPT__)
-    Pix *orig = pagesImage[pagenum];
-    pagesImage[pagenum] = pixConvertRGBToGray(orig,0.0,0.0,0.0);
-    pixDestroy(&orig);
-#elif defined (__PAGEXML_IMG_MAGICK__)
-    if( pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleMatteType )
-      pagesImage[pagenum].type( Magick::GrayscaleMatteType );
-    else if( ! pagesImage[pagenum].matte() && pagesImage[pagenum].type() != Magick::GrayscaleType )
-      pagesImage[pagenum].type( Magick::GrayscaleType );
-#endif
-  }
 
 #if defined (__PAGEXML_LEPT__)
   int imgwidth = pixGetWidth(pagesImage[pagenum]);
@@ -1124,8 +1015,9 @@ vector<xmlNodePt> PageXML::select( const char* xpath, const xmlNodePt node ) {
     throw_runtime_error( "PageXML.select: unable to create xpath context" );
     return matched;
   }
-  if( xmlXPathRegisterNs( ncontext, (xmlChar*)"_", (xmlChar*)pagens ) != 0 ) {
-    throw_runtime_error( "PageXML.select: unable to register namespace" );
+  std::string pagens = getDefaultNamespace(xml);
+  if( xmlXPathRegisterNs( ncontext, (xmlChar*)"_", (xmlChar*)pagens.c_str() ) != 0 ) {
+    throw_runtime_error( "PageXML.select: unable to register default namespace" );
     return matched;
   }
 #endif
@@ -3961,7 +3853,7 @@ int PageXML::simplifyIDs() {
       sampid = regex_replace(sampid,reTrim,"");
       if( sampid.size() > 0 ) {
         sampid = regex_replace(sampid,reInvalid,"_");
-        setAttr( nodes[n], "orig-id", id );
+        setProperty( nodes[n], "orig-id", id );
         setAttr( nodes[n], "id", sampid.c_str() );
         simplified++;
       }
