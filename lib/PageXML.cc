@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.03.20$
+ * @version $Version: 2019.03.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.03.20";
+static char class_version[] = "Version: 2019.03.21";
 
 /**
  * Returns the class version.
@@ -200,12 +200,21 @@ void PageXML::freeSchema() {
 std::string getDefaultNamespace( xmlDocPtr doc ) {
   xmlXPathContextPtr ctxt = xmlXPathNewContext(doc);
   xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)"//namespace::*[name()='']", ctxt );
-  if( xsel == NULL || xmlXPathNodeSetIsEmpty(xsel->nodesetval) || xsel->nodesetval->nodeNr < 1 )
+  if ( xsel == NULL || xmlXPathNodeSetIsEmpty(xsel->nodesetval) || xsel->nodesetval->nodeNr < 1 )
     throw_runtime_error( "getDefaultNamespace: problems retrieving default namespace" );
   xmlChar* cnamespace = xmlNodeGetContent(xsel->nodesetval->nodeTab[0]);
   std::string snamespace((char*)cnamespace);
   xmlFree(cnamespace);
   xmlXPathFreeObject(xsel);
+  if ( snamespace == std::string("http://www.w3.org/2001/XMLSchema") ) {
+    xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)"//namespace::*[name()='pc']", ctxt );
+    if ( xsel == NULL || xmlXPathNodeSetIsEmpty(xsel->nodesetval) || xsel->nodesetval->nodeNr < 1 )
+      throw_runtime_error( "getDefaultNamespace: problems retrieving pc namespace" );
+    cnamespace = xmlNodeGetContent(xsel->nodesetval->nodeTab[0]);
+    snamespace = std::string((char*)cnamespace);
+    xmlFree(cnamespace);
+    xmlXPathFreeObject(xsel);
+  }
   xmlXPathFreeContext(ctxt);
   return snamespace;
 }
@@ -239,6 +248,40 @@ bool PageXML::isValid( xmlDocPtr xml_to_validate ) {
     xml_to_validate = xml;
   if( xml_to_validate == NULL || valid_context == NULL || ! validation_enabled )
     return true;
+
+  std::string xml_namespace = getDefaultNamespace(xml_to_validate);
+  if ( xml_namespace != schema_namespace ) {
+    std::string conv_str = std::string("<xsl:stylesheet\n")
+        + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+        + "    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n"
+        + "    xmlns:_=\"" + xml_namespace + "\"\n"
+        + "    xmlns=\"" + schema_namespace + "\"\n"
+        + "    extension-element-prefixes=\"xsi _\"\n"
+        + "    version=\"1.0\">\n"
+        + "  <xsl:output method=\"xml\" indent=\"no\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/>\n"
+        + "  <xsl:strip-space elements=\"*\"/>\n"
+        + "  <xsl:template match=\"@xsi:schemaLocation\"/>\n"
+        + "  <xsl:template match=\"@* | node()\">\n"
+        + "    <xsl:copy>\n"
+        + "      <xsl:apply-templates select=\"@* | node()\"/>\n"
+        + "    </xsl:copy>\n"
+        + "  </xsl:template>\n"
+        + "  <xsl:template match=\"_:*\">\n"
+        + "    <xsl:element name=\"{local-name()}\">\n"
+        + "      <xsl:apply-templates select=\"@* | node()\"/>\n"
+        + "    </xsl:element>\n"
+        + "  </xsl:template>\n"
+        + "</xsl:stylesheet>\n";
+
+    xsltStylesheetPtr conv_xslt = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)conv_str.c_str() ) );
+    xmlDocPtr conv_xml = xsltApplyStylesheet( conv_xslt, xml_to_validate, NULL );
+    bool is_valid = xmlSchemaValidateDoc(valid_context, conv_xml) ? false : true;
+    xmlFreeDoc(conv_xml);
+    xsltFreeStylesheet(conv_xslt);
+
+    return is_valid;
+  }
+
   return xmlSchemaValidateDoc(valid_context, xml_to_validate) ? false : true;
 }
 
@@ -328,6 +371,11 @@ string PageXML::toString( bool indent, bool validate ) {
  * @param imgH     Height of image.
  */
 xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH, const char* pagens ) {
+  if ( schema_namespace.length() == 0 && pagens == NULL ) {
+    throw_runtime_error( "PageXML.newXml: either pagens needs to be provided or a schema be loaded" );
+    return NULL;
+  }
+
   freeXML();
 
   time_t now;
@@ -335,10 +383,15 @@ xmlNodePt PageXML::newXml( const char* creator, const char* image, const int img
   char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
 
-  string str = string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-      + "<PcGts xmlns=\"" + pagens + "\">\n"
+  std::string spagens = schema_namespace;
+  if ( schema_namespace.length() == 0 )
+    spagens = std::string(pagens);
+  std::string libver = std::string("PageXML ") + (class_version+9);
+
+  std::string str = std::string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+      + "<PcGts xmlns=\"" + spagens + "\">\n"
       + "  <Metadata>\n"
-      + "    <Creator>" + (creator == NULL ? "PageXML.cc" : creator) + "</Creator>\n"
+      + "    <Creator>" + (creator == NULL ? libver : std::string(creator)+" ("+libver+")" ) + "</Creator>\n"
       + "    <Created>" + tstamp + "</Created>\n"
       + "    <LastChange>" + tstamp + "</LastChange>\n"
       + "  </Metadata>\n"

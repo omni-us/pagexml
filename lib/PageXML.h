@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.03.20$
+ * @version $Version: 2019.03.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -129,7 +129,7 @@ class PageXML {
     std::string getXmlFilePath();
     void loadSchema( const char* schema_path );
     bool isValid( xmlDocPtr xml_to_validate = NULL );
-    xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0, const char* pagens = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15" );
+    xmlNodePt newXml( const char* creator, const char* image, const int imgW = 0, const int imgH = 0, const char* pagens = NULL );
     void loadXml( const char* fname, bool validate = true );
     void loadXml( int fnum, bool prevfree = true, bool validate = true );
     void loadXmlString( const char* xml_string, bool validate = true );

@@ -4,3 +4,6 @@
 [submodule "doxy2swig"]
 	path = doxy2swig
 	url = https://github.com/m7thon/doxy2swig.git
+[submodule "pageformat"]
+	path = pageformat
+	url = https://github.com/omni-us/pageformat.git

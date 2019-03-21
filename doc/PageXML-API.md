@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.03.20
+Version2019.03.21
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -809,7 +809,7 @@ Whether flattening was performed.
 `public std::string `[`getXmlFilePath`](#class_page_x_m_l_1ae24c226a9dbb8853f67ba78747057239)`()` | 
 `public void `[`loadSchema`](#class_page_x_m_l_1a26f73cb3afd642889c5c6e7e5bd4a2ba)`(const char * schema_path)` | Loads a schema for xml validation.
 `public bool `[`isValid`](#class_page_x_m_l_1a79ad495504b37292df9e507332e29ba4)`(xmlDocPtr xml_to_validate)` | Validates the currently loaded XML.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a439127dfb448376a7cb11a95f18f062e)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` | Loaders ///.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a2ca59b20e66291d5006e4672ac18c96d)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` | Loaders ///.
 `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` | Loads a Page XML from a file.
 `public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` | Loads a Page XML from an input stream.
 `public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` | Loads a Page XML from a string.
@@ -1006,7 +1006,7 @@ Loads a schema for xml validation.
 
 Validates the currently loaded XML.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a439127dfb448376a7cb11a95f18f062e)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a2ca59b20e66291d5006e4672ac18c96d)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` 
 
 Loaders ///.
 

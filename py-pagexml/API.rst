@@ -1,4 +1,4 @@
-pagexml API (version 2019.3.20)
+pagexml API (version 2019.3.21)
 *******************************
 
 
@@ -1663,7 +1663,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Intersection geometry.
 
-   newXml(*args)
+   newXml(creator, image, imgW=0, imgH=0, pagens=None)
 
       Loaders ///.
 

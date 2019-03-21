@@ -10,6 +10,11 @@ _PageXML = PageXML
 
 PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
 
+def set_omnius_schema():
+    global PAGE_XSD
+    PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_omnius.xsd'
+
+
 class PageXML(_PageXML): #pylint: disable=function-redefined
     def __init__(self, *args, **kwargs):
         if 'schema_path' not in kwargs:
