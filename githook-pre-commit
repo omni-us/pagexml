@@ -107,4 +107,11 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   git add py-textfeat/API.rst;
 fi
 
+### Validate circleci config ###
+circleci config validate -c .circleci/config.yml;
+if [ "$?" != 0 ]; then
+  echo "${0##*/}: error: validation of circleci config failed" 1>&2 &&
+  exit 1;
+fi
+
 exit 0;

@@ -49,13 +49,13 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-16.04-py35:
-      - build-18.04-py36:
+      - build-16.04-py35
+      - build-18.04-py36
       - publish-release-16.04-py35:
-        <<: *tagfilter
-        requires:
+          <<: *tagfilter
+          requires:
             - build-16.04-py35
       - publish-release-18.04-py36:
-        <<: *tagfilter
-        requires:
+          <<: *tagfilter
+          requires:
             - build-18.04-py36
