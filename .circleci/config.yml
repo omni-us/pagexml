@@ -1,0 +1,38 @@
+version: 2
+dockerpublish: &dockerpublish
+  steps:
+    - checkout
+    - run:
+        name: "Publish Release on GitHub"
+        command: |
+          git submodule update --init
+          cd py-pagexml
+          ./setup.py bdist_wheel
+          mkdir artifacts
+          mv dist/*.whl artifacts
+          ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./artifacts/
+jobs:
+  publish-github-release-16.04-py35:
+    <<: *dockerpublish
+    docker:
+      - image: mauvilsa/pagexml:build-ubuntu16.04-py35
+  publish-github-release-18.04-py36:
+    <<: *dockerpublish
+    docker:
+      - image: mauvilsa/pagexml:build-ubuntu18.04-py36
+workflows:
+  version: 2
+  main:
+    jobs:
+      - publish-github-release-16.04-py35:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - publish-github-release-18.04-py36:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/

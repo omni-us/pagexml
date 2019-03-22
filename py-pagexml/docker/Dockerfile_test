@@ -1,0 +1,13 @@
+ARG BUILD_TAG=ubuntu18.04-py36
+
+FROM mauvilsa/pagexml:$BUILD_TAG
+
+COPY lib /opt/pagexml/lib
+COPY xsd/*.xsd /opt/pagexml/xsd/
+COPY py-pagexml /opt/pagexml/py-pagexml
+
+WORKDIR /opt/pagexml/py-pagexml
+
+RUN ./setup.py bdist_wheel \
+ && ./setup.py install \
+ && ./setup.py test

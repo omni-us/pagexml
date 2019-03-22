@@ -15,7 +15,7 @@ RUN apt-get update --fix-missing \
  && apt-get install -y --no-install-recommends \
       less \
       nano \
-      build-essential \
+      g++ \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-setuptools \
       python$PYTHON_VERSION-pkgconfig \
@@ -27,16 +27,12 @@ RUN apt-get update --fix-missing \
       libopencv-dev \
       libgdal-dev \
       libboost-all-dev \
+      ca-certificates \
+      wget \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
+ && cd /tmp \
+ && wget https://github.com/tcnksm/ghr/releases/download/v0.12.0/ghr_v0.12.0_linux_amd64.tar.gz \
+ && tar xzf ghr_v0.12.0_linux_amd64.tar.gz \
+ && mv ghr_v0.12.0_linux_amd64/ghr /usr/local/bin/ \
  && if [ "$PYTHON_VERSION" = "3" ]; then ln -s /usr/bin/python3 /usr/local/bin/python; fi
-
-COPY lib /opt/pagexml/lib
-COPY xsd /opt/pagexml/xsd
-COPY py-pagexml /opt/pagexml/py-pagexml
-
-WORKDIR /opt/pagexml/py-pagexml
-
-RUN ./setup.py bdist_wheel \
- && ./setup.py install \
- && ./setup.py test
