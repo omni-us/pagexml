@@ -15,15 +15,9 @@ dockerpublish: &dockerpublish
     - run:
         name: "Publish Release on GitHub"
         command: |
-          cd py-pagexml
           mkdir artifacts
           mv dist/*.whl artifacts
           ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./artifacts/
-
-buildfilter: &buildfilter
-  filters:
-    tags:
-      only: /.*/
 
 tagfilter: &tagfilter
   filters:
@@ -55,9 +49,9 @@ workflows:
   main:
     jobs:
       - build-16.04-py35:
-          <<: *buildfilter
+          <<: *tagfilter
       - build-18.04-py36:
-          <<: *buildfilter
+          <<: *tagfilter
       - publish-release-16.04-py35:
           <<: *tagfilter
           requires:
