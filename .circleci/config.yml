@@ -20,6 +20,11 @@ dockerpublish: &dockerpublish
           mv dist/*.whl artifacts
           ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./artifacts/
 
+buildfilter: &buildfilter
+  filters:
+    tags:
+      only: /.*/
+
 tagfilter: &tagfilter
   filters:
     branches:
@@ -49,8 +54,10 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-16.04-py35
-      - build-18.04-py36
+      - build-16.04-py35:
+          <<: *buildfilter
+      - build-18.04-py36:
+          <<: *buildfilter
       - publish-release-16.04-py35:
           <<: *tagfilter
           requires:
