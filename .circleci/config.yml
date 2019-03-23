@@ -1,6 +1,7 @@
 version: 2
 
 dockerbuild: &dockerbuild
+  working_directory: /tmp/pagexml-build
   steps:
     - checkout
     - run:
@@ -9,9 +10,15 @@ dockerbuild: &dockerbuild
           git submodule update --init
           cd py-pagexml
           ./setup.py bdist_wheel
+    - persist_to_workspace:
+        root: .
+        paths: ./*
 
 dockerpublish: &dockerpublish
+  working_directory: /tmp/pagexml-build
   steps:
+    - attach_workspace:
+        at: .
     - run:
         name: "Publish Release on GitHub"
         command: |
@@ -35,14 +42,10 @@ jobs:
     <<: *dockerbuild
     docker:
       - image: mauvilsa/pagexml:build-ubuntu18.04-py36
-  publish-release-16.04-py35:
+  publish-release:
     <<: *dockerpublish
     docker:
-      - image: mauvilsa/pagexml:build-ubuntu16.04-py35
-  publish-release-18.04-py36:
-    <<: *dockerpublish
-    docker:
-      - image: mauvilsa/pagexml:build-ubuntu18.04-py36
+      - image: cibuilds/github:0.12.0
 
 workflows:
   version: 2
@@ -52,11 +55,8 @@ workflows:
           <<: *tagfilter
       - build-18.04-py36:
           <<: *tagfilter
-      - publish-release-16.04-py35:
+      - publish-release:
           <<: *tagfilter
           requires:
             - build-16.04-py35
-      - publish-release-18.04-py36:
-          <<: *tagfilter
-          requires:
             - build-18.04-py36
