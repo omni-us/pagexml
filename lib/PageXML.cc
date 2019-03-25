@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.03.21$
+ * @version $Version: 2019.03.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.03.21";
+static char class_version[] = "Version: 2019.03.25";
 
 /**
  * Returns the class version.
@@ -1501,7 +1501,22 @@ std::string PageXML::getValue( xmlNodePt node ) {
  * @return           String with the node value.
  */
 std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
-  return getValue( selectNth( xpath, 0, node ) );
+  std::string val;
+
+  xmlXPathContextPtr ncontext = context;
+  ncontext->node = node == NULL ? (xmlNodePtr)rootnode : (xmlNodePtr)node;
+
+  xmlXPathObjectPtr xsel = xmlXPathEvalExpression( (xmlChar*)xpath, ncontext );
+
+  if( xsel == NULL ) {
+    throw_runtime_error( "PageXML.getValue: xpath expression failed: %s", xpath );
+    return val;
+  }
+
+  xsel = xmlXPathConvertString(xsel);
+  val = std::string((char*)xsel->stringval);
+
+  return val;
 }
 
 /**
