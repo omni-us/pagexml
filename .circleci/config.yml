@@ -1,7 +1,6 @@
 version: 2
 
 dockerbuild: &dockerbuild
-  working_directory: /tmp/pagexml-build
   steps:
     - checkout
     - run:
@@ -10,16 +9,10 @@ dockerbuild: &dockerbuild
           git submodule update --init
           cd py-pagexml
           ./setup.py bdist_wheel
+          ./setup.py test
     - persist_to_workspace:
         root: .
         paths: ./py-pagexml/dist/*.whl
-
-tagfilter: &tagfilter
-  filters:
-    branches:
-      ignore: /.*/
-    tags:
-      only: /^\d+\.\d+\.\d+$/
 
 jobs:
   build-16.04-py35:
@@ -33,16 +26,20 @@ jobs:
   publish-release:
     docker:
       - image: cibuilds/github:0.12.0
-    working_directory: /tmp/pagexml-build
     steps:
       - attach_workspace:
           at: .
       - run:
           name: "Publish Release on GitHub"
           command: |
-            mkdir artifacts
-            cp py-pagexml/dist/*.whl artifacts
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./artifacts/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./py-pagexml/dist/
+
+tagfilter: &tagfilter
+  filters:
+    branches:
+      ignore: /.*/
+    tags:
+      only: /^\d+\.\d+\.\d+$/
 
 workflows:
   version: 2

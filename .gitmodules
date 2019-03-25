@@ -5,5 +5,5 @@
 	path = doxy2swig
 	url = https://github.com/m7thon/doxy2swig.git
 [submodule "pageformat"]
-	path = pageformat
+	path = xsd/pageformat
 	url = https://github.com/omni-us/pageformat.git
