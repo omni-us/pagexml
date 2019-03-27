@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.03.25$
+ * @version $Version: 2019.03.27$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.03.25";
+static char class_version[] = "Version: 2019.03.27";
 
 /**
  * Returns the class version.
@@ -1515,6 +1515,7 @@ std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
 
   xsel = xmlXPathConvertString(xsel);
   val = std::string((char*)xsel->stringval);
+  xmlXPathFreeObject(xsel);
 
   return val;
 }

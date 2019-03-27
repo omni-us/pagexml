@@ -12,7 +12,7 @@
  - swig
  - libxml2-dev
  - libxslt1-dev
- - opencv-dev
+ - libopencv-dev
  - libgdal-dev
  - libboost-all-dev
 
