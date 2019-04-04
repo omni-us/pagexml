@@ -23,7 +23,17 @@ jobs:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu18.04-py36
     <<: *dockerbuild
-  publish-release:
+  publish-pypi:
+    docker:
+      - image: mauvilsa/twine:1.11.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publish Release on PyPI"
+          command: |
+            twine upload --repository-url "${PYPI_URL}" --username "${PYPI_USER}" --password "${PYPI_PASS}" ./py-pagexml/dist/*.whl
+  publish-github:
     docker:
       - image: cibuilds/github:0.12.0
     steps:
@@ -49,7 +59,7 @@ workflows:
           <<: *tagfilter
       - build-18.04-py36:
           <<: *tagfilter
-      - publish-release:
+      - publish-github:
           <<: *tagfilter
           requires:
             - build-16.04-py35

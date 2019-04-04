@@ -22,6 +22,7 @@ RUN apt-get update --fix-missing \
       python$PYTHON_VERSION-wheel \
       python$PYTHON_VERSION-dev \
       swig \
+      git \
       libxml2-dev \
       libxslt1-dev \
       libopencv-dev \

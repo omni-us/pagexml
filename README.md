@@ -2,6 +2,8 @@
 
 Library in C++ and a python wrapper for dealing with Page XML files
 
+[![CircleCI](https://circleci.com/gh/omni-us/pagexml.svg?style=svg)](https://circleci.com/gh/omni-us/pagexml)
+
 # Requirements
 
 Check [py-pagexml/README.md](py-pagexml/README.md) and/or [docker/Dockerfile_build](docker/Dockerfile_build), [docker/Dockerfile_runtime](docker/Dockerfile_runtime).
