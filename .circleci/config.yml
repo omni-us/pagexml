@@ -59,6 +59,11 @@ workflows:
           <<: *tagfilter
       - build-18.04-py36:
           <<: *tagfilter
+      - publish-pypi:
+          <<: *tagfilter
+          requires:
+            - build-16.04-py35
+            - build-18.04-py36
       - publish-github:
           <<: *tagfilter
           requires:
