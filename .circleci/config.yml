@@ -25,7 +25,7 @@ jobs:
     <<: *dockerbuild
   publish-pypi:
     docker:
-      - image: mauvilsa/twine:1.11.0
+      - image: mauvilsa/docker-twine:1.11.0
     steps:
       - attach_workspace:
           at: .
