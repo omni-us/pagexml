@@ -1013,6 +1013,8 @@ Parameters
     Root node element.  
 * `xpath` :  
     Relative xpath to select the TextEquiv elements.  
+* `type` :  
+    Type attribute. Set to \"\" for TextEquivs without a type.  
 * `separator` :  
     String to add between TextEquivs.  
 
@@ -1148,6 +1150,8 @@ Parameters
     The text string.  
 * `_conf` :  
     Pointer to confidence value, NULL for no confidence.  
+* `type` :  
+    Type attribute.  
 
 Returns
 -------
@@ -1166,6 +1170,8 @@ Parameters
     The text string.  
 * `conf` :  
     Confidence value.  
+* `type` :  
+    Type attribute.  
 
 Returns
 -------
@@ -1184,6 +1190,8 @@ Parameters
     The text string.  
 * `_conf` :  
     Pointer to confidence value, NULL for no confidence.  
+* `type` :  
+    Type attribute.  
 
 Returns
 -------

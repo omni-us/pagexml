@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.03.27$
+ * @version $Version: 2019.04.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.03.27";
+static char class_version[] = "Version: 2019.04.04";
 
 /**
  * Returns the class version.
@@ -2302,14 +2302,21 @@ std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xml
  *
  * @param node       Root node element.
  * @param xpath      Relative xpath to select the TextEquiv elements.
+ * @param type       Type attribute. Set to "" for TextEquivs without a type.
  * @param separator  String to add between TextEquivs.
  * @return           String with the concatenated TextEquivs.
  */
-std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char* separator ) {
-  std::vector<xmlNodePt> nodes = select( xpath, node );
+std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char* type, const char* separator ) {
+  std::vector<xmlNodePt> textequivs = select( (std::string(xpath)+"/_:Unicode").c_str(), node );
+  if ( type != NULL ) {
+    if ( std::string(type).empty() )
+      textequivs = filter( "*[not(../@type)]", textequivs );
+    else
+      textequivs = filter( (std::string("*[../@type='")+type+"']").c_str(), textequivs );
+  }
   std::string text;
-  for ( int n=0; n<(int)nodes.size(); n++ ) {
-    xmlChar* t = xmlNodeGetContent(nodes[n]);
+  for ( int n=0; n<(int)textequivs.size(); n++ ) {
+    xmlChar* t = xmlNodeGetContent(textequivs[n]);
     text += std::string(n==0?"":separator) + (char*)t;
     xmlFree(t);
   }
@@ -2495,17 +2502,35 @@ xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const double va
  * @param node   The node of element to set the TextEquiv.
  * @param text   The text string.
  * @param _conf  Pointer to confidence value, NULL for no confidence.
+ * @param type   Type attribute.
  * @return       Pointer to created element.
  */
-xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double* _conf ) {
+xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double* _conf, const char* type ) {
   if( node == NULL ) {
     throw_runtime_error( "PageXML.setTextEquiv: received NULL node pointer" );
     return NULL;
   }
 
-  rmElems( select( "_:TextEquiv", node ) );
+  xmlNodePt textequiv = NULL;
 
-  xmlNodePt textequiv = addElem( "TextEquiv", NULL, node );
+  std::vector<xmlNodePt> textequivs = select( "_:TextEquiv", node );
+  if ( textequivs.size() == 0 )
+    textequiv = addElem( "TextEquiv", NULL, node );
+  else if ( type == NULL ) {
+    textequiv = textequivs[0];
+    rmElems( select( "* | @conf", textequiv ) );
+  }
+  else {
+    textequivs = filter( (std::string("*[@type='")+type+"']").c_str(), textequivs );
+    if ( textequivs.size() == 0 ) {
+      textequiv = addElem( "TextEquiv", NULL, node );
+      setAttr( textequiv, "type", type );
+    }
+    else {
+      textequiv = textequivs[0];
+      rmElems( select( "* | @conf", textequiv ) );
+    }
+  }
 
   xmlNodePt unicode = xmlNewTextChild( textequiv, NULL, (xmlChar*)"Unicode", (xmlChar*)text );
   if( ! unicode ) {
@@ -2531,10 +2556,11 @@ xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double*
  * @param node   The node of element to set the TextEquiv.
  * @param text   The text string.
  * @param conf   Confidence value.
+ * @param type   Type attribute.
  * @return       Pointer to created element.
  */
-xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double conf ) {
-  return setTextEquiv( node, text, &conf );
+xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double conf, const char* type ) {
+  return setTextEquiv( node, text, &conf, type );
 }
 
 /**
@@ -2543,16 +2569,17 @@ xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double 
  * @param xpath  Selector for element to set the TextEquiv.
  * @param text   The text string.
  * @param _conf  Pointer to confidence value, NULL for no confidence.
+ * @param type   Type attribute.
  * @return       Pointer to created element.
  */
-xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf ) {
+xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double* _conf, const char* type ) {
   vector<xmlNodePt> target = select( xpath );
   if( target.size() == 0 ) {
     throw_runtime_error( "PageXML.setTextEquiv: unmatched target: xpath=%s", xpath );
     return NULL;
   }
 
-  return setTextEquiv( target[0], text, _conf );
+  return setTextEquiv( target[0], text, _conf, type );
 }
 
 /**
@@ -2563,8 +2590,8 @@ xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const doub
  * @param conf   Confidence value.
  * @return       Pointer to created element.
  */
-xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double conf ) {
-  return setTextEquiv( xpath, text, &conf );
+xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double conf, const char* type ) {
+  return setTextEquiv( xpath, text, &conf, type );
 }
 
 /**

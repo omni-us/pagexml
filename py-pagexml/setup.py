@@ -55,7 +55,7 @@ def pagexml_Extension(magick):
                      define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = swig_opts + [cvinc,'-I./opencv-swig/lib','-modern','-c++'],
+                     swig_opts = swig_opts + [cvinc,'-I./opencv-swig/lib','-modern','-keyword','-w511','-c++'],
                      sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
 
 

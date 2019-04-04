@@ -197,7 +197,7 @@ Copyright (c) 2004-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:
 
 Header file for the [PageXML](#class_page_x_m_l) class
 
-Version2019.03.27
+Version2019.04.04
 
 Copyright (c) 2016-present, Mauricio Villegas [mauricio_ville@yahoo.com](mailto:mauricio_ville@yahoo.com)  MIT License
 
@@ -872,7 +872,7 @@ Whether flattening was performed.
 `public std::vector< cv::Point2f > `[`getFpgram`](#class_page_x_m_l_1a0425df4d97b66a7f259cfb1fae847667)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the features parallelogram (Property[="fpgram"]/) for a given node.
 `public std::vector< cv::Point2f > `[`getPoints`](#class_page_x_m_l_1aba7be6cf9e66f1395c84f0880ca2a069)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Retrieves and parses the Coords/ for a given base node.
 `public std::vector< std::vector< cv::Point2f > > `[`getPoints`](#class_page_x_m_l_1a41e062ef2c08e4c3212c39d4ec48b2fa)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Retrieves and parses the Coords/ for a given list of base nodes.
-`public std::string `[`getTextEquiv`](#class_page_x_m_l_1a00ab0efcf9edb0224208962c807e465f)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` | Retrieves the concatenated TextEquivs for a given root node and xpath.
+`public std::string `[`getTextEquiv`](#class_page_x_m_l_1a59ac58298c502d1cdbe6c4115d0bbb67)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * type,const char * separator)` | Retrieves the concatenated TextEquivs for a given root node and xpath.
 `public void `[`processStart`](#class_page_x_m_l_1a3eeffa37a2ace0dc732405e81cb49e4d)`(const char * tool,const char * ref)` | Starts a process in the Page XML.
 `public void `[`processEnd`](#class_page_x_m_l_1a29d780f46c1f14b241f48665d835394c)`()` | Ends the running process in the Page XML.
 `public void `[`updateLastChange`](#class_page_x_m_l_1a99bc8c45fae21207bb608e69609dedcd)`()` | Updates the last change time stamp.
@@ -881,10 +881,10 @@ Whether flattening was performed.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1aa05ac4ccd18740e84e8566f5f07ed876)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const char * val,const double conf)` | Sets a Property to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a82ffe7a5366736034a3e4514b43ab389)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double * _conf)` | Sets a Property to a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setProperty`](#class_page_x_m_l_1a8acc4a27f30da3f3d75c93baf5280a6d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * key,const double val,const double conf)` | Sets a Property to a given node.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a65f380acfc400de2a6dc59eb1ee22904)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given node.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a3d01bccae1af691fc5cc60e720d1659b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf)` | Adds or modifies (if already exists) the TextEquiv for a given node.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ae7938084955a0668bc44f24307ad77ba)`(const char * xpath,const char * text,const double * _conf)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
-`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1aeaad48fa1ad577caa032534960e955f0)`(const char * xpath,const char * text,const double conf)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a42701134869b12b6a5e9b8f4346b608d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf,const char * type)` | Adds or modifies (if already exists) the TextEquiv for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ab62079d8ff8c5245daf228f10c43997a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf,const char * type)` | Adds or modifies (if already exists) the TextEquiv for a given node.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1af837230770f8a39e6808d99c4ade0dec)`(const char * xpath,const char * text,const double * _conf,const char * type)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
+`public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1abc6d669170274fba81ac9500b0ef6850)`(const char * xpath,const char * text,const double conf,const char * type)` | Adds or modifies (if already exists) the TextEquiv for a given xpath.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a8d92328ba656b8e8e847bf2ad3607a46)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double * _conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1acf4d9ee3ef34fc928e4b3b0e53221284)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setCoords`](#class_page_x_m_l_1a626847a8aac3c4bc650d0b27f3ce042b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const std::vector< cv::Point > & points,const double * _conf)` | 
@@ -1556,7 +1556,7 @@ Retrieves and parses the Coords/ for a given list of base nodes.
 #### Returns
 Reference to the points vector.
 
-#### `public std::string `[`getTextEquiv`](#class_page_x_m_l_1a00ab0efcf9edb0224208962c807e465f)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * separator)` 
+#### `public std::string `[`getTextEquiv`](#class_page_x_m_l_1a59ac58298c502d1cdbe6c4115d0bbb67)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * type,const char * separator)` 
 
 Retrieves the concatenated TextEquivs for a given root node and xpath.
 
@@ -1564,6 +1564,8 @@ Retrieves the concatenated TextEquivs for a given root node and xpath.
 * `node` Root node element. 
 
 * `xpath` Relative xpath to select the TextEquiv elements. 
+
+* `type` Type attribute. Set to "" for TextEquivs without a type. 
 
 * `separator` String to add between TextEquivs. 
 
@@ -1656,7 +1658,7 @@ Sets a Property to a given node.
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a65f380acfc400de2a6dc59eb1ee22904)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a42701134869b12b6a5e9b8f4346b608d)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double * _conf,const char * type)` 
 
 Adds or modifies (if already exists) the TextEquiv for a given node.
 
@@ -1667,10 +1669,12 @@ Adds or modifies (if already exists) the TextEquiv for a given node.
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
 
+* `type` Type attribute. 
+
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1a3d01bccae1af691fc5cc60e720d1659b)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ab62079d8ff8c5245daf228f10c43997a)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * text,const double conf,const char * type)` 
 
 Adds or modifies (if already exists) the TextEquiv for a given node.
 
@@ -1681,10 +1685,12 @@ Adds or modifies (if already exists) the TextEquiv for a given node.
 
 * `conf` Confidence value. 
 
+* `type` Type attribute. 
+
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1ae7938084955a0668bc44f24307ad77ba)`(const char * xpath,const char * text,const double * _conf)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1af837230770f8a39e6808d99c4ade0dec)`(const char * xpath,const char * text,const double * _conf,const char * type)` 
 
 Adds or modifies (if already exists) the TextEquiv for a given xpath.
 
@@ -1695,10 +1701,12 @@ Adds or modifies (if already exists) the TextEquiv for a given xpath.
 
 * `_conf` Pointer to confidence value, NULL for no confidence. 
 
+* `type` Type attribute. 
+
 #### Returns
 Pointer to created element.
 
-#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1aeaad48fa1ad577caa032534960e955f0)`(const char * xpath,const char * text,const double conf)` 
+#### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setTextEquiv`](#class_page_x_m_l_1abc6d669170274fba81ac9500b0ef6850)`(const char * xpath,const char * text,const double conf,const char * type)` 
 
 Adds or modifies (if already exists) the TextEquiv for a given xpath.
 

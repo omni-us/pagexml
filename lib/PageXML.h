@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.03.27$
+ * @version $Version: 2019.04.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -202,7 +202,7 @@ class PageXML {
     std::vector<cv::Point2f> getFpgram( const xmlNodePt node );
     std::vector<cv::Point2f> getPoints( const xmlNodePt node, const char* xpath = "_:Coords" );
     std::vector<std::vector<cv::Point2f> > getPoints( const std::vector<xmlNodePt> nodes, const char* xpath = "_:Coords" );
-    std::string getTextEquiv( xmlNodePt node, const char* xpath = "_:TextEquiv/_:Unicode", const char* separator = " " );
+    std::string getTextEquiv( xmlNodePt node, const char* xpath = "_:TextEquiv", const char* type = NULL, const char* separator = " " );
     void processStart( const char* tool, const char* ref = NULL );
     void processEnd();
     void updateLastChange();
@@ -211,10 +211,10 @@ class PageXML {
     xmlNodePt setProperty( xmlNodePt node, const char* key, const char* val, const double conf );
     xmlNodePt setProperty( xmlNodePt node, const char* key, const double val, const double* _conf = NULL );
     xmlNodePt setProperty( xmlNodePt node, const char* key, const double val, const double conf );
-    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double* _conf = NULL );
-    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double conf );
-    xmlNodePt setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL );
-    xmlNodePt setTextEquiv( const char* xpath, const char* text, const double conf );
+    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double* _conf = NULL, const char* type = NULL );
+    xmlNodePt setTextEquiv( xmlNodePt node,    const char* text, const double conf,          const char* type = NULL );
+    xmlNodePt setTextEquiv( const char* xpath, const char* text, const double* _conf = NULL, const char* type = NULL );
+    xmlNodePt setTextEquiv( const char* xpath, const char* text, const double conf,          const char* type = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double conf );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,   const double* _conf = NULL );
