@@ -21,7 +21,7 @@
  - python3
  - libxml2
  - libxslt1.1
- - libopencv-highgui
+ - libopencv-imgcodecs (Ubuntu 18.04) | libopencv-highgui (Ubuntu 16.04)
  - libopencv-imgproc
  - libopencv-core
  - libgdal
@@ -29,7 +29,14 @@
 
 ## Installation from wheel binary file
 
-    pip3 install --user pagexml-2017.11.5-cp35-cp35m-linux_x86_64.whl
+If you have configured a pypi server that includes pagexml:
+
+    pip3 install pagexml
+
+Otherwise you can install it from a github [release](https://github.com/omni-us/pagexml/releases). Each release includes two wheel files. One for python 3.5 which is built for Ubuntu 16.04, and the other for python 3.6 built for Ubuntu 18.04. Once you have located the appropriate wheel file, copy the link and run as follows replacing the URL with the one you copied:
+
+    pip3 install https://github.com/omni-us/pagexml/releases/download/2019.04.04/pagexml-2019.4.4-cp36-cp36m-linux_x86_64.whl
+
 
 ## Documentation
 

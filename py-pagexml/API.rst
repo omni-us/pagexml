@@ -1250,7 +1250,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       String with the name.
 
-   getOGRpolygon(*args)
+   getOGRpolygon(*args, **kwargs)
 
       Gets an element's Coords as an OGRMultiPolygon.
 
@@ -1274,7 +1274,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Area.
 
-   getOGRpolygons(*args)
+   getOGRpolygons(*args, **kwargs)
 
       Gets elements' Coords as OGRMultiPolygons.
 
@@ -1288,7 +1288,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Vector of OGRMultiPolygon pointer elements.
 
-   getOGRpolyline(*args)
+   getOGRpolyline(*args, **kwargs)
 
       Gets the element's Baseline as an OGRMultiLineString.
 
@@ -1421,7 +1421,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
       Otherwise try to get rotation from readingOrientation attribute
       ///
 
-   getTextEquiv(*args)
+   getTextEquiv(*args, **kwargs)
 
       Retrieves the concatenated TextEquivs for a given root node and
       xpath.
@@ -1434,13 +1434,17 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
            Relative xpath to select the TextEquiv elements.
 
+      * *type* :
+
+           Type attribute. Set to "" for TextEquivs without a type.
+
       * *separator* :
 
            String to add between TextEquivs.
 
       String with the concatenated TextEquivs.
 
-   getUnionOGRpolygon(*args)
+   getUnionOGRpolygon(*args, **kwargs)
 
       Gets the union of Coords elements as a OGRMultiPolygon.
 
@@ -1767,7 +1771,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
    static pointsToString(*args)
 
-   static printVersions(*args)
+   static printVersions(*args, **kwargs)
 
    processEnd()
 
@@ -2156,7 +2160,7 @@ class pagexml.PageXML(pagexml_path=None, schema_path=None)
 
       Returns the class version.
 
-   write(*args)
+   write(*args, **kwargs)
 
       Output ///.
 
@@ -2239,7 +2243,7 @@ pagexml.PageXML_pointsLimits(points, xmin, xmax, ymin, ymax)
 
 pagexml.PageXML_pointsToString(*args)
 
-pagexml.PageXML_printVersions(*args)
+pagexml.PageXML_printVersions(*args, **kwargs)
 
 pagexml.PageXML_setValidationEnabled(val)
 
