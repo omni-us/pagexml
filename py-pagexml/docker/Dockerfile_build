@@ -23,6 +23,7 @@ RUN apt-get update --fix-missing \
       python$PYTHON_VERSION-dev \
       swig \
       git \
+      ca-certificates \
       libxml2-dev \
       libxslt1-dev \
       libopencv-dev \

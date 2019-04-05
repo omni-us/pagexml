@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.04$
+ * @version $Version: 2019.04.05$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.04";
+static char class_version[] = "Version: 2019.04.05";
 
 /**
  * Returns the class version.
@@ -2416,7 +2416,7 @@ std::string PageXML::getPropertyValue( xmlNodePt node, const char* key ) {
 xmlNodePt PageXML::setProperty( xmlNodePt node, const char* key, const char* val, const double* _conf ) {
   rmElems( select( std::string("_:Property[@key=\"")+key+"\"]", node ) );
 
-  std::vector<xmlNodePt> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata']", node );
+  std::vector<xmlNodePt> siblafter = select( "*[local-name()!='Property' and local-name()!='Metadata'] | *[local-name()='Unicode']", node );
   std::vector<xmlNodePt> props = select( "_:Property", node );
 
   xmlNodePt prop = NULL;
@@ -2514,8 +2514,11 @@ xmlNodePt PageXML::setTextEquiv( xmlNodePt node, const char* text, const double*
   xmlNodePt textequiv = NULL;
 
   std::vector<xmlNodePt> textequivs = select( "_:TextEquiv", node );
-  if ( textequivs.size() == 0 )
+  if ( textequivs.size() == 0 ) {
     textequiv = addElem( "TextEquiv", NULL, node );
+    if ( type != NULL )
+      setAttr( textequiv, "type", type );
+  }
   else if ( type == NULL ) {
     textequiv = textequivs[0];
     rmElems( select( "* | @conf", textequiv ) );
