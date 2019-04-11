@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.05$
+ * @version $Version: 2019.04.11$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -39,7 +39,7 @@ regex reIsTiff(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 
 xsltStylesheetPtr sortattr = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:template match=\"*\"><xsl:copy><xsl:apply-templates select=\"@*\"><xsl:sort select=\"name()\"/></xsl:apply-templates><xsl:apply-templates/></xsl:copy></xsl:template><xsl:template match=\"@*|comment()|processing-instruction()\"><xsl:copy/></xsl:template></xsl:stylesheet>" ) );
 
-xsltStylesheetPtr sortelem = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:strip-space elements=\"*\"/><xsl:template match=\"@* | node()\"><xsl:copy><xsl:apply-templates select=\"@* | node()\"/></xsl:copy></xsl:template><xsl:template match=\"*[local-name()='PcGts']\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='Metadata']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Page']\"/><xsl:apply-templates select=\"node()[not(contains(' Metadata Property Page ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template><xsl:template match=\"*[*[local-name()='Coords' or local-name()='Baseline' or local-name()='TextEquiv']]\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='ImageOrientation']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Coords']\"/><xsl:apply-templates select=\"*[local-name()='Baseline']\"/><xsl:apply-templates select=\"*[local-name()='TextLine' or local-name()='Word' or local-name()='Glyph']\"/><xsl:apply-templates select=\"*[local-name()='TextEquiv']\"/><xsl:apply-templates select=\"node()[not(contains(' ImageOrientation Property Coords Baseline TextLine Word Glyph TextEquiv ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template></xsl:stylesheet>" ) );
+xsltStylesheetPtr sortelem = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)"<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\"><xsl:output method=\"xml\" indent=\"yes\" encoding=\"utf-8\" omit-xml-declaration=\"no\"/><xsl:strip-space elements=\"*\"/><xsl:template match=\"@* | node()\"><xsl:copy><xsl:apply-templates select=\"@* | node()\"/></xsl:copy></xsl:template><xsl:template match=\"*[local-name()='PcGts']\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='Metadata']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Page']\"/><xsl:apply-templates select=\"node()[not(contains(' Metadata Property Page ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template><xsl:template match=\"*[*[local-name()='Coords' or local-name()='Baseline' or local-name()='TextEquiv']] | *[local-name()='Page']\"><xsl:copy><xsl:apply-templates select=\"@*\"/><xsl:apply-templates select=\"*[local-name()='ImageOrientation']\"/><xsl:apply-templates select=\"*[local-name()='Property']\"/><xsl:apply-templates select=\"*[local-name()='Coords']\"/><xsl:apply-templates select=\"*[local-name()='Baseline']\"/><xsl:apply-templates select=\"*[local-name()='TextLine' or local-name()='Word' or local-name()='Glyph']\"/><xsl:apply-templates select=\"*[local-name()='TextEquiv']\"/><xsl:apply-templates select=\"node()[not(contains(' ImageOrientation Property Coords Baseline TextLine Word Glyph TextEquiv ',concat(' ',local-name(),' ')))]\"/></xsl:copy></xsl:template></xsl:stylesheet>" ) );
 
 bool validation_enabled = true;
 
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.05";
+static char class_version[] = "Version: 2019.04.11";
 
 /**
  * Returns the class version.
