@@ -1,9 +1,6 @@
 [submodule "py-pagexml/opencv-swig"]
 	path = py-pagexml/opencv-swig
 	url = https://github.com/renatoGarcia/opencv-swig.git
-[submodule "doxy2swig"]
-	path = doxy2swig
-	url = https://github.com/m7thon/doxy2swig.git
 [submodule "pageformat"]
 	path = xsd/pageformat
 	url = https://github.com/omni-us/pageformat.git

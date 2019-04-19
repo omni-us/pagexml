@@ -1,3411 +1,2309 @@
-
-// File: index.xml
-
-// File: structi_f1.xml
-
-
-%feature("docstring") iF1 "
-
-C++ includes: mem.h
-";
-
-// File: structi_i1.xml
-
-
-%feature("docstring") iI1 "
-
-C++ includes: mem.h
-";
-
-// File: struct_i_v2.xml
-
-
-%feature("docstring") IV2 "
-
-C++ includes: mem.h
-";
-
-// File: struct_named_image.xml
-
-
-%feature("docstring") NamedImage "
-
-C++ includes: PageXML.h
-";
-
-%feature("docstring") NamedImage::NamedImage "
-";
-
-%feature("docstring") NamedImage::NamedImage "
-";
-
-// File: class_o_g_r_multi_line_string__.xml
-
-
-%feature("docstring") OGRMultiLineString_ "
-
-C++ includes: PageXML.h
-";
-
-%feature("docstring") OGRMultiLineString_::~OGRMultiLineString_ "
-";
-
-%feature("docstring") OGRMultiLineString_::OGRMultiLineString_ "
-";
-
-%feature("docstring") OGRMultiLineString_::OGRMultiLineString_ "
-";
-
-// File: class_o_g_r_multi_polygon__.xml
-
-
-%feature("docstring") OGRMultiPolygon_ "
-
-C++ includes: PageXML.h
-";
-
-%feature("docstring") OGRMultiPolygon_::~OGRMultiPolygon_ "
-";
-
-%feature("docstring") OGRMultiPolygon_::OGRMultiPolygon_ "
-";
-
-%feature("docstring") OGRMultiPolygon_::OGRMultiPolygon_ "
-";
-
-// File: class_page_x_m_l.xml
-
-
-%feature("docstring") PageXML "
-
-C++ includes: PageXML.h
-";
-
-%feature("docstring") PageXML::version "
-
-Returns the class version.  
-";
-
-%feature("docstring") PageXML::printVersions "
-";
-
-%feature("docstring") PageXML::setValidationEnabled "
-
-Enables/disables schema validation.  
-";
-
-%feature("docstring") PageXML::stringToPoints "
-
-Page processing ///.  
-
-Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.  
-
-Parameters
-----------
-* `spoints` :  
-    String containing coordinate pairs.  
-
-Returns
--------
-Array of (x,y) coordinates.  
-";
-
-%feature("docstring") PageXML::stringToPoints "
-";
-
-%feature("docstring") PageXML::pointsToString "
-";
-
-%feature("docstring") PageXML::pointsToString "
-";
-
-%feature("docstring") PageXML::pointsLimits "
-
-Gets the minimum and maximum coordinate values for an array of points.  
-
-Parameters
-----------
-* `points` :  
-    The vector of points to find the limits.  
-* `xmin` :  
-    Minimum x value.  
-* `xmax` :  
-    Maximum x value.  
-* `ymin` :  
-    Minimum y value.  
-* `ymax` :  
-    Maximum y value.  
-";
-
-%feature("docstring") PageXML::pointsBBox "
-
-Generates a vector of 4 points that define the bounding box for a given vector
-of points.  
-
-Parameters
-----------
-* `points` :  
-    The vector of points to find the limits.  
-
-Returns
--------
-The 4 points defining the bounding box (top-left clockwise).  
-";
-
-%feature("docstring") PageXML::isBBox "
-
-Determines whether a vector of points defines a bounding box.  
-
-Parameters
-----------
-* `points` :  
-    The vector of points to find the limits.  
-
-Returns
--------
-True if bounding box, otherwise false.  
-";
-
-%feature("docstring") PageXML::nodeIs "
-
-Checks if node is of given name.  
-
-Parameters
-----------
-* `node` :  
-    XML node.  
-* `name` :  
-    String with name to match against.  
-
-Returns
--------
-True if name matches, otherwise false.  
-";
-
-%feature("docstring") PageXML::~PageXML "
-
-PageXML object destructor.  
-";
+// File: xml/class_page_x_m_l.xml
 
 %feature("docstring") PageXML::PageXML "
+PageXML constructor that receives a file name to load.
 
-Constructors ///.  
+Arguments:
+    pagexml_path (const char *): Path to the XML file to read.
+    schema_path (const char *): Path to the XSD file to read.
 
-PageXML constructor that receives a file name to load.  
-
-Parameters
-----------
-* `pagexml_path` :  
-    Path to the XML file to read.  
-* `schema_path` :  
-    Path to the XSD file to read.  
 ";
 
-%feature("docstring") PageXML::clone "
+%feature("docstring") PageXML::addElem "
+Overloaded function with 3 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addElem(const char *name, const char *id, const xmlNodePt node, PAGEXML_INSERT itype=PAGEXML_INSERT_APPEND, bool checkid=false)``
+
+Creates a new element and adds it relative to a given node.
+
+Arguments:
+    name (const char *): Name of element to create.
+    id (const char *): ID attribute for element.
+    node (const xmlNodePt): Reference element for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+    checkid (bool): 
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addElem(const char *name, const char *id, const char *xpath, PAGEXML_INSERT itype=PAGEXML_INSERT_APPEND, bool checkid=false)``
+
+Creates a new element and adds it relative to a given xpath.
+
+Arguments:
+    name (const char *): Name of element to create.
+    id (const char *): ID attribute for element.
+    xpath (const char *): Selector for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+    checkid (bool): 
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 3**
+
+``xmlNodePt PageXML::addElem(const std::string name, const std::string id, const std::string xpath, PAGEXML_INSERT itype=PAGEXML_INSERT_APPEND, bool checkid=false)``
+
+Arguments:
+    name (const std::string): 
+    id (const std::string): 
+    xpath (const std::string): 
+    itype (PAGEXML_INSERT): 
+    checkid (bool): 
+
+Returns:
+    xmlNodePt: 
+
 ";
 
-%feature("docstring") PageXML::setImagesBaseDir "
+%feature("docstring") PageXML::addGlyph "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addGlyph(xmlNodePt node, const char *id=NULL, const char *before_id=NULL)``
+
+Adds a Glyph to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to add the Glyph.
+    id (const char *): ID for Glyph, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the Glyph with this ID.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addGlyph(const char *xpath, const char *id=NULL, const char *before_id=NULL)``
+
+Adds a Glyph to a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to set the Glyph.
+    id (const char *): ID for Glyph, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the Glyph with this ID.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") PageXML::setXmlFilePath "
+%feature("docstring") PageXML::addPage "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addPage(const char *image, const int imgW, const int imgH, const char *id=NULL, xmlNodePt before_node=NULL)``
+
+Adds a Page to the PcGts node.
+
+Arguments:
+    image (const char *): Path to the image file.
+    imgW (const int): Width of image.
+    imgH (const int): Height of image.
+    id (const char *): ID for Page, if NULL it is left unset.
+    before_node (xmlNodePt): If !=NULL inserts it before the provided Page node.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addPage(std::string image, const int imgW, const int imgH, const char *id=NULL, xmlNodePt before_node=NULL)``
+
+Adds a Page to the PcGts node.
+
+Arguments:
+    image (std::string): Path to the image file.
+    imgW (const int): Width of image.
+    imgH (const int): Height of image.
+    id (const char *): ID for Page, if NULL it is left unset.
+    before_node (xmlNodePt): If !=NULL inserts it before the provided Page node.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") PageXML::getImagesBaseDir "
+%feature("docstring") PageXML::addTextLine "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addTextLine(xmlNodePt node, const char *id=NULL, const char *before_id=NULL)``
+
+Adds a TextLine to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to add the TextLine.
+    id (const char *): ID for TextLine, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TextLine with this ID.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addTextLine(const char *xpath, const char *id=NULL, const char *before_id=NULL)``
+
+Adds a TextLine to a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to add the TextLine.
+    id (const char *): ID for TextLine, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TextLine with this ID.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") PageXML::getXmlFilePath "
+%feature("docstring") PageXML::addTextRegion "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addTextRegion(xmlNodePt node, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``
+
+Adds a TextRegion to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to add the TextRegion.
+    id (const char *): ID for TextRegion, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TextRegion with this ID.
+    prepend (bool): Whether to add element before all other TextRegions.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addTextRegion(const char *xpath, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``
+
+Adds new TextRegion to a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to add the TextRegion.
+    id (const char *): ID for TextRegion, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TextRegion with this ID.
+    prepend (bool): 
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") PageXML::loadSchema "
+%feature("docstring") PageXML::addWord "
+Overloaded function with 2 signatures.
 
-Loads a schema for xml validation.  
+**Signature 1**
 
-Parameters
-----------
-* `schema_path` :  
-    File name of the XSD file to read.  
-";
+``xmlNodePt PageXML::addWord(xmlNodePt node, const char *id=NULL, const char *before_id=NULL)``
 
-%feature("docstring") PageXML::isValid "
+Adds a Word to a given node.
 
-Validates the currently loaded XML.  
-";
+Arguments:
+    node (xmlNodePt): The node of element to add the Word.
+    id (const char *): ID for Word, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the Word with this ID.
 
-%feature("docstring") PageXML::newXml "
+Returns:
+    xmlNodePt: Pointer to created element.
 
-Loaders ///.  
+**Signature 2**
 
-Creates a new Page XML.  
+``xmlNodePt PageXML::addWord(const char *xpath, const char *id=NULL, const char *before_id=NULL)``
 
-Parameters
-----------
-* `creator` :  
-    Info about tool creating the XML.  
-* `image` :  
-    Path to the image file.  
-* `imgW` :  
-    Width of image.  
-* `imgH` :  
-    Height of image.  
-";
+Adds a Word to a given xpath.
 
-%feature("docstring") PageXML::loadXml "
+Arguments:
+    xpath (const char *): Selector for element to set the Word.
+    id (const char *): ID for Word, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the Word with this ID.
 
-Loads a Page XML from a file.  
+Returns:
+    xmlNodePt: Pointer to created element.
 
-Parameters
-----------
-* `fname` :  
-    File name of the XML file to read.  
-";
-
-%feature("docstring") PageXML::loadXml "
-
-Loads a Page XML from an input stream.  
-
-Parameters
-----------
-* `fnum` :  
-    File number from where to read the XML file.  
-* `prevfree` :  
-    Whether to release resources before loading.  
-";
-
-%feature("docstring") PageXML::loadXmlString "
-
-Loads a Page XML from a string.  
-
-Parameters
-----------
-* `xml_string` :  
-    The XML content.  
-";
-
-%feature("docstring") PageXML::releaseImage "
-
-Releases an already loaded image.  
-
-Parameters
-----------
-* `pagenum` :  
-    The number of the page for which to release the image.  
-";
-
-%feature("docstring") PageXML::releaseImage "
-";
-
-%feature("docstring") PageXML::releaseImages "
-";
-
-%feature("docstring") PageXML::loadImage "
-";
-
-%feature("docstring") PageXML::loadImage "
-";
-
-%feature("docstring") PageXML::loadImages "
-";
-
-%feature("docstring") PageXML::simplifyIDs "
-
-Simplifies IDs by removing imgbase prefixes and replaces invalid characters with
-_.  
-
-Returns
--------
-Number of IDs simplified.  
-";
-
-%feature("docstring") PageXML::relativizeImageFilename "
-
-Modifies imageFilename to be a relative path w.r.t. given xml path. Currently
-just checks prefix directories and removes it.  
-";
-
-%feature("docstring") PageXML::getUniqueID "
-
-Gets a unique id.  
-
-Parameters
-----------
-* `prefix` :  
-    Prefix for id.  
-* `suffix` :  
-    Suffix for id.  
-* `count_start` :  
-    Counter start to place between prefix and suffix.  
-* `count_max` :  
-    Maximum count to test.  
-
-Returns
--------
-The generated unique id.  
-";
-
-%feature("docstring") PageXML::relabelChildIDs "
-
-Relabels IDs of child elements.  
-
-Parameters
-----------
-* `node` :  
-    Base node.  
-* `include_self` :  
-    Whether to also relabel the base node.  
-
-Returns
--------
-Number of IDs affected.  
-";
-
-%feature("docstring") PageXML::getImageBases "
-
-Gets image bases for all pages in xml.  
-
-Returns
--------
-Vector of strings containing the image base names.  
 ";
 
 %feature("docstring") PageXML::areIDsUnique "
+Verifies that all IDs in page are unique.
 
-Verifies that all IDs in page are unique.  
+
+Returns:
+    bool: 
+
 ";
 
-%feature("docstring") PageXML::getNodeName "
+%feature("docstring") PageXML::clone "
 
-Gets the name of the given node.  
+Returns:
+    PageXML: 
 
-Parameters
-----------
-* `node` :  
-    XML node.  
-
-Returns
--------
-String with the name.  
-";
-
-%feature("docstring") PageXML::crop "
-
-Crops images using its Coords polygon, regions outside the polygon are set to
-transparent.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for polygons to crop.  
-* `margin` :  
-    Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and
-    height.  
-* `opaque_coords` :  
-    Whether to include an alpha channel with the polygon interior in opaque.  
-* `transp_xpath` :  
-    Selector for semi-transparent elements.  
-
-Returns
--------
-An std::vector containing NamedImage objects of the cropped images.  
-
-Get parent node id ///  
-
-Construct sample name ///  
-
-Get coords points ///  
-
-Get crop window parameters ///  
-
-Add margin to bounding box ///  
-
-Crop image ///  
-
-Subtract crop window offset and round points ///  
-
-Draw opaque polygon for Coords ///  
-
-Draw semi-transparent polygons according to xpath ///  
-
-Add alpha channel to image ///  
-
-Append crop and related data to list ///  
-";
-
-%feature("docstring") PageXML::count "
-
-Returns number of matched nodes for a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector expression.  
-* `node` :  
-    XML node for context, set to NULL for root node.  
-
-Returns
--------
-Number of matched nodes.  
-";
-
-%feature("docstring") PageXML::count "
-";
-
-%feature("docstring") PageXML::select "
-
-Selects nodes given an xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector expression.  
-* `node` :  
-    XML node for context, set to NULL for root node.  
-
-Returns
--------
-Vector of matched nodes.  
-";
-
-%feature("docstring") PageXML::select "
-";
-
-%feature("docstring") PageXML::select "
-";
-
-%feature("docstring") PageXML::selectNth "
-
-Selects the n-th node that matches an xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector expression.  
-* `num` :  
-    Element number (0-indexed), negative from last.  
-* `node` :  
-    XML node for context, set to NULL for root node.  
-
-Returns
--------
-Matched node.  
-";
-
-%feature("docstring") PageXML::selectNth "
-";
-
-%feature("docstring") PageXML::selectByID "
-
-Selects an element with a given ID.  
-
-Parameters
-----------
-* `id` :  
-    ID of element to select.  
-* `node` :  
-    XML node for context, set to NULL for root node.  
-
-Returns
--------
-Matched node.  
-";
-
-%feature("docstring") PageXML::filter "
-
-Filters a vector of xml nodes given an xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Filtering expression.  
-* `elems` :  
-    Vector of nodes to filter.  
-
-Returns
--------
-Vector of filtered nodes.  
 ";
 
 %feature("docstring") PageXML::closest "
+Selects closest node of a given name.
 
-Selects closest node of a given name.  
-";
+Arguments:
+    name (const char *): 
+    node (xmlNodePt): 
 
-%feature("docstring") PageXML::parent "
+Returns:
+    xmlNodePt: 
 
-Returns the parent of a node.  
-
-Parameters
-----------
-* `node` :  
-    XML node.  
-
-Returns
--------
-Parent node.  
-";
-
-%feature("docstring") PageXML::getValue "
-
-Retrieves a node value.  
-
-Parameters
-----------
-* `node` :  
-    Node element.  
-
-Returns
--------
-String with the node value.  
-";
-
-%feature("docstring") PageXML::getValue "
-
-Retrieves a node value.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for the element to get the value.  
-* `node` :  
-    XML node for context, set to NULL for root node.  
-
-Returns
--------
-String with the node value.  
-";
-
-%feature("docstring") PageXML::setValue "
-
-Sets a node value.  
-
-Parameters
-----------
-* `node` :  
-    Node element.  
-
-Returns
--------
-String with the node value.  
-";
-
-%feature("docstring") PageXML::getAttr "
-
-Gets an attribute value from an xml node.  
-
-Parameters
-----------
-* `node` :  
-    XML node.  
-* `name` :  
-    Attribute name.  
-* `value` :  
-    String to set the value.  
-
-Returns
--------
-True if attribute found, otherwise false.  
-";
-
-%feature("docstring") PageXML::getAttr "
-
-Gets an attribute value for a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for the element to get the attribute.  
-* `name` :  
-    Attribute name.  
-* `value` :  
-    String to set the value.  
-
-Returns
--------
-True if attribute found, otherwise false.  
-";
-
-%feature("docstring") PageXML::getAttr "
-";
-
-%feature("docstring") PageXML::setAttr "
-";
-
-%feature("docstring") PageXML::setAttr "
-
-Adds or modifies (if already exists) an attribute for a given node.  
-
-Parameters
-----------
-* `node` :  
-    Node to set the attribute.  
-* `name` :  
-    Attribute name.  
-* `value` :  
-    Attribute value.  
-
-Returns
--------
-Number of elements modified.  
-";
-
-%feature("docstring") PageXML::setAttr "
-
-Adds or modifies (if already exists) an attribute for a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for the element(s) to set the attribute.  
-* `name` :  
-    Attribute name.  
-* `value` :  
-    Attribute value.  
-
-Returns
--------
-Number of elements modified.  
-";
-
-%feature("docstring") PageXML::setAttr "
-";
-
-%feature("docstring") PageXML::insertElem "
-
-Inserts an element relative to a given node.  
-
-Parameters
-----------
-* `elem` :  
-    Element to insert.  
-* `node` :  
-    Reference element for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to inserted element.  
-";
-
-%feature("docstring") PageXML::addElem "
-
-Creates a new element and adds it relative to a given node.  
-
-Parameters
-----------
-* `name` :  
-    Name of element to create.  
-* `id` :  
-    ID attribute for element.  
-* `node` :  
-    Reference element for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addElem "
-
-Creates a new element and adds it relative to a given xpath.  
-
-Parameters
-----------
-* `name` :  
-    Name of element to create.  
-* `id` :  
-    ID attribute for element.  
-* `xpath` :  
-    Selector for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addElem "
-";
-
-%feature("docstring") PageXML::rmElem "
-
-Removes the given element.  
-
-Parameters
-----------
-* `node` :  
-    Element.  
-";
-
-%feature("docstring") PageXML::rmElems "
-";
-
-%feature("docstring") PageXML::rmElems "
-
-Remove the elements that match a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for elements to remove.  
-* `node` :  
-    Base node for element selection.  
-
-Returns
--------
-Number of elements removed.  
-";
-
-%feature("docstring") PageXML::rmElems "
-";
-
-%feature("docstring") PageXML::copyElem "
-
-Clone an element and add it relative to a given node.  
-
-Parameters
-----------
-* `elem` :  
-    Element to clone.  
-* `node` :  
-    Reference element for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to cloned element.  
-";
-
-%feature("docstring") PageXML::moveElem "
-
-Unlink an element and add it relative to a given node.  
-
-Parameters
-----------
-* `elem` :  
-    Element to move.  
-* `node` :  
-    Reference element for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to moved element.  
-";
-
-%feature("docstring") PageXML::moveElems "
-
-Unlink elements and add them relative to a given node.  
-
-Parameters
-----------
-* `elems` :  
-    Elements to move.  
-* `node` :  
-    Reference element for insertion.  
-* `itype` :  
-    Type of insertion.  
-
-Returns
--------
-Pointer to moved element.  
-";
-
-%feature("docstring") PageXML::setRotation "
-
-Sets the rotation angle to a TextRegion node.  
-
-Parameters
-----------
-* `node` :  
-    Node of the TextRegion element.  
-* `rotation` :  
-    Rotation angle to set.  
-";
-
-%feature("docstring") PageXML::setReadingDirection "
-
-Sets the reading direction to a TextRegion node.  
-
-Parameters
-----------
-* `node` :  
-    Node of the TextRegion element.  
-* `direction` :  
-    Direction to set.  
-";
-
-%feature("docstring") PageXML::getDominantBaselinesOrientation "
-
-Gets the dominant orientation angle for a set of baselines.  
-
-Parameters
-----------
-* `elems` :  
-    Nodes of the TextLine elements.  
-
-Returns
--------
-The dominant orientation angle in radians, NaN if unset.  
-";
-
-%feature("docstring") PageXML::getBaselineOrientation "
-
-Gets the baseline orientation angle (weighted average over polyline segments) of
-a given text line.  
-
-Parameters
-----------
-* `elem` :  
-    Node of the TextLine element.  
-
-Returns
--------
-The orientation angle in radians, NaN if unset.  
-";
-
-%feature("docstring") PageXML::getPolylineOrientation "
-
-Gets the baseline orientation angle (weighted average over polyline segments) in
-radians of a given baseline.  
-
-Parameters
-----------
-* `points` :  
-    Baseline points.  
-
-Returns
--------
-The orientation angle in radians, NaN if unset.  
-";
-
-%feature("docstring") PageXML::getPolylineLength "
-
-Gets the baseline length.  
-
-Parameters
-----------
-* `points` :  
-    Baseline points.  
-
-Returns
--------
-The orientation angle in radians, NaN if unset.  
-";
-
-%feature("docstring") PageXML::getRotation "
-
-Retrieves the rotation angle for a given TextLine or TextRegion node.  
-
-Parameters
-----------
-* `elem` :  
-    Node of the TextLine or TextRegion element.  
-
-Returns
--------
-The rotation angle in degrees, 0 if unset.  
-
-If TextLine try to get rotation from custom attribute ///  
-
-Otherwise try to get rotation from readingOrientation attribute ///  
-";
-
-%feature("docstring") PageXML::getReadingDirection "
-
-Retrieves the reading direction for a given TextLine or TextRegion node.  
-
-Parameters
-----------
-* `elem` :  
-    Node of the TextLine or TextRegion element.  
-
-Returns
--------
-The reading direction, PAGEXML_READ_DIRECTION_LTR if unset.  
-
-If TextLine try to get direction from custom attribute ///  
-
-Otherwise try to get direction from readingDirection attribute ///  
-";
-
-%feature("docstring") PageXML::getXheight "
-
-Retrieves the x-height for a given TextLine node.  
-
-Parameters
-----------
-* `node` :  
-    Node of the TextLine element.  
-
-Returns
--------
-x-height>0 on success, -1 if unset.  
-";
-
-%feature("docstring") PageXML::getXheight "
-
-Retrieves the x-height for a given TextLine id.  
-
-Parameters
-----------
-* `id` :  
-    Identifier of the TextLine.  
-
-Returns
--------
-x-height>0 on success, -1 if unset.  
-";
-
-%feature("docstring") PageXML::getFpgram "
-
-Retrieves the features parallelogram (Property[=\"fpgram\"]/) for a given node.  
-
-Parameters
-----------
-* `node` :  
-    Base node.  
-
-Returns
--------
-Reference to the points vector.  
-";
-
-%feature("docstring") PageXML::getPoints "
-
-Retrieves and parses the Coords/ for a given base node.  
-
-Parameters
-----------
-* `node` :  
-    Base node.  
-
-Returns
--------
-Reference to the points vector.  
-";
-
-%feature("docstring") PageXML::getPoints "
-
-Retrieves and parses the Coords/ for a given list of base nodes.  
-
-Parameters
-----------
-* `nodes` :  
-    Base nodes.  
-
-Returns
--------
-Reference to the points vector.  
-";
-
-%feature("docstring") PageXML::getTextEquiv "
-
-Retrieves the concatenated TextEquivs for a given root node and xpath.  
-
-Parameters
-----------
-* `node` :  
-    Root node element.  
-* `xpath` :  
-    Relative xpath to select the TextEquiv elements.  
-* `type` :  
-    Type attribute. Set to \"\" for TextEquivs without a type.  
-* `separator` :  
-    String to add between TextEquivs.  
-
-Returns
--------
-String with the concatenated TextEquivs.  
-";
-
-%feature("docstring") PageXML::processStart "
-
-Starts a process in the Page XML.  
-
-Add Process element ///  
-
-Start time attribute ///  
-
-Tool and ref attributes ///  
-";
-
-%feature("docstring") PageXML::processEnd "
-
-Ends the running process in the Page XML.  
-";
-
-%feature("docstring") PageXML::updateLastChange "
-
-Updates the last change time stamp.  
-";
-
-%feature("docstring") PageXML::getPropertyValue "
-
-Retrieves a Property value.  
-
-Parameters
-----------
-* `node` :  
-    Node element.  
-
-Returns
--------
-String with the property value.  
-";
-
-%feature("docstring") PageXML::setProperty "
-
-Sets a Property to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Property.  
-* `key` :  
-    The key for the Property.  
-* `val` :  
-    The optional value for the Property.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setProperty "
-
-Sets a Property to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Property.  
-* `key` :  
-    The key for the Property.  
-* `val` :  
-    The optional value for the Property.  
-* `conf` :  
-    Confidence value.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setProperty "
-
-Sets a Property to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Property.  
-* `key` :  
-    The key for the Property.  
-* `val` :  
-    Numeric value for the Property.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setProperty "
-
-Sets a Property to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Property.  
-* `key` :  
-    The key for the Property.  
-* `val` :  
-    The optional value for the Property.  
-* `conf` :  
-    Confidence value.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setTextEquiv "
-
-Adds or modifies (if already exists) the TextEquiv for a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the TextEquiv.  
-* `text` :  
-    The text string.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-* `type` :  
-    Type attribute.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setTextEquiv "
-
-Adds or modifies (if already exists) the TextEquiv for a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the TextEquiv.  
-* `text` :  
-    The text string.  
-* `conf` :  
-    Confidence value.  
-* `type` :  
-    Type attribute.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setTextEquiv "
-
-Adds or modifies (if already exists) the TextEquiv for a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to set the TextEquiv.  
-* `text` :  
-    The text string.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-* `type` :  
-    Type attribute.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setTextEquiv "
-
-Adds or modifies (if already exists) the TextEquiv for a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to set the TextEquiv.  
-* `text` :  
-    The text string.  
-* `conf` :  
-    Confidence value.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoords "
-";
-
-%feature("docstring") PageXML::setCoordsBBox "
-
-Adds or modifies (if already exists) the Coords as a bounding box for a given
-node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Coords.  
-* `xmin` :  
-    Minimum x value of bounding box.  
-* `ymin` :  
-    Minimum y value of bounding box.  
-* `width` :  
-    Width of bounding box.  
-* `height` :  
-    Height of bounding box.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-* `subone` :  
-    Whether to subtract 1 when computing xmax and ymax (discrete compatibility).  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setCoordsBBox "
-
-Adds or modifies (if already exists) the Coords as a bounding box for a given
-node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Coords.  
-* `xmin` :  
-    Minimum x value of bounding box.  
-* `ymin` :  
-    Minimum y value of bounding box.  
-* `width` :  
-    Width of bounding box.  
-* `height` :  
-    Height of bounding box.  
-* `conf` :  
-    Confidence value.  
-* `subone` :  
-    Whether to subtract 1 when computing xmax and ymax (discrete compatibility).  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setBaseline "
-";
-
-%feature("docstring") PageXML::setBaseline "
-";
-
-%feature("docstring") PageXML::setBaseline "
-";
-
-%feature("docstring") PageXML::setBaseline "
-";
-
-%feature("docstring") PageXML::setBaseline "
-
-Adds or modifies (if already exists) a two point Baseline for a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Baseline.  
-* `x1` :  
-    x value of first point.  
-* `y1` :  
-    y value of first point.  
-* `x2` :  
-    x value of second point.  
-* `y2` :  
-    y value of second point.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::setBaseline "
-
-Adds or modifies (if already exists) a two point Baseline for a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Baseline.  
-* `x1` :  
-    x value of first point.  
-* `y1` :  
-    y value of first point.  
-* `x2` :  
-    x value of second point.  
-* `y2` :  
-    y value of second point.  
-* `conf` :  
-    Confidence value.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::intersection "
-
-Finds the intersection point between two lines defined by pairs of points or
-returns false if no intersection  
-";
-
-%feature("docstring") PageXML::isPolystripe "
-
-Checks whether Coords is a poly-stripe for its corresponding baseline.  
-
-Parameters
-----------
-* `coords` :  
-    Coords points.  
-* `baseline` :  
-    Baseline points.  
-* `offset` :  
-    The offset of the poly-stripe (>=0 && <= 0.5).  
-
-Returns
--------
-Pointer to created element.  
-
-Check points are collinear ///  
-
-Check lines are parallel ///  
-
-Check stripe extremes perpendicular to baseline ///  
-";
-
-%feature("docstring") PageXML::setPolystripe "
-
-Sets the Coords of a TextLine as a poly-stripe of the baseline.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to set the Coords.  
-* `height` :  
-    The height of the poly-stripe in pixels (>0).  
-* `offset` :  
-    The offset of the poly-stripe (>=0 && <= 0.5).  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::getPageNumber "
-
-Gets the page number for the given node.  
-";
-
-%feature("docstring") PageXML::setPageImageOrientation "
-
-Sets the image orientation for the given Page node.  
-
-Parameters
-----------
-* `node` :  
-    The page node.  
-* `angle` :  
-    The orientation angle in degrees {0,90,180,-90}.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-
-Normalize angle between [-90,180] ///  
-";
-
-%feature("docstring") PageXML::setPageImageOrientation "
-
-Sets the image orientation for the given Page node.  
-
-Parameters
-----------
-* `node` :  
-    The page node.  
-* `angle` :  
-    The orientation angle in degrees {0,90,180,-90}.  
-* `conf` :  
-    Confidence value.  
-";
-
-%feature("docstring") PageXML::setPageImageOrientation "
-
-Sets the image orientation for the given Page number.  
-
-Parameters
-----------
-* `pagenum` :  
-    The page number (0-based).  
-* `angle` :  
-    The orientation angle in degrees {0,90,180,-90}.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-";
-
-%feature("docstring") PageXML::setPageImageOrientation "
-
-Sets the image orientation for the given Page number.  
-
-Parameters
-----------
-* `pagenum` :  
-    The page number (0-based).  
-* `angle` :  
-    The orientation angle in degrees {0,90,180,-90}.  
-* `conf` :  
-    Confidence value.  
-";
-
-%feature("docstring") PageXML::getPageImageOrientation "
-
-Gets the image orientation for the given node.  
-
-Parameters
-----------
-* `node` :  
-    A node to get its image orientation.  
-
-Returns
--------
-Orientation in degrees.  
-";
-
-%feature("docstring") PageXML::getPageImageOrientation "
-
-Gets the image orientation for the given Page number.  
-
-Parameters
-----------
-* `pagenum` :  
-    The page number (0-based).  
-
-Returns
--------
-Orientation in degrees.  
-";
-
-%feature("docstring") PageXML::getPageWidth "
-
-Gets the width of a page (might be different to image width due to the image
-orientation).  
-
-Parameters
-----------
-* `node` :  
-    A node to get its page width.  
-
-Returns
--------
-The page width.  
-";
-
-%feature("docstring") PageXML::getPageWidth "
-
-Gets the width of a page (might be different to image width due to the image
-orientation).  
-
-Parameters
-----------
-* `pagenum` :  
-    The page number (0-based).  
-
-Returns
--------
-The page width.  
-";
-
-%feature("docstring") PageXML::getPageHeight "
-
-Gets the height of a page (might be different to image width due to the image
-orientation).  
-
-Parameters
-----------
-* `node` :  
-    A node to get its page height.  
-
-Returns
--------
-The page height.  
-";
-
-%feature("docstring") PageXML::getPageHeight "
-
-Gets the height of a page (might be different to image width due to the image
-orientation).  
-
-Parameters
-----------
-* `pagenum` :  
-    The page number (0-based).  
-
-Returns
--------
-The page height.  
-";
-
-%feature("docstring") PageXML::setPageWidth "
-
-Sets the width of a page (actually sets imageWidth accounting for image
-orientation).  
-
-Parameters
-----------
-* `node` :  
-    A node to set its page width.  
-* `width` :  
-    The width to set.  
-";
-
-%feature("docstring") PageXML::setPageHeight "
-
-Sets the height of a page (actually sets imageHeight accounting for image
-orientation).  
-
-Parameters
-----------
-* `node` :  
-    A node to set its page height.  
-* `height` :  
-    The height to set.  
-";
-
-%feature("docstring") PageXML::getPagesSize "
-
-Retrieves pages size.  
-
-Parameters
-----------
-* `pages` :  
-    Page nodes.  
-
-Returns
--------
-Vector of page sizes.  
-";
-
-%feature("docstring") PageXML::getPagesSize "
-
-Retrieves pages size.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for Page nodes.  
-
-Returns
--------
-Vector of page sizes.  
-";
-
-%feature("docstring") PageXML::rotatePage "
-
-Rotates a page.  
-
-Parameters
-----------
-* `angle` :  
-    Angle to rotate in degrees {0,90,180,-90}.  
-* `page` :  
-    The Page node.  
-* `update_image_orientation` :  
-    Whether to update the ImageOrientation element.  
-* `conf` :  
-    Confidence value.  
-
-Returns
--------
-Number of elements modified.  
-";
-
-%feature("docstring") PageXML::rotatePage "
-
-Rotates a page.  
-
-Parameters
-----------
-* `angle` :  
-    Angle to rotate in degrees {0,90,180,-90}.  
-* `page` :  
-    The Page node.  
-* `update_image_orientation` :  
-    Whether to check that the aspect ratio is properly preserved.  
-* `_conf` :  
-    Pointer to confidence value, NULL for no confidence.  
-
-Returns
--------
-Number of elements modified.  
-
-Normalize angle between [-90,180] ///  
-
-Set image orientation ///  
-
-Select all elements with coordinates ///  
-
-Rotate all coordinates ///  
-";
-
-%feature("docstring") PageXML::resize "
-
-Resizes pages and all respective coordinates.  
-
-Parameters
-----------
-* `sizes` :  
-    Page sizes to resize to.  
-* `pages` :  
-    Page nodes.  
-* `check_aspect_ratio` :  
-    Whether to check that the aspect ratio is properly preserved.  
-
-Returns
--------
-Number of pages+points attributes modified.  
-
-Input checks ///  
-
-Check that aspect ratios are the same ///  
-
-For each page update size and resize coords ///  
-
-Resize Coords/ and Baseline/ ///  
-
-Resize Property[='fpgram']/ ///  
-";
-
-%feature("docstring") PageXML::resize "
-
-Resizes pages and all respective coordinates.  
-
-Parameters
-----------
-* `sizes` :  
-    Page sizes to resize to.  
-* `xpath` :  
-    Selector for Page nodes.  
-* `check_aspect_ratio` :  
-    Whether to check that the aspect ratio is properly preserved.  
-
-Returns
--------
-Number of pages+points attributes modified.  
-";
-
-%feature("docstring") PageXML::resize "
-
-Resizes a page and all respective coordinates.  
-
-Parameters
-----------
-* `size` :  
-    Page size to resize to.  
-* `page` :  
-    Page node.  
-* `check_aspect_ratio` :  
-    Whether to check that the aspect ratio is properly preserved.  
-
-Returns
--------
-Number of pages+points attributes modified.  
-";
-
-%feature("docstring") PageXML::resize "
-
-Resizes a page and all respective coordinates.  
-
-Parameters
-----------
-* `factor` :  
-    Resizing factor.  
-* `xpath` :  
-    Selector for Page nodes.  
-
-Returns
--------
-Number of pages+points attributes modified.  
-";
-
-%feature("docstring") PageXML::setPageImageFilename "
-
-Sets the imageFilename of a page.  
-";
-
-%feature("docstring") PageXML::setPageImageFilename "
-";
-
-%feature("docstring") PageXML::getPageImageFilename "
-
-Returns the imageFilename of a page.  
-";
-
-%feature("docstring") PageXML::getPageImageFilename "
-";
-
-%feature("docstring") PageXML::isPageImageLoaded "
-
-Checks whether a page image is loaded.  
-";
-
-%feature("docstring") PageXML::isPageImageLoaded "
-";
-
-%feature("docstring") PageXML::getPageImage "
-
-Returns the image for the given page.  
-";
-
-%feature("docstring") PageXML::getPageImage "
-";
-
-%feature("docstring") PageXML::addGlyph "
-
-Adds a Glyph to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to add the Glyph.  
-* `id` :  
-    ID for Glyph, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the Glyph with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addGlyph "
-
-Adds a Glyph to a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to set the Glyph.  
-* `id` :  
-    ID for Glyph, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the Glyph with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addWord "
-
-Adds a Word to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to add the Word.  
-* `id` :  
-    ID for Word, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the Word with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addWord "
-
-Adds a Word to a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to set the Word.  
-* `id` :  
-    ID for Word, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the Word with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addTextLine "
-
-Adds a TextLine to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to add the TextLine.  
-* `id` :  
-    ID for TextLine, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the TextLine with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addTextLine "
-
-Adds a TextLine to a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to add the TextLine.  
-* `id` :  
-    ID for TextLine, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the TextLine with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addTextRegion "
-
-Adds a TextRegion to a given node.  
-
-Parameters
-----------
-* `node` :  
-    The node of element to add the TextRegion.  
-* `id` :  
-    ID for TextRegion, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the TextRegion with this ID.  
-* `prepend` :  
-    Whether to add element before all other TextRegions.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addTextRegion "
-
-Adds new TextRegion to a given xpath.  
-
-Parameters
-----------
-* `xpath` :  
-    Selector for element to add the TextRegion.  
-* `id` :  
-    ID for TextRegion, if NULL it is selected automatically.  
-* `before_id` :  
-    If !=NULL inserts it before the TextRegion with this ID.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addPage "
-
-Adds a Page to the PcGts node.  
-
-Parameters
-----------
-* `image` :  
-    Path to the image file.  
-* `imgW` :  
-    Width of image.  
-* `imgH` :  
-    Height of image.  
-* `id` :  
-    ID for Page, if NULL it is left unset.  
-* `before_node` :  
-    If !=NULL inserts it before the provided Page node.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::addPage "
-
-Adds a Page to the PcGts node.  
-
-Parameters
-----------
-* `image` :  
-    Path to the image file.  
-* `imgW` :  
-    Width of image.  
-* `imgH` :  
-    Height of image.  
-* `id` :  
-    ID for Page, if NULL it is left unset.  
-* `before_node` :  
-    If !=NULL inserts it before the provided Page node.  
-
-Returns
--------
-Pointer to created element.  
-";
-
-%feature("docstring") PageXML::write "
-
-Output ///.  
-
-Writes the current state of the XML to a file using utf-8 encoding.  
-
-Parameters
-----------
-* `fname` :  
-    File name of where the XML file will be written.  
-* `indent` :  
-    Whether to indent the XML.  
-* `validate` :  
-    Whether the Page XML should be validated before writing.  
-
-Returns
--------
-Number of bytes written.  
-";
-
-%feature("docstring") PageXML::toString "
-
-Creates a string representation of the Page XML.  
-
-Parameters
-----------
-* `indent` :  
-    Whether to indent the XML.  
-* `validate` :  
-    Whether the Page XML should be validated before writing.  
-
-Returns
--------
-The Page XML string.  
-";
-
-%feature("docstring") PageXML::pointsToOGRpolygon "
-
-Converts Coords to an OGRMultiPolygon.  
-
-Parameters
-----------
-* `points` :  
-    Vector of x,y points.  
-
-Returns
--------
-Pointer to OGRMultiPolygon element.  
-";
-
-%feature("docstring") PageXML::pointsToOGRpolygons "
-
-Converts Coords to OGRMultiPolygons.  
-
-Parameters
-----------
-* `points` :  
-    Vectors of x,y points.  
-
-Returns
--------
-Pointer to OGRMultiPolygon element.  
-";
-
-%feature("docstring") PageXML::getOGRpolygon "
-
-Gets an element's Coords as an OGRMultiPolygon.  
-
-Parameters
-----------
-* `node` :  
-    The element from which to extract the Coords points.  
-* `xpath` :  
-    Selector for the Coords element.  
-
-Returns
--------
-Pointer to OGRMultiPolygon element.  
-";
-
-%feature("docstring") PageXML::getOGRpolygons "
-
-Gets elements' Coords as OGRMultiPolygons.  
-
-Parameters
-----------
-* `nodes` :  
-    Elements from which to extract the Coords points.  
-* `xpath` :  
-    Selector for the Coords element.  
-
-Returns
--------
-Vector of OGRMultiPolygon pointer elements.  
-";
-
-%feature("docstring") PageXML::getUnionOGRpolygon "
-
-Gets the union of Coords elements as a OGRMultiPolygon.  
-
-Parameters
-----------
-* `nodes` :  
-    Elements from which to extract the Coords points.  
-* `xpath` :  
-    Selector for the Coords element.  
-
-Returns
--------
-Pointer to OGRMultiPolygon element.  
-";
-
-%feature("docstring") PageXML::getOGRpolygonArea "
-
-Gets the area of a OGRMultiPolygon.  
-
-Parameters
-----------
-* `poly` :  
-    OGRMultiPolygon pointer.  
-
-Returns
--------
-Area.  
-";
-
-%feature("docstring") PageXML::getOGRpolyline "
-
-Gets the element's Baseline as an OGRMultiLineString.  
-
-Parameters
-----------
-* `node` :  
-    The element from which to extract the Baseline points.  
-
-Returns
--------
-Pointer to OGRMultiLineString element.  
-";
-
-%feature("docstring") PageXML::multiPolylineIntersection "
-
-Computes the intersection between a multipolylines and a multipolygon.  
-
-Parameters
-----------
-* `poly1` :  
-    Polyline.  
-* `poly2` :  
-    Polygon.  
-
-Returns
--------
-Intersection geometry.  
-";
-
-%feature("docstring") PageXML::multiPolygonIntersection "
-
-Computes the intersection of two multipolygons.  
-
-Parameters
-----------
-* `poly1` :  
-    First polygon.  
-* `poly2` :  
-    Second polygon.  
-
-Returns
--------
-Intersection geometry.  
-";
-
-%feature("docstring") PageXML::computeIntersectFactor "
-
-Computes the intersection factor of one multipolygon over another.  
-
-Parameters
-----------
-* `poly1` :  
-    First polygon.  
-* `poly2` :  
-    Second polygon.  
-
-Returns
--------
-Factor value.  
-";
-
-%feature("docstring") PageXML::computeIntersectFactor "
-
-Computes the intersection factor of one polyline over polygon.  
-
-Parameters
-----------
-* `poly1` :  
-    Polyline.  
-* `poly2` :  
-    Polygon.  
-
-Returns
--------
-Factor value.  
-";
-
-%feature("docstring") PageXML::computeIoU "
-
-Computes the intersection over union (IoU) of two polygons.  
-
-Parameters
-----------
-* `poly1` :  
-    First polygon.  
-* `poly2` :  
-    Second polygon.  
-
-Returns
--------
-IoU value.  
-";
-
-%feature("docstring") PageXML::computeIoUs "
-
-Computes the intersection over unions (IoU) of polygons.  
-
-Parameters
-----------
-* `poly` :  
-    Polygon.  
-* `polys` :  
-    Vector of polygons.  
-
-Returns
--------
-IoU values.  
-";
-
-%feature("docstring") PageXML::computeIntersectionPercentage "
-
-Computes the intersection percentage of one polygon with respect to another
-polygons.  
-
-Parameters
-----------
-* `poly1` :  
-    First polygon.  
-* `poly2` :  
-    Second polygon.  
-
-Returns
--------
-Intersection percentage value.  
-";
-
-%feature("docstring") PageXML::computeIntersectionPercentages "
-
-Computes the intersection percentage of one polygon with respect to other
-polygons.  
-
-Parameters
-----------
-* `poly` :  
-    Polygon.  
-* `polys` :  
-    Vector of polygons.  
-
-Returns
--------
-Intersection percentage values.  
 ";
 
 %feature("docstring") PageXML::computeAreas "
+Computes the areas for given polygons.
 
-Computes the areas for given polygons.  
+Arguments:
+    polys (std::vector< OGRMultiPolygonPtr_ >): Polygons to process.
 
-Parameters
-----------
-* `polys` :  
-    Polygons to process.  
+Returns:
+    std::vector< double >: The polygon areas.
 
-Returns
--------
-The polygon areas.  
-";
-
-%feature("docstring") PageXML::computeCoordsIntersectionsWeightedByArea "
-
-Computes polygon-polygon intersections weighted by area.  
-
-Parameters
-----------
-* `poly` :  
-    Polygon.  
-* `polys` :  
-    Polygons to compare with.  
-* `areas` :  
-    Polygons areas.  
-
-Returns
--------
-Obtained intersection scores.  
-
-Check input ///  
-
-Compute intersections ///  
-
-Return if fewer than 2 intersects ///  
-
-Weight by areas ///  
 ";
 
 %feature("docstring") PageXML::computeBaselineIntersectionsWeightedByArea "
+Computes line-polygon intersections weighted by area.
 
-Computes line-polygon intersections weighted by area.  
+Arguments:
+    poly (OGRMultiLineStringPtr_): Polyline.
+    polys (std::vector< OGRMultiPolygonPtr_ >): Polygons to compare with.
+    areas (std::vector< double >): Polygons areas.
 
-Parameters
-----------
-* `poly` :  
-    Polyline.  
-* `polys` :  
-    Polygons to compare with.  
-* `areas` :  
-    Polygons areas.  
+Returns:
+    std::vector< double >: Obtained intersection scores.
 
-Returns
--------
-Obtained intersection scores.  
-
-Check input ///  
-
-Compute intersections ///  
-
-Return if fewer than 2 intersects ///  
-
-Weight by areas ///  
 ";
 
-%feature("docstring") PageXML::selectByOverlap "
+%feature("docstring") PageXML::computeCoordsIntersectionsWeightedByArea "
+Computes polygon-polygon intersections weighted by area.
 
-Selects elements based on overlap to a polygon.  
+Arguments:
+    poly (OGRMultiPolygonPtr_): Polygon.
+    polys (std::vector< OGRMultiPolygonPtr_ >): Polygons to compare with.
+    areas (std::vector< double >): Polygons areas.
 
-Parameters
-----------
-* `points` :  
-    Polygon for selection.  
-* `page` :  
-    Page element for selection.  
-* `xpath` :  
-    xpath for candidate elements for selection.  
-* `overlap_thr` :  
-    Overlapping score threshold.  
-* `overlap_type` :  
-    Type of overlap to use for selecting.  
+Returns:
+    std::vector< double >: Obtained intersection scores.
 
-Returns
--------
-Number of TextLines copied.  
-
-OGR polygon(s) for selection ///  
-
-Get areas for overlap computation ///  
-
-Loop through elements ///  
-
-Compute overlap scores ///  
-
-Add if higher than threshold ///  
 ";
 
-%feature("docstring") PageXML::selectByOverlap "
+%feature("docstring") PageXML::computeIntersectFactor "
+Overloaded function with 2 signatures.
 
-Selects elements based on overlap to a polygon.  
+**Signature 1**
 
-Parameters
-----------
-* `points` :  
-    Polygon for selection.  
-* `pagenum` :  
-    Page number for selection.  
-* `xpath` :  
-    xpath for candidate elements for selection.  
-* `overlap_thr` :  
-    Overlapping score threshold.  
-* `overlap_type` :  
-    Type of overlap to use for selecting.  
+``double PageXML::computeIntersectFactor(OGRMultiPolygonPtr_ poly1, OGRMultiPolygonPtr_ poly2)``
 
-Returns
--------
-Number of TextLines copied.  
+Computes the intersection factor of one multipolygon over another.
+
+Arguments:
+    poly1 (OGRMultiPolygonPtr_): First polygon.
+    poly2 (OGRMultiPolygonPtr_): Second polygon.
+
+Returns:
+    double: Factor value.
+
+**Signature 2**
+
+``double PageXML::computeIntersectFactor(OGRMultiLineStringPtr_ poly1, OGRMultiPolygonPtr_ poly2)``
+
+Computes the intersection factor of one polyline over polygon.
+
+Arguments:
+    poly1 (OGRMultiLineStringPtr_): Polyline.
+    poly2 (OGRMultiPolygonPtr_): Polygon.
+
+Returns:
+    double: Factor value.
+
+";
+
+%feature("docstring") PageXML::computeIntersectionPercentage "
+Computes the intersection percentage of one polygon with respect to another polygons.
+
+Arguments:
+    poly1 (OGRMultiPolygonPtr_): First polygon.
+    poly2 (OGRMultiPolygonPtr_): Second polygon.
+
+Returns:
+    double: Intersection percentage value.
+
+";
+
+%feature("docstring") PageXML::computeIntersectionPercentages "
+Computes the intersection percentage of one polygon with respect to other polygons.
+
+Arguments:
+    poly (OGRMultiPolygonPtr_): Polygon.
+    polys (std::vector< OGRMultiPolygonPtr_ >): Vector of polygons.
+
+Returns:
+    std::vector< double >: Intersection percentage values.
+
+";
+
+%feature("docstring") PageXML::computeIoU "
+Computes the intersection over union (IoU) of two polygons.
+
+Arguments:
+    poly1 (OGRMultiPolygonPtr_): First polygon.
+    poly2 (OGRMultiPolygonPtr_): Second polygon.
+
+Returns:
+    double: IoU value.
+
+";
+
+%feature("docstring") PageXML::computeIoUs "
+Computes the intersection over unions (IoU) of polygons.
+
+Arguments:
+    poly (OGRMultiPolygonPtr_): Polygon.
+    polys (std::vector< OGRMultiPolygonPtr_ >): Vector of polygons.
+
+Returns:
+    std::vector< double >: IoU values.
+
+";
+
+%feature("docstring") PageXML::copyElem "
+Clone an element and add it relative to a given node.
+
+Arguments:
+    elem (xmlNodePt): Element to clone.
+    node (const xmlNodePt): Reference element for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+
+Returns:
+    xmlNodePt: Pointer to cloned element.
+
 ";
 
 %feature("docstring") PageXML::copyTextLinesAssignByOverlap "
+Copies TextLines from one page xml to another assigning to regions based on overlap.
 
-Copies TextLines from one page xml to another assigning to regions based on
-overlap.  
+Arguments:
+    pageFrom (PageXML &): PageXML from where to copy TextLines.
+    overlap_thr (double): Overlapping score threshold. If overlap below threshold, TextLine is copied to the page region.
+    overlap_type (PAGEXML_OVERLAP): Type of overlap to use for assigning lines to regions.
+    comb_alpha (double): Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for PAGEXML_OVERLAP_COORDS_BASELINE_IWA.
+    verbose (bool): 
 
-Parameters
-----------
-* `pageFrom` :  
-    PageXML from where to copy TextLines.  
-* `overlap_thr` :  
-    Overlapping score threshold. If overlap below threshold, TextLine is copied
-    to the page region.  
-* `overlap_type` :  
-    Type of overlap to use for assigning lines to regions.  
-* `comb_alpha` :  
-    Weight for overlap factors: alpha*bline+(1-alpha)*coords. Only for
-    PAGEXML_OVERLAP_COORDS_BASELINE_IWA.  
+Returns:
+    int: Number of TextLines copied.
 
-Returns
--------
-Number of TextLines copied.  
-
-Loop through pages ///  
-
-Check that image size is the same in both PageXMLs ///  
-
-Select page region or create one if it does not exist ///  
-
-Select relevant elements ///  
-
-Get polygons of regions for IoU computation ///  
-
-Loop through lines ///  
-
-Compute overlap scores ///  
-
-Check if TextLine should be copied ///  
-
-Clone line and add it to the destination region node ///  
-
-Remove added page region if no TextLine was added to it ///  
 ";
 
-%feature("docstring") PageXML::getLeftRightTextContinuationGroups "
+%feature("docstring") PageXML::count "
+Overloaded function with 2 signatures.
 
-Determines groups of left-right text elem continuations (requires single segment
-polystripe).  
+**Signature 1**
 
-Parameters
-----------
-* `elems` :  
-    Text elements to test for continuation: TextLines, Words, Glyphs or
-    TextRegions.  
-* `_group_order` :  
-    Join groups line indices (output).  
-* `_group_score` :  
-    Join group scores (output).  
-* `max_angle_diff` :  
-    Maximum baseline angle difference for joining.  
-* `max_horiz_iou` :  
-    Maximum horizontal IoU for joining.  
-* `min_prolong_fact` :  
-    Minimum prolongation factor for joining.  
-* `prolong_alpha` :  
-    Weight for prolongation factors: alpha*bline+(1-alpha)*coords.  
-* `fake_baseline` :  
-    Use bottom line of Coords rectangle as the baseline.  
-* `recurse_factor` :  
-    Multiplication factor for continuation criteria on each recursion.  
+``int PageXML::count(const char *xpath, xmlNodePt node=NULL)``
 
-Returns
--------
-Number of join groups, elements per group in order and group scores.  
+Returns number of matched nodes for a given xpath.
 
-Get points and compute baseline angles and lengths ///  
+Arguments:
+    xpath (const char *): Selector expression.
+    node (xmlNodePt): XML node for context, set to NULL for root node.
 
-Loop through all directed pairs of text elems ///  
+Returns:
+    int: Number of matched nodes.
 
-Check that baseline angle difference is small ///  
+**Signature 2**
 
-Project baseline limits onto the local horizontal axis ///  
+``int PageXML::count(std::string xpath, xmlNodePt node=NULL)``
 
-Check that elem n starts before elem m ///  
+Arguments:
+    xpath (std::string): 
+    node (xmlNodePt): 
 
-Check that horizontal IoU is small //  
+Returns:
+    int: 
 
-Compute coords endpoint-startpoint intersection factors /// (both ways,
-intersection length of prolongated elem 1 and elem 2 divided by height of elem
-2) /// Todo
-Possible improvement: coords_fact_xx = isect_1d / min(norm_n,norm_m)  
-
-Compute baseline alignment factors /// (both ways, one minus distance between
-prolongated baseline 1 and baseline 2 divided by height of elem 2 ) /// Todo
-Possible improvement: max( 0, 1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )  
-
-Overall alignment factor ///  
-
-Add text elem to a group (new or existing) ///  
-
-Check if should be part of existing group ///  
-
-Unique existing group ///  
-
-Two existing groups, thus merge groups ///  
-
-Update groups ///  
-
-Adjust text elem order for groups with more than two text elems ///  
-
-Get horizontal direction ///  
-
-Check if there is high horizontal overlaps within group ///  
-
-If high overlap recurse with stricter criterion ///  
-
-Project baseline centers onto the local horizontal axis ///  
-
-Sort text elems by horizontal center projections ///  
-
-Score as average of scores ///  
-
-Add recursed extra groups ///  
-
-Sort groups based on first element original order ///  
 ";
 
-%feature("docstring") PageXML::getLeftRightTopBottomReadingOrder "
+%feature("docstring") PageXML::crop "
+Crops images using its Coords polygon, regions outside the polygon are set to transparent.
 
-Gets the reading order for a set of text elems (requires single segment
-polystripe).  
+Arguments:
+    xpath (const char *): Selector for polygons to crop.
+    margin (cv::Point2f *): Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height.
+    opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.
+    transp_xpath (const char *): Selector for semi-transparent elements.
+    base_xpath (const char *): 
 
-Parameters
-----------
-* `elems` :  
-    Elements to process: TextLines, Words, Glyphs or TextRegions.  
-* `max_angle_diff` :  
-    Maximum baseline angle difference for joining.  
-* `max_horiz_iou` :  
-    Maximum horizontal IoU for joining.  
-* `min_prolong_fact` :  
-    Minimum prolongation factor for joining.  
-* `prolong_alpha` :  
-    Weight for prolongation factors: alpha*bline+(1-alpha)*coords.  
-* `fake_baseline` :  
-    Use bottom line of Coords rectangle as the baseline.  
-* `recurse_factor` :  
-    Multiplication factor for continuation criteria on each recursion.  
+Returns:
+    std::vector< NamedImage >: An std::vector containing NamedImage objects of the cropped images.
 
-Returns
--------
-Pair of reading order indices and subgroup lengths.  
+";
 
-Get text elem join groups ///  
+%feature("docstring") PageXML::filter "
+Filters a vector of xml nodes given an xpath.
 
-Get points and compute baseline angles and lengths ///  
+Arguments:
+    xpath (const char *): Filtering expression.
+    elems (const std::vector< xmlNodePt >): Vector of nodes to filter.
 
-Get horizontal direction ///  
+Returns:
+    std::vector< xmlNodePt >: Vector of filtered nodes.
 
-Add text elems not in join groups ///  
+";
 
-Get vertical group center projections ///  
+%feature("docstring") PageXML::getAttr "
+Overloaded function with 3 signatures.
 
-Sort groups by vertical center projections ///  
+**Signature 1**
 
-Populate reading order vector ///  
+``string PageXML::getAttr(const xmlNodePt node, const char *name)``
+
+Gets an attribute value from an xml node.
+
+Arguments:
+    node (const xmlNodePt): XML node.
+    name (const char *): Attribute name.
+
+Returns:
+    std::string: True if attribute found, otherwise false.
+
+**Signature 2**
+
+``string PageXML::getAttr(const char *xpath, const char *name)``
+
+Gets an attribute value for a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for the element to get the attribute.
+    name (const char *): Attribute name.
+
+Returns:
+    std::string: True if attribute found, otherwise false.
+
+**Signature 3**
+
+``std::string PageXML::getAttr(const std::string xpath, const std::string name)``
+
+Arguments:
+    xpath (const std::string): 
+    name (const std::string): 
+
+Returns:
+    std::string: 
+
+";
+
+%feature("docstring") PageXML::getBaselineOrientation "
+Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.
+
+Arguments:
+    elem (xmlNodePt): Node of the TextLine element.
+
+Returns:
+    double: The orientation angle in radians, NaN if unset.
+
 ";
 
 %feature("docstring") PageXML::getDocPtr "
+Returns the XML document pointer.
 
-Returns the XML document pointer.  
+
+Returns:
+    xmlDocPtr: 
+
 ";
 
-// File: structrgb.xml
+%feature("docstring") PageXML::getDominantBaselinesOrientation "
+Gets the dominant orientation angle for a set of baselines.
 
+Arguments:
+    elems (std::vector< xmlNodePt >): Nodes of the TextLine elements.
 
-%feature("docstring") rgb "
+Returns:
+    double: The dominant orientation angle in radians, NaN if unset.
 
-C++ includes: mem.h
 ";
 
-// File: class_text_feat_extractor.xml
+%feature("docstring") PageXML::getFpgram "
+Retrieves the features parallelogram (Property[@key='fpgram']/@value) for a given node.
 
+Arguments:
+    node (const xmlNodePt): Base node.
 
-%feature("docstring") TextFeatExtractor "
+Returns:
+    std::vector< cv::Point2f >: Reference to the points vector.
 
-C++ includes: TextFeatExtractor.h
 ";
+
+%feature("docstring") PageXML::getImageBases "
+Gets image bases for all pages in xml.
 
-%feature("docstring") TextFeatExtractor::version "
 
-Returns the class version.  
+Returns:
+    std::vector< std::string >: Vector of strings containing the image base names.
+
 ";
 
-%feature("docstring") TextFeatExtractor::TextFeatExtractor "
+%feature("docstring") PageXML::getImagesBaseDir "
 
-Constructors ///.  
+Returns:
+    std::string: 
+
 ";
 
-%feature("docstring") TextFeatExtractor::printConf "
+%feature("docstring") PageXML::getLeftRightTextContinuationGroups "
+Determines groups of left-right text elem continuations (requires single segment polystripe).
 
-Configuration ///.  
+Arguments:
+    elems (std::vector< xmlNodePt >): Text elements to test for continuation: TextLines, Words, Glyphs or TextRegions.
+    _group_order (std::vector< std::vector< int > > &): Join groups line indices (output).
+    _group_score (std::vector< double > &): Join group scores (output).
+    max_angle_diff (double): Maximum baseline angle difference for joining.
+    max_horiz_iou (double): Maximum horizontal IoU for joining.
+    min_prolong_fact (double): Minimum prolongation factor for joining.
+    prolong_alpha (double): Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
+    fake_baseline (bool): Use bottom line of Coords rectangle as the baseline.
+    recurse_factor (double): Multiplication factor for continuation criteria on each recursion.
 
-Prints the current configuration.  
+Returns:
+    int: Number of join groups, elements per group in order and group scores.
 
-Parameters
-----------
-* `file` :  
-    File to print to.  
 ";
+
+%feature("docstring") PageXML::getLeftRightTopBottomReadingOrder "
+Gets the reading order for a set of text elems (requires single segment polystripe).
 
-%feature("docstring") TextFeatExtractor::preprocess "
+Arguments:
+    elems (std::vector< xmlNodePt >): Elements to process: TextLines, Words, Glyphs or TextRegions.
+    max_angle_diff (double): Maximum baseline angle difference for joining.
+    max_horiz_iou (double): Maximum horizontal IoU for joining.
+    min_prolong_fact (double): Minimum prolongation factor for joining.
+    prolong_alpha (double): Weight for prolongation factors: alpha*bline+(1-alpha)*coords.
+    fake_baseline (bool): Use bottom line of Coords rectangle as the baseline.
+    recurse_factor (double): Multiplication factor for continuation criteria on each recursion.
 
-Pre-processes a text image, optionally computing the connected components
-contour.  
+Returns:
+    std::pair< std::vector< int >, std::vector< int > >: Pair of reading order indices and subgroup lengths.
 
-Parameters
-----------
-* `image` :  
-    Image to process.  
-* `_fcontour` :  
-    Output contour points, set to NULL to skip computation.  
-* `randomize` :  
-    Whether to do a random perturbation of preprocessing parameters.  
+";
 
-Convert to grayscale ///  
+%feature("docstring") PageXML::getNodeName "
+Gets the name of the given node.
 
-Contrast stretching ///  
+Arguments:
+    node (xmlNodePt): XML node.
+    base_node (xmlNodePt): 
 
-Text image enhancement ///  
+Returns:
+    std::string: String with the name.
+
+";
 
-Random perturbation ///  
+%feature("docstring") PageXML::getOGRpolygon "
+Gets an element's Coords as an OGRMultiPolygon.
 
-Compute connected components contour polygon ///  
+Arguments:
+    node (const xmlNodePt): The element from which to extract the Coords points.
+    xpath (const char *): Selector for the Coords element.
 
-Binalize image ///  
+Returns:
+    OGRMultiPolygonPtr_: Pointer to OGRMultiPolygon element.
 
-Add border ///  
+";
 
-Apply RLSA ///  
+%feature("docstring") PageXML::getOGRpolygonArea "
+Gets the area of a OGRMultiPolygon.
 
-Join connected components ///  
+Arguments:
+    poly (OGRMultiPolygonPtr_): OGRMultiPolygon pointer.
 
-Dilate using disk structural element ///  
+Returns:
+    double: Area.
 
-Get contour coordinates ///  
 ";
-
-%feature("docstring") TextFeatExtractor::estimateAngles "
 
-Estimates slope and slant angles for an image.  
+%feature("docstring") PageXML::getOGRpolygons "
+Gets elements' Coords as OGRMultiPolygons.
 
-Parameters
-----------
-* `image` :  
-    Image to process.  
-* `_slope` :  
-    Estimated slope angle in degrees.  
-* `_slant` :  
-    Estimated slant angle in degrees.  
+Arguments:
+    nodes (std::vector< xmlNodePt >): Elements from which to extract the Coords points.
+    xpath (const char *): Selector for the Coords element.
 
-Estimate line slope angle ///  
+Returns:
+    std::vector< OGRMultiPolygonPtr_ >: Vector of OGRMultiPolygon pointer elements.
 
-Estimate writing slant angle ///  
 ";
 
-%feature("docstring") TextFeatExtractor::extractFeats "
+%feature("docstring") PageXML::getOGRpolyline "
+Gets the element's Baseline as an OGRMultiLineString.
 
-Extracts features for the given image already preprocessed image.  
+Arguments:
+    node (const xmlNodePt): The element from which to extract the Baseline points.
+    xpath (const char *): 
 
-Parameters
-----------
-* `feaimg` :  
-    Image to process.  
-* `slope` :  
-    Slope angle in degrees.  
-* `slant` :  
-    Slant angle in degrees.  
-* `_fpgram` :  
-    Output features parallelogram coordinates.  
-* `randomize` :  
-    Whether to do a random perturbation of extraction parameters.  
+Returns:
+    OGRMultiLineStringPtr_: Pointer to OGRMultiLineString element.
+
+";
 
-Returns
--------
-Features matrix.  
+%feature("docstring") PageXML::getPageHeight "
+Overloaded function with 2 signatures.
 
-Set image transparent zones to white ///  
+**Signature 1**
 
-Random slant ///  
+``unsigned int PageXML::getPageHeight(xmlNodePt node)``
 
-Apply affine transformation considering both slope and slant ///  
+Gets the height of a page (might be different to image width due to the image orientation).
 
-Trim image ///  
+Arguments:
+    node (xmlNodePt): A node to get its page height.
 
-Momentum normalization ///  
+Returns:
+    unsigned int: The page height.
 
-Normalize x-height ///  
+**Signature 2**
 
-Random scaling ///  
+``unsigned int PageXML::getPageHeight(int pagenum)``
 
-Add left and right padding ///  
+Gets the height of a page (might be different to image width due to the image orientation).
 
-Account for reading direction ///  
+Arguments:
+    pagenum (int): The page number (0-based).
 
-Compute features parallelogram ///  
+Returns:
+    unsigned int: The page height.
 
-Compute features ///  
 ";
 
-%feature("docstring") TextFeatExtractor::isImageFormat "
+%feature("docstring") PageXML::getPageImage "
+Overloaded function with 2 signatures.
 
-Whether the configured output format is image.  
-";
+**Signature 1**
 
-%feature("docstring") TextFeatExtractor::write "
+``PageImage PageXML::getPageImage(int pagenum)``
 
-Prints features to a file stream using the configured output format.  
+Returns the image for the given page.
 
-Parameters
-----------
-* `feats` :  
-    OpenCV matrix containing the features.  
-* `file` :  
-    File stream to write the features.  
-";
+Arguments:
+    pagenum (int): 
+
+Returns:
+    PageImage: 
 
-%feature("docstring") TextFeatExtractor::write "
+**Signature 2**
 
-Writes features to a file using the configured output format.  
+``PageImage PageXML::getPageImage(xmlNodePt node)``
 
-Parameters
-----------
-* `feats` :  
-    OpenCV matrix containing the features.  
-* `fname` :  
-    File name of where to write the features.  
+Arguments:
+    node (xmlNodePt): 
+
+Returns:
+    PageImage: 
+
 ";
 
-// File: namespacestd.xml
+%feature("docstring") PageXML::getPageImageFilename "
+Overloaded function with 2 signatures.
 
-// File: namespacestd_1_1chrono.xml
+**Signature 1**
 
-// File: intimg_8cc.xml
+``string PageXML::getPageImageFilename(xmlNodePt node)``
 
-%feature("docstring") malloc_II1 "
+Returns the imageFilename of a page.
 
-Functions related to integral images  
+Arguments:
+    node (xmlNodePt): 
 
-copyright: Copyright (c) 2004-present, Mauricio Villegas
-    mauricio_ville@yahoo.com  MIT License  
-";
+Returns:
+    std::string: 
 
-%feature("docstring") malloc_II2 "
-";
+**Signature 2**
 
-%feature("docstring") compII12_graym "
-";
+``string PageXML::getPageImageFilename(int pagenum)``
 
-%feature("docstring") cropsum_II "
-";
+Arguments:
+    pagenum (int): 
 
-%feature("docstring") mean_II "
-";
+Returns:
+    std::string: 
 
-%feature("docstring") sd_II "
 ";
 
-%feature("docstring") meanSd_II "
-";
+%feature("docstring") PageXML::getPageImageOrientation "
+Overloaded function with 2 signatures.
 
-%feature("docstring") meanSdCW_II "
-";
+**Signature 1**
 
-%feature("docstring") enhSauvola_single "
-";
+``int PageXML::getPageImageOrientation(xmlNodePt node)``
 
-%feature("docstring") enhWolf_single "
-";
+Gets the image orientation for the given node.
 
-%feature("docstring") minValmaxStd "
-";
+Arguments:
+    node (xmlNodePt): A node to get its image orientation.
 
-%feature("docstring") enhLocal_graym "
-";
+Returns:
+    int: Orientation in degrees.
 
-%feature("docstring") enhSauvola_sample_prm_graym "
-";
+**Signature 2**
 
-// File: intimg_8h.xml
+``int PageXML::getPageImageOrientation(int pagenum)``
 
-%feature("docstring") malloc_II1 "
+Gets the image orientation for the given Page number.
 
-Functions related to integral images  
+Arguments:
+    pagenum (int): The page number (0-based).
 
-copyright: Copyright (c) 2004-present, Mauricio Villegas
-    mauricio_ville@yahoo.com  MIT License  
-";
+Returns:
+    int: Orientation in degrees.
 
-%feature("docstring") malloc_II2 "
 ";
 
-%feature("docstring") compII12_graym "
-";
+%feature("docstring") PageXML::getPageNumber "
+Gets the page number for the given node.
 
-%feature("docstring") cropsum_II "
-";
+Arguments:
+    node (xmlNodePt): 
 
-%feature("docstring") mean_II "
-";
+Returns:
+    int: 
 
-%feature("docstring") sd_II "
 ";
 
-%feature("docstring") meanSd_II "
-";
+%feature("docstring") PageXML::getPageWidth "
+Overloaded function with 2 signatures.
 
-%feature("docstring") enhLocal_graym "
-";
+**Signature 1**
 
-%feature("docstring") enhSauvola_graym "
-";
+``unsigned int PageXML::getPageWidth(xmlNodePt node)``
 
-%feature("docstring") enhSauvola_sample_prm_graym "
-";
+Gets the width of a page (might be different to image width due to the image orientation).
 
-// File: mem_8cc.xml
+Arguments:
+    node (xmlNodePt): A node to get its page width.
 
-%feature("docstring") bfree "
+Returns:
+    unsigned int: The page width.
 
-Functions for allocating memory  
+**Signature 2**
 
-copyright: Copyright (c) 2004-present, Mauricio Villegas
-    mauricio_ville@yahoo.com  MIT License  
-";
+``unsigned int PageXML::getPageWidth(int pagenum)``
 
-%feature("docstring") zeros_I1 "
-";
+Gets the width of a page (might be different to image width due to the image orientation).
 
-%feature("docstring") zeros_F1 "
-";
+Arguments:
+    pagenum (int): The page number (0-based).
 
-%feature("docstring") zeros_D1 "
-";
+Returns:
+    unsigned int: The page width.
 
-%feature("docstring") copy_I1 "
 ";
 
-%feature("docstring") copy_F1 "
-";
+%feature("docstring") PageXML::getPagesSize "
+Overloaded function with 2 signatures.
 
-%feature("docstring") copy_D1 "
-";
+**Signature 1**
 
-%feature("docstring") clone_graym "
-";
+``std::vector< cv::Size2i > PageXML::getPagesSize(std::vector< xmlNodePt > pages)``
 
-%feature("docstring") clone_pixelm "
-";
+Retrieves pages size.
 
-%feature("docstring") malloc_grayv "
-";
+Arguments:
+    pages (std::vector< xmlNodePt >): Page nodes.
 
-%feature("docstring") malloc_pixelv "
-";
+Returns:
+    std::vector< cv::Size2i >: Vector of page sizes.
 
-%feature("docstring") malloc_I1v "
-";
+**Signature 2**
 
-%feature("docstring") malloc_F1v "
-";
+``std::vector< cv::Size2i > PageXML::getPagesSize(const char *xpath=\"//_:Page\")``
 
-%feature("docstring") malloc_D1v "
-";
+Retrieves pages size.
 
-%feature("docstring") malloc_iI1v "
-";
+Arguments:
+    xpath (const char *): Selector for Page nodes.
 
-%feature("docstring") malloc_iF1v "
-";
+Returns:
+    std::vector< cv::Size2i >: Vector of page sizes.
 
-%feature("docstring") malloc_IV2v "
 ";
 
-%feature("docstring") malloc_graym "
-";
+%feature("docstring") PageXML::getPoints "
+Overloaded function with 2 signatures.
 
-%feature("docstring") malloc_pixelm "
-";
+**Signature 1**
 
-%feature("docstring") malloc_I1m "
-";
+``vector< cv::Point2f > PageXML::getPoints(const xmlNodePt node, const char *xpath=\"_:Coords\")``
 
-%feature("docstring") malloc_F1m "
-";
+Retrieves and parses the Coords/ for a given base node.
 
-%feature("docstring") malloc_D1m "
-";
+Arguments:
+    node (const xmlNodePt): Base node.
+    xpath (const char *): 
 
-%feature("docstring") malloc_F1t "
-";
+Returns:
+    std::vector< cv::Point2f >: Reference to the points vector.
 
-%feature("docstring") malloc_D1t "
-";
+**Signature 2**
 
-%feature("docstring") nullfree "
-";
+``std::vector< std::vector< cv::Point2f > > PageXML::getPoints(const std::vector< xmlNodePt > nodes, const char *xpath=\"_:Coords\")``
 
-%feature("docstring") mclone "
-";
+Retrieves and parses the Coords/ for a given list of base nodes.
 
-%feature("docstring") mem "
-";
+Arguments:
+    nodes (const std::vector< xmlNodePt >): Base nodes.
+    xpath (const char *): 
 
-%feature("docstring") mmem "
-";
+Returns:
+    std::vector< std::vector< cv::Point2f > >: Reference to the points vector.
 
-%feature("docstring") bmem "
 ";
 
-%feature("docstring") tmem "
-";
+%feature("docstring") PageXML::getPolylineLength "
+Gets the baseline length.
 
-%feature("docstring") vrmem_index "
-";
+Arguments:
+    points (std::vector< cv::Point2f >): Baseline points.
 
-%feature("docstring") vrmem "
+Returns:
+    double: The orientation angle in radians, NaN if unset.
+
 ";
 
-// File: mem_8h.xml
+%feature("docstring") PageXML::getPolylineOrientation "
+Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.
 
-%feature("docstring") bfree "
+Arguments:
+    points (std::vector< cv::Point2f >): Baseline points.
 
-Functions for allocating memory  
+Returns:
+    double: The orientation angle in radians, NaN if unset.
 
-copyright: Copyright (c) 2004-present, Mauricio Villegas
-    mauricio_ville@yahoo.com  MIT License  
 ";
 
-%feature("docstring") zeros_I1 "
-";
+%feature("docstring") PageXML::getPropertyValue "
+Retrieves a Property value.
 
-%feature("docstring") zeros_F1 "
-";
+Arguments:
+    node (xmlNodePt): Node element.
+    key (const char *): 
 
-%feature("docstring") zeros_D1 "
-";
+Returns:
+    std::string: String with the property value.
 
-%feature("docstring") copy_I1 "
 ";
 
-%feature("docstring") copy_F1 "
-";
+%feature("docstring") PageXML::getReadingDirection "
+Retrieves the reading direction for a given TextLine or TextRegion node.
 
-%feature("docstring") copy_D1 "
-";
+Arguments:
+    elem (const xmlNodePt): Node of the TextLine or TextRegion element.
 
-%feature("docstring") clone_graym "
-";
+Returns:
+    int: The reading direction, PAGEXML_READ_DIRECTION_LTR if unset.
 
-%feature("docstring") clone_pixelm "
 ";
+
+%feature("docstring") PageXML::getRotation "
+Retrieves the rotation angle for a given TextLine or TextRegion node.
+
+Arguments:
+    elem (const xmlNodePt): Node of the TextLine or TextRegion element.
 
-%feature("docstring") malloc_grayv "
+Returns:
+    double: The rotation angle in degrees, 0 if unset.
+
 ";
+
+%feature("docstring") PageXML::getTextEquiv "
+Retrieves the concatenated TextEquivs for a given root node and xpath.
+
+Arguments:
+    node (xmlNodePt): Root node element.
+    xpath (const char *): Relative xpath to select the TextEquiv elements.
+    type (const char *): Type attribute. Set to \"\" for TextEquivs without a type.
+    separator (const char *): String to add between TextEquivs.
+
+Returns:
+    std::string: String with the concatenated TextEquivs.
 
-%feature("docstring") malloc_pixelv "
 ";
 
-%feature("docstring") malloc_I1v "
+%feature("docstring") PageXML::getUnionOGRpolygon "
+Gets the union of Coords elements as a OGRMultiPolygon.
+
+Arguments:
+    nodes (std::vector< xmlNodePt >): Elements from which to extract the Coords points.
+    xpath (const char *): Selector for the Coords element.
+
+Returns:
+    OGRMultiPolygonPtr_: Pointer to OGRMultiPolygon element.
+
 ";
+
+%feature("docstring") PageXML::getUniqueID "
+Gets a unique id.
+
+Arguments:
+    prefix (const char *): Prefix for id.
+    suffix (const char *): Suffix for id.
+    count_start (int): Counter start to place between prefix and suffix.
+    count_max (int): Maximum count to test.
+
+Returns:
+    std::string: The generated unique id.
 
-%feature("docstring") malloc_F1v "
 ";
+
+%feature("docstring") PageXML::getValue "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``std::string PageXML::getValue(xmlNodePt node)``
+
+Retrieves a node value.
+
+Arguments:
+    node (xmlNodePt): Node element.
+
+Returns:
+    std::string: String with the node value.
+
+**Signature 2**
 
-%feature("docstring") malloc_D1v "
+``std::string PageXML::getValue(const char *xpath, const xmlNodePt node=NULL)``
+
+Retrieves a node value.
+
+Arguments:
+    xpath (const char *): Selector for the element to get the value.
+    node (const xmlNodePt): XML node for context, set to NULL for root node.
+
+Returns:
+    std::string: String with the node value.
+
 ";
+
+%feature("docstring") PageXML::getXheight "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``float PageXML::getXheight(const xmlNodePt node)``
+
+Retrieves the x-height for a given TextLine node.
+
+Arguments:
+    node (const xmlNodePt): Node of the TextLine element.
+
+Returns:
+    float: x-height>0 on success, -1 if unset.
+
+**Signature 2**
+
+``float PageXML::getXheight(const char *id)``
+
+Retrieves the x-height for a given TextLine id.
+
+Arguments:
+    id (const char *): Identifier of the TextLine.
 
-%feature("docstring") malloc_iI1v "
+Returns:
+    float: x-height>0 on success, -1 if unset.
+
 ";
+
+%feature("docstring") PageXML::getXmlFilePath "
+
+Returns:
+    std::string: 
 
-%feature("docstring") malloc_iF1v "
 ";
+
+%feature("docstring") PageXML::insertElem "
+Inserts an element relative to a given node.
+
+Arguments:
+    elem (xmlNodePt): Element to insert.
+    node (const xmlNodePt): Reference element for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+
+Returns:
+    xmlNodePt: Pointer to inserted element.
 
-%feature("docstring") malloc_IV2v "
 ";
 
-%feature("docstring") malloc_graym "
+%feature("docstring") PageXML::intersection "
+Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+
+Arguments:
+    line1_point1 (cv::Point2f): 
+    line1_point2 (cv::Point2f): 
+    line2_point1 (cv::Point2f): 
+    line2_point2 (cv::Point2f): 
+    _ipoint (cv::Point2f &): 
+
+Returns:
+    bool: 
+
 ";
 
-%feature("docstring") malloc_pixelm "
+%feature("docstring") PageXML::isBBox "
+Determines whether a vector of points defines a bounding box.
+
+Arguments:
+    points (const std::vector< cv::Point2f > &): The vector of points to find the limits.
+
+Returns:
+    bool: True if bounding box, otherwise false.
+
 ";
+
+%feature("docstring") PageXML::isPageImageLoaded "
+Overloaded function with 2 signatures.
 
-%feature("docstring") malloc_I1m "
+**Signature 1**
+
+``bool PageXML::isPageImageLoaded(int pagenum)``
+
+Checks whether a page image is loaded.
+
+Arguments:
+    pagenum (int): 
+
+Returns:
+    bool: 
+
+**Signature 2**
+
+``bool PageXML::isPageImageLoaded(xmlNodePt node)``
+
+Arguments:
+    node (xmlNodePt): 
+
+Returns:
+    bool: 
+
 ";
 
-%feature("docstring") malloc_F1m "
+%feature("docstring") PageXML::isPolystripe "
+Checks whether Coords is a poly-stripe for its corresponding baseline.
+
+Arguments:
+    coords (std::vector< cv::Point2f >): Coords points.
+    baseline (std::vector< cv::Point2f >): Baseline points.
+    height (double *): 
+    offset (double *): The offset of the poly-stripe (>=0 && <= 0.5).
+
+Returns:
+    bool: Pointer to created element.
+
 ";
+
+%feature("docstring") PageXML::isValid "
+Validates the currently loaded XML.
 
-%feature("docstring") malloc_D1m "
+Arguments:
+    xml_to_validate (xmlDocPtr): 
+
+Returns:
+    bool: 
+
 ";
+
+%feature("docstring") PageXML::loadImage "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``void PageXML::loadImage(int pagenum, const char *fname=NULL, const bool resize_coords=false, int density=0)``
+
+Arguments:
+    pagenum (int): 
+    fname (const char *): 
+    resize_coords (const bool): 
+    density (int): 
 
-%feature("docstring") malloc_F1t "
+**Signature 2**
+
+``void PageXML::loadImage(xmlNodePt node, const char *fname=NULL, const bool resize_coords=false, int density=0)``
+
+Arguments:
+    node (xmlNodePt): 
+    fname (const char *): 
+    resize_coords (const bool): 
+    density (int): 
+
 ";
 
-%feature("docstring") malloc_D1t "
+%feature("docstring") PageXML::loadImages "
+Arguments:
+    resize_coords (const bool): 
+    density (const int): 
+
 ";
+
+%feature("docstring") PageXML::loadSchema "
+Loads a schema for xml validation.
 
-%feature("docstring") nullfree "
+Arguments:
+    schema_path (const char *): File name of the XSD file to read.
+
 ";
+
+%feature("docstring") PageXML::loadXml "
+Overloaded function with 2 signatures.
 
-%feature("docstring") mclone "
+**Signature 1**
+
+``void PageXML::loadXml(const char *fname, bool validate=true)``
+
+Loads a Page XML from a file.
+
+Arguments:
+    fname (const char *): File name of the XML file to read.
+    validate (bool): 
+
+**Signature 2**
+
+``void PageXML::loadXml(int fnum, bool prevfree=true, bool validate=true)``
+
+Loads a Page XML from an input stream.
+
+Arguments:
+    fnum (int): File number from where to read the XML file.
+    prevfree (bool): Whether to release resources before loading.
+    validate (bool): 
+
 ";
+
+%feature("docstring") PageXML::loadXmlString "
+Loads a Page XML from a string.
+
+Arguments:
+    xml_string (const char *): The XML content.
+    validate (bool): 
 
-%feature("docstring") mem "
 ";
 
-%feature("docstring") mmem "
+%feature("docstring") PageXML::moveElem "
+Unlink an element and add it relative to a given node.
+
+Arguments:
+    elem (xmlNodePt): Element to move.
+    node (const xmlNodePt): Reference element for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+
+Returns:
+    xmlNodePt: Pointer to moved element.
+
 ";
+
+%feature("docstring") PageXML::moveElems "
+Unlink elements and add them relative to a given node.
 
-%feature("docstring") bmem "
+Arguments:
+    elems (const std::vector< xmlNodePt > &): Elements to move.
+    node (const xmlNodePt): Reference element for insertion.
+    itype (PAGEXML_INSERT): Type of insertion.
+
+Returns:
+    int: Pointer to moved element.
+
 ";
+
+%feature("docstring") PageXML::multiPolygonIntersection "
+Computes the intersection of two multipolygons.
 
-%feature("docstring") tmem "
+Arguments:
+    poly1 (OGRMultiPolygonPtr_): First polygon.
+    poly2 (OGRMultiPolygonPtr_): Second polygon.
+
+Returns:
+    OGRMultiPolygonPtr_: Intersection geometry.
+
 ";
+
+%feature("docstring") PageXML::multiPolylineIntersection "
+Computes the intersection between a multipolylines and a multipolygon.
 
-%feature("docstring") vrmem_index "
+Arguments:
+    poly1 (OGRMultiLineStringPtr_): Polyline.
+    poly2 (OGRMultiPolygonPtr_): Polygon.
+
+Returns:
+    OGRMultiLineStringPtr_: Intersection geometry.
+
 ";
+
+%feature("docstring") PageXML::newXml "
+Creates a new Page XML.
 
-%feature("docstring") vrmem "
+Arguments:
+    creator (const char *): Info about tool creating the XML.
+    image (const char *): Path to the image file.
+    imgW (const int): Width of image.
+    imgH (const int): Height of image.
+    pagens (const char *): 
+
+Returns:
+    xmlNodePt: 
+
 ";
+
+%feature("docstring") PageXML::nodeIs "
+Checks if node is of given name.
+
+Arguments:
+    node (xmlNodePt): XML node.
+    name (const char *): String with name to match against.
 
-// File: _page_x_m_l_8cc.xml
+Returns:
+    bool: True if name matches, otherwise false.
 
-%feature("docstring") std::reXheight "
 ";
 
-%feature("docstring") std::reRotation "
+%feature("docstring") PageXML::parent "
+Returns the parent of a node.
+
+Arguments:
+    node (const xmlNodePt): XML node.
+
+Returns:
+    xmlNodePt: Parent node.
+
 ";
+
+%feature("docstring") PageXML::pointsBBox "
+Generates a vector of 4 points that define the bounding box for a given vector of points.
+
+Arguments:
+    points (std::vector< cv::Point2f >): The vector of points to find the limits.
+
+Returns:
+    std::vector< cv::Point2f >: The 4 points defining the bounding box (top-left clockwise).
 
-%feature("docstring") std::reDirection "
 ";
 
-%feature("docstring") std::reFileExt "
+%feature("docstring") PageXML::pointsLimits "
+Gets the minimum and maximum coordinate values for an array of points.
+
+Arguments:
+    points (std::vector< cv::Point2f > &): The vector of points to find the limits.
+    xmin (double &): Minimum x value.
+    xmax (double &): Maximum x value.
+    ymin (double &): Minimum y value.
+    ymax (double &): Maximum y value.
+
 ";
+
+%feature("docstring") PageXML::pointsToOGRpolygon "
+Converts Coords to an OGRMultiPolygon.
 
-%feature("docstring") std::reInvalidBaseChars "
+Arguments:
+    points (std::vector< cv::Point2f >): Vector of x,y points.
+
+Returns:
+    OGRMultiPolygonPtr_: Pointer to OGRMultiPolygon element.
+
 ";
+
+%feature("docstring") PageXML::pointsToOGRpolygons "
+Converts Coords to OGRMultiPolygons.
+
+Arguments:
+    points (std::vector< std::vector< cv::Point2f > >): Vectors of x,y points.
 
-%feature("docstring") std::reImagePageNum "
+Returns:
+    std::vector< OGRMultiPolygonPtr_ >: Pointer to OGRMultiPolygon element.
+
 ";
+
+%feature("docstring") PageXML::pointsToString "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``static std::string PageXML::pointsToString(std::vector< cv::Point2f > points, bool rounded=false)``
+
+Arguments:
+    points (std::vector< cv::Point2f >): 
+    rounded (bool): 
+
+Returns:
+    std::string: 
 
-%feature("docstring") std::reIsPdf "
+**Signature 2**
+
+``static std::string PageXML::pointsToString(std::vector< cv::Point > points)``
+
+Arguments:
+    points (std::vector< cv::Point >): 
+
+Returns:
+    std::string: 
+
 ";
+
+%feature("docstring") PageXML::printVersions "
+Arguments:
+    file (FILE *): 
 
-%feature("docstring") std::reIsTiff "
 ";
 
-%feature("docstring") std::validationErrorFunc "
+%feature("docstring") PageXML::processEnd "
+Ends the running process in the Page XML.
 
-Schema validation ///.  
+
 ";
+
+%feature("docstring") PageXML::processStart "
+Starts a process in the Page XML.
 
-%feature("docstring") std::validationWarningFunc "
+Arguments:
+    tool (const char *): 
+    ref (const char *): 
+
 ";
+
+%feature("docstring") PageXML::relabelChildIDs "
+Relabels IDs of child elements.
+
+Arguments:
+    node (xmlNodePt): Base node.
+    include_self (bool): Whether to also relabel the base node.
 
-%feature("docstring") std::getDefaultNamespace "
+Returns:
+    int: Number of IDs affected.
 
-Gets the default namespace of a document.  
 ";
 
-%feature("docstring") std::mktemp "
+%feature("docstring") PageXML::relativizeImageFilename "
+Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
 
-Function that creates a temporal file using the mktemp command  
+Arguments:
+    xml_path (const char *): 
 
-Parameters
-----------
-* `tempbase` :  
-    The mktemp template to use, including at least 3 consecutive X.  
 ";
+
+%feature("docstring") PageXML::releaseImage "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``void PageXML::releaseImage(int pagenum)``
+
+Releases an already loaded image.
 
-%feature("docstring") std::project_2d_to_1d "
+Arguments:
+    pagenum (int): The number of the page for which to release the image.
 
-Projects points onto a line defined by a direction and y-offset  
+**Signature 2**
+
+``void PageXML::releaseImage(xmlNodePt node)``
+
+Arguments:
+    node (xmlNodePt): 
+
 ";
 
-%feature("docstring") std::angleDiff "
+%feature("docstring") PageXML::releaseImages "
 
-Computes the difference between two angles [-PI,PI] accounting for the
-discontinuity  
 ";
+
+%feature("docstring") PageXML::resize "
+Overloaded function with 4 signatures.
+
+**Signature 1**
+
+``int PageXML::resize(std::vector< cv::Size2i > sizes, std::vector< xmlNodePt > pages, bool check_aspect_ratio=true)``
+
+Resizes pages and all respective coordinates.
 
-%feature("docstring") std::intersection_1d "
+Arguments:
+    sizes (std::vector< cv::Size2i >): Page sizes to resize to.
+    pages (std::vector< xmlNodePt >): Page nodes.
+    check_aspect_ratio (bool): Whether to check that the aspect ratio is properly preserved.
 
-Computes the 1D intersection  
+Returns:
+    int: Number of pages+points attributes modified.
+
+**Signature 2**
+
+``int PageXML::resize(std::vector< cv::Size2i > sizes, const char *xpath=\"//_:Page\", bool check_aspect_ratio=true)``
+
+Resizes pages and all respective coordinates.
+
+Arguments:
+    sizes (std::vector< cv::Size2i >): Page sizes to resize to.
+    xpath (const char *): Selector for Page nodes.
+    check_aspect_ratio (bool): Whether to check that the aspect ratio is properly preserved.
+
+Returns:
+    int: Number of pages+points attributes modified.
+
+**Signature 3**
+
+``int PageXML::resize(cv::Size2i size, xmlNodePt page, bool check_aspect_ratio=true)``
+
+Resizes a page and all respective coordinates.
+
+Arguments:
+    size (cv::Size2i): Page size to resize to.
+    page (xmlNodePt): Page node.
+    check_aspect_ratio (bool): Whether to check that the aspect ratio is properly preserved.
+
+Returns:
+    int: Number of pages+points attributes modified.
+
+**Signature 4**
+
+``int PageXML::resize(double fact, const char *xpath=\"//_:Page\")``
+
+Resizes a page and all respective coordinates.
+
+Arguments:
+    fact (double): 
+    xpath (const char *): Selector for Page nodes.
+
+Returns:
+    int: Number of pages+points attributes modified.
+
 ";
 
-%feature("docstring") std::IoU_1d "
+%feature("docstring") PageXML::rmElem "
+Removes the given element.
 
-Computes the 1D intersection over union  
+Arguments:
+    node (const xmlNodePt): Element.
+
 ";
 
-%feature("docstring") std::withinSegment "
+%feature("docstring") PageXML::rmElems "
+Overloaded function with 3 signatures.
 
-Checks if a point is within a line segment  
+**Signature 1**
 
-Parameters
-----------
-* `segm_start` :  
-    Point for begining of segment.  
-* `segm_end` :  
-    Point for end of segment.  
-* `point` :  
-    Point to check withiness.  
+``int PageXML::rmElems(const std::vector< xmlNodePt > &nodes)``
 
-Returns
--------
-0 if within segment, +1 if outside but aligned to the right, -1 if outside but
-aligned to the left, otherwise NaN.  
+Arguments:
+    nodes (const std::vector< xmlNodePt > &): 
 
-check collinearity (normalized triangle area) ///  
+Returns:
+    int: 
 
-return zero if in segment ///  
+**Signature 2**
 
-return +1 if to the right and -1 if to the left ///  
-";
+``int PageXML::rmElems(const char *xpath, xmlNodePt node=NULL)``
+
+Remove the elements that match a given xpath.
 
-// File: _page_x_m_l_8h.xml
+Arguments:
+    xpath (const char *): Selector for elements to remove.
+    node (xmlNodePt): Base node for element selection.
 
-// File: _text_feat_extractor_8cc.xml
+Returns:
+    int: Number of elements removed.
 
-%feature("docstring") std::chrono::colorWhite "
+**Signature 3**
+
+``int PageXML::rmElems(const std::string xpath, xmlNodePt node=NULL)``
+
+Arguments:
+    xpath (const std::string): 
+    node (xmlNodePt): 
+
+Returns:
+    int: 
+
 ";
+
+%feature("docstring") PageXML::rotatePage "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``int PageXML::rotatePage(int angle, xmlNodePt page, bool update_image_orientation, const double conf)``
 
-%feature("docstring") std::chrono::colorBlack "
+Rotates a page.
+
+Arguments:
+    angle (int): Angle to rotate in degrees {0,90,180,-90}.
+    page (xmlNodePt): The Page node.
+    update_image_orientation (bool): Whether to update the ImageOrientation element.
+    conf (const double): Confidence value.
+
+Returns:
+    int: Number of elements modified.
+
+**Signature 2**
+
+``int PageXML::rotatePage(int angle, xmlNodePt page, bool update_image_orientation=true, const double *_conf=NULL)``
+
+Rotates a page.
+
+Arguments:
+    angle (int): Angle to rotate in degrees {0,90,180,-90}.
+    page (xmlNodePt): The Page node.
+    update_image_orientation (bool): Whether to check that the aspect ratio is properly preserved.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+Returns:
+    int: Number of elements modified.
+
 ";
+
+%feature("docstring") PageXML::select "
+Overloaded function with 3 signatures.
+
+**Signature 1**
+
+``vector< xmlNodePt > PageXML::select(const char *xpath, const xmlNodePt node=NULL)``
+
+Selects nodes given an xpath.
+
+Arguments:
+    xpath (const char *): Selector expression.
+    node (const xmlNodePt): XML node for context, set to NULL for root node.
 
-%feature("docstring") std::chrono::print_int "
+Returns:
+    std::vector< xmlNodePt >: Vector of matched nodes.
 
-Loaders ///.  
+**Signature 2**
 
-Loads the projecton matrix from an hdf5 file.  
+``std::vector<xmlNodePt> PageXML::select(std::string xpath, const xmlNodePt node=NULL)``
 
-Parameters
-----------
-* `projfile` :  
-    File from which to read the projection.Features output /// Prints a long in
-    binary.  
+Arguments:
+    xpath (std::string): 
+    node (const xmlNodePt): 
+
+Returns:
+    std::vector< xmlNodePt >: 
+
+**Signature 3**
+
+``std::vector<xmlNodePt> PageXML::select(const char *xpath, const std::vector< xmlNodePt > nodes, bool unique=true)``
+
+Arguments:
+    xpath (const char *): 
+    nodes (const std::vector< xmlNodePt >): 
+    unique (bool): 
+
+Returns:
+    std::vector< xmlNodePt >: 
+
 ";
+
+%feature("docstring") PageXML::selectByID "
+Selects an element with a given ID.
 
-%feature("docstring") std::chrono::print_short "
+Arguments:
+    id (const char *): ID of element to select.
+    node (const xmlNodePt): XML node for context, set to NULL for root node.
 
-Prints an int in binary.  
+Returns:
+    xmlNodePt: Matched node.
+
 ";
+
+%feature("docstring") PageXML::selectByOverlap "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``std::vector< xmlNodePt > PageXML::selectByOverlap(std::vector< cv::Point2f > points, xmlNodePt page, const char *xpath=\".//_:TextLine\", double overlap_thr=0.1, PAGEXML_OVERLAP overlap_type=PAGEXML_OVERLAP_COORDS_IWA)``
+
+Selects elements based on overlap to a polygon.
+
+Arguments:
+    points (std::vector< cv::Point2f >): Polygon for selection.
+    page (xmlNodePt): Page element for selection.
+    xpath (const char *): xpath for candidate elements for selection.
+    overlap_thr (double): Overlapping score threshold.
+    overlap_type (PAGEXML_OVERLAP): Type of overlap to use for selecting.
+
+Returns:
+    std::vector< xmlNodePt >: Number of TextLines copied.
 
-%feature("docstring") std::chrono::print_float "
+**Signature 2**
 
-Prints a float in binary.  
+``std::vector< xmlNodePt > PageXML::selectByOverlap(std::vector< cv::Point2f > points, int pagenum, const char *xpath=\".//_:TextLine\", double overlap_thr=0.1, PAGEXML_OVERLAP overlap_type=PAGEXML_OVERLAP_COORDS_IWA)``
+
+Selects elements based on overlap to a polygon.
+
+Arguments:
+    points (std::vector< cv::Point2f >): Polygon for selection.
+    pagenum (int): Page number for selection.
+    xpath (const char *): xpath for candidate elements for selection.
+    overlap_thr (double): Overlapping score threshold.
+    overlap_type (PAGEXML_OVERLAP): Type of overlap to use for selecting.
+
+Returns:
+    std::vector< xmlNodePt >: Number of TextLines copied.
+
 ";
+
+%feature("docstring") PageXML::selectNth "
+Overloaded function with 2 signatures.
+
+**Signature 1**
 
-%feature("docstring") std::chrono::print_features_htk "
+``xmlNodePt PageXML::selectNth(const char *xpath, int num=0, const xmlNodePt node=NULL)``
 
-Prints features to a file stream using HTK format.  
+Selects the n-th node that matches an xpath.
 
-Parameters
-----------
-* `feats` :  
-    OpenCV matrix containing the features.  
-* `file` :  
-    File stream to print the features.  
+Arguments:
+    xpath (const char *): Selector expression.
+    num (int): Element number (0-indexed), negative from last.
+    node (const xmlNodePt): XML node for context, set to NULL for root node.
+
+Returns:
+    xmlNodePt: Matched node.
+
+**Signature 2**
+
+``xmlNodePt PageXML::selectNth(std::string xpath, int num=0, const xmlNodePt node=NULL)``
+
+Arguments:
+    xpath (std::string): 
+    num (int): 
+    node (const xmlNodePt): 
+
+Returns:
+    xmlNodePt: 
+
 ";
+
+%feature("docstring") PageXML::setAttr "
+Overloaded function with 4 signatures.
+
+**Signature 1**
+
+``int PageXML::setAttr(std::vector< xmlNodePt > nodes, const char *name, const char *value)``
+
+Arguments:
+    nodes (std::vector< xmlNodePt >): 
+    name (const char *): 
+    value (const char *): 
+
+Returns:
+    int: 
+
+**Signature 2**
+
+``int PageXML::setAttr(const xmlNodePt node, const char *name, const char *value)``
+
+Adds or modifies (if already exists) an attribute for a given node.
+
+Arguments:
+    node (const xmlNodePt): Node to set the attribute.
+    name (const char *): Attribute name.
+    value (const char *): Attribute value.
+
+Returns:
+    int: Number of elements modified.
+
+**Signature 3**
+
+``int PageXML::setAttr(const char *xpath, const char *name, const char *value)``
+
+Adds or modifies (if already exists) an attribute for a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for the element(s) to set the attribute.
+    name (const char *): Attribute name.
+    value (const char *): Attribute value.
 
-%feature("docstring") std::chrono::print_features_ascii "
+Returns:
+    int: Number of elements modified.
 
-Prints features to a file stream using ASCII format.  
+**Signature 4**
 
-Parameters
-----------
-* `feats` :  
-    OpenCV matrix containing the features.  
-* `file` :  
-    File stream to print the features.  
+``int PageXML::setAttr(const std::string xpath, const std::string name, const std::string value)``
+
+Arguments:
+    xpath (const std::string): 
+    name (const std::string): 
+    value (const std::string): 
+
+Returns:
+    int: 
+
 ";
+
+%feature("docstring") PageXML::setBaseline "
+Overloaded function with 6 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::setBaseline(xmlNodePt node, const std::vector< cv::Point2f > &points, const double *_conf=NULL)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point2f > &): 
+    _conf (const double *): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 2**
+
+``xmlNodePt PageXML::setBaseline(xmlNodePt node, const std::vector< cv::Point2f > &points, const double conf)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point2f > &): 
+    conf (const double): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 3**
+
+``xmlNodePt PageXML::setBaseline(const char *xpath, const std::vector< cv::Point2f > &points, const double *_conf=NULL)``
+
+Arguments:
+    xpath (const char *): 
+    points (const std::vector< cv::Point2f > &): 
+    _conf (const double *): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 4**
+
+``xmlNodePt PageXML::setBaseline(const char *xpath, const std::vector< cv::Point2f > &points, const double conf)``
+
+Arguments:
+    xpath (const char *): 
+    points (const std::vector< cv::Point2f > &): 
+    conf (const double): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 5**
+
+``xmlNodePt PageXML::setBaseline(xmlNodePt node, double x1, double y1, double x2, double y2, const double *_conf=NULL)``
+
+Adds or modifies (if already exists) a two point Baseline for a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to set the Baseline.
+    x1 (double): x value of first point.
+    y1 (double): y value of first point.
+    x2 (double): x value of second point.
+    y2 (double): y value of second point.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 6**
+
+``xmlNodePt PageXML::setBaseline(xmlNodePt node, double x1, double y1, double x2, double y2, const double conf)``
 
-%feature("docstring") std::chrono::magick2cvmat8u "
+Adds or modifies (if already exists) a two point Baseline for a given node.
 
-Image processing ///.  
+Arguments:
+    node (xmlNodePt): The node of element to set the Baseline.
+    x1 (double): x value of first point.
+    y1 (double): y value of first point.
+    x2 (double): x value of second point.
+    y2 (double): y value of second point.
+    conf (const double): Confidence value.
 
-Copies image data from Magick::Image to an OpenCV Mat.  
+Returns:
+    xmlNodePt: Pointer to created element.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `cvimg` :  
-    OpenCV Mat.  
 ";
 
-%feature("docstring") std::chrono::magick2cvmat8uc3 "
+%feature("docstring") PageXML::setCoords "
+Overloaded function with 6 signatures.
 
-Copies image data from Magick::Image to an OpenCV Mat.  
+**Signature 1**
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `cvimg` :  
-    OpenCV Mat.  
+``xmlNodePt PageXML::setCoords(xmlNodePt node, const std::vector< cv::Point2f > &points, const double *_conf=NULL)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point2f > &): 
+    _conf (const double *): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 2**
+
+``xmlNodePt PageXML::setCoords(xmlNodePt node, const std::vector< cv::Point2f > &points, const double conf)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point2f > &): 
+    conf (const double): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 3**
+
+``xmlNodePt PageXML::setCoords(xmlNodePt node, const std::vector< cv::Point > &points, const double *_conf=NULL)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point > &): 
+    _conf (const double *): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 4**
+
+``xmlNodePt PageXML::setCoords(xmlNodePt node, const std::vector< cv::Point > &points, const double conf)``
+
+Arguments:
+    node (xmlNodePt): 
+    points (const std::vector< cv::Point > &): 
+    conf (const double): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 5**
+
+``xmlNodePt PageXML::setCoords(const char *xpath, const std::vector< cv::Point2f > &points, const double *_conf=NULL)``
+
+Arguments:
+    xpath (const char *): 
+    points (const std::vector< cv::Point2f > &): 
+    _conf (const double *): 
+
+Returns:
+    xmlNodePt: 
+
+**Signature 6**
+
+``xmlNodePt PageXML::setCoords(const char *xpath, const std::vector< cv::Point2f > &points, const double conf)``
+
+Arguments:
+    xpath (const char *): 
+    points (const std::vector< cv::Point2f > &): 
+    conf (const double): 
+
+Returns:
+    xmlNodePt: 
+
 ";
+
+%feature("docstring") PageXML::setCoordsBBox "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::setCoordsBBox(xmlNodePt node, double xmin, double ymin, double width, double height, const double *_conf=NULL, bool subone=true)``
 
-%feature("docstring") std::chrono::magick2graym "
+Adds or modifies (if already exists) the Coords as a bounding box for a given node.
 
-Copies image data from Magick::Image to an unsigned char matrix.  
+Arguments:
+    node (xmlNodePt): The node of element to set the Coords.
+    xmin (double): Minimum x value of bounding box.
+    ymin (double): Minimum y value of bounding box.
+    width (double): Width of bounding box.
+    height (double): Height of bounding box.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+    subone (bool): Whether to subtract 1 when computing xmax and ymax (discrete compatibility).
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `gimg` :  
-    Unsigned char matrix (it is allocated if NULL).  
-* `_alpha` :  
-    Pointer to unsigned char matrix for alpha channel (it is allocated if NULL).  
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::setCoordsBBox(xmlNodePt node, double xmin, double ymin, double width, double height, const double conf, bool subone=true)``
+
+Adds or modifies (if already exists) the Coords as a bounding box for a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to set the Coords.
+    xmin (double): Minimum x value of bounding box.
+    ymin (double): Minimum y value of bounding box.
+    width (double): Width of bounding box.
+    height (double): Height of bounding box.
+    conf (const double): Confidence value.
+    subone (bool): Whether to subtract 1 when computing xmax and ymax (discrete compatibility).
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") std::chrono::to16bits "
+%feature("docstring") PageXML::setImagesBaseDir "
+Arguments:
+    imgBaseDir (std::string): 
 
-Converts unsigned char to 16-bits.  
 ";
 
-%feature("docstring") std::chrono::graym2magick "
+%feature("docstring") PageXML::setPageHeight "
+Sets the height of a page (actually sets imageHeight accounting for image orientation).
 
-Copies image data from unsigned char matrix to Magick::Image.  
+Arguments:
+    node (xmlNodePt): A node to set its page height.
+    height (int): The height to set.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `gimg` :  
-    Unsigned char matrix.  
-* `alpha` :  
-    Unsigned char matrix for alpha channel.  
 ";
 
-%feature("docstring") std::chrono::grayms2magick "
+%feature("docstring") PageXML::setPageImageFilename "
+Overloaded function with 2 signatures.
 
-Copies image data from unsigned char matrix to Magick::Image.  
+**Signature 1**
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `rimg` :  
-    Unsigned char matrix of read channel.  
-* `gimg` :  
-    Unsigned char matrix of green channel.  
-* `bimg` :  
-    Unsigned char matrix of blue channel.  
-* `alpha` :  
-    Unsigned char matrix of alpha channel.  
+``void PageXML::setPageImageFilename(xmlNodePt node, const char *image)``
+
+Sets the imageFilename of a page.
+
+Arguments:
+    node (xmlNodePt): 
+    image (const char *): 
+
+**Signature 2**
+
+``void PageXML::setPageImageFilename(int pagenum, const char *image)``
+
+Arguments:
+    pagenum (int): 
+    image (const char *): 
+
 ";
+
+%feature("docstring") PageXML::setPageImageOrientation "
+Overloaded function with 4 signatures.
+
+**Signature 1**
+
+``void PageXML::setPageImageOrientation(xmlNodePt node, int angle, const double *_conf=NULL)``
+
+Sets the image orientation for the given Page node.
+
+Arguments:
+    node (xmlNodePt): The page node.
+    angle (int): The orientation angle in degrees {0,90,180,-90}.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+**Signature 2**
+
+``void PageXML::setPageImageOrientation(xmlNodePt node, int angle, const double conf)``
+
+Sets the image orientation for the given Page node.
+
+Arguments:
+    node (xmlNodePt): The page node.
+    angle (int): The orientation angle in degrees {0,90,180,-90}.
+    conf (const double): Confidence value.
+
+**Signature 3**
+
+``void PageXML::setPageImageOrientation(int pagenum, int angle, const double *_conf=NULL)``
+
+Sets the image orientation for the given Page number.
+
+Arguments:
+    pagenum (int): The page number (0-based).
+    angle (int): The orientation angle in degrees {0,90,180,-90}.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+**Signature 4**
+
+``void PageXML::setPageImageOrientation(int pagenum, int angle, const double conf)``
 
-%feature("docstring") std::chrono::cvmat8u2magick "
+Sets the image orientation for the given Page number.
 
-Copies image data from an OpenCV Mat to Magick::Image.  
+Arguments:
+    pagenum (int): The page number (0-based).
+    angle (int): The orientation angle in degrees {0,90,180,-90}.
+    conf (const double): Confidence value.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `cvimg` :  
-    OpenCV Mat.  
 ";
 
-%feature("docstring") std::chrono::cvmat8u2magick "
+%feature("docstring") PageXML::setPageWidth "
+Sets the width of a page (actually sets imageWidth accounting for image orientation).
 
-Copies image data from an OpenCV Mat to Magick::Image.  
+Arguments:
+    node (xmlNodePt): A node to set its page width.
+    width (int): The width to set.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `cvimg` :  
-    OpenCV Mat.  
-* `cvimg_alpha` :  
-    OpenCV Mat.  
 ";
 
-%feature("docstring") std::chrono::cvmat8uc32magick "
+%feature("docstring") PageXML::setPolystripe "
+Sets the Coords of a TextLine as a poly-stripe of the baseline.
 
-Copies image data from an OpenCV Mat to Magick::Image.  
+Arguments:
+    node (xmlNodePt): The node of element to set the Coords.
+    height (double): The height of the poly-stripe in pixels (>0).
+    offset (double): The offset of the poly-stripe (>=0 && <= 0.5).
+    offset_check (bool): 
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `cvimg` :  
-    OpenCV Mat.  
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
+
+%feature("docstring") PageXML::setProperty "
+Overloaded function with 4 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::setProperty(xmlNodePt node, const char *key, const char *val=NULL, const double *_conf=NULL)``
+
+Sets a Property to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to set the Property.
+    key (const char *): The key for the Property.
+    val (const char *): The optional value for the Property.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::setProperty(xmlNodePt node, const char *key, const char *val, const double conf)``
+
+Sets a Property to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to set the Property.
+    key (const char *): The key for the Property.
+    val (const char *): The optional value for the Property.
+    conf (const double): Confidence value.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 3**
 
-%feature("docstring") std::chrono::enhance "
+``xmlNodePt PageXML::setProperty(xmlNodePt node, const char *key, const double val, const double *_conf=NULL)``
 
-Does a local enhancement of a text image.  
+Sets a Property to a given node.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `winW` :  
-    Window width for local enhancement.  
-* `prm1` :  
-    Enhancement parameter.  
-* `slp` :  
-    Gray slope parameter.  
-* `type` :  
-    Enhancement algorithm.  
-* `prm0` :  
-    Enhancement parameter to store in channel 0 (set to 0.0 for single channel
-    output).  
-* `prm2` :  
-    Enhancement parameter to store in channel 2 (set to 0.0 for single channel
-    output).  
+Arguments:
+    node (xmlNodePt): The node of element to set the Property.
+    key (const char *): The key for the Property.
+    val (const double): Numeric value for the Property.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 4**
+
+``xmlNodePt PageXML::setProperty(xmlNodePt node, const char *key, const double val, const double conf)``
+
+Sets a Property to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to set the Property.
+    key (const char *): The key for the Property.
+    val (const double): The optional value for the Property.
+    conf (const double): Confidence value.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
 ";
 
-%feature("docstring") std::chrono::rlsa4_graym "
+%feature("docstring") PageXML::setReadingDirection "
+Sets the reading direction to a TextRegion node.
 
-Four directional RLSA algorithm.  
+Arguments:
+    elem (const xmlNodePt): 
+    direction (PAGEXML_READ_DIRECTION): Direction to set.
 
-Parameters
-----------
-* `img` :  
-    Unsigned char matrix of input image.  
-* `imgW` :  
-    Image width.  
-* `imgH` :  
-    Image height.  
-* `op` :  
-    Directions enabled (bit0 '-', bit1 '|', bit2 '/', bit3 '\\').  
-* `lengths` :  
-    RLSA lengths for each direction.  
-* `negate` :  
-    Whether to negate imput.  
-* `res` :  
-    Unsigned char matrix of output image.  
 ";
+
+%feature("docstring") PageXML::setRotation "
+Sets the rotation angle to a TextRegion node.
+
+Arguments:
+    elem (const xmlNodePt): 
+    rotation (const float): Rotation angle to set.
 
-%feature("docstring") std::chrono::findMinMax "
 ";
+
+%feature("docstring") PageXML::setTextEquiv "
+Overloaded function with 4 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::setTextEquiv(xmlNodePt node, const char *text, const double *_conf=NULL, const char *type=NULL)``
+
+Adds or modifies (if already exists) the TextEquiv for a given node.
 
-%feature("docstring") std::chrono::estimateSlant "
+Arguments:
+    node (xmlNodePt): The node of element to set the TextEquiv.
+    text (const char *): The text string.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+    type (const char *): Type attribute.
 
-Estimates the slant angle of an image containing handwritten text.  
+Returns:
+    xmlNodePt: Pointer to created element.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `amin` :  
-    Minimum slant angle in degrees.  
-* `amax` :  
-    Maximum slant angle in degrees.  
-* `amin` :  
-    Slant angle step in degrees.  
+**Signature 2**
 
-Returns
--------
-Estimated slant angle in degrees.  
-Todo
-If alpha channel, do not project transparent  
+``xmlNodePt PageXML::setTextEquiv(xmlNodePt node, const char *text, const double conf, const char *type=NULL)``
 
-List angles for pyramidal sampling ///  
+Adds or modifies (if already exists) the TextEquiv for a given node.
 
-Pyramidal sampling loop ///  
+Arguments:
+    node (xmlNodePt): The node of element to set the TextEquiv.
+    text (const char *): The text string.
+    conf (const double): Confidence value.
+    type (const char *): Type attribute.
 
-Initially only sample every skip angles ///  
+Returns:
+    xmlNodePt: Pointer to created element.
 
-Then sample on both sides of large found values, each time with half the skip
-///  
+**Signature 3**
 
-Project for the current angle ///  
+``xmlNodePt PageXML::setTextEquiv(const char *xpath, const char *text, const double *_conf=NULL, const char *type=NULL)``
 
-Compute variance of projection ///  
+Adds or modifies (if already exists) the TextEquiv for a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to set the TextEquiv.
+    text (const char *): The text string.
+    _conf (const double *): Pointer to confidence value, NULL for no confidence.
+    type (const char *): Type attribute.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 4**
+
+``xmlNodePt PageXML::setTextEquiv(const char *xpath, const char *text, const double conf, const char *type=NULL)``
+
+Adds or modifies (if already exists) the TextEquiv for a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to set the TextEquiv.
+    text (const char *): The text string.
+    conf (const double): Confidence value.
+    type (const char *): 
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+";
+
+%feature("docstring") PageXML::setValidationEnabled "
+Enables/disables schema validation.
+
+Arguments:
+    val (bool): 
+
 ";
+
+%feature("docstring") PageXML::setValue "
+Sets a node value.
 
-%feature("docstring") std::chrono::findOuterContours "
+Arguments:
+    node (xmlNodePt): Node element.
+    value (const char *): 
 
-Gets outer contour points of connected components in an image, optionally
-approximating it.  
+";
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
-* `contours` :  
-    Output array of arrays containing the contours.  
-* `method` :  
-    Contour approximation method.  
-* `eps` :  
-    Epsilon for approxPolyDP, zero to disable.  
+%feature("docstring") PageXML::setXmlFilePath "
+Arguments:
+    xmlFilePath (std::string): 
+
+";
 
-Get outer contours ///  
+%feature("docstring") PageXML::simplifyIDs "
+Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
 
-Approximate contours ///  
 
-If no contours, use full image as contour ///  
+Returns:
+    int: Number of IDs simplified.
 
-Add image page offset to contour coordinates ///  
 ";
+
+%feature("docstring") PageXML::stringToPoints "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``vector< cv::Point2f > PageXML::stringToPoints(const char *spoints)``
+
+Parses a string of pairs of coordinates (x1,y1 [x2,y2 ...]) into an array.
 
-%feature("docstring") std::chrono::joinComponents "
+Arguments:
+    spoints (const char *): String containing coordinate pairs.
 
-Joints all connected components in an image using 1px thick lines between
-nearest contour points.  
+Returns:
+    std::vector< cv::Point2f >: Array of (x,y) coordinates.
 
-Parameters
-----------
-* `image` :  
-    Magick++ Image object.  
+**Signature 2**
 
-Get external contours ///  
+``static std::vector<cv::Point2f> PageXML::stringToPoints(std::string spoints)``
 
-Prepare contours nearest neighbor search ///  
+Arguments:
+    spoints (std::string): 
 
-Loop through all contours ///  
+Returns:
+    std::vector< cv::Point2f >: 
 
-Copy x-th component coordinates for test ///  
+";
+
+%feature("docstring") PageXML::toString "
+Creates a string representation of the Page XML.
+
+Arguments:
+    indent (bool): Whether to indent the XML.
+    validate (bool): Whether the Page XML should be validated before writing.
 
-Copy all other component coordinates for reference ///  
+Returns:
+    std::string: The Page XML string.
 
-Find nearest neighbors ///  
+";
+
+%feature("docstring") PageXML::updateLastChange "
+Updates the last change time stamp.
 
-Relabel joined components ///  
 
-Join components with a line ///  
 ";
 
-%feature("docstring") std::chrono::toGrayscale "
+%feature("docstring") PageXML::version "
+Returns the class version.
 
-Converts image to grayscale preserving alpha channel if present.  
 
-Parameters
-----------
-* `image` :  
-    Image to process.  
+Returns:
+    char *: 
 
-Returns
--------
-Whether the conversion was performed.  
 ";
 
-%feature("docstring") std::chrono::flattenImage "
+%feature("docstring") PageXML::write "
+Writes the current state of the XML to a file using utf-8 encoding.
 
-Removes alpha channel, setting all transparent regions to the background color.  
+Arguments:
+    fname (const char *): File name of where the XML file will be written.
+    indent (bool): Whether to indent the XML.
+    validate (bool): Whether the Page XML should be validated before writing.
 
-Parameters
-----------
-* `image` :  
-    Image to process.  
-* `color` :  
-    Color for the background.  
+Returns:
+    int: Number of bytes written.
 
-Returns
--------
-Whether flattening was performed.  
 ";
 
-// File: _text_feat_extractor_8h.xml
+%feature("docstring") PageXML::~PageXML "
+PageXML object destructor.
 
-// File: todo.xml
+
+";
 

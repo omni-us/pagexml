@@ -119,7 +119,7 @@
 `public static void `[`validationErrorFunc`](#_page_x_m_l_8cc_1a42193d6b48be67e3479f98616552874c)`(void *ctx  __attribute__,const char * msg,...)`            | Schema validation ///.
 `public static void `[`validationWarningFunc`](#_page_x_m_l_8cc_1a4a5264df828c064fb9d585c736895e78)`(void *ctx  __attribute__,const char * msg,...)`            | 
 `public std::string `[`getDefaultNamespace`](#_page_x_m_l_8cc_1a9daf721cba86bc6907aab1c5b223e072)`(xmlDocPtr doc)`            | Gets the default namespace of a document.
-`public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command
+`public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)`            | Function that creates a temporal file using the mktemp command.
 `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)`            | Projects points onto a line defined by a direction and y-offset
 `public inline static double `[`angleDiff`](#_page_x_m_l_8cc_1a61fc06d078d73deb50298f47d612eedd)`(double a1,double a2)`            | Computes the difference between two angles [-PI,PI] accounting for the discontinuity
 `public inline static double `[`intersection_1d`](#_page_x_m_l_8cc_1a8cb2d5f6e60399cf47f11bb9201fb4dc)`(double & a1,double & a2,double & b1,double & b2)`            | Computes the 1D intersection
@@ -149,6 +149,7 @@
 `public static void `[`joinComponents`](#_text_feat_extractor_8cc_1a4da782c15ab0baee562d0370e6297e02)`(Magick::Image & img)`            | Joints all connected components in an image using 1px thick lines between nearest contour points.
 `public bool `[`toGrayscale`](#_text_feat_extractor_8cc_1a360080636b9ecf83ebbf859d652ffedc)`(cv::Mat & image,cv::Mat & image_alpha)`            | Converts image to grayscale preserving alpha channel if present.
 `public bool `[`flattenImage`](#_text_feat_extractor_8cc_1ab109c954f49e5729f8adc65382209b34)`(Magick::Image & image,const Magick::Color * color)`            | Removes alpha channel, setting all transparent regions to the background color.
+`namespace `[`doxy2swig`](#namespacedoxy2swig) | Converts doxygen XMLs into swig python docstrings.
 `class `[`OGRMultiLineString_`](#class_o_g_r_multi_line_string__) | 
 `class `[`OGRMultiPolygon_`](#class_o_g_r_multi_polygon__) | 
 `class `[`PageXML`](#class_page_x_m_l) | 
@@ -486,12 +487,20 @@ Schema validation ///.
 
 Gets the default namespace of a document.
 
+#### Parameters
+* `doc` The XML document pointer. 
+
+#### Returns
+The default namespace string.
+
 #### `public void `[`mktemp`](#_page_x_m_l_8cc_1a54bdec4c6dd5a11b008fc79598dfbd64)`(const char * tempbase,char * tempname)` 
 
-Function that creates a temporal file using the mktemp command
+Function that creates a temporal file using the mktemp command.
 
 #### Parameters
-* `tempbase` The mktemp template to use, including at least 3 consecutive X.
+* `tempbase` The mktemp template to use, including at least 3 consecutive X. 
+
+* `tempname` Pointer to where to store the temporal filename created.
 
 #### `public static std::vector< double > `[`project_2d_to_1d`](#_page_x_m_l_8cc_1aa295be52a9f7d03cb5a745bc6b2550e9)`(std::vector< cv::Point2f > points,cv::Point2f axis,double yoffset)` 
 
@@ -752,6 +761,20 @@ Removes alpha channel, setting all transparent regions to the background color.
 #### Returns
 Whether flattening was performed.
 
+# namespace `doxy2swig` 
+
+Converts doxygen XMLs into swig python docstrings.
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public def `[`get_node_text`](#namespacedoxy2swig_1a8002750982e85626dec7022e6eeee3be)`(node)`            | 
+
+## Members
+
+#### `public def `[`get_node_text`](#namespacedoxy2swig_1a8002750982e85626dec7022e6eeee3be)`(node)` 
+
 # class `OGRMultiLineString_` 
 
 ## Summary
@@ -817,8 +840,8 @@ Whether flattening was performed.
 `public void `[`releaseImage`](#class_page_x_m_l_1a7ae389bfa05769d488568131fa4a49fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | 
 `public void `[`releaseImages`](#class_page_x_m_l_1ae8f1b698bf3abeee79a84d79dc877b7d)`()` | 
 `public void `[`loadImage`](#class_page_x_m_l_1acc541aed93c06fdfeec29ad217f217a8)`(int pagenum,const char * fname,const bool resize_coords,int density)` | 
-`public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` | 
-`public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` | 
+`public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` | Loads an image for a Page in the XML.
+`public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` | Loads images for all pages in the XML.
 `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` | Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.
 `public void `[`relativizeImageFilename`](#class_page_x_m_l_1a3c43349d7cff78cea6d1ba7b01f023b3)`(const char * xml_path)` | Modifies imageFilename to be a relative path w.r.t. given xml path. Currently just checks prefix directories and removes it.
 `public std::string `[`getUniqueID`](#class_page_x_m_l_1af5e856c0759ff2c980c70b97ac366b73)`(const char * prefix,const char * suffix,int count_start,int count_max)` | Gets a unique id.
@@ -869,9 +892,9 @@ Whether flattening was performed.
 `public int `[`getReadingDirection`](#class_page_x_m_l_1acc2adc9d4408836ea87d8056e2d522f6)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` elem)` | Retrieves the reading direction for a given TextLine or TextRegion node.
 `public float `[`getXheight`](#class_page_x_m_l_1a6d7cd4ada93f19226e3723d6c41a9ebf)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the x-height for a given TextLine node.
 `public float `[`getXheight`](#class_page_x_m_l_1a401b8196ba181dec3fa5d76eb9c6e585)`(const char * id)` | Retrieves the x-height for a given TextLine id.
-`public std::vector< cv::Point2f > `[`getFpgram`](#class_page_x_m_l_1a0425df4d97b66a7f259cfb1fae847667)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the features parallelogram (Property[="fpgram"]/) for a given node.
-`public std::vector< cv::Point2f > `[`getPoints`](#class_page_x_m_l_1aba7be6cf9e66f1395c84f0880ca2a069)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Retrieves and parses the Coords/ for a given base node.
-`public std::vector< std::vector< cv::Point2f > > `[`getPoints`](#class_page_x_m_l_1a41e062ef2c08e4c3212c39d4ec48b2fa)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Retrieves and parses the Coords/ for a given list of base nodes.
+`public std::vector< cv::Point2f > `[`getFpgram`](#class_page_x_m_l_1a0425df4d97b66a7f259cfb1fae847667)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Retrieves the features parallelogram (Property[@key='fpgram']/@value) for a given node.
+`public std::vector< cv::Point2f > `[`getPoints`](#class_page_x_m_l_1aba7be6cf9e66f1395c84f0880ca2a069)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` | Retrieves and parses the Coords/@points for a given base node.
+`public std::vector< std::vector< cv::Point2f > > `[`getPoints`](#class_page_x_m_l_1a41e062ef2c08e4c3212c39d4ec48b2fa)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` | Retrieves and parses the Coords/@points for a given list of base nodes.
 `public std::string `[`getTextEquiv`](#class_page_x_m_l_1a59ac58298c502d1cdbe6c4115d0bbb67)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * type,const char * separator)` | Retrieves the concatenated TextEquivs for a given root node and xpath.
 `public void `[`processStart`](#class_page_x_m_l_1a3eeffa37a2ace0dc732405e81cb49e4d)`(const char * tool,const char * ref)` | Starts a process in the Page XML.
 `public void `[`processEnd`](#class_page_x_m_l_1a29d780f46c1f14b241f48665d835394c)`()` | Ends the running process in the Page XML.
@@ -899,7 +922,7 @@ Whether flattening was performed.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a9b2b8f89080a44663008d011c118801c)`(const char * xpath,const std::vector< cv::Point2f > & points,const double conf)` | 
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1a489cf14031d07454f538a048e4b48c03)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double * _conf)` | Adds or modifies (if already exists) a two point Baseline for a given node.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setBaseline`](#class_page_x_m_l_1af8a1bedc13b1c70a7bb6f249b8e34f52)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double x1,double y1,double x2,double y2,const double conf)` | Adds or modifies (if already exists) a two point Baseline for a given node.
-`public bool `[`intersection`](#class_page_x_m_l_1a37da0ed1fb708b374e7d83e6b22cbb23)`(cv::Point2f line1_point1,cv::Point2f line1_point2,cv::Point2f line2_point1,cv::Point2f line2_point2,cv::Point2f & _ipoint)` | Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+`public bool `[`intersection`](#class_page_x_m_l_1a37da0ed1fb708b374e7d83e6b22cbb23)`(cv::Point2f line1_point1,cv::Point2f line1_point2,cv::Point2f line2_point1,cv::Point2f line2_point2,cv::Point2f & _ipoint)` | Finds the intersection point between two lines defined by pairs of points.
 `public bool `[`isPolystripe`](#class_page_x_m_l_1a61c1b6597c7bcf7b65dc195e95ef7ab4)`(std::vector< cv::Point2f > coords,std::vector< cv::Point2f > baseline,double * height,double * offset)` | Checks whether Coords is a poly-stripe for its corresponding baseline.
 `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`setPolystripe`](#class_page_x_m_l_1ab97470a0132a3e497c80f26e061aba28)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,double height,double offset,bool offset_check)` | Sets the Coords of a TextLine as a poly-stripe of the baseline.
 `public int `[`getPageNumber`](#class_page_x_m_l_1ae660a692143a9983406bba434037e78c)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` | Gets the page number for the given node.
@@ -1006,6 +1029,12 @@ Loads a schema for xml validation.
 
 Validates the currently loaded XML.
 
+#### Parameters
+* `xml_to_validate` Pointer to the loaded XML to validate. 
+
+#### Returns
+Whether XML validates or not.
+
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`newXml`](#class_page_x_m_l_1a2ca59b20e66291d5006e4672ac18c96d)`(const char * creator,const char * image,const int imgW,const int imgH,const char * pagens)` 
 
 Loaders ///.
@@ -1019,14 +1048,21 @@ Creates a new Page XML.
 
 * `imgW` Width of image. 
 
-* `imgH` Height of image.
+* `imgH` Height of image. 
+
+* `pagens` The page xml namespace string to use. 
+
+#### Returns
+Pointer to the Page node.
 
 #### `public void `[`loadXml`](#class_page_x_m_l_1a4ec7578dd9794ac300d9bbf1e04d6f55)`(const char * fname,bool validate)` 
 
 Loads a Page XML from a file.
 
 #### Parameters
-* `fname` File name of the XML file to read.
+* `fname` File name of the XML file to read. 
+
+* `validate` Whether to validate against XSD schema.
 
 #### `public void `[`loadXml`](#class_page_x_m_l_1a803d631c80ea3cc9d93b03a791fb560c)`(int fnum,bool prevfree,bool validate)` 
 
@@ -1035,21 +1071,25 @@ Loads a Page XML from an input stream.
 #### Parameters
 * `fnum` File number from where to read the XML file. 
 
-* `prevfree` Whether to release resources before loading.
+* `prevfree` Whether to release resources before loading. 
+
+* `validate` Whether to validate against XSD schema.
 
 #### `public void `[`loadXmlString`](#class_page_x_m_l_1a70b4da88ce7f75a92fc3127e7b7e5c1f)`(const char * xml_string,bool validate)` 
 
 Loads a Page XML from a string.
 
 #### Parameters
-* `xml_string` The XML content.
+* `xml_string` The XML content. 
+
+* `validate` Whether to validate against XSD schema.
 
 #### `public void `[`releaseImage`](#class_page_x_m_l_1a42af7ec35f05910aa3fa322f053240be)`(int pagenum)` 
 
 Releases an already loaded image.
 
 #### Parameters
-* `pagenum` The number of the page for which to release the image.
+* `pagenum` The number of the page for which to release the image (0-based).
 
 #### `public void `[`releaseImage`](#class_page_x_m_l_1a7ae389bfa05769d488568131fa4a49fd)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
@@ -1059,7 +1099,25 @@ Releases an already loaded image.
 
 #### `public void `[`loadImage`](#class_page_x_m_l_1a74593bb0b4ca5e266dfc5650ca5009d0)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * fname,const bool resize_coords,int density)` 
 
+Loads an image for a Page in the XML.
+
+#### Parameters
+* `node` Pointer to a Page node or a descendant. 
+
+* `fname` File name of the image to read, overriding the one in the XML. 
+
+* `resize_coords` If image size differs, resize page XML coordinates. 
+
+* `density` Load the image at the given density, resizing the page coordinates if required.
+
 #### `public void `[`loadImages`](#class_page_x_m_l_1a21450ed106a7a385b9b391b6cb033d4c)`(const bool resize_coords,const int density)` 
+
+Loads images for all pages in the XML.
+
+#### Parameters
+* `resize_coords` If image size differs, resize page XML coordinates. 
+
+* `density` Load the image at the given density, resizing the page coordinates if required.
 
 #### `public int `[`simplifyIDs`](#class_page_x_m_l_1a5d3b4a59cecbf6fdf8c84f806a7648f0)`()` 
 
@@ -1134,6 +1192,8 @@ Crops images using its Coords polygon, regions outside the polygon are set to tr
 
 * `transp_xpath` Selector for semi-transparent elements. 
 
+* `base_xpath` Selector for base node to use to construct the sample name. 
+
 #### Returns
 An std::vector containing [NamedImage](#struct_named_image) objects of the cropped images.
 
@@ -1174,12 +1234,12 @@ Selects the n-th node that matches an xpath.
 #### Parameters
 * `xpath` Selector expression. 
 
-* `num` Element number (0-indexed), negative from last. 
+* `num` Element number (0-based), negative from last. 
 
 * `node` XML node for context, set to NULL for root node. 
 
 #### Returns
-Matched node.
+Matched node or NULL if nothing matched.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`selectNth`](#class_page_x_m_l_1ae29d8b0b92240bc0866064c88c1eb0ab)`(std::string xpath,int num,const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
@@ -1193,7 +1253,7 @@ Selects an element with a given ID.
 * `node` XML node for context, set to NULL for root node. 
 
 #### Returns
-Matched node.
+Matched node or NULL if nothing matched.
 
 #### `public std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > `[`filter`](#class_page_x_m_l_1a4fd13a5fac680321187fb601d40a43e3)`(const char * xpath,const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > elems)` 
 
@@ -1210,6 +1270,14 @@ Vector of filtered nodes.
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`closest`](#class_page_x_m_l_1a089e2ca706141bf750b301fd34595fc1)`(const char * name,`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
 Selects closest node of a given name.
+
+#### Parameters
+* `name` Name of node to search for closest. 
+
+* `node` Base node to start the search from. 
+
+#### Returns
+Pointer to the matched closest element or NULL if nothing matched.
 
 #### `public `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` `[`parent`](#class_page_x_m_l_1a8ac32174f32b120caf595ec3a82e57d1)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
@@ -1250,8 +1318,7 @@ Sets a node value.
 #### Parameters
 * `node` Node element. 
 
-#### Returns
-String with the node value.
+* `value` String with the value to set.
 
 #### `public std::string `[`getAttr`](#class_page_x_m_l_1a23e16f7c70950b4fe990b8c22a2e1ce5)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * name)` 
 
@@ -1262,10 +1329,8 @@ Gets an attribute value from an xml node.
 
 * `name` Attribute name. 
 
-* `value` String to set the value. 
-
 #### Returns
-True if attribute found, otherwise false.
+The attribute value, empty string if not set.
 
 #### `public std::string `[`getAttr`](#class_page_x_m_l_1abef00c0a3b59143989b8d29beaeb14bf)`(const char * xpath,const char * name)` 
 
@@ -1276,10 +1341,8 @@ Gets an attribute value for a given xpath.
 
 * `name` Attribute name. 
 
-* `value` String to set the value. 
-
 #### Returns
-True if attribute found, otherwise false.
+The attribute value, empty string if not set.
 
 #### `public std::string `[`getAttr`](#class_page_x_m_l_1a057bb3cecf33b3cd2e621d56095a4716)`(const std::string xpath,const std::string name)` 
 
@@ -1342,6 +1405,8 @@ Creates a new element and adds it relative to a given node.
 
 * `itype` Type of insertion. 
 
+* `checkid` Whether to check if the id already exists. 
+
 #### Returns
 Pointer to created element.
 
@@ -1357,6 +1422,8 @@ Creates a new element and adds it relative to a given xpath.
 * `xpath` Selector for insertion. 
 
 * `itype` Type of insertion. 
+
+* `checkid` Whether to check if the id already exists. 
 
 #### Returns
 Pointer to created element.
@@ -1528,33 +1595,37 @@ x-height>0 on success, -1 if unset.
 
 #### `public std::vector< cv::Point2f > `[`getFpgram`](#class_page_x_m_l_1a0425df4d97b66a7f259cfb1fae847667)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node)` 
 
-Retrieves the features parallelogram (Property[="fpgram"]/) for a given node.
+Retrieves the features parallelogram (Property[@key='fpgram']/@value) for a given node.
 
 #### Parameters
 * `node` Base node. 
 
 #### Returns
-Reference to the points vector.
+Vector of points.
 
 #### `public std::vector< cv::Point2f > `[`getPoints`](#class_page_x_m_l_1aba7be6cf9e66f1395c84f0880ca2a069)`(const `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath)` 
 
-Retrieves and parses the Coords/ for a given base node.
+Retrieves and parses the Coords/@points for a given base node.
 
 #### Parameters
 * `node` Base node. 
 
+* `xpath` Relative selector for the points. 
+
 #### Returns
-Reference to the points vector.
+Vector of points.
 
 #### `public std::vector< std::vector< cv::Point2f > > `[`getPoints`](#class_page_x_m_l_1a41e062ef2c08e4c3212c39d4ec48b2fa)`(const std::vector< `[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` > nodes,const char * xpath)` 
 
-Retrieves and parses the Coords/ for a given list of base nodes.
+Retrieves and parses the Coords/@points for a given list of base nodes.
 
 #### Parameters
 * `nodes` Base nodes. 
 
+* `xpath` Relative selector for the points. 
+
 #### Returns
-Reference to the points vector.
+Vector of vectors of points.
 
 #### `public std::string `[`getTextEquiv`](#class_page_x_m_l_1a59ac58298c502d1cdbe6c4115d0bbb67)`(`[`xmlNodePt`](#_page_x_m_l_8h_1af218c64e915cb44ddde63d5f20078a80)` node,const char * xpath,const char * type,const char * separator)` 
 
@@ -1565,7 +1636,7 @@ Retrieves the concatenated TextEquivs for a given root node and xpath.
 
 * `xpath` Relative xpath to select the TextEquiv elements. 
 
-* `type` Type attribute. Set to "" for TextEquivs without a type. 
+* `type` Type attribute. Set to empty string for TextEquivs without a type. 
 
 * `separator` String to add between TextEquivs. 
 
@@ -1575,6 +1646,11 @@ String with the concatenated TextEquivs.
 #### `public void `[`processStart`](#class_page_x_m_l_1a3eeffa37a2ace0dc732405e81cb49e4d)`(const char * tool,const char * ref)` 
 
 Starts a process in the Page XML.
+
+#### Parameters
+* `tool` Short description of tool that started the process. 
+
+* `ref` Short description of execution reference.
 
 #### `public void `[`processEnd`](#class_page_x_m_l_1a29d780f46c1f14b241f48665d835394c)`()` 
 
@@ -1590,6 +1666,8 @@ Retrieves a Property value.
 
 #### Parameters
 * `node` Node element. 
+
+* `key` The key for the Property. 
 
 #### Returns
 String with the property value.
@@ -1717,6 +1795,8 @@ Adds or modifies (if already exists) the TextEquiv for a given xpath.
 
 * `conf` Confidence value. 
 
+* `type` Type attribute. 
+
 #### Returns
 Pointer to created element.
 
@@ -1826,7 +1906,19 @@ Pointer to created element.
 
 #### `public bool `[`intersection`](#class_page_x_m_l_1a37da0ed1fb708b374e7d83e6b22cbb23)`(cv::Point2f line1_point1,cv::Point2f line1_point2,cv::Point2f line2_point1,cv::Point2f line2_point2,cv::Point2f & _ipoint)` 
 
-Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+Finds the intersection point between two lines defined by pairs of points.
+
+#### Parameters
+* `line1_point1` First point of line 1. 
+
+* `line1_point2` Second point of line 1. 
+
+* `line2_point1` First point of line 2. 
+
+* `line2_point2` Second point of line 2. 
+
+#### Returns
+False if no intersection otherwise true.
 
 #### `public bool `[`isPolystripe`](#class_page_x_m_l_1a61c1b6597c7bcf7b65dc195e95ef7ab4)`(std::vector< cv::Point2f > coords,std::vector< cv::Point2f > baseline,double * height,double * offset)` 
 
@@ -1852,6 +1944,8 @@ Sets the Coords of a TextLine as a poly-stripe of the baseline.
 * `height` The height of the poly-stripe in pixels (>0). 
 
 * `offset` The offset of the poly-stripe (>=0 && <= 0.5). 
+
+* `offset_check` Whether to check if offset is valid. 
 
 #### Returns
 Pointer to created element.
