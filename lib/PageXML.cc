@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.11$
+ * @version $Version: 2019.04.20$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.11";
+static char class_version[] = "Version: 2019.04.20";
 
 /**
  * Returns the class version.
@@ -56,6 +56,11 @@ char* PageXML::version() {
   return class_version+9;
 }
 
+/**
+ * Prints the version of the PageXML library and its main dependencies.
+ *
+ * @param file  Stream where to print the versions.
+ */
 void PageXML::printVersions( FILE* file ) {
   fprintf( file, "compiled against PageXML %s\n", class_version+9 );
   fprintf( file, "compiled against libxml2 %s, linked with %s\n", LIBXML_DOTTED_VERSION, xmlParserVersion );
@@ -196,6 +201,9 @@ void PageXML::freeSchema() {
 
 /**
  * Gets the default namespace of a document.
+ *
+ * @param doc  The XML document pointer.
+ * @return     The default namespace string.
  */
 std::string getDefaultNamespace( xmlDocPtr doc ) {
   xmlXPathContextPtr ctxt = xmlXPathNewContext(doc);
@@ -242,6 +250,9 @@ void PageXML::loadSchema( const char *schema_path ) {
 
 /**
  * Validates the currently loaded XML.
+ *
+ * @param xml_to_validate  Pointer to the loaded XML to validate.
+ * @return                 Whether XML validates or not.
  */
 bool PageXML::isValid( xmlDocPtr xml_to_validate ) {
   if( xml_to_validate == NULL )
@@ -287,6 +298,8 @@ bool PageXML::isValid( xmlDocPtr xml_to_validate ) {
 
 /**
  * Enables/disables schema validation.
+ *
+ * @param val     Whether schema validation should be enabled.
  */
 void PageXML::setValidationEnabled( bool val ) {
   validation_enabled = val;
@@ -369,6 +382,8 @@ string PageXML::toString( bool indent, bool validate ) {
  * @param image    Path to the image file.
  * @param imgW     Width of image.
  * @param imgH     Height of image.
+ * @param pagens   The page xml namespace string to use.
+ * @return         Pointer to the Page node.
  */
 xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH, const char* pagens ) {
   if ( schema_namespace.length() == 0 && pagens == NULL ) {
@@ -430,7 +445,8 @@ xmlNodePt PageXML::newXml( const char* creator, const char* image, const int img
 /**
  * Loads a Page XML from a file.
  *
- * @param fname  File name of the XML file to read.
+ * @param fname     File name of the XML file to read.
+ * @param validate  Whether to validate against XSD schema.
  */
 void PageXML::loadXml( const char* fname, bool validate ) {
   freeXML();
@@ -460,6 +476,7 @@ void PageXML::loadXml( const char* fname, bool validate ) {
  *
  * @param fnum      File number from where to read the XML file.
  * @param prevfree  Whether to release resources before loading.
+ * @param validate  Whether to validate against XSD schema.
  */
 void PageXML::loadXml( int fnum, bool prevfree, bool validate ) {
   if ( prevfree )
@@ -483,6 +500,7 @@ void PageXML::loadXml( int fnum, bool prevfree, bool validate ) {
  * Loads a Page XML from a string.
  *
  * @param xml_string  The XML content.
+ * @param validate    Whether to validate against XSD schema.
  */
 void PageXML::loadXmlString( const char* xml_string, bool validate ) {
   freeXML();
@@ -503,6 +521,8 @@ void PageXML::loadXmlString( const char* xml_string, bool validate ) {
 
 /**
  * Populates the imageFilename and pagesImageBase arrays for the given page number.
+ *
+ * @param pagenum  The page number (0-based).
  */
 void PageXML::parsePageImage( int pagenum ) {
   xmlNodePt page = selectNth( "//_:Page", pagenum );
@@ -555,9 +575,10 @@ void PageXML::setupXml() {
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
 /**
- * Function that creates a temporal file using the mktemp command
+ * Function that creates a temporal file using the mktemp command.
  *
  * @param tempbase    The mktemp template to use, including at least 3 consecutive X.
+ * @param tempname    Pointer to where to store the temporal filename created.
  */
 void mktemp( const char* tempbase, char *tempname ) {
   char cmd[FILENAME_MAX];
@@ -596,7 +617,7 @@ bool listFlattenImage( Magick::Image& image, const Magick::Color* color = NULL )
 /**
  * Releases an already loaded image.
  *
- * @param pagenum        The number of the page for which to release the image.
+ * @param pagenum    The number of the page for which to release the image (0-based).
  */
 void PageXML::releaseImage( int pagenum ) {
   if( pagenum < 0 || pagenum >= (int)pagesImageFilename.size() )
@@ -622,17 +643,25 @@ void PageXML::releaseImages() {
     releaseImage( n );
 }
 
+#if defined (__PAGEXML_LEPT__) && defined (__PAGEXML_MAGICK__)
 /**
  * Loads an image for a Page in the XML.
  *
- * @param pagenum        The number of the page for which to load the image.
+ * @param pagenum        The number of the page for which to load the image (0-based).
  * @param fname          File name of the image to read, overriding the one in the XML.
  * @param resize_coords  If image size differs, resize page XML coordinates.
  * @param density        Load the image at the given density, resizing the page coordinates if required.
  */
-#if defined (__PAGEXML_LEPT__) && defined (__PAGEXML_MAGICK__)
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density ) {
 #else
+/**
+ * Loads an image for a Page in the XML.
+ *
+ * @param pagenum        The number of the page for which to load the image (0-based).
+ * @param fname          File name of the image to read, overriding the one in the XML.
+ * @param resize_coords  If image size differs, resize page XML coordinates.
+ * @param density        Load the image at the given density, resizing the page coordinates if required.
+ */
 void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coords, const int density __attribute__((unused)) ) {
 #endif
   if( pagenum < 0 || pagenum >= (int)pagesImageFilename.size() )
@@ -644,7 +673,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     fname = aux.c_str();
   }
 
-  /// Get image number for multipage files ///
+  // Get image number for multipage files //
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__)
   int imgnum = 0;
 #endif
@@ -662,7 +691,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   releaseImage(pagenum);
 #if defined (__PAGEXML_LEPT__)
 #if defined (__PAGEXML_MAGICK__)
-  /// Leptonica load pdf page ///
+  // Leptonica load pdf page //
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -688,7 +717,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #endif
   if( pagesImage[pagenum] == NULL ) {
-    /// Leptonica load tiff page ///
+    // Leptonica load tiff page //
     if( std::regex_match(fname, reIsTiff) ) {
       PIXA* tiffimage = pixaReadMultipageTiff( fbase.c_str() );
       if( tiffimage == NULL || tiffimage->n == 0 )
@@ -698,7 +727,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
       pagesImage[pagenum] = pixClone(tiffimage->pix[imgnum]);
       pixaDestroy(&tiffimage);
     }
-    /// Leptonica load other image formats ///
+    // Leptonica load other image formats //
     else
       pagesImage[pagenum] = pixRead(fname);
   }
@@ -707,7 +736,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     return;
   }
 #elif defined (__PAGEXML_IMG_MAGICK__)
-  /// ImageMagick load image ///
+  // ImageMagick load image //
   try {
     if( density )
       pagesImage[pagenum].density(std::to_string(density).c_str());
@@ -722,7 +751,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #elif defined (__PAGEXML_IMG_CV__)
 #if defined (__PAGEXML_MAGICK__)
-  /// OpenCV load pdf page ///
+  // OpenCV load pdf page //
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -747,7 +776,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
   else
 #endif
-  /// OpenCV load other image formats ///
+  // OpenCV load other image formats //
   pagesImage[pagenum] = cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
@@ -775,7 +804,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   int width = getPageWidth(pagenum);
   int height = getPageHeight(pagenum);
 
-  /// Resize XML coords if required ///
+  // Resize XML coords if required //
   if( ( width != imgwidth || height != imgheight ) && resize_coords ) {
     double ratio_diff = imgwidth < imgheight ?
       (double)imgwidth/imgheight - (double)width/height:
@@ -788,11 +817,11 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     height = getPageHeight(page);
   }
 
-  /// Check that image size agrees with XML ///
+  // Check that image size agrees with XML //
   if( width != imgwidth || height != imgheight )
     throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size (%dx%d vs. %dx%d): %s", imgwidth, imgheight, width, height, fname );
 
-  /// Check image orientation and rotate accordingly ///
+  // Check image orientation and rotate accordingly //
   if ( angle ) {
 #if defined (__PAGEXML_LEPT__)
     Pix *orig = pagesImage[pagenum];
@@ -846,6 +875,14 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 }
 
+/**
+ * Loads an image for a Page in the XML.
+ *
+ * @param node           Pointer to a Page node or a descendant.
+ * @param fname          File name of the image to read, overriding the one in the XML.
+ * @param resize_coords  If image size differs, resize page XML coordinates.
+ * @param density        Load the image at the given density, resizing the page coordinates if required.
+ */
 void PageXML::loadImage( xmlNodePt node, const char* fname, const bool resize_coords, const int density ) {
   int pagenum = getPageNumber(node);
   if( pagenum >= 0 )
@@ -853,6 +890,12 @@ void PageXML::loadImage( xmlNodePt node, const char* fname, const bool resize_co
   throw_runtime_error( "PageXML.loadImage: node must be a Page or descendant of a Page" );
 }
 
+/**
+ * Loads images for all pages in the XML.
+ *
+ * @param resize_coords  If image size differs, resize page XML coordinates.
+ * @param density        Load the image at the given density, resizing the page coordinates if required.
+ */
 void PageXML::loadImages( const bool resize_coords, const int density ) {
   int numpages = count("//_:Page");
   for( int n=0; n<numpages; n++ )
@@ -989,7 +1032,7 @@ bool PageXML::isBBox( const vector<cv::Point2f>& points ) {
 }
 
 /**
- * Cronvers a vector of points to a string in format "x1,y1 x2,y2 ...".
+ * Converts a vector of points to a string in format 'x1,y1 x2,y2 ...'.
  *
  * @param points   Vector of points.
  * @param rounded  Whether to round values.
@@ -1011,7 +1054,7 @@ string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
 }
 
 /**
- * Cronvers a vector of points to a string in format "x1,y1 x2,y2 ...".
+ * Converts a vector of points to a string in format 'x1,y1 x2,y2 ...'.
  *
  * @param points  Vector of points.
  * @return        String representation of the points.
@@ -1137,9 +1180,9 @@ vector<xmlNodePt> PageXML::select( const char* xpath, const vector<xmlNodePt> no
  * Selects the n-th node that matches an xpath.
  *
  * @param xpath  Selector expression.
- * @param num    Element number (0-indexed), negative from last.
+ * @param num    Element number (0-based), negative from last.
  * @param node   XML node for context, set to NULL for root node.
- * @return       Matched node.
+ * @return       Matched node or NULL if nothing matched.
  */
 xmlNodePt PageXML::selectNth( const char* xpath, int num, const xmlNodePt node ) {
   vector<xmlNodePt> matches = select( xpath, node );
@@ -1152,9 +1195,9 @@ xmlNodePt PageXML::selectNth( const char* xpath, int num, const xmlNodePt node )
  * Selects the n-th node that matches an xpath.
  *
  * @param xpath  Selector expression.
- * @param num    Element number (0-indexed), negative from last.
+ * @param num    Element number (0-based), negative from last.
  * @param node   XML node for context, set to NULL for root node.
- * @return       Matched node.
+ * @return       Matched node or NULL if nothing matched.
  */
 xmlNodePt PageXML::selectNth( string xpath, int num, const xmlNodePt node ) {
   return selectNth( xpath.c_str(), num, node );
@@ -1165,7 +1208,7 @@ xmlNodePt PageXML::selectNth( string xpath, int num, const xmlNodePt node ) {
  *
  * @param id     ID of element to select.
  * @param node   XML node for context, set to NULL for root node.
- * @return       Matched node.
+ * @return       Matched node or NULL if nothing matched.
  */
 xmlNodePt PageXML::selectByID( const char* id, const xmlNodePt node ) {
   vector<xmlNodePt> sel = select( (string(".//*[@id='")+id+"']").c_str(), node );
@@ -1191,6 +1234,10 @@ std::vector<xmlNodePt> PageXML::filter( const char* xpath, const std::vector<xml
 
 /**
  * Selects closest node of a given name.
+ *
+ * @param name  Name of node to search for closest.
+ * @param node  Base node to start the search from.
+ * @return      Pointer to the matched closest element or NULL if nothing matched.
  */
 xmlNodePt PageXML::closest( const char* name, xmlNodePt node ) {
   return selectNth( string("ancestor-or-self::*[local-name()='")+name+"']", 0, node );
@@ -1249,6 +1296,7 @@ std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
  * @param margin         Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height.
  * @param opaque_coords  Whether to include an alpha channel with the polygon interior in opaque.
  * @param transp_xpath   Selector for semi-transparent elements.
+ * @param base_xpath     Selector for base node to use to construct the sample name.
  * @return               An std::vector containing NamedImage objects of the cropped images.
  */
 vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath, const char* base_xpath ) {
@@ -1304,18 +1352,18 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
         pageImage = pagesImage[pagenum];
     }
 
-    /// Get parent node id ///
+    // Get parent node id //
     string sampid = getAttr( node->parent, "id" );
     if( sampid.empty() ) {
       throw_runtime_error( "PageXML.crop: expected parent element to include id attribute: match=%d xpath=%s", n+1, xpath );
       return images;
     }
 
-    /// Construct sample name ///
+    // Construct sample name //
     //string sampname = imageBase + "." + sampid;
     std::string sampname = getNodeName( node->parent, base_node );
 
-    /// Get coords points ///
+    // Get coords points //
     string spoints = getAttr( node, "points" );
     if( spoints.empty() ) {
       throw_runtime_error( "PageXML.crop: expected a points attribute in Coords element: id=%s", sampid.c_str() );
@@ -1323,7 +1371,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     }
     vector<cv::Point2f> coords = stringToPoints( spoints );
 
-    /// Get crop window parameters ///
+    // Get crop window parameters //
     double xmin=0, xmax=0, ymin=0, ymax=0;
     pointsLimits( coords, xmin, xmax, ymin, ymax );
     size_t cropW = (size_t)(ceil(xmax)-floor(xmin)+1);
@@ -1331,7 +1379,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     int cropX = (int)floor(xmin);
     int cropY = (int)floor(ymin);
 
-    /// Add margin to bounding box ///
+    // Add margin to bounding box //
     if( margin != NULL ) {
       int maxWH = cropW > cropH ? cropW : cropH;
       int ocropX = cropX;
@@ -1348,7 +1396,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       cropH = cropY+cropH-1 >= height ? height-cropY-1 : cropH;
     }
 
-    /// Crop image ///
+    // Crop image //
 #if defined (__PAGEXML_LEPT__)
     BOX* box = boxCreate(cropX, cropY, cropW, cropH);
     Pix* cropimg = pixClipRectangle(pageImage, box, NULL);
@@ -1387,13 +1435,13 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       return images;
 
 #elif defined (__PAGEXML_IMG_MAGICK__)
-      /// Subtract crop window offset ///
+      // Subtract crop window offset //
       for( auto&& coord : coords ) {
         coord.x -= cropX;
         coord.y -= cropY;
       }
 
-      /// Add transparency layer ///
+      // Add transparency layer //
       list<Magick::Drawable> drawList;
       drawList.push_back( Magick::DrawableStrokeColor(opaque) );
       drawList.push_back( Magick::DrawableFillColor(opaque) );
@@ -1410,18 +1458,18 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
       }
 
 #elif defined (__PAGEXML_IMG_CV__)
-      /// Subtract crop window offset and round points ///
+      // Subtract crop window offset and round points //
       std::vector<cv::Point> rcoods;
       std::vector<std::vector<cv::Point> > polys;
       for( auto&& coord : coords )
         rcoods.push_back( cv::Point( round(coord.x-cropX), round(coord.y-cropY) ) );
       polys.push_back(rcoods);
 
-      /// Draw opaque polygon for Coords ///
+      // Draw opaque polygon for Coords //
       cv::Mat wmask( cropimg.size(), CV_MAKE_TYPE(cropimg.type(),cropimg.channels()+1), cv::Scalar(0,0,0,0) );
       cv::fillPoly( wmask, polys, cv::Scalar(0,0,0,255) );
 
-      /// Draw semi-transparent polygons according to xpath ///
+      // Draw semi-transparent polygons according to xpath //
       if( transp_xpath != NULL ) {
         vector<xmlNodePt> child_coords = select( transp_xpath, node );
 
@@ -1446,7 +1494,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
         cv::fillPoly( wmask, polys, cv::Scalar(0,0,0,128) );
       }
 
-      /// Add alpha channel to image ///
+      // Add alpha channel to image //
       int from_to[] = { 0,0, 1,1, 2,2 };
       cv::mixChannels( &cropimg, 1, &wmask, 1, from_to, cropimg.channels() );
       cropimg = wmask;
@@ -1459,7 +1507,7 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
     if ( std::isnan(rotation) )
       rotation = getRotation(node->parent);
 
-    /// Append crop and related data to list ///
+    // Append crop and related data to list //
     NamedImage namedimage(
       sampid,
       sampname,
@@ -1524,7 +1572,7 @@ std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
  * Sets a node value.
  *
  * @param node       Node element.
- * @return           String with the node value.
+ * @param value      String with the value to set.
  */
 void PageXML::setValue( xmlNodePt node, const char* value ) {
   if( node == NULL || value == NULL )
@@ -1537,8 +1585,7 @@ void PageXML::setValue( xmlNodePt node, const char* value ) {
  *
  * @param node   XML node.
  * @param name   Attribute name.
- * @param value  String to set the value.
- * @return       True if attribute found, otherwise false.
+ * @return       The attribute value, empty string if not set.
 */
 string PageXML::getAttr( const xmlNodePt node, const char* name ) {
   string value("");
@@ -1559,8 +1606,7 @@ string PageXML::getAttr( const xmlNodePt node, const char* name ) {
  *
  * @param xpath  Selector for the element to get the attribute.
  * @param name   Attribute name.
- * @param value  String to set the value.
- * @return       True if attribute found, otherwise false.
+ * @return       The attribute value, empty string if not set.
 */
 string PageXML::getAttr( const char* xpath, const char* name ) {
   vector<xmlNodePt> xsel = select( xpath );
@@ -1575,8 +1621,7 @@ string PageXML::getAttr( const char* xpath, const char* name ) {
  *
  * @param xpath  Selector for the element to get the attribute.
  * @param name   Attribute name.
- * @param value  String to set the value.
- * @return       True if attribute found, otherwise false.
+ * @return       The attribute value, empty string if not set.
 */
 string PageXML::getAttr( const string xpath, const string name ) {
   vector<xmlNodePt> xsel = select( xpath.c_str() );
@@ -1689,11 +1734,12 @@ xmlNodePt PageXML::insertElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INS
 /**
  * Creates a new element and adds it relative to a given node.
  *
- * @param name   Name of element to create.
- * @param id     ID attribute for element.
- * @param node   Reference element for insertion.
- * @param itype  Type of insertion.
- * @return       Pointer to created element.
+ * @param name     Name of element to create.
+ * @param id       ID attribute for element.
+ * @param node     Reference element for insertion.
+ * @param itype    Type of insertion.
+ * @param checkid  Whether to check if the id already exists.
+ * @return         Pointer to created element.
  */
 xmlNodePt PageXML::addElem( const char* name, const char* id, const xmlNodePt node, PAGEXML_INSERT itype, bool checkid ) {
   xmlNodePt elem = xmlNewNode( rpagens, (xmlChar*)name );
@@ -1740,11 +1786,12 @@ xmlNodePt PageXML::addElem( const char* name, const char* id, const xmlNodePt no
 /**
  * Creates a new element and adds it relative to a given xpath.
  *
- * @param name   Name of element to create.
- * @param id     ID attribute for element.
- * @param xpath  Selector for insertion.
- * @param itype  Type of insertion.
- * @return       Pointer to created element.
+ * @param name     Name of element to create.
+ * @param id       ID attribute for element.
+ * @param xpath    Selector for insertion.
+ * @param itype    Type of insertion.
+ * @param checkid  Whether to check if the id already exists.
+ * @return         Pointer to created element.
  */
 xmlNodePt PageXML::addElem( const char* name, const char* id, const char* xpath, PAGEXML_INSERT itype, bool checkid ) {
   vector<xmlNodePt> target = select( xpath );
@@ -1759,11 +1806,12 @@ xmlNodePt PageXML::addElem( const char* name, const char* id, const char* xpath,
 /**
  * Creates a new element and adds it relative to a given xpath.
  *
- * @param name   Name of element to create.
- * @param id     ID attribute for element.
- * @param xpath  Selector for insertion.
- * @param itype  Type of insertion.
- * @return       Pointer to created element.
+ * @param name     Name of element to create.
+ * @param id       ID attribute for element.
+ * @param xpath    Selector for insertion.
+ * @param itype    Type of insertion.
+ * @param checkid  Whether to check if the id already exists.
+ * @return         Pointer to created element.
  */
 xmlNodePt PageXML::addElem( const string name, const string id, const string xpath, PAGEXML_INSERT itype, bool checkid ) {
   vector<xmlNodePt> target = select( xpath );
@@ -2122,7 +2170,7 @@ double PageXML::getRotation( const xmlNodePt elem ) {
 
   xmlNodePt node = (xmlNodePt)elem;
 
-  /// If TextLine try to get rotation from custom attribute ///
+  // If TextLine try to get rotation from custom attribute //
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
     if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
       node = node->parent;
@@ -2136,7 +2184,7 @@ double PageXML::getRotation( const xmlNodePt elem ) {
       xmlFree(attr);
     }
   }
-  /// Otherwise try to get rotation from readingOrientation attribute ///
+  // Otherwise try to get rotation from readingOrientation attribute //
   if( xmlHasProp( node, (xmlChar*)"readingOrientation" ) ) {
     xmlChar* attr = xmlGetProp( node, (xmlChar*)"readingOrientation" );
     rotation = stod((char*)attr);
@@ -2159,7 +2207,7 @@ int PageXML::getReadingDirection( const xmlNodePt elem ) {
 
   xmlNodePt node = (xmlNodePt)elem;
 
-  /// If TextLine try to get direction from custom attribute ///
+  // If TextLine try to get direction from custom attribute //
   if( ! xmlStrcmp( node->name, (const xmlChar*)"TextLine") ) {
     if( ! xmlHasProp( node, (xmlChar*)"custom" ) )
       node = node->parent;
@@ -2181,7 +2229,7 @@ int PageXML::getReadingDirection( const xmlNodePt elem ) {
       xmlFree(attr);
     }
   }
-  /// Otherwise try to get direction from readingDirection attribute ///
+  // Otherwise try to get direction from readingDirection attribute //
   if( xmlHasProp( node, (xmlChar*)"readingDirection" ) ) {
     char* attr = (char*)xmlGetProp( node, (xmlChar*)"readingDirection" );
     if( ! strcmp(attr,"left-to-right") )
@@ -2231,10 +2279,10 @@ float PageXML::getXheight( const char* id ) {
 }
 
 /**
- * Retrieves the features parallelogram (Property[@key="fpgram"]/@value) for a given node.
+ * Retrieves the features parallelogram (Property[\@key='fpgram']/\@value) for a given node.
  *
  * @param node   Base node.
- * @return       Reference to the points vector.
+ * @return       Vector of points.
  */
 vector<cv::Point2f> PageXML::getFpgram( const xmlNodePt node ) {
   vector<cv::Point2f> points;
@@ -2259,10 +2307,11 @@ vector<cv::Point2f> PageXML::getFpgram( const xmlNodePt node ) {
 }
 
 /**
- * Retrieves and parses the Coords/@points for a given base node.
+ * Retrieves and parses the Coords/\@points for a given base node.
  *
  * @param node   Base node.
- * @return       Reference to the points vector.
+ * @param xpath  Relative selector for the points.
+ * @return       Vector of points.
  */
 vector<cv::Point2f> PageXML::getPoints( const xmlNodePt node, const char* xpath ) {
   vector<cv::Point2f> points;
@@ -2281,10 +2330,11 @@ vector<cv::Point2f> PageXML::getPoints( const xmlNodePt node, const char* xpath 
 }
 
 /**
- * Retrieves and parses the Coords/@points for a given list of base nodes.
+ * Retrieves and parses the Coords/\@points for a given list of base nodes.
  *
  * @param nodes  Base nodes.
- * @return       Reference to the points vector.
+ * @param xpath  Relative selector for the points.
+ * @return       Vector of vectors of points.
  */
 std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xmlNodePt> nodes, const char* xpath ) {
   std::vector<std::vector<cv::Point2f> > points;
@@ -2302,7 +2352,7 @@ std::vector<std::vector<cv::Point2f> > PageXML::getPoints( const std::vector<xml
  *
  * @param node       Root node element.
  * @param xpath      Relative xpath to select the TextEquiv elements.
- * @param type       Type attribute. Set to "" for TextEquivs without a type.
+ * @param type       Type attribute. Set to empty string for TextEquivs without a type.
  * @param separator  String to add between TextEquivs.
  * @return           String with the concatenated TextEquivs.
  */
@@ -2325,6 +2375,9 @@ std::string PageXML::getTextEquiv( xmlNodePt node, const char* xpath, const char
 
 /**
  * Starts a process in the Page XML.
+ *
+ * @param tool  Short description of tool that started the process.
+ * @param ref   Short description of execution reference.
  */
 void PageXML::processStart( const char* tool, const char* ref ) {
   if( tool == NULL || tool[0] == '\0' ) {
@@ -2338,21 +2391,21 @@ void PageXML::processStart( const char* tool, const char* ref ) {
 
   process_started = chrono::high_resolution_clock::now();
 
-  /// Add Process element ///
+  // Add Process element //
   process_running = addElem( "Process", NULL, "//_:Metadata" );
   if ( ! process_running ) {
     throw_runtime_error( "PageXML.processStart: problems creating element" );
     return;
   }
 
-  /// Start time attribute ///
+  // Start time attribute //
   time_t now;
   time(&now);
   char tstamp[sizeof "YYYY-MM-DDTHH:MM:SSZ"];
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
   setAttr( process_running, "started", tstamp );
 
-  /// Tool and ref attributes ///
+  // Tool and ref attributes //
   setAttr( process_running, "tool", tool );
   if ( ref != NULL )
     setAttr( process_running, "ref", ref );
@@ -2396,8 +2449,9 @@ void PageXML::updateLastChange() {
 /**
  * Retrieves a Property value.
  *
- * @param node       Node element.
- * @return           String with the property value.
+ * @param node  Node element.
+ * @param key   The key for the Property.
+ * @return      String with the property value.
  */
 std::string PageXML::getPropertyValue( xmlNodePt node, const char* key ) {
   xmlNodePt prop = selectNth( std::string("_:Property[@key='")+key+"']/@value", 0, node );
@@ -2591,6 +2645,7 @@ xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const doub
  * @param xpath  Selector for element to set the TextEquiv.
  * @param text   The text string.
  * @param conf   Confidence value.
+ * @param type   Type attribute.
  * @return       Pointer to created element.
  */
 xmlNodePt PageXML::setTextEquiv( const char* xpath, const char* text, const double conf, const char* type ) {
@@ -2673,7 +2728,7 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, c
 /**
  * Adds or modifies (if already exists) the Coords for a given xpath.
  *
- * @param node   Selector for element to set the Coords.
+ * @param xpath  Selector for element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
  * @param _conf  Pointer to confidence value, NULL for no confidence.
  * @return       Pointer to created element.
@@ -2691,7 +2746,7 @@ xmlNodePt PageXML::setCoords( const char* xpath, const vector<cv::Point2f>& poin
 /**
  * Adds or modifies (if already exists) the Coords for a given xpath.
  *
- * @param node   Selector for element to set the Coords.
+ * @param xpath  Selector for element to set the Coords.
  * @param points Vector of x,y coordinates for the points attribute.
  * @param conf   Confidence value.
  * @return       Pointer to created element.
@@ -2857,7 +2912,13 @@ xmlNodePt PageXML::setBaseline( xmlNodePt node, double x1, double y1, double x2,
 }
 
 /**
- * Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+ * Finds the intersection point between two lines defined by pairs of points.
+ *
+ * @param line1_point1  First point of line 1.
+ * @param line1_point2  Second point of line 1.
+ * @param line2_point1  First point of line 2.
+ * @param line2_point2  Second point of line 2.
+ * @return              False if no intersection otherwise true.
  */
 bool PageXML::intersection( cv::Point2f line1_point1, cv::Point2f line1_point2, cv::Point2f line2_point1, cv::Point2f line2_point2, cv::Point2f& _ipoint ) {
   cv::Point2f x = line2_point1-line1_point1;
@@ -2891,13 +2952,13 @@ double withinSegment( cv::Point2f segm_start, cv::Point2f segm_end, cv::Point2f 
   double bc = cv::norm(b-c);
   double area = fabs( a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y) ) / (2*(ab+ac+bc)*(ab+ac+bc));
 
-  /// check collinearity (normalized triangle area) ///
+  // check collinearity (normalized triangle area) //
   if ( area > 1e-3 )
     return std::numeric_limits<double>::quiet_NaN();
-  /// return zero if in segment ///
+  // return zero if in segment //
   if ( ac <= ab && bc <= ab )
     return 0.0;
-  /// return +1 if to the right and -1 if to the left ///
+  // return +1 if to the right and -1 if to the left //
   return ac > bc ? 1.0 : -1.0;
 }
 
@@ -2922,11 +2983,11 @@ bool PageXML::isPolystripe( std::vector<cv::Point2f> coords, std::vector<cv::Poi
   for ( int n=0; n<(int)baseline.size(); n++ ) {
     int m = coords.size()-1-n;
 
-    /// Check points are collinear ///
+    // Check points are collinear //
     if ( withinSegment( coords[n], coords[m], baseline[n] ) == 0.0 )
       return false;
 
-    /// Check lines are parallel ///
+    // Check lines are parallel //
     if ( n > 0 ) {
       prevbase = baseline[n-1]-baseline[n]; prevbase *= 1.0/cv::norm(prevbase);
       prevabove = coords[n-1]-coords[n];    prevabove *= 1.0/cv::norm(prevabove);
@@ -2936,7 +2997,7 @@ bool PageXML::isPolystripe( std::vector<cv::Point2f> coords, std::vector<cv::Poi
         return false;
     }
 
-    /// Check stripe extremes perpendicular to baseline ///
+    // Check stripe extremes perpendicular to baseline //
     if ( n == 0 || n == (int)(baseline.size()-1) ) {
       cv::Point2f base = n > 0 ? prevbase : baseline[1]-baseline[0]; base *= 1.0/cv::norm(base);
       cv::Point2f extr = coords[n]-coords[m]; extr *= 1.0/cv::norm(extr);
@@ -2960,10 +3021,11 @@ bool PageXML::isPolystripe( std::vector<cv::Point2f> coords, std::vector<cv::Poi
 /**
  * Sets the Coords of a TextLine as a poly-stripe of the baseline.
  *
- * @param node   The node of element to set the Coords.
- * @param height The height of the poly-stripe in pixels (>0).
- * @param offset The offset of the poly-stripe (>=0 && <= 0.5).
- * @return       Pointer to created element.
+ * @param node          The node of element to set the Coords.
+ * @param height        The height of the poly-stripe in pixels (>0).
+ * @param offset        The offset of the poly-stripe (>=0 && <= 0.5).
+ * @param offset_check  Whether to check if offset is valid.
+ * @return              Pointer to created element.
  */
 xmlNodePt PageXML::setPolystripe( xmlNodePt node, double height, double offset, bool offset_check ) {
   if( ! nodeIs( node, "TextLine" ) ) {
@@ -3051,7 +3113,7 @@ void PageXML::setPageImageOrientation( xmlNodePt node, int angle, const double* 
     return;
   }
 
-  /// Normalize angle between [-90,180] ///
+  // Normalize angle between [-90,180] //
   angle = ( angle + 90 ) % 360;
   if ( angle < 0 )
     angle += 360;
@@ -3276,7 +3338,7 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
     return 0;
   }
 
-  /// Normalize angle between [-90,180] ///
+  // Normalize angle between [-90,180] //
   angle = ( angle + 90 ) % 360;
   if ( angle < 0 )
     angle += 360;
@@ -3285,7 +3347,7 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
   int pageWidth = getPageWidth(page);
   int pageHeight = getPageHeight(page);
 
-  /// Set image orientation ///
+  // Set image orientation //
   int num = 0;
   if ( update_image_orientation ) {
     setPageImageOrientation( page, getPageImageOrientation(page)-angle, _conf );
@@ -3294,12 +3356,12 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
   if ( angle == 0 )
     return num;
 
-  /// Select all elements with coordinates ///
+  // Select all elements with coordinates //
   std::vector<xmlNodePt> points = select(".//@points[.!=\"0,0 0,0\"]", page);
   std::vector<xmlNodePt> fpgrams = select(".//_:Property[@key='fpgram']/@value", page);
   points.insert(points.end(), fpgrams.begin(), fpgrams.end());
 
-  /// Rotate all coordinates ///
+  // Rotate all coordinates //
   for ( int n=(int)points.size()-1; n>=0; n-- ) {
     std::vector<cv::Point2f> pts = stringToPoints(getValue(points[n]));
     if ( angle == -90 )
@@ -3335,7 +3397,7 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
  * @return                    Number of pages+points attributes modified.
  */
 int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages, bool check_aspect_ratio ) {
-  /// Input checks ///
+  // Input checks //
   if ( sizes.size() != pages.size() ) {
     throw_runtime_error( "PageXML.resize: number of sizes and pages must coincide" );
     return 0;
@@ -3346,7 +3408,7 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
       return 0;
     }
 
-  /// Check that aspect ratios are the same ///
+  // Check that aspect ratios are the same //
   std::vector<cv::Size2i> orig_sizes = getPagesSize(pages);
   if ( check_aspect_ratio )
     for ( int n=0; n<(int)pages.size(); n++ ) {
@@ -3359,7 +3421,7 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
       }
     }
 
-  /// For each page update size and resize coords ///
+  // For each page update size and resize coords //
   int updated = 0;
   for ( int n=0; n<(int)pages.size(); n++ ) {
     int currWidth = getPageWidth(pages[n]);
@@ -3374,7 +3436,7 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
     double fact_x = (double)sizes[n].width/orig_sizes[n].width;
     double fact_y = (double)sizes[n].height/orig_sizes[n].height;
 
-    /// Resize Coords/@points and Baseline/@points ///
+    // Resize Coords/@points and Baseline/@points //
     std::vector<xmlNodePt> coords = select( ".//*[@points]", pages[n] );
     for ( int m=0; m<(int)coords.size(); m++ ) {
       std::vector<cv::Point2f> pts = stringToPoints( getAttr(coords[m],"points") );
@@ -3385,7 +3447,7 @@ int PageXML::resize( std::vector<cv::Size2i> sizes, std::vector<xmlNodePt> pages
       setAttr( coords[m], "points", pointsToString(pts).c_str() );
     }
 
-    /// Resize Property[@key='fpgram']/@value ///
+    // Resize Property[@key='fpgram']/@value //
     std::vector<xmlNodePt> fpgram = select( ".//_:Property[@key='fpgram' and @value]", pages[n] );
     for ( int m=0; m<(int)fpgram.size(); m++ ) {
       std::vector<cv::Point2f> pts = stringToPoints( getAttr(fpgram[m],"value") );
@@ -4320,13 +4382,13 @@ std::vector<double> PageXML::computeAreas( std::vector<OGRMultiPolygonPtr_> poly
 std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiPolygonPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas ) {
   std::vector<double> scores;
 
-  /// Check input ///
+  // Check input //
   if ( polys.size() != areas.size() ) {
     throw_runtime_error( "PageXML.computeCoordsIntersectionsWeightedByArea: size of polys and areas must be the same" );
     return scores;
   }
 
-  /// Compute intersections ///
+  // Compute intersections //
   double poly_area = getOGRpolygonArea(poly);
   if ( poly_area == 0.0 ) {
     for ( int n=0; n<(int)polys.size(); n++ )
@@ -4345,11 +4407,11 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
     }
   }
 
-  /// Return if fewer than 2 intersects ///
+  // Return if fewer than 2 intersects //
   if ( isect_count < 2 )
     return scores;
 
-  /// Weight by areas ///
+  // Weight by areas //
   for ( int n=0; n<(int)scores.size(); n++ )
     if ( scores[n] > 0.0 )
       scores[n] *= 1.0-areas[n]/sum_areas;
@@ -4368,13 +4430,13 @@ std::vector<double> PageXML::computeCoordsIntersectionsWeightedByArea( OGRMultiP
 std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMultiLineStringPtr_ poly, std::vector<OGRMultiPolygonPtr_> polys, std::vector<double> areas ) {
   std::vector<double> scores;
 
-  /// Check input ///
+  // Check input //
   if ( polys.size() != areas.size() ) {
     throw_runtime_error( "PageXML.computeBaselineIntersectionsWeightedByArea: size of polys and areas must be the same" );
     return scores;
   }
 
-  /// Compute intersections ///
+  // Compute intersections //
   double baseline_length = poly->multipolyline->get_Length();
   double sum_areas = 0.0;
   int isect_count = 0;
@@ -4388,11 +4450,11 @@ std::vector<double> PageXML::computeBaselineIntersectionsWeightedByArea( OGRMult
     }
   }
 
-  /// Return if fewer than 2 intersects ///
+  // Return if fewer than 2 intersects //
   if ( isect_count < 2 )
     return scores;
 
-  /// Weight by areas ///
+  // Weight by areas //
   for ( int n=0; n<(int)scores.size(); n++ )
     if ( scores[n] > 0.0 )
       scores[n] *= 1.0-areas[n]/sum_areas;
@@ -4417,7 +4479,7 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
     return selection;
   }
 
-  /// OGR polygon(s) for selection ///
+  // OGR polygon(s) for selection //
   std::vector<OGRMultiPolygonPtr_> polys;
   polys.push_back(pointsToOGRpolygon(points));
   if( getOGRpolygonArea(polys[0]) == 0.0 )
@@ -4433,13 +4495,13 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
     polys.push_back(pointsToOGRpolygon(pagereg));
   }
 
-  /// Get areas for overlap computation ///
+  // Get areas for overlap computation //
   std::vector<double> areas = computeAreas(polys);
 
-  /// Loop through elements ///
+  // Loop through elements //
   std::vector<xmlNodePt> elems = select( xpath, page );
   for ( int n=0; n<(int)elems.size(); n++ ) {
-    /// Compute overlap scores ///
+    // Compute overlap scores //
     std::vector<double> overlap;
     switch ( overlap_type ) {
       case PAGEXML_OVERLAP_COORDS_IOU:
@@ -4459,7 +4521,7 @@ std::vector<xmlNodePt> PageXML::selectByOverlap( std::vector<cv::Point2f> points
         return selection;
     }
 
-    /// Add if higher than threshold ///
+    // Add if higher than threshold //
     if ( overlap[0] > overlap_thr )
       selection.push_back(elems[n]);
   }
@@ -4502,7 +4564,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
 
   int linesCopied = 0;
 
-  /// Loop through pages ///
+  // Loop through pages //
   for ( int npage = 0; npage<(int)pgsFrom.size(); npage++ ) {
     std::vector<xmlNodePt> linesFrom = pageFrom.select( ".//_:TextLine", pgsFrom[npage] );
     if( linesFrom.size() == 0 )
@@ -4510,14 +4572,14 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
 
     unsigned int toImW = getPageWidth(npage);
     unsigned int toImH = getPageHeight(npage);
-    /// Check that image size is the same in both PageXMLs ///
+    // Check that image size is the same in both PageXMLs //
     if ( toImW != pageFrom.getPageWidth(npage) ||
          toImH != pageFrom.getPageHeight(npage) ) {
       throw_runtime_error( "PageXML.copyTextLinesAssignByOverlap: for Page %d image size differs between input PageXMLs", npage );
       return 0;
     }
 
-    /// Select page region or create one if it does not exist ///
+    // Select page region or create one if it does not exist //
     std::string xmax = std::to_string(toImW-1);
     std::string ymax = std::to_string(toImH-1);
     xmlNodePt pageRegTo = selectNth( std::string("_:TextRegion[_:Coords/@points='0,0 ")+xmax+",0 "+xmax+","+ymax+" 0,"+ymax+"']", 0, pgsTo[npage] );
@@ -4538,16 +4600,16 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
       }
     }
 
-    /// Select relevant elements ///
+    // Select relevant elements //
     std::vector<xmlNodePt> regsTo = select( ".//_:TextRegion[_:Coords]", pgsTo[npage] );
 
-    /// Get polygons of regions for IoU computation ///
+    // Get polygons of regions for IoU computation //
     std::vector<OGRMultiPolygonPtr_> regs_poly = getOGRpolygons(regsTo);
     std::vector<double> reg_areas;
     if ( overlap_type == PAGEXML_OVERLAP_COORDS_IWA || overlap_type == PAGEXML_OVERLAP_BASELINE_IWA || overlap_type == PAGEXML_OVERLAP_COORDS_BASELINE_IWA )
       reg_areas = computeAreas(regs_poly);
 
-    /// Loop through lines ///
+    // Loop through lines //
     std::vector<xmlNodePt> linesAdded;
     for ( int n=0; n<(int)linesFrom.size(); n++ ) {
       if ( overlap_type != PAGEXML_OVERLAP_BASELINE_IWA && getPoints(linesFrom[n]).size() < 4 ) {
@@ -4555,7 +4617,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
           fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: expected Coords to have at least 4 points, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
         continue;
       }
-      /// Compute overlap scores ///
+      // Compute overlap scores //
       std::vector<double> overlap;
       std::vector<double> overlap2;
       switch ( overlap_type ) {
@@ -4579,14 +4641,14 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
           break;
       }
 
-      /// Check if TextLine should be copied ///
+      // Check if TextLine should be copied //
       int max_idx = std::distance(overlap.begin(), std::max_element(overlap.begin(), overlap.end()));
       if ( overlap[max_idx] == 0.0 ) {
         if ( verbose )
           fprintf( stderr, "PageXML.copyTextLinesAssignByOverlap: warning: TextLine does not overlap with any region, skipping copy of id=%s\n", getAttr(linesFrom[n],"id").c_str() );
         continue;
       }
-      /// Clone line and add it to the destination region node ///
+      // Clone line and add it to the destination region node //
       std::string lid = getUniqueID( "cp", (std::string("_")+getAttr( linesFrom[n], "id" )).c_str() );
       xmlNodePt lineclone = NULL;
       if ( 0 != xmlDOMWrapCloneNode( NULL, NULL, linesFrom[n], &lineclone, docToPtr, NULL, 1, 0 ) ||
@@ -4608,7 +4670,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
       }
     }
 
-    /// Remove added page region if no TextLine was added to it ///
+    // Remove added page region if no TextLine was added to it //
     if ( pageregadded && count("_:TextLine",pageRegTo) == 0 )
       rmElem(pageRegTo);
 
@@ -4635,7 +4697,7 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
  * @return                      Number of join groups, elements per group in order and group scores.
  */
 int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, std::vector<std::vector<int> >& _group_order, std::vector<double>& _group_score, double max_angle_diff, double max_horiz_iou, double min_prolong_fact, double prolong_alpha, bool fake_baseline, double recurse_factor ) {
-  /// Get points and compute baseline angles and lengths ///
+  // Get points and compute baseline angles and lengths //
   std::vector< std::vector<cv::Point2f> > coords;
   std::vector< std::vector<cv::Point2f> > baseline;
   std::vector<double> angle;
@@ -4677,16 +4739,16 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
   for ( int n=0; n<num_elems; n++ )
     group_idx[n] = -1;
 
-  /// Loop through all directed pairs of text elems ///
+  // Loop through all directed pairs of text elems //
   for ( int n=0; n<num_elems; n++ )
     for ( int m=0; m<num_elems; m++ )
       if ( n != m ) {
-        /// Check that baseline angle difference is small ///
+        // Check that baseline angle difference is small //
         double angle_diff = fabs(angleDiff(angle[n],angle[m]));
         if ( angle_diff > max_angle_diff )
           continue;
 
-        /// Project baseline limits onto the local horizontal axis ///
+        // Project baseline limits onto the local horizontal axis //
         cv::Point2f dir_n = baseline[n][1]-baseline[n][0];
         cv::Point2f dir_m = baseline[m][1]-baseline[m][0];
         dir_n *= 1.0/cv::norm(dir_n);
@@ -4696,19 +4758,19 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         std::vector<double> horiz_n = project_2d_to_1d(baseline[n],horiz);
         std::vector<double> horiz_m = project_2d_to_1d(baseline[m],horiz);
 
-        /// Check that elem n starts before elem m ///
+        // Check that elem n starts before elem m //
         double direct = horiz_n[0] < horiz_n[1] ? 1.0 : -1.0;
         if ( direct*horiz_m[0] < direct*horiz_n[0] )
           continue;
         
-        /// Check that horizontal IoU is small //
+        // Check that horizontal IoU is small //
         double iou = IoU_1d(horiz_n[0],horiz_n[1],horiz_m[0],horiz_m[1]);
         if ( iou > max_horiz_iou )
           continue;
 
-        /// Compute coords endpoint-startpoint intersection factors ///
-        /// (both ways, intersection length of prolongated elem 1 and elem 2 divided by height of elem 2) ///
-        /// @todo Possible improvement: coords_fact_xx = isect_1d / min(norm_n,norm_m)
+        // Compute coords endpoint-startpoint intersection factors //
+        // (both ways, intersection length of prolongated elem 1 and elem 2 divided by height of elem 2) //
+        // @todo Possible improvement: coords_fact_xx = isect_1d / min(norm_n,norm_m)
         std::vector<cv::Point2f> pts_n = coords[n];
         std::vector<cv::Point2f> pts_m = coords[m];
         std::vector<cv::Point2f> isect_nm(2);
@@ -4726,9 +4788,9 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         double coords_fact_nm = intersection_1d(vert_nm_n[0],vert_nm_n[1],vert_nm_m[0],vert_nm_m[3])/cv::norm(pts_m[3]-pts_m[0]);
         double coords_fact_mn = intersection_1d(vert_mn_n[1],vert_mn_n[2],vert_mn_m[0],vert_mn_m[1])/cv::norm(pts_n[2]-pts_n[1]);
 
-        /// Compute baseline alignment factors ///
-        /// (both ways, one minus distance between prolongated baseline 1 and baseline 2 divided by height of elem 2 ) ///
-        /// @todo Possible improvement: max( 0, 1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )
+        // Compute baseline alignment factors //
+        // (both ways, one minus distance between prolongated baseline 1 and baseline 2 divided by height of elem 2 ) //
+        // @todo Possible improvement: max( 0, 1-norm(isec_xx-bline_x)/max(norm_n,norm_m) )
         std::vector<cv::Point2f> bline_n = baseline[n];
         std::vector<cv::Point2f> bline_m = baseline[m];
         if ( ! intersection( bline_n[0], bline_n[1], pts_m[0], pts_m[3], isect_nm[0] ) ) continue;
@@ -4736,7 +4798,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         double bline_fact_nm = std::max(0.0, 1.0-cv::norm(isect_nm[0]-bline_m[0])/cv::norm(pts_m[3]-pts_m[0]));
         double bline_fact_mn = std::max(0.0, 1.0-cv::norm(isect_mn[0]-bline_n[1])/cv::norm(pts_n[2]-pts_n[1]));
 
-        /// Overall alignment factor ///
+        // Overall alignment factor //
         double coords_fact = 0.5*(coords_fact_nm+coords_fact_mn);
         double bline_fact = 0.5*(bline_fact_nm+bline_fact_mn);
 
@@ -4744,21 +4806,21 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         if ( prolong_fact < min_prolong_fact )
           continue;
 
-        /// Add text elem to a group (new or existing) ///
+        // Add text elem to a group (new or existing) //
         int k = (int)elem_groups.size();
         std::unordered_set<int> elem_group;
         std::vector<int> group_order;
         std::vector<double> group_scores;
         std::vector<double> group_direct;
 
-        /// Check if should be part of existing group ///
+        // Check if should be part of existing group //
         if ( group_idx[n] != -1 || group_idx[m] != -1 ) {
 
-          /// Unique existing group ///
+          // Unique existing group //
           if ( group_idx[n] == -1 || group_idx[m] == -1 || group_idx[n] == group_idx[m] )
             k = std::max(group_idx[n], group_idx[m]);
 
-          /// Two existing groups, thus merge groups ///
+          // Two existing groups, thus merge groups //
           else {
             k = std::min(group_idx[n], group_idx[m]);
             int kk = std::max(group_idx[n], group_idx[m]);
@@ -4781,7 +4843,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         }
         group_idx[n] = group_idx[m] = k;
 
-        /// Update groups ///
+        // Update groups //
         elem_group.insert(n);
         elem_group.insert(m);
         group_order.push_back(n);
@@ -4801,7 +4863,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         }
       }
 
-  /// Adjust text elem order for groups with more than two text elems ///
+  // Adjust text elem order for groups with more than two text elems //
   std::vector<std::vector<int> > extra_group_order;
   std::vector<double> extra_group_score;
 
@@ -4809,7 +4871,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
     if ( elem_group_scores[k].size() > 1 ) {
       int num_group = elem_groups[k].size();
 
-      /// Get horizontal direction ///
+      // Get horizontal direction //
       std::vector<int> idx;
       double totlength = 0.0;
       cv::Point2f horiz(0.0,0.0);
@@ -4821,7 +4883,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
       }
       horiz *= 1.0/totlength;
 
-      /// Check if there is high horizontal overlaps within group ///
+      // Check if there is high horizontal overlaps within group //
       std::vector<std::vector<double> > blines;
       for ( int j=0; j<(int)idx.size(); j++ )
         blines.push_back( project_2d_to_1d(baseline[idx[j]],horiz) );
@@ -4839,7 +4901,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
           }
       afterRecourseLoop:
 
-      /// If high overlap recurse with stricter criterion ///
+      // If high overlap recurse with stricter criterion //
       if ( recurse ) {
         std::vector<xmlNodePtr> recurse_elems;
         std::vector<std::vector<int> > recurse_group_order;
@@ -4873,13 +4935,13 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         continue;
       }
 
-      /// Project baseline centers onto the local horizontal axis ///
+      // Project baseline centers onto the local horizontal axis //
       std::vector<cv::Point2f> cent;
       for ( int j=0; j<(int)idx.size(); j++ )
         cent.push_back(0.5*(baseline[idx[j]][0]+baseline[idx[j]][1]));
       std::vector<double> hpos = project_2d_to_1d(cent,horiz);
 
-      /// Sort text elems by horizontal center projections ///
+      // Sort text elems by horizontal center projections //
       int flags = elem_group_direct[k] == 1.0 ? CV_SORT_ASCENDING : CV_SORT_DESCENDING;
       std::vector<int> sidx(num_group);
       cv::sortIdx( hpos, sidx, flags );
@@ -4887,7 +4949,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
       for ( int j=0; j<(int)sidx.size(); j++ )
         group_order.push_back(idx[sidx[j]]);
 
-      /// Score as average of scores ///
+      // Score as average of scores //
       double score = 0.0;
       for ( int j=0; j<(int)elem_group_scores[k].size(); j++ )
         score += elem_group_scores[k][j];
@@ -4902,13 +4964,13 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
   for ( int k=0; k<(int)elem_group_scores.size(); k++ )
     elem_group_score.push_back(elem_group_scores[k][0]);
 
-  /// Add recursed extra groups ///
+  // Add recursed extra groups //
   if ( extra_group_order.size() > 0 ) {
     elem_group_order.insert(elem_group_order.end(), extra_group_order.begin(), extra_group_order.end());
     elem_group_score.insert(elem_group_score.end(), extra_group_score.begin(), extra_group_score.end());
   }
 
-  /// Sort groups based on first element original order ///
+  // Sort groups based on first element original order //
   if ( elem_group_order.size() > 0 ) {
     std::vector<int> sval(elem_group_order.size());
     std::vector<int> sidx(elem_group_order.size());
@@ -4949,12 +5011,12 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
   if ( elems.size() == 0 )
     return std::pair<std::vector<int>, std::vector<int> >(reading_order, subgroup_lengths);
 
-  /// Get text elem join groups ///
+  // Get text elem join groups //
   std::vector<std::vector<int> > elem_groups;
   std::vector<double> join_group_score;
   int num_joins = getLeftRightTextContinuationGroups( elems, elem_groups, join_group_score, max_angle_diff, max_horiz_iou, min_prolong_fact, prolong_alpha, fake_baseline, recurse_factor );
 
-  /// Get points and compute baseline angles and lengths ///
+  // Get points and compute baseline angles and lengths //
   std::vector<std::vector<cv::Point2f> > baseline;
   std::vector<double> length;
   for ( int n=0; n<(int)elems.size(); n++ ) {
@@ -4970,7 +5032,7 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
     length.push_back( getPolylineLength(baseline[n]) );
   }
 
-  /// Get horizontal direction ///
+  // Get horizontal direction //
   double totlength = 0.0;
   cv::Point2f horiz(0.0,0.0);
   for ( int n=0; n<(int)elems.size(); n++ ) {
@@ -4980,7 +5042,7 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
   }
   horiz *= 1.0/totlength;
 
-  /// Add text elems not in join groups ///
+  // Add text elems not in join groups //
   for ( int n=0; n<(int)elems.size(); n++ ) {
     bool in_join_group = false;
     for ( int i=0; i<num_joins; i++ )
@@ -4997,7 +5059,7 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
     }
   }
 
-  /// Get vertical group center projections ///
+  // Get vertical group center projections //
   std::vector<cv::Point2f> cent;
   for ( int i=0; i<(int)elem_groups.size(); i++ ) {
     double totlength = 0.0;
@@ -5013,11 +5075,11 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
   cv::Point2f vert(-horiz.y,horiz.x);
   std::vector<double> vpos = project_2d_to_1d(cent,vert);
 
-  /// Sort groups by vertical center projections ///
+  // Sort groups by vertical center projections //
   std::vector<int> sidx(vpos.size());
   cv::sortIdx( vpos, sidx, CV_SORT_ASCENDING );
 
-  /// Populate reading order vector ///
+  // Populate reading order vector //
   for ( int ii=0; ii<(int)sidx.size(); ii++ ) {
     int i = sidx[ii];
     subgroup_lengths.push_back((int)elem_groups[i].size());

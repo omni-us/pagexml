@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ### Create pre-commit symlink if unset ###
 GITDIR="";
@@ -24,7 +24,7 @@ fi
 
 
 ### Update versions on files ###
-FILES=( $(git status --porcelain | sed 's| .* | |' | grep '^[MRA]') );
+FILES=( $(git status --porcelain | sed -r 's|^ |_|; s|^(.) |\1_|;' | grep -E '^([MRA]|.M)') );
 V=$(date -u +%Y.%m.%d);
 
 check_change_after_staged () {
@@ -68,43 +68,54 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
         pylint --errors-only --extension-pkg-whitelist=cv2 "${FILES[$n]}";
         [ "$?" != 0 ] && exit 1;
         ;;
+      *.rst | githook-pre-commit )
+        check_change_after_staged "${FILES[$n]}" "${FILES[$((n-1))]}";
+        ;;
     esac
   n=$((n+2));
 done
 
 if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
-  ### Update C++ documentation ###
-  echo "### Update C++ documentation ###"
+  ### Update swig docstrings ###
+  echo "### Update swig docstrings ###"
   cd lib;
-  doxygen && \
-    moxygen -o ../doc/PageXML-API.md xml && \
-    ../doxy2swig/doxy2swig.py xml/index.xml ../py-pagexml/pagexml/PageXML_doxy2swig.i;
+  doxygen &&
+    ../doxy2swig/doxy2swig.py xml/class_page_x_m_l.xml --output ../py-pagexml/pagexml/PageXML_doxy2swig.i &&
+    ../doxy2swig/doxy2swig.py xml/class_text_feat_extractor.xml --output ../py-textfeat/textfeat/TextFeatExtractor_doxy2swig.i;
   [ "$?" != "0" ] && exit 1;
   cd ..;
-  git add doc/PageXML-API.md py-pagexml/pagexml/PageXML_doxy2swig.i;
+  git add py-pagexml/pagexml/PageXML_doxy2swig.i py-textfeat/textfeat/TextFeatExtractor_doxy2swig.i;
 
   ### Test python wrapper and update documentation ###
   echo "### Test pagexml python wrapper and update documentation ###"
   cd py-pagexml;
   python setup.py test;
   [ "$?" != "0" ] && exit 1;
-  python setup.py build_sphinx --quiet --builder text &&
-    cp -p docs/_build/text/pagexml.txt API.rst;
+  python setup.py build_sphinx --quiet --builder html &&
+    rm -r ../docs/py-pagexml/{_modules,_sources} ../docs/py-pagexml/*.* &&
+    mv docs/_build/html/{_modules,_sources} docs/_build/html/*.* ../docs/py-pagexml &&
+    mv docs/_build/html/_static/documentation_options.js ../docs/py-pagexml/_static &&
+    find ../docs/py-pagexml -name '*.html' -or -name '*.js' \
+      | grep -v _static \
+      | xargs sed -i 's|pagexml\.pagexml|pagexml|g';
   [ "$?" != "0" ] && exit 1;
-  sed -i 's|pagexml\.pagexml|pagexml|g' API.rst;
   cd ..;
-  git add py-pagexml/API.rst;
+  git add docs/py-pagexml;
 
   echo "### Test textfeat python wrapper and update documentation ###"
   cd py-textfeat;
   python setup.py test;
   [ "$?" != "0" ] && exit 1;
-  python setup.py build_sphinx --quiet --builder text &&
-    cp -p docs/_build/text/textfeat.txt API.rst;
+  python setup.py build_sphinx --quiet --builder html &&
+    rm -r ../docs/py-textfeat/{_modules,_sources} ../docs/py-textfeat/*.* &&
+    mv docs/_build/html/{_modules,_sources} docs/_build/html/*.* ../docs/py-textfeat &&
+    mv docs/_build/html/_static/documentation_options.js ../docs/py-textfeat/_static &&
+    find ../docs/py-textfeat -name '*.html' -or -name '*.js' \
+      | grep -v _static \
+      | xargs sed -i 's|textfeat\.textfeat|textfeat|g';
   [ "$?" != "0" ] && exit 1;
-  sed -i 's|textfeat\.textfeat|textfeat|g' API.rst;
   cd ..;
-  git add py-textfeat/API.rst;
+  git add docs/py-textfeat;
 fi
 
 ### Validate circleci config ###

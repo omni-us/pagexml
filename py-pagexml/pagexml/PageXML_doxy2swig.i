@@ -23,7 +23,7 @@ Arguments:
     id (const char *): ID attribute for element.
     node (const xmlNodePt): Reference element for insertion.
     itype (PAGEXML_INSERT): Type of insertion.
-    checkid (bool): 
+    checkid (bool): Whether to check if the id already exists.
 
 Returns:
     xmlNodePt: Pointer to created element.
@@ -39,7 +39,7 @@ Arguments:
     id (const char *): ID attribute for element.
     xpath (const char *): Selector for insertion.
     itype (PAGEXML_INSERT): Type of insertion.
-    checkid (bool): 
+    checkid (bool): Whether to check if the id already exists.
 
 Returns:
     xmlNodePt: Pointer to created element.
@@ -251,11 +251,11 @@ Returns:
 Selects closest node of a given name.
 
 Arguments:
-    name (const char *): 
-    node (xmlNodePt): 
+    name (const char *): Name of node to search for closest.
+    node (xmlNodePt): Base node to start the search from.
 
 Returns:
-    xmlNodePt: 
+    xmlNodePt: Pointer to the matched closest element or NULL if nothing matched.
 
 ";
 
@@ -440,7 +440,7 @@ Arguments:
     margin (cv::Point2f *): Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height.
     opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.
     transp_xpath (const char *): Selector for semi-transparent elements.
-    base_xpath (const char *): 
+    base_xpath (const char *): Selector for base node to use to construct the sample name.
 
 Returns:
     std::vector< NamedImage >: An std::vector containing NamedImage objects of the cropped images.
@@ -473,7 +473,7 @@ Arguments:
     name (const char *): Attribute name.
 
 Returns:
-    std::string: True if attribute found, otherwise false.
+    std::string: The attribute value, empty string if not set.
 
 **Signature 2**
 
@@ -486,7 +486,7 @@ Arguments:
     name (const char *): Attribute name.
 
 Returns:
-    std::string: True if attribute found, otherwise false.
+    std::string: The attribute value, empty string if not set.
 
 **Signature 3**
 
@@ -539,7 +539,7 @@ Arguments:
     node (const xmlNodePt): Base node.
 
 Returns:
-    std::vector< cv::Point2f >: Reference to the points vector.
+    std::vector< cv::Point2f >: Vector of points.
 
 ";
 
@@ -842,27 +842,27 @@ Overloaded function with 2 signatures.
 
 ``vector< cv::Point2f > PageXML::getPoints(const xmlNodePt node, const char *xpath=\"_:Coords\")``
 
-Retrieves and parses the Coords/ for a given base node.
+Retrieves and parses the Coords/@points for a given base node.
 
 Arguments:
     node (const xmlNodePt): Base node.
-    xpath (const char *): 
+    xpath (const char *): Relative selector for the points.
 
 Returns:
-    std::vector< cv::Point2f >: Reference to the points vector.
+    std::vector< cv::Point2f >: Vector of points.
 
 **Signature 2**
 
 ``std::vector< std::vector< cv::Point2f > > PageXML::getPoints(const std::vector< xmlNodePt > nodes, const char *xpath=\"_:Coords\")``
 
-Retrieves and parses the Coords/ for a given list of base nodes.
+Retrieves and parses the Coords/@points for a given list of base nodes.
 
 Arguments:
     nodes (const std::vector< xmlNodePt >): Base nodes.
-    xpath (const char *): 
+    xpath (const char *): Relative selector for the points.
 
 Returns:
-    std::vector< std::vector< cv::Point2f > >: Reference to the points vector.
+    std::vector< std::vector< cv::Point2f > >: Vector of vectors of points.
 
 ";
 
@@ -893,7 +893,7 @@ Retrieves a Property value.
 
 Arguments:
     node (xmlNodePt): Node element.
-    key (const char *): 
+    key (const char *): The key for the Property.
 
 Returns:
     std::string: String with the property value.
@@ -928,7 +928,7 @@ Retrieves the concatenated TextEquivs for a given root node and xpath.
 Arguments:
     node (xmlNodePt): Root node element.
     xpath (const char *): Relative xpath to select the TextEquiv elements.
-    type (const char *): Type attribute. Set to \"\" for TextEquivs without a type.
+    type (const char *): Type attribute. Set to empty string for TextEquivs without a type.
     separator (const char *): String to add between TextEquivs.
 
 Returns:
@@ -1042,17 +1042,17 @@ Returns:
 ";
 
 %feature("docstring") PageXML::intersection "
-Finds the intersection point between two lines defined by pairs of points or returns false if no intersection
+Finds the intersection point between two lines defined by pairs of points.
 
 Arguments:
-    line1_point1 (cv::Point2f): 
-    line1_point2 (cv::Point2f): 
-    line2_point1 (cv::Point2f): 
-    line2_point2 (cv::Point2f): 
+    line1_point1 (cv::Point2f): First point of line 1.
+    line1_point2 (cv::Point2f): Second point of line 1.
+    line2_point1 (cv::Point2f): First point of line 2.
+    line2_point2 (cv::Point2f): Second point of line 2.
     _ipoint (cv::Point2f &): 
 
 Returns:
-    bool: 
+    bool: False if no intersection otherwise true.
 
 ";
 
@@ -1112,10 +1112,10 @@ Returns:
 Validates the currently loaded XML.
 
 Arguments:
-    xml_to_validate (xmlDocPtr): 
+    xml_to_validate (xmlDocPtr): Pointer to the loaded XML to validate.
 
 Returns:
-    bool: 
+    bool: Whether XML validates or not.
 
 ";
 
@@ -1136,18 +1136,22 @@ Arguments:
 
 ``void PageXML::loadImage(xmlNodePt node, const char *fname=NULL, const bool resize_coords=false, int density=0)``
 
+Loads an image for a Page in the XML.
+
 Arguments:
-    node (xmlNodePt): 
-    fname (const char *): 
-    resize_coords (const bool): 
-    density (int): 
+    node (xmlNodePt): Pointer to a Page node or a descendant.
+    fname (const char *): File name of the image to read, overriding the one in the XML.
+    resize_coords (const bool): If image size differs, resize page XML coordinates.
+    density (int): Load the image at the given density, resizing the page coordinates if required.
 
 ";
 
 %feature("docstring") PageXML::loadImages "
+Loads images for all pages in the XML.
+
 Arguments:
-    resize_coords (const bool): 
-    density (const int): 
+    resize_coords (const bool): If image size differs, resize page XML coordinates.
+    density (const int): Load the image at the given density, resizing the page coordinates if required.
 
 ";
 
@@ -1170,7 +1174,7 @@ Loads a Page XML from a file.
 
 Arguments:
     fname (const char *): File name of the XML file to read.
-    validate (bool): 
+    validate (bool): Whether to validate against XSD schema.
 
 **Signature 2**
 
@@ -1181,7 +1185,7 @@ Loads a Page XML from an input stream.
 Arguments:
     fnum (int): File number from where to read the XML file.
     prevfree (bool): Whether to release resources before loading.
-    validate (bool): 
+    validate (bool): Whether to validate against XSD schema.
 
 ";
 
@@ -1190,7 +1194,7 @@ Loads a Page XML from a string.
 
 Arguments:
     xml_string (const char *): The XML content.
-    validate (bool): 
+    validate (bool): Whether to validate against XSD schema.
 
 ";
 
@@ -1252,10 +1256,10 @@ Arguments:
     image (const char *): Path to the image file.
     imgW (const int): Width of image.
     imgH (const int): Height of image.
-    pagens (const char *): 
+    pagens (const char *): The page xml namespace string to use.
 
 Returns:
-    xmlNodePt: 
+    xmlNodePt: Pointer to the Page node.
 
 ";
 
@@ -1354,8 +1358,10 @@ Returns:
 ";
 
 %feature("docstring") PageXML::printVersions "
+Prints the version of the PageXML library and its main dependencies.
+
 Arguments:
-    file (FILE *): 
+    file (FILE *): Stream where to print the versions.
 
 ";
 
@@ -1369,8 +1375,8 @@ Ends the running process in the Page XML.
 Starts a process in the Page XML.
 
 Arguments:
-    tool (const char *): 
-    ref (const char *): 
+    tool (const char *): Short description of tool that started the process.
+    ref (const char *): Short description of execution reference.
 
 ";
 
@@ -1404,7 +1410,7 @@ Overloaded function with 2 signatures.
 Releases an already loaded image.
 
 Arguments:
-    pagenum (int): The number of the page for which to release the image.
+    pagenum (int): The number of the page for which to release the image (0-based).
 
 **Signature 2**
 
@@ -1610,7 +1616,7 @@ Arguments:
     node (const xmlNodePt): XML node for context, set to NULL for root node.
 
 Returns:
-    xmlNodePt: Matched node.
+    xmlNodePt: Matched node or NULL if nothing matched.
 
 ";
 
@@ -1662,11 +1668,11 @@ Selects the n-th node that matches an xpath.
 
 Arguments:
     xpath (const char *): Selector expression.
-    num (int): Element number (0-indexed), negative from last.
+    num (int): Element number (0-based), negative from last.
     node (const xmlNodePt): XML node for context, set to NULL for root node.
 
 Returns:
-    xmlNodePt: Matched node.
+    xmlNodePt: Matched node or NULL if nothing matched.
 
 **Signature 2**
 
@@ -2047,7 +2053,7 @@ Arguments:
     node (xmlNodePt): The node of element to set the Coords.
     height (double): The height of the poly-stripe in pixels (>0).
     offset (double): The offset of the poly-stripe (>=0 && <= 0.5).
-    offset_check (bool): 
+    offset_check (bool): Whether to check if offset is valid.
 
 Returns:
     xmlNodePt: Pointer to created element.
@@ -2195,7 +2201,7 @@ Arguments:
     xpath (const char *): Selector for element to set the TextEquiv.
     text (const char *): The text string.
     conf (const double): Confidence value.
-    type (const char *): 
+    type (const char *): Type attribute.
 
 Returns:
     xmlNodePt: Pointer to created element.
@@ -2206,7 +2212,7 @@ Returns:
 Enables/disables schema validation.
 
 Arguments:
-    val (bool): 
+    val (bool): Whether schema validation should be enabled.
 
 ";
 
@@ -2215,7 +2221,7 @@ Sets a node value.
 
 Arguments:
     node (xmlNodePt): Node element.
-    value (const char *): 
+    value (const char *): String with the value to set.
 
 ";
 

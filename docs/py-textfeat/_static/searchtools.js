@@ -1,0 +1,1 @@
+../../py-pagexml/_static/searchtools.js
