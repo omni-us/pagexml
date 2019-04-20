@@ -13,6 +13,8 @@ and the schema itself included in py-pagexml can be found at:
 - `XSD schema documentation <https://omni-us.github.io/pageformat/pagecontent_omnius.html>`_.
 - `pagecontent_omnius.xsd <https://omni-us.github.io/pageformat/pagecontent_omnius.xsd>`_.
 
+The official online documentation of py-pagexml is available at `<https://omni-us.github.io/pagexml/py-pagexml>`_.
+
 
 Project steering committee
 --------------------------
