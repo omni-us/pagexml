@@ -6,14 +6,15 @@ Library in C++ and a python wrapper for dealing with Page XML files
 
 # Requirements
 
-Check [py-pagexml/README.md](py-pagexml/README.md) and/or [docker/Dockerfile_build](docker/Dockerfile_build), [docker/Dockerfile_runtime](docker/Dockerfile_runtime).
+Check [py-pagexml/README.rst](py-pagexml/README.rst) and/or [docker/Dockerfile_build](docker/Dockerfile_build), [docker/Dockerfile_runtime](docker/Dockerfile_runtime).
 
 # Contents 
 
 - [lib](lib): Directory containing the C++ PageXML library.
 - [py-pagexml](py-pagexml): Swig-based python wrapper for the PageXML library.
+- [py-textfeat](py-textfeat): Swig-based python wrapper for the PageXML library.
 
 # Documentation
 
-- [doc/PageXML-API.md](doc/PageXML-API.md): Doxygen+moxygen generated documentation of the PageXML C++ library API.
-- [py-pagexml/README.md](py-pagexml/README.md): General readme for the python C++ PageXML wrapper including a basic usage example.
+- [https://omni-us.github.io/pagexml/py-pagexml](https://omni-us.github.io/pagexml/py-pagexml): Online documentation for py-pagexml.
+- [https://omni-us.github.io/pagexml/py-textfeat](https://omni-us.github.io/pagexml/py-textfeat): Online documentation for py-textfeat.
