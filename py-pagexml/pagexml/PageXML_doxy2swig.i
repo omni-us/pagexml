@@ -1205,6 +1205,7 @@ Arguments:
     elem (xmlNodePt): Element to move.
     node (const xmlNodePt): Reference element for insertion.
     itype (PAGEXML_INSERT): Type of insertion.
+    bugimpl (bool): 
 
 Returns:
     xmlNodePt: Pointer to moved element.
@@ -1218,6 +1219,7 @@ Arguments:
     elems (const std::vector< xmlNodePt > &): Elements to move.
     node (const xmlNodePt): Reference element for insertion.
     itype (PAGEXML_INSERT): Type of insertion.
+    bugimpl (bool): 
 
 Returns:
     int: Pointer to moved element.

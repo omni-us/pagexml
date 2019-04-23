@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.20$
+ * @version $Version: 2019.04.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.20";
+static char class_version[] = "Version: 2019.04.23";
 
 /**
  * Returns the class version.
@@ -1912,7 +1912,7 @@ xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
  * @param itype  Type of insertion.
  * @return       Pointer to moved element.
  */
-xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype ) {
+xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype, bool bugimpl ) {
   if( elem == NULL || node == NULL ) {
     throw_runtime_error( "PageXML.moveElem: received NULL pointer (elem=%p, node=%p)", elem, node );
     return NULL;
@@ -1922,18 +1922,29 @@ xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
     return NULL;
   }
 
-  xmlNodePt elemcopy = NULL;
-  try {
-    elemcopy = copyElem( elem, node, itype );
+  if ( node->doc != elem->doc || bugimpl ) {
+    xmlNodePt elemcopy = NULL;
+    try {
+      elemcopy = copyElem( elem, node, itype );
+    }
+    catch( exception& e ) {
+      throw_runtime_error( "PageXML.moveElem: problems moving element: %s", e.what() );
+      return NULL;
+    }
+    xmlUnlinkNode(elem);
+    xmlFreeNode(elem);
+    return elemcopy;
   }
-  catch( exception& e ) {
-    throw_runtime_error( "PageXML.moveElem: problems moving element: %s", e.what() );
-    return NULL;
+  else {
+    xmlUnlinkNode(elem);
+    try {
+      return insertElem( elem, node, itype );
+    }
+    catch( exception& e ) {
+      throw_runtime_error( "PageXML.moveElem: problems inserting element" );
+    }
   }
-  xmlUnlinkNode(elem);
-  xmlFreeNode(elem);
-
-  return elemcopy;
+  return NULL;
 }
 
 /**
@@ -1944,19 +1955,20 @@ xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
  * @param itype  Type of insertion.
  * @return       Pointer to moved element.
  */
-int PageXML::moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype ) {
+int PageXML::moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype, bool bugimpl ) {
+  // @todo Return vector of pointers instead of number of moves?
   int moves = 0;
   switch( itype ) {
     case PAGEXML_INSERT_APPEND:
     case PAGEXML_INSERT_PREVSIB:
       for( int n=0; n<(int)elems.size(); n++ )
-        if( moveElem(elems[n],node,itype) != NULL )
+        if( moveElem(elems[n],node,itype,bugimpl) != NULL )
           moves++;
       break;
     case PAGEXML_INSERT_PREPEND:
     case PAGEXML_INSERT_NEXTSIB:
       for( int n=(int)elems.size()-1; n>=0; n-- )
-        if( moveElem(elems[n],node,itype) != NULL )
+        if( moveElem(elems[n],node,itype,bugimpl) != NULL )
           moves++;
       break;
   }

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2019.4.20 documentation</title>
+  <title>pagexml &mdash; pagexml 2019.4.23 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.4.20
+                2019.4.23
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.4.20)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.4.23)</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -11139,7 +11139,7 @@
         <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_copyElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PageXML.moveElem"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.moveElem">[docs]</a>    <span class="k">def</span> <span class="nf">moveElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="n">PAGEXML_INSERT_APPEND</span><span class="p">):</span>
+<div class="viewcode-block" id="PageXML.moveElem"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.moveElem">[docs]</a>    <span class="k">def</span> <span class="nf">moveElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="n">PAGEXML_INSERT_APPEND</span><span class="p">,</span> <span class="n">bugimpl</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Unlink an element and add it relative to a given node.</span>
@@ -11154,10 +11154,10 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_moveElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_moveElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="p">,</span> <span class="n">bugimpl</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PageXML.moveElems"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.moveElems">[docs]</a>    <span class="k">def</span> <span class="nf">moveElems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="n">PAGEXML_INSERT_APPEND</span><span class="p">):</span>
+<div class="viewcode-block" id="PageXML.moveElems"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.moveElems">[docs]</a>    <span class="k">def</span> <span class="nf">moveElems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="n">PAGEXML_INSERT_APPEND</span><span class="p">,</span> <span class="n">bugimpl</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Unlink elements and add them relative to a given node.</span>
@@ -11172,7 +11172,7 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_moveElems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_moveElems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">itype</span><span class="p">,</span> <span class="n">bugimpl</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PageXML.setRotation"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.setRotation">[docs]</a>    <span class="k">def</span> <span class="nf">setRotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">rotation</span><span class="p">):</span>

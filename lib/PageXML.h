@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.04.20$
+ * @version $Version: 2019.04.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -187,8 +187,8 @@ class PageXML {
     int rmElems( const char* xpath,       xmlNodePt node = NULL );
     int rmElems( const std::string xpath, xmlNodePt node = NULL );
     xmlNodePt copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
-    xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
-    int moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND );
+    xmlNodePt moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool bugimpl = false );
+    int moveElems( const std::vector<xmlNodePt>& elems, const xmlNodePt node, PAGEXML_INSERT itype = PAGEXML_INSERT_APPEND, bool bugimpl = false );
     void setRotation( const xmlNodePt elem, const float rotation );
     void setReadingDirection( const xmlNodePt elem, PAGEXML_READ_DIRECTION direction );
     double getDominantBaselinesOrientation( std::vector<xmlNodePt> elems );
