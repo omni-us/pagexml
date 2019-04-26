@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.23$
+ * @version $Version: 2019.04.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.23";
+static char class_version[] = "Version: 2019.04.26";
 
 /**
  * Returns the class version.
@@ -1292,17 +1292,30 @@ std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
 /**
  * Crops images using its Coords polygon, regions outside the polygon are set to transparent.
  *
- * @param xpath          Selector for polygons to crop.
- * @param margin         Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height.
+ * @param xpath          Selector for Coord nodes to crop.
+ * @param margin         Margins, if >1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.
  * @param opaque_coords  Whether to include an alpha channel with the polygon interior in opaque.
  * @param transp_xpath   Selector for semi-transparent elements.
- * @param base_xpath     Selector for base node to use to construct the sample name.
+ * @param base_xpath     Expression to construct sample name, overriding the default IMGBASE.ELEMID.
  * @return               An std::vector containing NamedImage objects of the cropped images.
  */
-vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath, const char* base_xpath ) {
-  vector<NamedImage> images;
+std::vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath, const char* base_xpath ) {
+  return crop( select(xpath), margin, opaque_coords, transp_xpath, base_xpath );
+}
 
-  vector<xmlNodePt> elems_coords = select( xpath );
+/**
+ * Crops images using its Coords polygon, regions outside the polygon are set to transparent.
+ *
+ * @param elems_coords   Vector of Coord nodes to crop.
+ * @param margin         Margins, if >1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.
+ * @param opaque_coords  Whether to include an alpha channel with the polygon interior in opaque.
+ * @param transp_xpath   Selector for semi-transparent elements.
+ * @param base_xpath     Expression to construct sample name, overriding the default IMGBASE.ELEMID.
+ * @return               An std::vector containing NamedImage objects of the cropped images.
+ */
+std::vector<NamedImage> PageXML::crop( std::vector<xmlNodePt> elems_coords, cv::Point2f* margin, bool opaque_coords, const char* transp_xpath, const char* base_xpath ) {
+  std::vector<NamedImage> images;
+
   if( elems_coords.size() == 0 )
     return images;
 
@@ -1316,24 +1329,23 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
   PageImage pageImage;
 #endif
 
-  xmlNodePt base_node = NULL;
-  if( base_xpath != NULL ) {
-    base_node = selectNth( base_xpath, 0 );
-    if( base_node == NULL ) {
-      throw_runtime_error( "PageXML.crop: base xpath did not match any nodes: xpath=%s", base_xpath );
-      return images;
-    }
-  }
-  // @todo Allow base_xpath to be relative to node, e.g. to select a different property for each page, region, etc.
-
   for( int n=0; n<(int)elems_coords.size(); n++ ) {
     xmlNodePt node = elems_coords[n];
 
-    if( ! nodeIs( node, "Coords") ) {
-      throw_runtime_error( "PageXML.crop: expected xpath to match only Coords elements: match=%d xpath=%s", n+1, xpath );
+    // Get parent node id //
+    string sampid = getAttr( node->parent, "id" );
+    if( sampid.empty() ) {
+      throw_runtime_error( "PageXML.crop: expected parent element to include id attribute: match=%d", n+1 );
       return images;
     }
 
+    // Check node is Coords //
+    if( ! nodeIs( node, "Coords") ) {
+      throw_runtime_error( "PageXML.crop: expected elements to be Coords: match=%d parent_id=%s", n+1, sampid.c_str() );
+      return images;
+    }
+
+    // Load page image //
     xmlNodePt page = selectNth( "ancestor-or-self::*[local-name()='Page']", 0, node );
     if( prevPage != page ) {
       prevPage = page;
@@ -1352,16 +1364,9 @@ vector<NamedImage> PageXML::crop( const char* xpath, cv::Point2f* margin, bool o
         pageImage = pagesImage[pagenum];
     }
 
-    // Get parent node id //
-    string sampid = getAttr( node->parent, "id" );
-    if( sampid.empty() ) {
-      throw_runtime_error( "PageXML.crop: expected parent element to include id attribute: match=%d xpath=%s", n+1, xpath );
-      return images;
-    }
-
     // Construct sample name //
     //string sampname = imageBase + "." + sampid;
-    std::string sampname = getNodeName( node->parent, base_node );
+    std::string sampname = base_xpath == NULL ? getNodeName( node->parent ) : getValue( base_xpath, node );
 
     // Get coords points //
     string spoints = getAttr( node, "points" );

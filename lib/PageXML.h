@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.04.23$
+ * @version $Version: 2019.04.26$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -148,7 +148,8 @@ class PageXML {
     std::vector<std::string> getImageBases();
     bool areIDsUnique();
     std::string getNodeName( xmlNodePt node, xmlNodePt base_node = NULL );
-    std::vector<NamedImage> crop( const char* xpath, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
+    std::vector<NamedImage> crop( const char* xpath,                   cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
+    std::vector<NamedImage> crop( std::vector<xmlNodePt> elems_coords, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
     static std::vector<cv::Point2f> stringToPoints( const char* spoints );
     static std::vector<cv::Point2f> stringToPoints( std::string spoints );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );

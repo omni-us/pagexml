@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2019.4.23 documentation</title>
+  <title>pagexml &mdash; pagexml 2019.4.26 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.4.23
+                2019.4.26
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.4.23)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.4.26)</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -10494,24 +10494,46 @@
         <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_getNodeName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">base_node</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PageXML.crop"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xpath</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opaque_coords</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transp_xpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_xpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PageXML.crop"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Overloaded function with 2 signatures.</span>
+
+<span class="sd">        **Signature 1**</span>
+
+<span class="sd">        ``std::vector&lt; NamedImage &gt; PageXML::crop(const char *xpath, cv::Point2f *margin=NULL, bool opaque_coords=true, const char *transp_xpath=NULL, const char *base_xpath=NULL)``</span>
 
 <span class="sd">        Crops images using its Coords polygon, regions outside the polygon are set to transparent.</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            xpath (const char *): Selector for polygons to crop.</span>
-<span class="sd">            margin (cv::Point2f *): Margins, if &gt;1.0 pixels, otherwise percentage of maximum of crop width and height.</span>
+<span class="sd">            xpath (const char *): Selector for Coord nodes to crop.</span>
+<span class="sd">            margin (cv::Point2f *): Margins, if &gt;1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.</span>
 <span class="sd">            opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.</span>
 <span class="sd">            transp_xpath (const char *): Selector for semi-transparent elements.</span>
-<span class="sd">            base_xpath (const char *): Selector for base node to use to construct the sample name.</span>
+<span class="sd">            base_xpath (const char *): Expression to construct sample name, overriding the default IMGBASE.ELEMID.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            std::vector&lt; NamedImage &gt;: An std::vector containing NamedImage objects of the cropped images.</span>
+
+<span class="sd">        **Signature 2**</span>
+
+<span class="sd">        ``std::vector&lt; NamedImage &gt; PageXML::crop(std::vector&lt; xmlNodePt &gt; elems_coords, cv::Point2f *margin=NULL, bool opaque_coords=true, const char *transp_xpath=NULL, const char *base_xpath=NULL)``</span>
+
+<span class="sd">        Crops images using its Coords polygon, regions outside the polygon are set to transparent.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            elems_coords (std::vector&lt; xmlNodePt &gt;): Vector of Coord nodes to crop.</span>
+<span class="sd">            margin (cv::Point2f *): Margins, if &gt;1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.</span>
+<span class="sd">            opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.</span>
+<span class="sd">            transp_xpath (const char *): Selector for semi-transparent elements.</span>
+<span class="sd">            base_xpath (const char *): Expression to construct sample name, overriding the default IMGBASE.ELEMID.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            std::vector&lt; NamedImage &gt;: An std::vector containing NamedImage objects of the cropped images.</span>
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xpath</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">opaque_coords</span><span class="p">,</span> <span class="n">transp_xpath</span><span class="p">,</span> <span class="n">base_xpath</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PageXML.stringToPoints"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.stringToPoints">[docs]</a>    <span class="k">def</span> <span class="nf">stringToPoints</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -11148,6 +11170,7 @@
 <span class="sd">            elem (xmlNodePt): Element to move.</span>
 <span class="sd">            node (const xmlNodePt): Reference element for insertion.</span>
 <span class="sd">            itype (PAGEXML_INSERT): Type of insertion.</span>
+<span class="sd">            bugimpl (bool): </span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            xmlNodePt: Pointer to moved element.</span>
@@ -11166,6 +11189,7 @@
 <span class="sd">            elems (const std::vector&lt; xmlNodePt &gt; &amp;): Elements to move.</span>
 <span class="sd">            node (const xmlNodePt): Reference element for insertion.</span>
 <span class="sd">            itype (PAGEXML_INSERT): Type of insertion.</span>
+<span class="sd">            bugimpl (bool): </span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: Pointer to moved element.</span>

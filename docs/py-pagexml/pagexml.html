@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml API (version 2019.4.23) &mdash; pagexml 2019.4.23 documentation</title>
+  <title>pagexml API (version 2019.4.26) &mdash; pagexml 2019.4.26 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                2019.4.23
+                2019.4.26
               </div>
             
           
@@ -84,7 +84,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">pagexml API (version 2019.4.23)</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pagexml API (version 2019.4.26)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pagexml">pagexml module</a></li>
 </ul>
 </li>
@@ -134,7 +134,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>pagexml API (version 2019.4.23)</li>
+      <li>pagexml API (version 2019.4.26)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,7 +154,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="pagexml-api-version-version">
-<h1>pagexml API (version 2019.4.23)<a class="headerlink" href="#pagexml-api-version-version" title="Permalink to this headline">¶</a></h1>
+<h1>pagexml API (version 2019.4.26)<a class="headerlink" href="#pagexml-api-version-version" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pagexml">
 <span id="pagexml-module"></span><h2>pagexml module<a class="headerlink" href="#module-pagexml" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1984,16 +1984,39 @@ PageXML:</p>
 
 <dl class="method">
 <dt id="pagexml.PageXML.crop">
-<code class="descname">crop</code><span class="sig-paren">(</span><em>xpath</em>, <em>margin=None</em>, <em>opaque_coords=True</em>, <em>transp_xpath=None</em>, <em>base_xpath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.crop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crops images using its Coords polygon, regions outside the polygon are set to transparent.</p>
+<code class="descname">crop</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded function with 2 signatures.</p>
+<p><strong>Signature 1</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">std::vector&lt;</span> <span class="pre">NamedImage</span> <span class="pre">&gt;</span> <span class="pre">PageXML::crop(const</span> <span class="pre">char</span> <span class="pre">*xpath,</span> <span class="pre">cv::Point2f</span> <span class="pre">*margin=NULL,</span> <span class="pre">bool</span> <span class="pre">opaque_coords=true,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*transp_xpath=NULL,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*base_xpath=NULL)</span></code></p>
+<p>Crops images using its Coords polygon, regions outside the polygon are set to transparent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xpath</strong> (<em>const char *</em>) – Selector for polygons to crop.</p></li>
-<li><p><strong>margin</strong> (<em>cv::Point2f *</em>) – Margins, if &gt;1.0 pixels, otherwise percentage of maximum of crop width and height.</p></li>
+<li><p><strong>xpath</strong> (<em>const char *</em>) – Selector for Coord nodes to crop.</p></li>
+<li><p><strong>margin</strong> (<em>cv::Point2f *</em>) – Margins, if &gt;1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.</p></li>
 <li><p><strong>opaque_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to include an alpha channel with the polygon interior in opaque.</p></li>
 <li><p><strong>transp_xpath</strong> (<em>const char *</em>) – Selector for semi-transparent elements.</p></li>
-<li><p><strong>base_xpath</strong> (<em>const char *</em>) – Selector for base node to use to construct the sample name.</p></li>
+<li><p><strong>base_xpath</strong> (<em>const char *</em>) – Expression to construct sample name, overriding the default IMGBASE.ELEMID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An std::vector containing NamedImage objects of the cropped images.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>std::vector&lt; NamedImage &gt;</p>
+</dd>
+</dl>
+<p><strong>Signature 2</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">std::vector&lt;</span> <span class="pre">NamedImage</span> <span class="pre">&gt;</span> <span class="pre">PageXML::crop(std::vector&lt;</span> <span class="pre">xmlNodePt</span> <span class="pre">&gt;</span> <span class="pre">elems_coords,</span> <span class="pre">cv::Point2f</span> <span class="pre">*margin=NULL,</span> <span class="pre">bool</span> <span class="pre">opaque_coords=true,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*transp_xpath=NULL,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*base_xpath=NULL)</span></code></p>
+<p>Crops images using its Coords polygon, regions outside the polygon are set to transparent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elems_coords</strong> (<em>std::vector&lt; xmlNodePt &gt;</em>) – Vector of Coord nodes to crop.</p></li>
+<li><p><strong>margin</strong> (<em>cv::Point2f *</em>) – Margins, if &gt;1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.</p></li>
+<li><p><strong>opaque_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to include an alpha channel with the polygon interior in opaque.</p></li>
+<li><p><strong>transp_xpath</strong> (<em>const char *</em>) – Selector for semi-transparent elements.</p></li>
+<li><p><strong>base_xpath</strong> (<em>const char *</em>) – Expression to construct sample name, overriding the default IMGBASE.ELEMID.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3059,6 +3082,7 @@ PageXML:</p>
 <li><p><strong>elem</strong> (<em>xmlNodePt</em>) – Element to move.</p></li>
 <li><p><strong>node</strong> (<em>const xmlNodePt</em>) – Reference element for insertion.</p></li>
 <li><p><strong>itype</strong> (<em>PAGEXML_INSERT</em>) – Type of insertion.</p></li>
+<li><p><strong>bugimpl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3080,6 +3104,7 @@ PageXML:</p>
 <li><p><strong>elems</strong> (<em>const std::vector&lt; xmlNodePt &gt; &amp;</em>) – Elements to move.</p></li>
 <li><p><strong>node</strong> (<em>const xmlNodePt</em>) – Reference element for insertion.</p></li>
 <li><p><strong>itype</strong> (<em>PAGEXML_INSERT</em>) – Type of insertion.</p></li>
+<li><p><strong>bugimpl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

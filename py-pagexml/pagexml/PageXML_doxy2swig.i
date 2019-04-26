@@ -433,14 +433,36 @@ Returns:
 ";
 
 %feature("docstring") PageXML::crop "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``std::vector< NamedImage > PageXML::crop(const char *xpath, cv::Point2f *margin=NULL, bool opaque_coords=true, const char *transp_xpath=NULL, const char *base_xpath=NULL)``
+
 Crops images using its Coords polygon, regions outside the polygon are set to transparent.
 
 Arguments:
-    xpath (const char *): Selector for polygons to crop.
-    margin (cv::Point2f *): Margins, if >1.0 pixels, otherwise percentage of maximum of crop width and height.
+    xpath (const char *): Selector for Coord nodes to crop.
+    margin (cv::Point2f *): Margins, if >1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.
     opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.
     transp_xpath (const char *): Selector for semi-transparent elements.
-    base_xpath (const char *): Selector for base node to use to construct the sample name.
+    base_xpath (const char *): Expression to construct sample name, overriding the default IMGBASE.ELEMID.
+
+Returns:
+    std::vector< NamedImage >: An std::vector containing NamedImage objects of the cropped images.
+
+**Signature 2**
+
+``std::vector< NamedImage > PageXML::crop(std::vector< xmlNodePt > elems_coords, cv::Point2f *margin=NULL, bool opaque_coords=true, const char *transp_xpath=NULL, const char *base_xpath=NULL)``
+
+Crops images using its Coords polygon, regions outside the polygon are set to transparent.
+
+Arguments:
+    elems_coords (std::vector< xmlNodePt >): Vector of Coord nodes to crop.
+    margin (cv::Point2f *): Margins, if >1.0 it is considered pixels, otherwise percentage of maximum between crop width and height.
+    opaque_coords (bool): Whether to include an alpha channel with the polygon interior in opaque.
+    transp_xpath (const char *): Selector for semi-transparent elements.
+    base_xpath (const char *): Expression to construct sample name, overriding the default IMGBASE.ELEMID.
 
 Returns:
     std::vector< NamedImage >: An std::vector containing NamedImage objects of the cropped images.

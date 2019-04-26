@@ -10,9 +10,9 @@ Check [py-pagexml/README.rst](py-pagexml/README.rst) and/or [docker/Dockerfile_b
 
 # Contents 
 
-- [lib](lib): Directory containing the C++ PageXML library.
+- [lib](lib): Directory containing the C++ PageXML and TextFeatExtractor libraries.
 - [py-pagexml](py-pagexml): Swig-based python wrapper for the PageXML library.
-- [py-textfeat](py-textfeat): Swig-based python wrapper for the PageXML library.
+- [py-textfeat](py-textfeat): Swig-based python wrapper for the TextFeatExtractor library.
 
 # Documentation
 
