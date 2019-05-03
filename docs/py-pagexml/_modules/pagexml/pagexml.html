@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2019.4.26 documentation</title>
+  <title>pagexml &mdash; pagexml 2019.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.4.26
+                2019.5.3
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.4.26)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.5.3)</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -13005,6 +13005,58 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_getLeftRightTopBottomReadingOrder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elems</span><span class="p">,</span> <span class="n">max_angle_diff</span><span class="p">,</span> <span class="n">max_horiz_iou</span><span class="p">,</span> <span class="n">min_prolong_fact</span><span class="p">,</span> <span class="n">prolong_alpha</span><span class="p">,</span> <span class="n">fake_baseline</span><span class="p">,</span> <span class="n">recurse_factor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PageXML.addGroup"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.addGroup">[docs]</a>    <span class="k">def</span> <span class="nf">addGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Adds a Group to the PcGts node.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            id (const char *): ID for Page, if NULL it is selected automatically.</span>
+<span class="sd">            elems (std::vector&lt; xmlNodePt &gt;): Elements to add (must have id attributes).</span>
+<span class="sd">            before_node (xmlNodePt): If !=NULL inserts it before the provided Group node.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            xmlNodePt: Pointer to created element.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_addGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PageXML.addToGroup"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.addToGroup">[docs]</a>    <span class="k">def</span> <span class="nf">addToGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">elems</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Adds elements to a Group.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            group (xmlNodePt): Pointer to group node.</span>
+<span class="sd">            elems (std::vector&lt; xmlNodePt &gt;): Elements to add (must have id attributes).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Number of elements added.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_addToGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">elems</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PageXML.selectGroupElements"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.selectGroupElements">[docs]</a>    <span class="k">def</span> <span class="nf">selectGroupElements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Selects all elements referenced by a Group.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            group (xmlNodePt): Pointer to group node.</span>
+<span class="sd">            recurse (bool): Whether to recurse into group members which are groups.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            std::vector&lt; xmlNodePt &gt;: Number of elements added.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_selectGroupElements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">recurse</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PageXML.getDocPtr"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.getDocPtr">[docs]</a>    <span class="k">def</span> <span class="nf">getDocPtr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

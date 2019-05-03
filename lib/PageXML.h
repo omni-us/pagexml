@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.04.26$
+ * @version $Version: 2019.05.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -299,6 +299,9 @@ class PageXML {
 #endif
     int getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, std::vector<std::vector<int> >& _group_order, std::vector<double>& _group_score, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
     std::pair<std::vector<int>, std::vector<int> > getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
+    xmlNodePt addGroup( const char* id = NULL, std::vector<xmlNodePt> elems = std::vector<xmlNodePt>(), xmlNodePt before_node = NULL );
+    int addToGroup( xmlNodePt group, std::vector<xmlNodePt> elems );
+    std::vector<xmlNodePt> selectGroupElements( xmlNodePt group, bool recurse = true );
     xmlDocPtr getDocPtr();
   private:
     xmlNsPtr rpagens = NULL;

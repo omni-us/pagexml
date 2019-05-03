@@ -93,6 +93,19 @@ Returns:
 
 ";
 
+%feature("docstring") PageXML::addGroup "
+Adds a Group to the PcGts node.
+
+Arguments:
+    id (const char *): ID for Page, if NULL it is selected automatically.
+    elems (std::vector< xmlNodePt >): Elements to add (must have id attributes).
+    before_node (xmlNodePt): If !=NULL inserts it before the provided Group node.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+";
+
 %feature("docstring") PageXML::addPage "
 Overloaded function with 2 signatures.
 
@@ -195,6 +208,18 @@ Arguments:
 
 Returns:
     xmlNodePt: Pointer to created element.
+
+";
+
+%feature("docstring") PageXML::addToGroup "
+Adds elements to a Group.
+
+Arguments:
+    group (xmlNodePt): Pointer to group node.
+    elems (std::vector< xmlNodePt >): Elements to add (must have id attributes).
+
+Returns:
+    int: Number of elements added.
 
 ";
 
@@ -1678,6 +1703,18 @@ Arguments:
 
 Returns:
     std::vector< xmlNodePt >: Number of TextLines copied.
+
+";
+
+%feature("docstring") PageXML::selectGroupElements "
+Selects all elements referenced by a Group.
+
+Arguments:
+    group (xmlNodePt): Pointer to group node.
+    recurse (bool): Whether to recurse into group members which are groups.
+
+Returns:
+    std::vector< xmlNodePt >: Number of elements added.
 
 ";
 

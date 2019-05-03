@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.04.26$
+ * @version $Version: 2019.05.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.04.26";
+static char class_version[] = "Version: 2019.05.03";
 
 /**
  * Returns the class version.
@@ -5108,6 +5108,110 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
     throw_runtime_error( "PageXML.getLeftRightTopBottomReadingOrder: implementation bug, obtained reading order size different to number of input elements: %d vs. %d", (int)reading_order.size(), (int)elems.size() );
 
   return std::pair<std::vector<int>, std::vector<int> >(reading_order, subgroup_lengths);
+}
+
+/**
+ * Adds a Group to the PcGts node.
+ *
+ * @param id           ID for Page, if NULL it is selected automatically.
+ * @param elems        Elements to add (must have id attributes).
+ * @param before_node  If !=NULL inserts it before the provided Group node.
+ * @return             Pointer to created element.
+ */
+xmlNodePt PageXML::addGroup( const char* id, std::vector<xmlNodePt> elems, xmlNodePt before_node ) {
+  xmlNodePt group;
+
+  std::string gid = id == NULL ? getUniqueID("gr") : std::string(id);
+
+  if ( before_node != NULL ) {
+    if ( ! nodeIs( before_node, "Group" ) ) {
+      throw_runtime_error( "PageXML.addGroup: before_node is required to be a Group" );
+      return NULL;
+    }
+    group = addElem( "Group", gid.c_str(), before_node, PAGEXML_INSERT_PREVSIB, true );
+  }
+  else {
+    xmlNodePt pcgts = selectNth("/_:PcGts",0);
+    if ( ! pcgts ) {
+      throw_runtime_error( "PageXML.addGroup: unable to select PcGts node" );
+      return NULL;
+    }
+    group = addElem( "Group", gid.c_str(), pcgts, PAGEXML_INSERT_APPEND, true );
+  }
+
+  if ( elems.size() > 0 )
+    addToGroup( group, elems );
+
+  return group;
+}
+
+/**
+ * Adds elements to a Group.
+ *
+ * @param group        Pointer to group node.
+ * @param elems        Elements to add (must have id attributes).
+ * @return             Number of elements added.
+ */
+int PageXML::addToGroup( xmlNodePt group, std::vector<xmlNodePt> elems ) {
+  if ( ! nodeIs( group, "Group" ) ) {
+    throw_runtime_error( "PageXML.addToGroup: expected pointer to be of a Group element" );
+    return 0;
+  }
+
+  std::unordered_set<std::string> member_ids;
+  std::vector<xmlNodePt> members = select("_:Member", group);
+  for ( int m=0; m<(int)members.size(); m++ )
+    member_ids.insert(getAttr(members[m], "ref"));
+
+  int num = 0;
+  for ( int n=0; n<(int)elems.size(); n++ ) {
+    std::string elem_id = getAttr(elems[n], "id");
+    if ( elem_id.empty() ) {
+      throw_runtime_error( "PageXML.addToGroup: elements are required to have an id attribute, none found for element %d", n+1 );
+      return 0;
+    }
+
+    if ( member_ids.find(elem_id) != member_ids.end() )
+      continue;
+
+    xmlNodePt member = addElem( "Member", NULL, group, PAGEXML_INSERT_APPEND );
+    setAttr(member, "ref", elem_id.c_str());
+    member_ids.insert(elem_id);
+
+    num++;
+  }
+
+  return num;
+}
+
+/**
+ * Selects all elements referenced by a Group.
+ *
+ * @param group        Pointer to group node.
+ * @param recurse      Whether to recurse into group members which are groups.
+ * @return             Number of elements added.
+ */
+std::vector<xmlNodePt> PageXML::selectGroupElements( xmlNodePt group, bool recurse ) {
+  std::vector<xmlNodePt> elems;
+
+  if ( ! nodeIs( group, "Group" ) ) {
+    throw_runtime_error( "PageXML.selectGroupElements: expected pointer to be of a Group element" );
+    return elems;
+  }
+
+  std::vector<xmlNodePt> members = select("_:Member", group);
+  for ( int n=0; n<(int)members.size(); n++ ) {
+    if ( recurse && nodeIs(members[n], "Group") ) {
+      std::vector<xmlNodePt> subelems = selectGroupElements(members[n], true);
+      elems.insert(elems.end(), subelems.begin(), subelems.end());
+    }
+    else {
+      std::string mid = getAttr(members[n], "ref");
+      elems.push_back( selectByID(mid.c_str()) );
+    }
+  }
+
+  return elems;
 }
 
 /**

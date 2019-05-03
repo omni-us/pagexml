@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml API (version 2019.4.26) &mdash; pagexml 2019.4.26 documentation</title>
+  <title>pagexml API (version 2019.5.3) &mdash; pagexml 2019.5.3 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                2019.4.26
+                2019.5.3
               </div>
             
           
@@ -84,7 +84,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">pagexml API (version 2019.4.26)</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pagexml API (version 2019.5.3)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pagexml">pagexml module</a></li>
 </ul>
 </li>
@@ -134,7 +134,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>pagexml API (version 2019.4.26)</li>
+      <li>pagexml API (version 2019.5.3)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,7 +154,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="pagexml-api-version-version">
-<h1>pagexml API (version 2019.4.26)<a class="headerlink" href="#pagexml-api-version-version" title="Permalink to this headline">¶</a></h1>
+<h1>pagexml API (version 2019.5.3)<a class="headerlink" href="#pagexml-api-version-version" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pagexml">
 <span id="pagexml-module"></span><h2>pagexml module<a class="headerlink" href="#module-pagexml" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1500,6 +1500,27 @@ PageXML:</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pagexml.PageXML.addGroup">
+<code class="descname">addGroup</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.addGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.addGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a Group to the PcGts node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>const char *</em>) – ID for Page, if NULL it is selected automatically.</p></li>
+<li><p><strong>elems</strong> (<em>std::vector&lt; xmlNodePt &gt;</em>) – Elements to add (must have id attributes).</p></li>
+<li><p><strong>before_node</strong> (<em>xmlNodePt</em>) – If !=NULL inserts it before the provided Group node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pointer to created element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xmlNodePt</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="pagexml.PageXML.addPage">
 <code class="descname">addPage</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.addPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.addPage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overloaded function with 2 signatures.</p>
@@ -1627,6 +1648,26 @@ PageXML:</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>xmlNodePt</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pagexml.PageXML.addToGroup">
+<code class="descname">addToGroup</code><span class="sig-paren">(</span><em>group</em>, <em>elems</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.addToGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.addToGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds elements to a Group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<em>xmlNodePt</em>) – Pointer to group node.</p></li>
+<li><p><strong>elems</strong> (<em>std::vector&lt; xmlNodePt &gt;</em>) – Elements to add (must have id attributes).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of elements added.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3706,6 +3747,26 @@ PageXML:</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Number of TextLines copied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>std::vector&lt; xmlNodePt &gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pagexml.PageXML.selectGroupElements">
+<code class="descname">selectGroupElements</code><span class="sig-paren">(</span><em>group</em>, <em>recurse=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/pagexml.html#PageXML.selectGroupElements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.selectGroupElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects all elements referenced by a Group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<em>xmlNodePt</em>) – Pointer to group node.</p></li>
+<li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to recurse into group members which are groups.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of elements added.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>std::vector&lt; xmlNodePt &gt;</p>
