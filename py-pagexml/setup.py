@@ -126,7 +126,7 @@ setup(name=NAME+('_magick' if '--magick' in sys.argv else ''),
       packages=find_packages(),
       distclass=Distribution,
       ext_modules=[pagexml_Extension(True if '--magick' in sys.argv else False)],
-      package_data={NAME: ['xsd/*.xsd'], NAME+'_tests.examples': ['*.xml', '*.png']},
+      package_data={NAME: ['xsd/*.xsd'], NAME+'_tests': ['examples/*.xml', 'examples/*.png']},
       command_options={
           'build_sphinx': {
               'project': ('setup.py', NAME),
