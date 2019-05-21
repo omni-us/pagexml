@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.05.03$
+ * @version $Version: 2019.05.21$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.05.03";
+static char class_version[] = "Version: 2019.05.21";
 
 /**
  * Returns the class version.
@@ -5189,7 +5189,7 @@ int PageXML::addToGroup( xmlNodePt group, std::vector<xmlNodePt> elems ) {
  *
  * @param group        Pointer to group node.
  * @param recurse      Whether to recurse into group members which are groups.
- * @return             Number of elements added.
+ * @return             Vector of group element nodes.
  */
 std::vector<xmlNodePt> PageXML::selectGroupElements( xmlNodePt group, bool recurse ) {
   std::vector<xmlNodePt> elems;
@@ -5201,13 +5201,14 @@ std::vector<xmlNodePt> PageXML::selectGroupElements( xmlNodePt group, bool recur
 
   std::vector<xmlNodePt> members = select("_:Member", group);
   for ( int n=0; n<(int)members.size(); n++ ) {
-    if ( recurse && nodeIs(members[n], "Group") ) {
-      std::vector<xmlNodePt> subelems = selectGroupElements(members[n], true);
+    std::string mid = getAttr(members[n], "ref");
+    xmlNodePt member = selectByID(mid.c_str());
+    if ( recurse && nodeIs(member, "Group") ) {
+      std::vector<xmlNodePt> subelems = selectGroupElements(member, true);
       elems.insert(elems.end(), subelems.begin(), subelems.end());
     }
     else {
-      std::string mid = getAttr(members[n], "ref");
-      elems.push_back( selectByID(mid.c_str()) );
+      elems.push_back( member );
     }
   }
 

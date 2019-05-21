@@ -1714,7 +1714,7 @@ Arguments:
     recurse (bool): Whether to recurse into group members which are groups.
 
 Returns:
-    std::vector< xmlNodePt >: Number of elements added.
+    std::vector< xmlNodePt >: Vector of group element nodes.
 
 ";
 
