@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2019.01.25$
+ * @version $Version: 2019.05.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -67,7 +67,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.01.25";
+static char class_version[] = "Version: 2019.05.23";
 
 /**
  * Returns the class version.
@@ -1989,21 +1989,28 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
   return feats;
 }
 
-/*
-cv::Mat TextFeatExtractor::preprocessAndExtract( Magick::Image& image, float* _slope, float* _slant, vector<cv::Point2f>* _fpgram, vector<cv::Point>* _fcontour ) {
+
+#if defined (__PAGEXML_IMG_MAGICK__)
+cv::Mat TextFeatExtractor::extract( Magick::Image& image, float rotate, float* _slope, float* _slant, std::vector<cv::Point2f>* _fpgram, std::vector<cv::Point>* _fcontour ) {
+#elif defined (__PAGEXML_IMG_CV__)
+cv::Mat TextFeatExtractor::extract( PageImage& image, float rotate, float* _slope, float* _slant, std::vector<cv::Point2f>* _fpgram, std::vector<cv::Point>* _fcontour ) {
+#endif
   /// Image cleaning and enhancement ///
   preprocess( image, _fcontour );
 
   /// Estimation of slope and slant ///
   float vslope = 0.0, vslant = 0.0;
-  estimateAngles( image, &vslope, &vslant );
+  estimateAngles( image, &vslope, &vslant, rotate );
   if( _slope != NULL ) *_slope = vslope;
   if( _slant != NULL ) *_slant = vslant;
 
   /// Extraction of features ///
+#if defined (__PAGEXML_IMG_MAGICK__)
   Magick::Image feaimg = image;
-  cv::Mat feats = extractFeats( feaimg, vslope, vslant, 0, _fpgram );
+#elif defined (__PAGEXML_IMG_CV__)
+  PageImage feaimg = image;
+#endif
+  cv::Mat feats = extractFeats( feaimg, vslope, vslant, 0, _fpgram, false, rotate );
 
   return feats;
 }
-*/

@@ -45,6 +45,20 @@ Arguments:
 
 ";
 
+%feature("docstring") TextFeatExtractor::extract "
+Arguments:
+    image (PageImage &): 
+    rotate (float): 
+    _slope (float *): 
+    _slant (float *): 
+    _fpgram (std::vector< cv::Point2f > *): 
+    _fcontour (std::vector< cv::Point > *): 
+
+Returns:
+    cv::Mat: 
+
+";
+
 %feature("docstring") TextFeatExtractor::extractFeats "
 Extracts features for the given image already preprocessed image.
 

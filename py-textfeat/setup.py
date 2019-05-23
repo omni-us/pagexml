@@ -95,12 +95,11 @@ if BuildDoc:
 def get_runtime_requirements():
     """Returns a list of required packages filtered to include only the ones necessary at runtime."""
     with open('requirements.txt') as f:
-        requirements = f.readlines()
-    requirements = [x.strip() for x in requirements]
+        requirements = [x.strip() for x in f.readlines()]
     if '--magick' in sys.argv:
-        regex = re.compile(r'^pagexml>')
+        regex = re.compile('^pagexml>')
         requirements = [re.sub(regex, 'pagexml-magick>', x) if regex.match(x) else x for x in requirements]
-    regex = re.compile(r'^coverage|^Sphinx|^pkgconfig')
+    regex = re.compile('^(coverage|sphinx|pkgconfig)', re.IGNORECASE)
     return [x for x in requirements if not regex.match(x)]
 
 

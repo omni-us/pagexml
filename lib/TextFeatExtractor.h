@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2019.01.25$
+ * @version $Version: 2019.05.23$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -111,11 +111,12 @@ class TextFeatExtractor {
     void preprocess( Magick::Image& image, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
     void estimateAngles( Magick::Image& image, float* _slope, float* _slant, float rotate = 0.0 );
     cv::Mat extractFeats( Magick::Image& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false, float rotate = 0.0, int direction = PAGEXML_READ_DIRECTION_LTR );
-    //cv::Mat preprocessAndExtract( Magick::Image& image, float* _slope = NULL, float* _slant = NULL, std::vector<cv::Point2f>* _fpgram = NULL, std::vector<cv::Point>* _fcontour = NULL );
+    cv::Mat extract( Magick::Image& image, float rotate = 0.0, float* _slope = NULL, float* _slant = NULL, std::vector<cv::Point2f>* _fpgram = NULL, std::vector<cv::Point>* _fcontour = NULL );
 #elif defined (__PAGEXML_IMG_CV__)
     void preprocess( PageImage& cvimg, std::vector<cv::Point>* _fcontour = NULL, bool randomize = false );
     void estimateAngles( PageImage& cvimg, float* _slope, float* _slant, float rotate = 0.0 );
     cv::Mat extractFeats( PageImage& feaimg, float slope = 0.0, float slant = 0.0, int xheight = 0, std::vector<cv::Point2f>* _fpgram = NULL, bool randomize = false, float rotate = 0.0, int direction = PAGEXML_READ_DIRECTION_LTR );
+    cv::Mat extract( PageImage& image,     float rotate = 0.0, float* _slope = NULL, float* _slant = NULL, std::vector<cv::Point2f>* _fpgram = NULL, std::vector<cv::Point>* _fcontour = NULL );
 #endif
     bool isImageFormat();
     void write( const cv::Mat& feats, FILE* file = stdout );

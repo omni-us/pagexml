@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>textfeat &mdash; textfeat 2019.1.25 documentation</title>
+  <title>textfeat &mdash; textfeat 2019.5.23 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.1.25
+                2019.5.23
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../textfeat.html">textfeat API (version 2019.1.25)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../textfeat.html">textfeat API (version 2019.5.23)</a></li>
 </ul>
 
             
@@ -656,6 +656,23 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_textfeat</span><span class="o">.</span><span class="n">TextFeatExtractor_extractFeats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TextFeatExtractor.extract"><a class="viewcode-back" href="../../textfeat.html#textfeat.TextFeatExtractor.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">_slope</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_slant</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_fpgram</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_fcontour</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        extract(self, image, rotate=0.0, _slope=None, _slant=None, _fpgram=None, _fcontour=None) -&gt; cv::Mat</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image: cv::Mat &amp;</span>
+<span class="sd">        rotate: float</span>
+<span class="sd">        _slope: float *</span>
+<span class="sd">        _slant: float *</span>
+<span class="sd">        _fpgram: std::vector&lt; cv::Point2f,std::allocator&lt; cv::Point2f &gt; &gt; *</span>
+<span class="sd">        _fcontour: std::vector&lt; cv::Point,std::allocator&lt; cv::Point &gt; &gt; *</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_textfeat</span><span class="o">.</span><span class="n">TextFeatExtractor_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">rotate</span><span class="p">,</span> <span class="n">_slope</span><span class="p">,</span> <span class="n">_slant</span><span class="p">,</span> <span class="n">_fpgram</span><span class="p">,</span> <span class="n">_fcontour</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TextFeatExtractor.isImageFormat"><a class="viewcode-back" href="../../textfeat.html#textfeat.TextFeatExtractor.isImageFormat">[docs]</a>    <span class="k">def</span> <span class="nf">isImageFormat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

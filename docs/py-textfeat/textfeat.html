@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>textfeat API (version 2019.1.25) &mdash; textfeat 2019.1.25 documentation</title>
+  <title>textfeat API (version 2019.5.23) &mdash; textfeat 2019.5.23 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                2019.1.25
+                2019.5.23
               </div>
             
           
@@ -84,7 +84,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">textfeat API (version 2019.1.25)</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">textfeat API (version 2019.5.23)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-textfeat">textfeat module</a></li>
 </ul>
 </li>
@@ -133,7 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>textfeat API (version 2019.1.25)</li>
+      <li>textfeat API (version 2019.5.23)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -153,7 +153,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="textfeat-api-version-version">
-<h1>textfeat API (version 2019.1.25)<a class="headerlink" href="#textfeat-api-version-version" title="Permalink to this headline">¶</a></h1>
+<h1>textfeat API (version 2019.5.23)<a class="headerlink" href="#textfeat-api-version-version" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-textfeat">
 <span id="textfeat-module"></span><h2>textfeat module<a class="headerlink" href="#module-textfeat" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -274,6 +274,23 @@
 <li><p><strong>_slope</strong> (<em>float *</em>) – </p></li>
 <li><p><strong>_slant</strong> (<em>float *</em>) – </p></li>
 <li><p><strong>rotate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="textfeat.TextFeatExtractor.extract">
+<code class="descname">extract</code><span class="sig-paren">(</span><em>self</em>, <em>image</em>, <em>rotate=0.0</em>, <em>_slope=None</em>, <em>_slant=None</em>, <em>_fpgram=None</em>, <em>_fcontour=None</em><span class="sig-paren">)</span> &#x2192; cv::Mat<a class="reference internal" href="_modules/textfeat/textfeat.html#TextFeatExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.extract" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>cv::Mat &amp;</em>) – </p></li>
+<li><p><strong>rotate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – </p></li>
+<li><p><strong>_slope</strong> (<em>float *</em>) – </p></li>
+<li><p><strong>_slant</strong> (<em>float *</em>) – </p></li>
+<li><p><strong>_fpgram</strong> (<em>std::vector&lt; cv::Point2f</em><em>,</em><em>std::allocator&lt; cv::Point2f &gt; &gt; *</em>) – </p></li>
+<li><p><strong>_fcontour</strong> (<em>std::vector&lt; cv::Point</em><em>,</em><em>std::allocator&lt; cv::Point &gt; &gt; *</em>) – </p></li>
 </ul>
 </dd>
 </dl>
