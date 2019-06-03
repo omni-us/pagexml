@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2019.05.23$
+ * @version $Version: 2019.06.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -46,6 +46,8 @@ const char* TextFeatExtractor::settingNames[] = {
   "normxheight",
   "normheight",
   "momentnorm",
+  "minheight",
+  "maxwidth",
   "fpgram",
   "fcontour",
   "fcontour_dilate",
@@ -67,7 +69,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.05.23";
+static char class_version[] = "Version: 2019.06.03";
 
 /**
  * Returns the class version.
@@ -106,6 +108,8 @@ TextFeatExtractor::TextFeatExtractor( int featype,
                                       int normxheight,
                                       int normheight,
                                       bool momentnorm,
+                                      int minheight,
+                                      int maxwidth,
                                       bool compute_fpgram,
                                       bool compute_fcontour,
                                       float fcontour_dilate,
@@ -136,6 +140,8 @@ TextFeatExtractor::TextFeatExtractor( int featype,
   this->normxheight = normxheight;
   this->normheight = normheight;
   this->momentnorm = momentnorm;
+  this->minheight = minheight;
+  this->maxwidth = maxwidth;
   this->compute_fpgram = compute_fpgram;
   this->compute_fcontour = compute_fcontour;
   this->fcontour_dilate = fcontour_dilate;
@@ -326,6 +332,12 @@ void TextFeatExtractor::loadConf( const libconfig::Config& config ) {
         break;
       case TEXTFEAT_SETTING_MOMENTNORM:
         momentnorm = settingBoolean(setting);
+        break;
+      case TEXTFEAT_SETTING_MINHEIGHT:
+        minheight = (int)setting;
+        break;
+      case TEXTFEAT_SETTING_MAXWIDTH:
+        maxwidth = (int)setting;
         break;
       case TEXTFEAT_SETTING_FPGRAM:
         compute_fpgram = settingBoolean(setting);
@@ -1886,6 +1898,13 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
     }
   }
 
+  /// Make sure image has at least the minimum height ///
+  if( (int)feaimg.rows() < minheight ) {
+    int minh_yoff = (feaimg.rows()-minheight)/2;
+    feaimg.extent( Magick::Geometry(feaimg.columns(),minheight,0,minh_yoff), colorWhite );
+    offy += minh_yoff;
+  }
+
   double scaling = 1.0;
   //int orig_height = feaimg.rows();
 
@@ -1899,6 +1918,12 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
   if( normheight && ! normxheight ) {
     scaling *= (float)normheight/(float)feaimg.rows();
     feaimg.resize( Magick::Geometry( ("x"+to_string(normheight)).c_str() ) );
+  }
+
+  /// Discard to the right if width larger than maximum ///
+  if( (int)feaimg.columns() > maxwidth ) {
+    fprintf(stderr,"warning: features width larger than maximum (%d), discarding %d pixels on the right\n",maxwidth,(int)feaimg.columns()-maxwidth);
+    feaimg.extent( Magick::Geometry(maxwidth,feaimg.rows(),0,0), colorWhite );
   }
 
   /// Random scaling ///

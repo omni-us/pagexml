@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2019.05.23$
+ * @version $Version: 2019.06.03$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -50,6 +50,8 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_NORMXHEIGHT,     // "normxheight"
   TEXTFEAT_SETTING_NORMHEIGHT,      // "normheight"
   TEXTFEAT_SETTING_MOMENTNORM,      // "momentnorm"
+  TEXTFEAT_SETTING_MINHEIGHT,       // "minheight"
+  TEXTFEAT_SETTING_MAXWIDTH,        // "maxwidth"
   TEXTFEAT_SETTING_FPGRAM,          // "fpgram"
   TEXTFEAT_SETTING_FCONTOUR,        // "fcontour"
   TEXTFEAT_SETTING_FCONTOUR_DILATE, // "fcontour_dilate"
@@ -96,6 +98,8 @@ class TextFeatExtractor {
                        int normxheight = 0,
                        int normheight = 64,
                        bool momentnorm = true,
+                       int minheight = 16,
+                       int maxwidth = 4000,
                        bool compute_fpgram = true,
                        bool compute_fcontour = true,
                        float fcontour_dilate = 4.0,
@@ -148,6 +152,8 @@ class TextFeatExtractor {
     int normxheight = 0;
     int normheight = 0;
     bool momentnorm = false;
+    int minheight = 16;
+    int maxwidth = 4000;
     bool compute_fpgram = true;
     bool compute_fcontour = true;
     float fcontour_dilate = 4.0;

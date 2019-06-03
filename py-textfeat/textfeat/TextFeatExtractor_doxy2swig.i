@@ -27,6 +27,8 @@ Arguments:
     normxheight (int): 
     normheight (int): 
     momentnorm (bool): 
+    minheight (int): 
+    maxwidth (int): 
     compute_fpgram (bool): 
     compute_fcontour (bool): 
     fcontour_dilate (float): 

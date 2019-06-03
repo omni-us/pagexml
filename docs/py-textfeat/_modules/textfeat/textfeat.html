@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>textfeat &mdash; textfeat 2019.5.23 documentation</title>
+  <title>textfeat &mdash; textfeat 2019.6.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.5.23
+                2019.6.3
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../textfeat.html">textfeat API (version 2019.5.23)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../textfeat.html">textfeat API (version 2019.6.3)</a></li>
 </ul>
 
             
@@ -557,7 +557,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        __init__(self, featype=TEXTFEAT_TYPE_RAW, format=TEXTFEAT_FORMAT_IMAGE, verbose=False, procimgs=False, stretch=True, enh=True, enh_type, enh_win=20, enh_slp=0.5, enh_prm=0.2, enh_prm_randmin=0.05, enh_prm_randmax=0.3, enh3_prm0=0.0, enh3_prm2=0.0, deslope=True, deslant=True, deslant_min=-6.0, deslant_max=48.0, deslant_step=1.0, deslant_hsteps=4, slant_rand=0.0, scale_rand=0.0, normxheight=0, normheight=64, momentnorm=True, compute_fpgram=True, compute_fcontour=True, fcontour_dilate=4.0, padding=12) -&gt; TextFeatExtractor</span>
+<span class="sd">        __init__(self, featype=TEXTFEAT_TYPE_RAW, format=TEXTFEAT_FORMAT_IMAGE, verbose=False, procimgs=False, stretch=True, enh=True, enh_type, enh_win=20, enh_slp=0.5, enh_prm=0.2, enh_prm_randmin=0.05, enh_prm_randmax=0.3, enh3_prm0=0.0, enh3_prm2=0.0, deslope=True, deslant=True, deslant_min=-6.0, deslant_max=48.0, deslant_step=1.0, deslant_hsteps=4, slant_rand=0.0, scale_rand=0.0, normxheight=0, normheight=64, momentnorm=True, minheight=16, maxwidth=4000, compute_fpgram=True, compute_fcontour=True, fcontour_dilate=4.0, padding=12) -&gt; TextFeatExtractor</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -586,6 +586,8 @@
 <span class="sd">        normxheight: int</span>
 <span class="sd">        normheight: int</span>
 <span class="sd">        momentnorm: bool</span>
+<span class="sd">        minheight: int</span>
+<span class="sd">        maxwidth: int</span>
 <span class="sd">        compute_fpgram: bool</span>
 <span class="sd">        compute_fcontour: bool</span>
 <span class="sd">        fcontour_dilate: float</span>
