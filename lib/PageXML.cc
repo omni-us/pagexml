@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.05.21$
+ * @version $Version: 2019.07.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.05.21";
+static char class_version[] = "Version: 2019.07.04";
 
 /**
  * Returns the class version.
@@ -387,7 +387,7 @@ string PageXML::toString( bool indent, bool validate ) {
  */
 xmlNodePt PageXML::newXml( const char* creator, const char* image, const int imgW, const int imgH, const char* pagens ) {
   if ( schema_namespace.length() == 0 && pagens == NULL ) {
-    throw_runtime_error( "PageXML.newXml: either pagens needs to be provided or a schema be loaded" );
+    throw_runtime_error( "PageXML.newXml: either a schema should be loaded or pagens provided" );
     return NULL;
   }
 
@@ -399,7 +399,7 @@ xmlNodePt PageXML::newXml( const char* creator, const char* image, const int img
   strftime(tstamp, sizeof tstamp, "%FT%TZ", gmtime(&now));
 
   std::string spagens = schema_namespace;
-  if ( schema_namespace.length() == 0 )
+  if ( pagens != NULL )
     spagens = std::string(pagens);
   std::string libver = std::string("PageXML ") + (class_version+9);
 
@@ -818,7 +818,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 
   // Check that image size agrees with XML //
-  if( width != imgwidth || height != imgheight )
+  if( ( width != imgwidth || height != imgheight ) && width != 0 && height != 0 )
     throw_runtime_error( "PageXML.loadImage: discrepancy between image and xml page size (%dx%d vs. %dx%d): %s", imgwidth, imgheight, width, height, fname );
 
   // Check image orientation and rotate accordingly //
@@ -1571,6 +1571,19 @@ std::string PageXML::getValue( const char* xpath, const xmlNodePt node ) {
   xmlXPathFreeObject(xsel);
 
   return val;
+}
+
+/**
+ * Sets a value to the given nodes.
+ *
+ * @param nodes  Vector of nodes.
+ * @param value  String with the value to set.
+ * @return       Number of elements modified.
+ */
+int PageXML::setValue( std::vector<xmlNodePt> nodes, const char* value ) {
+  for( int n=(int)nodes.size()-1; n>=0; n-- )
+    setValue( nodes[n], value );
+  return (int)nodes.size();
 }
 
 /**
@@ -3675,8 +3688,8 @@ xmlNodePt PageXML::addGlyph( const char* xpath, const char* id, const char* befo
  * @return           Pointer to created element.
  */
 xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_id ) {
-  if( ! nodeIs( node, "TextLine" ) ) {
-    throw_runtime_error( "PageXML.addWord: node is required to be a TextLine" );
+  if ( ! ( nodeIs( node, "TextLine" ) || nodeIs( node, "TextRegion" ) || nodeIs( node, "Page" ) ) ) {
+    throw_runtime_error( "PageXML.addWord: node is required to be a TextLine, TextRegion or Page" );
     return NULL;
   }
 
@@ -3750,8 +3763,8 @@ xmlNodePt PageXML::addWord( const char* xpath, const char* id, const char* befor
  * @return           Pointer to created element.
  */
 xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* before_id ) {
-  if( ! nodeIs( node, "TextRegion" ) ) {
-    throw_runtime_error( "PageXML.addTextLine: node is required to be a TextRegion" );
+  if ( ! ( nodeIs( node, "TextRegion" ) || nodeIs( node, "Page" ) ) ) {
+    throw_runtime_error( "PageXML.addTextLine: node is required to be a TextRegion or a Page" );
     return NULL;
   }
 
@@ -3839,8 +3852,8 @@ xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* be
   else {
     int n = select( "*/_:TextRegion", node->parent ).size();
     while( true ) {
-      if( selectByID( (string("t")+to_string(++n)).c_str() ) == NULL ) {
-        rid = string("t")+to_string(n);
+      if( selectByID( (string("r")+to_string(++n)).c_str() ) == NULL ) {
+        rid = string("r")+to_string(n);
         break;
       }
       if( n > 100000 ) {

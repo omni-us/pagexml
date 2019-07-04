@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2019.5.21 documentation</title>
+  <title>pagexml &mdash; pagexml 2019.7.4 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.5.21
+                2019.7.4
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.5.21)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pagexml.html">pagexml API (version 2019.7.4)</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -10889,8 +10889,27 @@
         <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PageXML.setValue"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="PageXML.setValue"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Overloaded function with 2 signatures.</span>
+
+<span class="sd">        **Signature 1**</span>
+
+<span class="sd">        ``int PageXML::setValue(std::vector&lt; xmlNodePt &gt; nodes, const char *value)``</span>
+
+<span class="sd">        Sets a value to the given nodes.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            nodes (std::vector&lt; xmlNodePt &gt;): Vector of nodes.</span>
+<span class="sd">            value (const char *): String with the value to set.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Number of elements modified.</span>
+
+<span class="sd">        **Signature 2**</span>
+
+<span class="sd">        ``void PageXML::setValue(xmlNodePt node, const char *value)``</span>
 
 <span class="sd">        Sets a node value.</span>
 
@@ -10900,7 +10919,7 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_pagexml</span><span class="o">.</span><span class="n">PageXML_setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PageXML.getAttr"><a class="viewcode-back" href="../../pagexml.html#pagexml.PageXML.getAttr">[docs]</a>    <span class="k">def</span> <span class="nf">getAttr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>

@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.05.21$
+ * @version $Version: 2019.07.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -171,6 +171,7 @@ class PageXML {
     static bool nodeIs( xmlNodePt node, const char* name );
     std::string getValue( xmlNodePt node );
     std::string getValue( const char* xpath, const xmlNodePt node = NULL );
+    int setValue( std::vector<xmlNodePt> nodes, const char* value );
     void setValue( xmlNodePt node, const char* value );
     std::string getAttr( const xmlNodePt node,    const char* name );
     std::string getAttr( const char* xpath,       const char* name );

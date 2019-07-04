@@ -2278,6 +2278,25 @@ Arguments:
 ";
 
 %feature("docstring") PageXML::setValue "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``int PageXML::setValue(std::vector< xmlNodePt > nodes, const char *value)``
+
+Sets a value to the given nodes.
+
+Arguments:
+    nodes (std::vector< xmlNodePt >): Vector of nodes.
+    value (const char *): String with the value to set.
+
+Returns:
+    int: Number of elements modified.
+
+**Signature 2**
+
+``void PageXML::setValue(xmlNodePt node, const char *value)``
+
 Sets a node value.
 
 Arguments:
