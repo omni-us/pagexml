@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.07.04$
+ * @version $Version: 2019.07.08$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.07.04";
+static char class_version[] = "Version: 2019.07.08";
 
 /**
  * Returns the class version.
@@ -1595,7 +1595,9 @@ int PageXML::setValue( std::vector<xmlNodePt> nodes, const char* value ) {
 void PageXML::setValue( xmlNodePt node, const char* value ) {
   if( node == NULL || value == NULL )
     throw_runtime_error( "PageXML.setValue: received NULL pointer (node=%p, value=%p)", node, value );
-  xmlNodeSetContent( node, (xmlChar*)value );
+  xmlChar* encvalue = xmlEncodeEntitiesReentrant( xml, (xmlChar*)value );
+  xmlNodeSetContent( node, encvalue );
+  xmlFree(encvalue);
 }
 
 /**

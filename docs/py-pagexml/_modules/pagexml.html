@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2019.7.4 documentation</title>
+  <title>pagexml &mdash; pagexml 2019.7.8 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2019.7.4
+                2019.7.8
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pagexml.html">pagexml API (version 2019.7.4)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pagexml.html">pagexml API (version 2019.7.8)</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -162,8 +162,7 @@
 
 <div class="viewcode-block" id="set_omnius_schema"><a class="viewcode-back" href="../pagexml.html#pagexml.set_omnius_schema">[docs]</a><span class="k">def</span> <span class="nf">set_omnius_schema</span><span class="p">():</span>
     <span class="k">global</span> <span class="n">PAGE_XSD</span>
-    <span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_omnius.xsd&#39;</span>
-    <span class="n">_PageXML</span><span class="o">.</span><span class="n">new_hierarchy</span> <span class="o">=</span> <span class="kc">True</span></div>
+    <span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_omnius.xsd&#39;</span></div>
 
 
 <div class="viewcode-block" id="PageXML"><a class="viewcode-back" href="../pagexml.html#pagexml.PageXML">[docs]</a><span class="k">class</span> <span class="nc">PageXML</span><span class="p">(</span><span class="n">_PageXML</span><span class="p">):</span> <span class="c1">#pylint: disable=function-redefined</span>
