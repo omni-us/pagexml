@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.07.08$
+ * @version $Version: 2019.08.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -33,7 +33,7 @@ regex reRotation(".*readingOrientation: *([0-9.]+) *;.*");
 regex reDirection(".*readingDirection: *([lrt]t[rlb]) *;.*");
 regex reFileExt("\\.[^.]+$");
 regex reInvalidBaseChars(" ");
-regex reImagePageNum("(.*)\\[([0-9]+)\\]$");
+regex reImagePageNum("^(.*)\\[([0-9]+)\\]$");
 regex reIsPdf(".+\\.pdf(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 regex reIsTiff(".+\\.tif{1,2}(\\[[0-9]+\\]){0,1}$",std::regex::icase);
 
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.07.08";
+static char class_version[] = "Version: 2019.08.12";
 
 /**
  * Returns the class version.
@@ -572,8 +572,6 @@ void PageXML::setupXml() {
     imgDir = string(".");
 }
 
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
-
 /**
  * Function that creates a temporal file using the mktemp command.
  *
@@ -591,6 +589,161 @@ void mktemp( const char* tempbase, char *tempname ) {
     pclose(p);
   }
 }
+
+#if defined (__PAGEXML_GS__)
+
+/**
+ * Function that uses libgs to get pdf page sizes.
+ *
+ * @param pdf_path    Path to pdf file to process.
+ */
+std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path ) {
+  void *minst;
+  int code, code1;
+
+  char outfile_temp[FILENAME_MAX];
+  mktemp( "tmp_gsGetPdfPageSizes_XXXXXXXX.txt", outfile_temp );
+  std::string outfile_arg = std::string("-sOutputFile=")+outfile_temp;
+  std::string infile_arg = std::string("-sInputFile=")+pdf_path;
+
+  int gsargc = 9;
+  const char * gsargv[gsargc];
+  gsargv[0] = "pdf_page_sizes";
+  gsargv[1] = "-dNOPAUSE";
+  gsargv[2] = "-dBATCH";
+  gsargv[3] = "-dQUIET";
+  gsargv[4] = "-dNODISPLAY";
+  gsargv[5] = outfile_arg.c_str();
+  gsargv[6] = infile_arg.c_str();
+  gsargv[7] = "-c";
+  gsargv[8] = "/outfile OutputFile (w) file def\n\
+InputFile (r) file runpdfbegin\n\
+1 1 pdfpagecount {\n\
+  pdfgetpage\n\
+  outfile (Rotate=) writestring\n\
+  dup /Rotate pget { =string cvs outfile exch writestring } if\n\
+  outfile (\tMediaBox=) writestring\n\
+  dup /MediaBox pget { { outfile ( ) writestring =string cvs outfile exch writestring } forall } if\n\
+  outfile (\tCropBox=) writestring\n\
+  dup /CropBox pget { { outfile ( ) writestring =string cvs outfile exch writestring } forall } if\n\
+  outfile (\n) writestring\n\
+} for\n\
+outfile closefile";
+
+  code = gsapi_new_instance(&minst, NULL);
+  if( code == 0 ) {
+    code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
+    if( code == 0 )
+      code = gsapi_init_with_args(minst, gsargc, const_cast<char **>(gsargv));
+    code1 = gsapi_exit(minst);
+    if( (code == 0) || (code == gs_error_Quit) )
+      code = code1;
+    gsapi_delete_instance(minst);
+  }
+
+  std::vector< std::pair<double,double> > pdf_pages;
+  if( code == 0 ) {
+    //fprintf(stderr, "outfile_temp: %s\n", outfile_temp);
+    //fprintf(stderr,"InputFile: %s\n",gsargv[6]);
+    //fprintf(stderr,"PS: %s\n",gsargv[8]);
+
+    std::regex parseLine("^Rotate=([-.0-9]*)\tMediaBox= ([-.0-9]+) ([-.0-9]+) ([-.0-9]+) ([-.0-9]+)\tCropBox=(.*)$");
+    std::regex parseCropBox("^ ([-.0-9]+) ([-.0-9]+) ([-.0-9]+) ([-.0-9]+)$");
+    std::ifstream infile(outfile_temp);
+    std::string line;
+    while( std::getline(infile, line) ) {
+      //fprintf(stderr, "  %s\n", line.c_str());
+      std::cmatch base_match;
+      if( std::regex_match(line.c_str(), base_match, parseLine) ) {
+        double rot = base_match[1].str().empty() ? 0.0 : stof(base_match[1].str());
+        double x0 = stof(base_match[2].str());
+        double y0 = stof(base_match[3].str());
+        double x1 = stof(base_match[4].str());
+        double y1 = stof(base_match[5].str());
+        std::string cropbox = base_match[6].str();
+        if( ! cropbox.empty() ) {
+          if( std::regex_match(cropbox.c_str(), base_match, parseCropBox) ) {
+            x0 = stof(base_match[1].str());
+            y0 = stof(base_match[2].str());
+            x1 = stof(base_match[3].str());
+            y1 = stof(base_match[4].str());
+          }
+          else {
+            unlink(outfile_temp);
+            throw_runtime_error( "gsGetPdfPageSizes: error: failed to parse CropBox '%s' for pdf file: %s\n", cropbox.c_str(), pdf_path.c_str() );
+          }
+        }
+        if( rot != 0 && rot != 90 && rot != 180 && rot != 270 ) {
+          unlink(outfile_temp);
+          throw_runtime_error( "gsGetPdfPageSizes: error: unexpected page rotation '%g' for pdf file: %s\n", rot, pdf_path.c_str() );
+        }
+        double width = (rot == 0 || rot == 180) ? x1-x0 : y1-y0;
+        double height = (rot == 0 || rot == 180) ? y1-y0 : x1-x0;
+        pdf_pages.push_back( std::make_pair(width,height) );
+        //fprintf( stderr, "R=%s M=%s,%s,%s,%s C=%s\n", base_match[1].str().c_str(), base_match[2].str().c_str(), base_match[3].str().c_str(), base_match[4].str().c_str(), base_match[5].str().c_str(), base_match[6].str().c_str() );
+        //fprintf( stderr, "R=%g M=%g,%g,%g,%g C=%s\n", rot, x0, y0, x1, y1, cropbox.c_str() );
+      }
+      else {
+        unlink(outfile_temp);
+        throw_runtime_error( "gsGetPdfPageSizes: error: failed to parse line '%s' for pdf file: %s\n", line.c_str(), pdf_path.c_str() );
+      }
+    }
+  }
+
+  unlink(outfile_temp);
+  return code == 0 ? pdf_pages : std::vector< std::pair<double,double> >();
+}
+
+/**
+ * Function that uses libgs to render a pdf page to a png file.
+ *
+ * @param pdf_path    Path to pdf file to process.
+ */
+void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_path, int density ) {
+  int code, code1;
+
+  std::string first_page_arg = std::string("-dFirstPage=")+std::to_string(page_num);
+  std::string last_page_arg = std::string("-dLastPage=")+std::to_string(page_num);
+  std::string outfile_arg = std::string("-sOutputFile=")+png_path;
+  std::string density_arg = std::string("-r")+std::to_string(density);
+
+  void *minst;
+  int gsargc = 13;
+  const char * gsargv[gsargc];
+  gsargv[0] = "pdf_to_png";
+  gsargv[1] = "-dNOPAUSE";
+  gsargv[2] = "-dQUIET";
+  gsargv[3] = "-dBATCH";
+  gsargv[4] = "-dUseCropBox";
+  gsargv[5] = "-sDEVICE=png16m";
+  gsargv[6] = "-dTextAlphaBits=4";
+  gsargv[7] = "-dGraphicsAlphaBits=4";
+  gsargv[8] = first_page_arg.c_str();
+  gsargv[9] = last_page_arg.c_str();
+  gsargv[10] = density_arg.c_str();
+  gsargv[11] = outfile_arg.c_str();
+  gsargv[12] = pdf_path.c_str();
+
+  code = gsapi_new_instance(&minst, NULL);
+  if( code == 0 ) {
+    code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
+    if( code == 0 )
+      code = gsapi_init_with_args(minst, gsargc, const_cast<char **>(gsargv));
+    code1 = gsapi_exit(minst);
+    if( (code == 0) || (code == gs_error_Quit) )
+      code = code1;
+    gsapi_delete_instance(minst);
+  }
+
+  if( code != 0 ) {
+    unlink(png_path.c_str());
+    throw_runtime_error( "gsRenderPdfPageToPng: failed to convert to png page %d of pdf file: %s", page_num, pdf_path.c_str() );
+  }
+}
+
+#endif
+
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
 #if defined (__PAGEXML_MAGICK__)
 
@@ -667,6 +820,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   if( pagenum < 0 || pagenum >= (int)pagesImageFilename.size() )
     throw_runtime_error( "PageXML.loadImage: invalid page number: %d", pagenum );
   string aux;
+  string aux2;
   string fbase;
   if( fname == NULL ) {
     aux = pagesImageFilename[pagenum].at(0) == '/' ? pagesImageFilename[pagenum] : (imgDir+'/'+pagesImageFilename[pagenum]);
@@ -674,24 +828,42 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 
   // Get image number for multipage files //
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_GS__) || defined (__PAGEXML_MAGICK__)
   int imgnum = 0;
 #endif
-#if defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_GS__) || defined (__PAGEXML_MAGICK__)
   fbase = string(fname);
   cmatch base_match;
   if( std::regex_match(fname,base_match,reImagePageNum) ) {
-    imgnum = stoi(base_match[2].str())-1;
-    aux = base_match[1].str() + "[" + std::to_string(imgnum) + "]";
-    fname = aux.c_str();
-    fbase = string(base_match[1]);
+    imgnum = stoi(base_match[2].str());
+    aux2 = std::string(base_match[1].str().c_str()) + "[" + std::to_string(imgnum) + "]";
+    fname = aux2.c_str();
+    fbase = std::string(base_match[1].str().c_str());
   }
 #endif
 
   releaseImage(pagenum);
 #if defined (__PAGEXML_LEPT__)
-#if defined (__PAGEXML_MAGICK__)
   // Leptonica load pdf page //
+#if defined (__PAGEXML_GS__)
+  if( std::regex_match(fname, reIsPdf) ) {
+    int ldensity = density;
+    if( ! density ) {
+      if( resize_coords )
+        throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
+      std::vector< std::pair<double,double> > page_sizes = gsGetPdfPageSizes( std::string(fname) );
+      double Dw = 72.0*getPageWidth(pagenum)/page_sizes[pagenum].first;
+      double Dh = 72.0*getPageHeight(pagenum)/page_sizes[pagenum].second;
+      ldensity = std::round(0.5*(Dw+Dh));
+    }
+    char tmpfname[FILENAME_MAX];
+    std::string tmpbase = std::string("tmp_PageXML_pdf_")+std::to_string(pagenum)+"_XXXXXXXX.png";
+    mktemp( tmpbase.c_str(), tmpfname );
+    gsRenderPdfPageToPng( fbase, imgnum+1, std::string(tmpfname), ldensity );
+    pagesImage[pagenum] = pixRead(tmpfname);
+    unlink(tmpfname);
+  }
+#elif defined (__PAGEXML_MAGICK__)
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -1276,7 +1448,7 @@ std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
     throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
     return nodename;
   }
-  
+
   if( base_node != NULL )
     nodename = getValue(base_node) + "." + nodename;
   else {
@@ -4756,7 +4928,6 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
       throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: input nodes need to be TextLines or Words or Glyphs or TextRegions" );
       return -1;
     }
-    // @todo Check for single segment polystripe 
     if ( baseline[n].size() != 2 || coords[n].size() != 4 ) {
       throw_runtime_error( "PageXML.getLeftRightTextContinuationGroups: Baselines and Coords are required to have exactly 2 and 4 points respectively. For horizontal left-to-right text give fake_baseline=true. (id=%s, #baseline=%d, #coords=%d)", getAttr(elems[n],"id").c_str(), (int)baseline[n].size(), (int)coords[n].size() );
       return -1;
@@ -4794,7 +4965,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
         double direct = horiz_n[0] < horiz_n[1] ? 1.0 : -1.0;
         if ( direct*horiz_m[0] < direct*horiz_n[0] )
           continue;
-        
+
         // Check that horizontal IoU is small //
         double iou = IoU_1d(horiz_n[0],horiz_n[1],horiz_m[0],horiz_m[1]);
         if ( iou > max_horiz_iou )

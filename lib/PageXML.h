@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2019.07.08$
+ * @version $Version: 2019.08.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -26,6 +26,11 @@
 #endif
 #if defined (__PAGEXML_MAGICK__)
 #include <Magick++.h>
+#endif
+
+#if defined (__PAGEXML_GS__)
+#include <../ghostscript/ierrors.h>
+#include <../ghostscript/iapi.h>
 #endif
 
 #if defined (__PAGEXML_OGR__)
@@ -327,5 +332,12 @@ class PageXML {
     void parsePageImage( int pagenum );
     void setupXml();
 };
+
+void mktemp( const char* tempbase, char *tempname );
+
+#if defined (__PAGEXML_GS__)
+std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path );
+void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_path, int density = 300 );
+#endif
 
 #endif
