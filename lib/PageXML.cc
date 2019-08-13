@@ -922,8 +922,26 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     return;
   }
 #elif defined (__PAGEXML_IMG_CV__)
-#if defined (__PAGEXML_MAGICK__)
   // OpenCV load pdf page //
+#if defined (__PAGEXML_GS__)
+  if( std::regex_match(fname, reIsPdf) ) {
+    int ldensity = density;
+    if( ! density ) {
+      if( resize_coords )
+        throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
+      std::vector< std::pair<double,double> > page_sizes = gsGetPdfPageSizes( std::string(fname) );
+      double Dw = 72.0*getPageWidth(pagenum)/page_sizes[pagenum].first;
+      double Dh = 72.0*getPageHeight(pagenum)/page_sizes[pagenum].second;
+      ldensity = std::round(0.5*(Dw+Dh));
+    }
+    char tmpfname[FILENAME_MAX];
+    std::string tmpbase = std::string("tmp_PageXML_pdf_")+std::to_string(pagenum)+"_XXXXXXXX.png";
+    mktemp( tmpbase.c_str(), tmpfname );
+    gsRenderPdfPageToPng( fbase, imgnum+1, std::string(tmpfname), ldensity );
+    pagesImage[pagenum] = cv::imread(tmpfname);
+    unlink(tmpfname);
+  }
+#elif defined (__PAGEXML_MAGICK__)
   if( std::regex_match(fname, reIsPdf) ) {
     int ldensity = density;
     if( ! density ) {
@@ -2091,7 +2109,7 @@ xmlNodePt PageXML::copyElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
   }
   catch( exception& e ) {
     xmlFreeNode(elemcopy);
-    throw_runtime_error( "PageXML.copyElem: problems inserting element" );
+    throw_runtime_error( "PageXML.copyElem: problems inserting element: %s", e.what() );
     return NULL;
   }
 }
@@ -2133,7 +2151,7 @@ xmlNodePt PageXML::moveElem( xmlNodePt elem, const xmlNodePt node, PAGEXML_INSER
       return insertElem( elem, node, itype );
     }
     catch( exception& e ) {
-      throw_runtime_error( "PageXML.moveElem: problems inserting element" );
+      throw_runtime_error( "PageXML.moveElem: problems inserting element: %s", e.what() );
     }
   }
   return NULL;
