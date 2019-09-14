@@ -1,7 +1,22 @@
-cd ../../
-docker-command-line-interface -- pagexml-build:16.04-py27 bash -c 'cp -p /opt/pagexml/py-pagexml/dist/*.egg .' &&
-docker-command-line-interface -- pagexml-build:16.04-py35 bash -c 'cp -p /opt/pagexml/py-pagexml/dist/*.egg .' &&
-docker-command-line-interface -- pagexml-build:18.04-py36 bash -c 'cp -p /opt/pagexml/py-pagexml/dist/*.egg .' &&
-docker build -f py-pagexml/docker/Dockerfile_runtime -t pagexml-runtime:16.04-py27 --build-arg UBUNTU_TAG=16.04 --build-arg GDAL_VERSION=1i --build-arg CV_VERSION=2.4v5 --build-arg PYTHON_VERSION= . &&
-docker build -f py-pagexml/docker/Dockerfile_runtime -t pagexml-runtime:16.04-py35 --build-arg UBUNTU_TAG=16.04 --build-arg GDAL_VERSION=1i --build-arg CV_VERSION=2.4v5 --build-arg PYTHON_VERSION=3 . &&
-docker build -f py-pagexml/docker/Dockerfile_runtime -t pagexml-runtime:16.04-py36 --build-arg UBUNTU_TAG=18.04 --build-arg GDAL_VERSION=20 --build-arg CV_VERSION=3.2  --build-arg PYTHON_VERSION=3 .
+PAGEXML_VERSION=2019.07.08
+
+docker build \
+  -f Dockerfile_runtime \
+  -t mauvilsa/pagexml:runtime-ubuntu16.04-py27 \
+  --build-arg UBUNTU_TAG=16.04 \
+  --build-arg PYTHON_VERSION=2 \
+  --build-arg PAGEXML_VERSION=$PAGEXML_VERSION .
+
+docker build \
+  -f Dockerfile_runtime \
+  -t mauvilsa/pagexml:runtime-ubuntu16.04-py35 \
+  --build-arg UBUNTU_TAG=16.04 \
+  --build-arg PYTHON_VERSION=3 \
+  --build-arg PAGEXML_VERSION=$PAGEXML_VERSION .
+
+docker build \
+  -f Dockerfile_runtime \
+  -t mauvilsa/pagexml:runtime-ubuntu18.04-py36 \
+  --build-arg UBUNTU_TAG=18.04 \
+  --build-arg PYTHON_VERSION=3 \
+  --build-arg PAGEXML_VERSION=$PAGEXML_VERSION .

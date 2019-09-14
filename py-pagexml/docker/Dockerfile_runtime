@@ -1,37 +1,69 @@
-ARG UBUNTU_TAG=16.04
-#ARG UBUNTU_TAG=18.04
+#                     16.04-py27  16.04-py35  18.04-py36
+# ARG UBUNTU_TAG      16.04       16.04       18.04
+# ARG PYTHON_VERSION  2           3           3
 
+ARG UBUNTU_TAG
 FROM library/ubuntu:$UBUNTU_TAG
 
 MAINTAINER Mauricio Villegas <mauricio@omnius.com>
 
-ARG CV_VERSION=2.4v5
-#ARG CV_VERSION=3.2
-ARG GDAL_VERSION=1i
-#ARG GDAL_VERSION=20
-ARG PYTHON_VERSION=3
-#ARG PYTHON_VERSION=
-
+SHELL ["/bin/bash", "-c"]
 ENV \
-  DEBIAN_FRONTEND=noninteractive
+ DEBIAN_FRONTEND=noninteractive \
+ LANG=en_US.UTF-8 \
+ LC_ALL=C.UTF-8
 
-RUN apt-get update --fix-missing \
+ARG PYTHON_VERSION
+ARG PAGEXML_VERSION
+
+RUN test -n "$PAGEXML_VERSION" \
+ && . /etc/os-release \
+ && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
+      CV_VERSION=2.4v5; \
+      GDAL_VERSION=1i; \
+      PYTHON_VERSION=; \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp27-cp27m; \
+    elif [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      CV_VERSION=2.4v5; \
+      GDAL_VERSION=1i; \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp35-cp35m; \
+    elif [ "$VERSION_ID" = "18.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      CV_VERSION=3.2; \
+      GDAL_VERSION=20; \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
+    else \
+      echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
+      exit 1; \
+    fi \
+ && PAGEXML_WHEEL=/tmp/${PAGEXML_RELEASE##*/}-linux_x86_64.whl \
+ && apt-get update --fix-missing \
+ && apt-get dist-upgrade -y \
  && apt-get install -y --no-install-recommends \
       less \
       nano \
+      curl \
       python$PYTHON_VERSION \
-      python$PYTHON_VERSION-setuptools \
+      python$PYTHON_VERSION-distutils \
+      python$PYTHON_VERSION-pip \
       libxml2 \
       libxslt1.1 \
-      libopencv-highgui$CV_VERSION \
       libopencv-imgproc$CV_VERSION \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
+ && if [ "$VERSION_ID" = "16.04" ]; then \
+      apt-get install -y --no-install-recommends \
+        libopencv-highgui$CV_VERSION; \
+    else \
+      apt-get install -y --no-install-recommends \
+        libopencv-imgcodecs$CV_VERSION; \
+    fi \
+ && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
+ && pip3 install $PAGEXML_WHEEL \
+ && python3 -m pagexml_tests.run_tests \
+ && pip3 install --upgrade pip setuptools wheel \
+ && apt-get purge -y \
+      python$PYTHON_VERSION-pip \
+ && apt-get autoremove -y \
+ && apt-get purge -y $(dpkg -l | awk '{if($1=="rc")print $2}') \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && if [ "$PYTHON_VERSION" = "3" ]; then ln -s /usr/bin/python3 /usr/local/bin/python; fi
-
-COPY pagexml-*.egg /tmp/
-
-RUN python -m easy_install /tmp/pagexml-*.egg \
- && python -m pagexml_tests.run_tests
+ && rm -rf /var/lib/apt/lists/* /tmp/*
