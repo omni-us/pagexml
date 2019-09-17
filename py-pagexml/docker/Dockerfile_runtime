@@ -16,7 +16,10 @@ ENV \
 ARG PYTHON_VERSION
 ARG PAGEXML_VERSION
 
-RUN test -n "$PAGEXML_VERSION" \
+RUN if ! test -n "$PAGEXML_VERSION"; then \
+      echo "error: PAGEXML_VERSION argument is required"; \
+      exit 1; \
+    fi \
  && . /etc/os-release \
  && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
       CV_VERSION=2.4v5; \
@@ -43,7 +46,6 @@ RUN test -n "$PAGEXML_VERSION" \
       nano \
       curl \
       python$PYTHON_VERSION \
-      python$PYTHON_VERSION-distutils \
       python$PYTHON_VERSION-pip \
       libxml2 \
       libxslt1.1 \
@@ -55,6 +57,7 @@ RUN test -n "$PAGEXML_VERSION" \
         libopencv-highgui$CV_VERSION; \
     else \
       apt-get install -y --no-install-recommends \
+        python$PYTHON_VERSION-distutils \
         libopencv-imgcodecs$CV_VERSION; \
     fi \
  && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
