@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.08.12$
+ * @version $Version: 2019.10.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.08.12";
+static char class_version[] = "Version: 2019.10.10";
 
 /**
  * Returns the class version.
@@ -3738,6 +3738,7 @@ void PageXML::setPageImageFilename( xmlNodePt node, const char* image ) {
     return;
   }
   setAttr( node, "imageFilename", image );
+  parsePageImage( getPageNumber(node) );
 }
 void PageXML::setPageImageFilename( int pagenum, const char* image ) {
   return setPageImageFilename( selectNth("//_:Page",pagenum), image );

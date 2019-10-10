@@ -59,12 +59,12 @@ workflows:
           <<: *tagfilter
       - build-1804-py36:
           <<: *tagfilter
-      - publish-pypi:
-          <<: *tagfilter
-          context: pagexml-context
-          requires:
-            - build-1604-py35
-            - build-1804-py36
+      #- publish-pypi:
+      #    <<: *tagfilter
+      #    context: pagexml-context
+      #    requires:
+      #      - build-1604-py35
+      #      - build-1804-py36
       - publish-github:
           <<: *tagfilter
           context: pagexml-context
