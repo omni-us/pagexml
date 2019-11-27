@@ -1,4 +1,4 @@
-PAGEXML_VERSION=2019.07.08
+PAGEXML_VERSION=2019.10.10
 
 #docker build \
 #  -f Dockerfile_runtime \

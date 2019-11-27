@@ -45,6 +45,7 @@ RUN if ! test -n "$PAGEXML_VERSION"; then \
       less \
       nano \
       curl \
+      ca-certificates \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-pip \
       libxml2 \
@@ -62,6 +63,7 @@ RUN if ! test -n "$PAGEXML_VERSION"; then \
     fi \
  && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
  && pip3 install $PAGEXML_WHEEL \
+ && pip3 install opencv-python \
  && python3 -m pagexml_tests.run_tests \
  && pip3 install --upgrade pip setuptools wheel \
  && apt-get purge -y \
