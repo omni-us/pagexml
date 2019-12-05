@@ -16,7 +16,10 @@ ENV \
 ARG PYTHON_VERSION
 ARG PAGEXML_VERSION
 
-RUN if ! test -n "$PAGEXML_VERSION"; then \
+RUN if ! test -n "$PYTHON_VERSION"; then \
+      echo "error: PYTHON_VERSION argument is required"; \
+      exit 1; \
+    elif ! test -n "$PAGEXML_VERSION"; then \
       echo "error: PAGEXML_VERSION argument is required"; \
       exit 1; \
     fi \

@@ -149,7 +149,7 @@
             
   <h1>Source code for pagexml</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">.pagexml</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.pagexml</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">cv2</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -166,7 +166,7 @@
 
 
 <div class="viewcode-block" id="PageXML"><a class="viewcode-back" href="../pagexml.html#pagexml.PageXML">[docs]</a><span class="k">class</span> <span class="nc">PageXML</span><span class="p">(</span><span class="n">_PageXML</span><span class="p">):</span> <span class="c1">#pylint: disable=function-redefined</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;schema_path&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;schema_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PAGE_XSD</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PageXML</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

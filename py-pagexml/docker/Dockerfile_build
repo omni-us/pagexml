@@ -1,34 +1,50 @@
-ARG UBUNTU_TAG=16.04
-#ARG UBUNTU_TAG=18.04
+#                     16.04-py27  16.04-py35  18.04-py36
+# ARG UBUNTU_TAG      16.04       16.04       18.04
+# ARG PYTHON_VERSION  2           3           3
 
+ARG UBUNTU_TAG
 FROM library/ubuntu:$UBUNTU_TAG
 
 MAINTAINER Mauricio Villegas <mauricio@omnius.com>
 
-ARG PYTHON_VERSION=3
-#ARG PYTHON_VERSION=
-
+SHELL ["/bin/bash", "-c"]
 ENV \
-  DEBIAN_FRONTEND=noninteractive
+ DEBIAN_FRONTEND=noninteractive \
+ LANG=en_US.UTF-8 \
+ LC_ALL=C.UTF-8
 
-RUN apt-get update --fix-missing \
+ARG PYTHON_VERSION
+
+RUN if ! test -n "$PYTHON_VERSION"; then \
+      echo "error: PYTHON_VERSION argument is required"; \
+      exit 1; \
+    fi \
+ && . /etc/os-release \
+ && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
+      PYTHON_VERSION=; \
+    elif [ "$PYTHON_VERSION" != "3" ]; then \
+      echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
+      exit 1; \
+    fi \
+ && apt-get update --fix-missing \
+ && apt-get dist-upgrade -y \
  && apt-get install -y --no-install-recommends \
       less \
       nano \
+      ca-certificates \
+      git \
       g++ \
+      swig \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-setuptools \
       python$PYTHON_VERSION-pkgconfig \
       python$PYTHON_VERSION-wheel \
+      python$PYTHON_VERSION-pip \
       python$PYTHON_VERSION-dev \
-      swig \
-      git \
-      ca-certificates \
       libxml2-dev \
       libxslt1-dev \
       libopencv-dev \
       libgdal-dev \
       libboost-all-dev \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && if [ "$PYTHON_VERSION" = "3" ]; then ln -s /usr/bin/python3 /usr/local/bin/python; fi
+ && rm -rf /var/lib/apt/lists/*
