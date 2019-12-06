@@ -51,6 +51,7 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       ca-certificates \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-pip \
+      virtualenv \
       libxml2 \
       libxslt1.1 \
       libopencv-imgproc$CV_VERSION \
@@ -62,7 +63,8 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
     else \
       apt-get install -y --no-install-recommends \
         python$PYTHON_VERSION-distutils \
-        libopencv-imgcodecs$CV_VERSION; \
+        libsm6 \
+        libopencv-highgui$CV_VERSION; \
     fi \
  && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
  && pip3 install $PAGEXML_WHEEL \
