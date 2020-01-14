@@ -1355,7 +1355,7 @@ void findOuterContours( Magick::Image& img, vector< vector<cv::Point> >& contour
   magick2cvmat8u( img, cvimg );
 
   /// Get outer contours ///
-  cv::findContours( cvimg, contours, CV_RETR_EXTERNAL, method, cvPoint(0,0) );
+  cv::findContours( cvimg, contours, cv::RETR_EXTERNAL, method, cv::Point(0,0) );
 
   /// Approximate contours ///
   if( eps > 0.0 ) {
@@ -1400,7 +1400,7 @@ static void joinComponents( Magick::Image& img ) {
 
   /// Get external contours ///
   vector< vector<cv::Point> > contours;
-  cv::findContours( cvimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0) );
+  cv::findContours( cvimg, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0,0) );
 
   magick2cvmat8u( img, cvimg );
 
@@ -1685,7 +1685,7 @@ void TextFeatExtractor::preprocess( PageImage& cvimg, vector<cv::Point>* _fconto
     vector<vector<cv::Point> > fcontour;
     double eps = fcontour_dilate/2.0;
     //int method = CV_CHAIN_APPROX_TC89_KCOS;
-    int method = CV_CHAIN_APPROX_SIMPLE;
+    int method = cv::CHAIN_APPROX_SIMPLE;
     findOuterContours( tmp, fcontour, method, eps );
 
     for( int k=fcontour[0].size()-1; k>=0; k-- ) {
