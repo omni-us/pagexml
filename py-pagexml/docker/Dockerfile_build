@@ -50,6 +50,8 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -u 1234 pagexml-build
-WORKDIR /home/pagexml-build
-USER 1234
+RUN pip3 install --upgrade pip setuptools
+
+#RUN useradd -m -u 1234 pagexml-build
+#WORKDIR /home/pagexml-build
+#USER 1234
