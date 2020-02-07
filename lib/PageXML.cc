@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2019.10.10$
+ * @version $Version: 2020.02.07$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2019.10.10";
+static char class_version[] = "Version: 2020.02.07";
 
 /**
  * Returns the class version.
@@ -1463,8 +1463,12 @@ bool PageXML::nodeIs( xmlNodePt node, const char* name ) {
 std::string PageXML::getNodeName( xmlNodePt node, xmlNodePt base_node ) {
   string nodename = getAttr( node, "id" );
   if( nodename.empty() ) {
-    throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
-    return nodename;
+    if( nodeIs( node, "Page") )
+      nodename = std::string(pagesImageBase[getPageNumber(node)]);
+    else {
+      throw_runtime_error( "PageXML.getNodeName: expected element to include id attribute" );
+      return nodename;
+    }
   }
 
   if( base_node != NULL )
