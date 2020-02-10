@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2020.02.07$
+ * @version $Version: 2020.02.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2020.02.07";
+static char class_version[] = "Version: 2020.02.10";
 
 /**
  * Returns the class version.
@@ -5168,7 +5168,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
       std::vector<double> hpos = project_2d_to_1d(cent,horiz);
 
       // Sort text elems by horizontal center projections //
-      int flags = elem_group_direct[k] == 1.0 ? CV_SORT_ASCENDING : CV_SORT_DESCENDING;
+      int flags = elem_group_direct[k] == 1.0 ? cv::SORT_ASCENDING : cv::SORT_DESCENDING;
       std::vector<int> sidx(num_group);
       cv::sortIdx( hpos, sidx, flags );
       std::vector<int> group_order;
@@ -5202,7 +5202,7 @@ int PageXML::getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, s
     std::vector<int> sidx(elem_group_order.size());
     for ( int n=0; n<(int)elem_group_order.size(); n++ )
       sval[n] = elem_group_order[n][0];
-    cv::sortIdx( sval, sidx, CV_SORT_ASCENDING );
+    cv::sortIdx( sval, sidx, cv::SORT_ASCENDING );
     std::vector<std::vector<int> > sorted_group_order;
     std::vector<double> sorted_group_score;
     for ( int n=0; n<(int)sidx.size(); n++ ) {
@@ -5303,7 +5303,7 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
 
   // Sort groups by vertical center projections //
   std::vector<int> sidx(vpos.size());
-  cv::sortIdx( vpos, sidx, CV_SORT_ASCENDING );
+  cv::sortIdx( vpos, sidx, cv::SORT_ASCENDING );
 
   // Populate reading order vector //
   for ( int ii=0; ii<(int)sidx.size(); ii++ ) {

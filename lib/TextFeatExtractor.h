@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2019.06.03$
+ * @version $Version: 2020.02.10$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
