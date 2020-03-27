@@ -35,6 +35,9 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       git \
       g++ \
       swig \
+      zip \
+      unzip \
+      locales \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-setuptools \
       python$PYTHON_VERSION-pkgconfig \
@@ -47,6 +50,7 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       libgdal-dev \
       libboost-all-dev \
       libopenblas-dev \
+ && locale-gen en_US.UTF-8 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
