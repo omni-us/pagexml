@@ -86,7 +86,7 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   cd py-pagexml;
   ./setup.py test;
   [ "$?" != "0" ] && exit 1;
-  ./setup.py build_sphinx --quiet --builder html &&
+  ./setup.py build_sphinx --quiet --builder html --version $V --release $V &&
     rm -r ../docs/py-pagexml/{_modules,_sources} ../docs/py-pagexml/*.* &&
     mv sphinx/_build/html/{_modules,_sources} sphinx/_build/html/*.* ../docs/py-pagexml &&
     mv sphinx/_build/html/_static/documentation_options.js ../docs/py-pagexml/_static &&
@@ -101,13 +101,13 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   cd py-textfeat;
   ./setup.py test;
   [ "$?" != "0" ] && exit 1;
-  ./setup.py build_sphinx --quiet --builder html &&
+  ./setup.py build_sphinx --quiet --builder html --version $V --release $V &&
     rm -r ../docs/py-textfeat/{_modules,_sources} ../docs/py-textfeat/*.* &&
     mv sphinx/_build/html/{_modules,_sources} sphinx/_build/html/*.* ../docs/py-textfeat &&
     mv sphinx/_build/html/_static/documentation_options.js ../docs/py-textfeat/_static &&
     find ../docs/py-textfeat -name '*.html' -or -name '*.js' \
       | grep -v _static \
-      | xargs sed -i 's|textfeat\.textfeat|textfeat|g';
+      | xargs sed -i 's|textfeat\.swigTextFeatExtractor|textfeat|g';
   [ "$?" != "0" ] && exit 1;
   cd ..;
   git add docs/py-textfeat;

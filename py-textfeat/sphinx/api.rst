@@ -9,3 +9,4 @@ textfeat module
     :undoc-members:
     :show-inheritance:
     :autosummary:
+    :exclude-members: SwigPyIterator

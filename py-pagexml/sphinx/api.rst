@@ -9,6 +9,7 @@ pagexml module
     :undoc-members:
     :show-inheritance:
     :autosummary:
+    :exclude-members: PageXML
 
 .. automodule:: pagexml.swigPageXML
     :members:

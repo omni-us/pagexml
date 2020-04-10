@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml local build documentation</title>
+  <title>pagexml &mdash; pagexml 2020.04.10 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                local build
+                2020.04.10
               </div>
             
           
@@ -203,7 +203,7 @@
 <span class="sd">        Boolean indicating whether write was successful.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cv2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cv2 and numpy required but not available.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cv2 and numpy required but not available. To have optional dependencies install with `pip3 install pagexml[all]`&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span></div>
 </pre></div>
 

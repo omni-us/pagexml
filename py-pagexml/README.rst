@@ -23,8 +23,8 @@ The core of py-pagexml is a compiled C++ library that links with a few
 libraries, so it requires installation of dependencies that cannot be
 automatically obtained from pypi servers.
 
-There are `docker images available at docker
-<https://hub.docker.com/r/mauvilsa/pagexml/tags>`_ hub which include both the
+There are `docker images available at docker hub
+<https://hub.docker.com/r/mauvilsa/pagexml/tags>`_ which include both the
 runtime and the build dependencies already installed. In particular the runtime
 docker images are intended to be used as base images for applications that use
 pagexml. The specific list of dependencies both for runtime and building are

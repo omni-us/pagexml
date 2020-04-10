@@ -53,5 +53,5 @@ def imwrite(filename, img, params=[]):
         Boolean indicating whether write was successful.
     """
     if not cv2:
-        raise Exception('cv2 and numpy required but not available.')
+        raise Exception('cv2 and numpy required but not available. To have optional dependencies install with `pip3 install pagexml[all]`')
     return cv2.imwrite(filename, np.asarray(img), params)
