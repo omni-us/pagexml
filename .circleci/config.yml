@@ -23,6 +23,10 @@ jobs:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu18.04-py36
     <<: *dockerbuild
+  build-2004-py38:
+    docker:
+      - image: mauvilsa/pagexml:build-ubuntu20.04-py38
+    <<: *dockerbuild
   publish-pypi:
     docker:
       - image: mauvilsa/docker-twine:1.11.0
@@ -59,15 +63,19 @@ workflows:
           <<: *tagfilter
       - build-1804-py36:
           <<: *tagfilter
+      - build-2004-py38:
+          <<: *tagfilter
       #- publish-pypi:
       #    <<: *tagfilter
       #    context: pagexml-context
       #    requires:
       #      - build-1604-py35
       #      - build-1804-py36
+      #      - build-2004-py38
       - publish-github:
           <<: *tagfilter
           context: pagexml-context
           requires:
             - build-1604-py35
             - build-1804-py36
+            - build-2004-py38

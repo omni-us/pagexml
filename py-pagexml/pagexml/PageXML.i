@@ -1,4 +1,4 @@
-%module pagexml
+%module swigPageXML
 
 //%feature("autodoc", "2");
 %include "PageXML_doxy2swig.i"

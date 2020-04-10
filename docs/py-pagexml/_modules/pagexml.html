@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2020.2.10 documentation</title>
+  <title>pagexml &mdash; pagexml local build documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                2020.2.10
+                local build
               </div>
             
           
@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pagexml.html">pagexml API (version 2020.2.10)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://omni-us.github.io/pageformat/pagecontent_omnius.html">OPF XSD schema documentation</a></li>
 </ul>
 
@@ -149,29 +149,40 @@
             
   <h1>Source code for pagexml</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">.pagexml</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.swigPageXML</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=import-error</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">cv2</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">cv2</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="n">_PageXML</span> <span class="o">=</span> <span class="n">PageXML</span>
 
-<span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_searchink.xsd&#39;</span>
+<span class="n">PAGE_XSD_SEARCHINK</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_searchink.xsd&#39;</span>
+<span class="n">PAGE_XSD_OMNIUS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_omnius.xsd&#39;</span>
+<span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">PAGE_XSD_OMNIUS</span>
 
-<div class="viewcode-block" id="set_omnius_schema"><a class="viewcode-back" href="../pagexml.html#pagexml.set_omnius_schema">[docs]</a><span class="k">def</span> <span class="nf">set_omnius_schema</span><span class="p">():</span>
+<div class="viewcode-block" id="set_searchink_schema"><a class="viewcode-back" href="../api.html#pagexml.set_searchink_schema">[docs]</a><span class="k">def</span> <span class="nf">set_searchink_schema</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Sets the schema for validation to be pagecontent_searchink.xsd.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">PAGE_XSD</span>
-    <span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;/xsd/pagecontent_omnius.xsd&#39;</span></div>
+    <span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">PAGE_XSD_SEARCHINK</span></div>
+
+<div class="viewcode-block" id="set_omnius_schema"><a class="viewcode-back" href="../api.html#pagexml.set_omnius_schema">[docs]</a><span class="k">def</span> <span class="nf">set_omnius_schema</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Sets the schema for validation to be pagecontent_omnius.xsd.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">PAGE_XSD</span>
+    <span class="n">PAGE_XSD</span> <span class="o">=</span> <span class="n">PAGE_XSD_OMNIUS</span></div>
 
 
-<div class="viewcode-block" id="PageXML"><a class="viewcode-back" href="../pagexml.html#pagexml.PageXML">[docs]</a><span class="k">class</span> <span class="nc">PageXML</span><span class="p">(</span><span class="n">_PageXML</span><span class="p">):</span> <span class="c1">#pylint: disable=function-redefined</span>
+<span class="n">_PageXML</span> <span class="o">=</span> <span class="n">PageXML</span>  <span class="c1"># pylint: disable=used-before-assignment</span>
+
+<div class="viewcode-block" id="PageXML"><a class="viewcode-back" href="../api.html#pagexml.PageXML">[docs]</a><span class="k">class</span> <span class="nc">PageXML</span><span class="p">(</span><span class="n">_PageXML</span><span class="p">):</span>  <span class="c1"># pylint: disable=function-redefined</span>
+    <span class="sd">&quot;&quot;&quot;Python only additions to the PageXML class.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;schema_path&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;schema_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PAGE_XSD</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PageXML</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PageXML.clone"><a class="viewcode-back" href="../pagexml.html#pagexml.PageXML.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PageXML.clone"><a class="viewcode-back" href="../api.html#pagexml.PageXML.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># The c++ clone gives error, so reimplemented it in python</span>
         <span class="n">pxml</span> <span class="o">=</span> <span class="n">PageXML</span><span class="p">()</span>
         <span class="n">pxml</span><span class="o">.</span><span class="n">loadXmlString</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">toString</span><span class="p">(),</span> <span class="kc">False</span> <span class="p">)</span>
@@ -180,7 +191,7 @@
         <span class="k">return</span> <span class="n">pxml</span></div></div>
 
 
-<div class="viewcode-block" id="imwrite"><a class="viewcode-back" href="../pagexml.html#pagexml.imwrite">[docs]</a><span class="k">def</span> <span class="nf">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="imwrite"><a class="viewcode-back" href="../api.html#pagexml.imwrite">[docs]</a><span class="k">def</span> <span class="nf">imwrite</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;Saves an image to a specified file.</span>
 
 <span class="sd">    Args:</span>

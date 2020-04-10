@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# textfeat documentation build configuration file, created by
+# pagexml documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul 31 18:01:01 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'autodocsumm',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,7 +56,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'textfeat'
+project = 'pagexml'
 copyright = '2016-present, Mauricio Villegas'
 author = 'Mauricio Villegas'
 
@@ -209,7 +210,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'textfeatdoc'
+htmlhelp_basename = 'pagexmldoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -231,7 +232,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'textfeat.tex', 'textfeat Documentation',
+    (master_doc, 'pagexml.tex', 'pagexml Documentation',
      'Mauricio Villegas', 'manual'),
 ]
 
@@ -261,7 +262,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'textfeat', 'textfeat Documentation',
+    (master_doc, 'pagexml', 'pagexml Documentation',
      [author], 1)
 ]
 
@@ -275,8 +276,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'textfeat', 'textfeat Documentation',
-     author, 'textfeat', 'One line description of project.',
+    (master_doc, 'pagexml', 'pagexml Documentation',
+     author, 'pagexml', 'One line description of project.',
      'Miscellaneous'),
 ]
 

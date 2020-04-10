@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PAGEXML_VERSION=2019.10.10
+PAGEXML_VERSION=2020.04.10
 
 docker build \
   -f Dockerfile_runtime \
@@ -19,7 +19,7 @@ docker build \
 
 docker build \
   -f Dockerfile_runtime \
-  -t mauvilsa/pagexml:runtime-ubuntu20.04-py37 \
+  -t mauvilsa/pagexml:runtime-ubuntu20.04-py38 \
   --build-arg UBUNTU_TAG=20.04 \
   --build-arg PAGEXML_VERSION=$PAGEXML_VERSION \
   .

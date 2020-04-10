@@ -8,10 +8,11 @@ py-textfeat/dist
 _build
 *.egg-info
 .eggs
+.coverage
 PageXML_wrap.cpp
-pagexml.py
+swigPageXML.py
 TextFeatExtractor_wrap.cpp
-textfeat.py
+swigTextFeatExtractor.py
 __pycache__
 CMakeCache.txt
 CMakeFiles

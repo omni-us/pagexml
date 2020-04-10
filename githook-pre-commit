@@ -24,7 +24,7 @@ fi
 
 
 ### Update versions on files ###
-FILES=( $(git status --porcelain | sed -r 's|^ |_|; s|^(.) |\1_|;' | grep -E '^([MRA]|.M)') );
+FILES=( $(git status --porcelain | sed -r 's|^ |_|; s|^(.) |\1_|;' | grep -E '^([MRA]|.M)' | grep -v '^R_') );
 V=$(date -u +%Y.%m.%d);
 
 check_change_after_staged () {
@@ -84,27 +84,27 @@ if [ "${#VERSION_UPDATED[@]}" -gt 0 ]; then
   ### Test python wrapper and update documentation ###
   echo "### Test pagexml python wrapper and update documentation ###"
   cd py-pagexml;
-  python setup.py test;
+  ./setup.py test;
   [ "$?" != "0" ] && exit 1;
-  python setup.py build_sphinx --quiet --builder html &&
+  ./setup.py build_sphinx --quiet --builder html &&
     rm -r ../docs/py-pagexml/{_modules,_sources} ../docs/py-pagexml/*.* &&
-    mv docs/_build/html/{_modules,_sources} docs/_build/html/*.* ../docs/py-pagexml &&
-    mv docs/_build/html/_static/documentation_options.js ../docs/py-pagexml/_static &&
+    mv sphinx/_build/html/{_modules,_sources} sphinx/_build/html/*.* ../docs/py-pagexml &&
+    mv sphinx/_build/html/_static/documentation_options.js ../docs/py-pagexml/_static &&
     find ../docs/py-pagexml -name '*.html' -or -name '*.js' \
       | grep -v _static \
-      | xargs sed -i 's|pagexml\.pagexml|pagexml|g';
+      | xargs sed -i 's|pagexml\.swigPageXML|pagexml|g';
   [ "$?" != "0" ] && exit 1;
   cd ..;
   git add docs/py-pagexml;
 
   echo "### Test textfeat python wrapper and update documentation ###"
   cd py-textfeat;
-  python setup.py test;
+  ./setup.py test;
   [ "$?" != "0" ] && exit 1;
-  python setup.py build_sphinx --quiet --builder html &&
+  ./setup.py build_sphinx --quiet --builder html &&
     rm -r ../docs/py-textfeat/{_modules,_sources} ../docs/py-textfeat/*.* &&
-    mv docs/_build/html/{_modules,_sources} docs/_build/html/*.* ../docs/py-textfeat &&
-    mv docs/_build/html/_static/documentation_options.js ../docs/py-textfeat/_static &&
+    mv sphinx/_build/html/{_modules,_sources} sphinx/_build/html/*.* ../docs/py-textfeat &&
+    mv sphinx/_build/html/_static/documentation_options.js ../docs/py-textfeat/_static &&
     find ../docs/py-textfeat -name '*.html' -or -name '*.js' \
       | grep -v _static \
       | xargs sed -i 's|textfeat\.textfeat|textfeat|g';

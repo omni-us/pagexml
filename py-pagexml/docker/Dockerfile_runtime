@@ -1,4 +1,4 @@
-#                     16.04-py35  18.04-py36  20.04-py37
+#                     16.04-py35  18.04-py36  20.04-py38
 # ARG UBUNTU_TAG      16.04       18.04       20.04
 # ARG PYTHON_VERSION  3           3           3
 
@@ -38,9 +38,9 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       GDAL_VERSION=20; \
       PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
     elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      CV_VERSION=4.1; \
-      GDAL_VERSION=20; \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp37-cp37m; \
+      CV_VERSION=4.2; \
+      GDAL_VERSION=26; \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp38-cp38m; \
     else \
       echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
       exit 1; \
@@ -59,21 +59,17 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       libxml2 \
       libxslt1.1 \
       libopencv-imgproc$CV_VERSION \
+      libopencv-highgui$CV_VERSION; \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
- && if [ "$VERSION_ID" = "16.04" ]; then \
-      apt-get install -y --no-install-recommends \
-        libopencv-highgui$CV_VERSION; \
-    else \
+ && if [ "$VERSION_ID" != "16.04" ]; then \
       apt-get install -y --no-install-recommends \
         python$PYTHON_VERSION-distutils \
         libsm6 \
-        libopencv-highgui$CV_VERSION; \
     fi \
  && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
- && pip3 install $PAGEXML_WHEEL \
- && pip3 install opencv-python \
- && python3 -m pagexml_tests.run_tests \
+ && pip3 install $PAGEXML_WHEEL[all] \
+ && python3 -m pagexml_tests \
  && pip3 install --upgrade pip setuptools wheel \
  && apt-get purge -y \
       python$PYTHON_VERSION-pip \

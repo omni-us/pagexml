@@ -7,7 +7,7 @@ Documentation Contents
 .. toctree::
    :maxdepth: 2
 
-   pagexml
+   api
 
    OPF XSD schema documentation <https://omni-us.github.io/pageformat/pagecontent_omnius.html>
 

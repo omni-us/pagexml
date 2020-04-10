@@ -1,21 +1,32 @@
 import os
-from .pagexml import *
+from .swigPageXML import *  # pylint: disable=import-error
 try:
     import cv2
     import numpy as np
 except ImportError:
     cv2 = False
 
-_PageXML = PageXML
 
-PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
+PAGE_XSD_SEARCHINK = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
+PAGE_XSD_OMNIUS = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_omnius.xsd'
+PAGE_XSD = PAGE_XSD_OMNIUS
+
+def set_searchink_schema():
+    """Sets the schema for validation to be pagecontent_searchink.xsd."""
+    global PAGE_XSD
+    PAGE_XSD = PAGE_XSD_SEARCHINK
 
 def set_omnius_schema():
+    """Sets the schema for validation to be pagecontent_omnius.xsd."""
     global PAGE_XSD
-    PAGE_XSD = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_omnius.xsd'
+    PAGE_XSD = PAGE_XSD_OMNIUS
 
 
-class PageXML(_PageXML): #pylint: disable=function-redefined
+_PageXML = PageXML  # pylint: disable=used-before-assignment
+
+class PageXML(_PageXML):  # pylint: disable=function-redefined
+    """Python only additions to the PageXML class."""
+
     def __init__(self, *args, **kwargs):
         if 'schema_path' not in kwargs:
             kwargs['schema_path'] = PAGE_XSD

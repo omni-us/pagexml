@@ -6,7 +6,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   textfeat
+   api
 
 
 Indices and tables

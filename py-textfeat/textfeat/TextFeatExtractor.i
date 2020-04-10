@@ -1,4 +1,4 @@
-%module textfeat
+%module swigTextFeatExtractor
 
 %feature("autodoc", "2");
 

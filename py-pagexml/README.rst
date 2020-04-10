@@ -16,13 +16,6 @@ and the schema itself included in py-pagexml can be found at:
 The official online documentation of py-pagexml is available at `<https://omni-us.github.io/pagexml/py-pagexml>`_.
 
 
-Project steering committee
---------------------------
-
-- Mauricio Villegas <mauricio@omnius.com> (Lead)
-- Lutz Goldmann <lutz@omnius.com>
-
-
 Software dependencies
 ---------------------
 
@@ -30,13 +23,20 @@ The core of py-pagexml is a compiled C++ library that links with a few
 libraries, so it requires installation of dependencies that cannot be
 automatically obtained from pypi servers.
 
+There are `docker images available at docker
+<https://hub.docker.com/r/mauvilsa/pagexml/tags>`_ hub which include both the
+runtime and the build dependencies already installed. In particular the runtime
+docker images are intended to be used as base images for applications that use
+pagexml. The specific list of dependencies both for runtime and building are
+listed below.
+
 Runtime dependencies
 ~~~~~~~~~~~~~~~~~~~~
 
  - python3
  - libxml2
  - libxslt1.1
- - libopencv-imgcodecs (Ubuntu 18.04) | libopencv-highgui (Ubuntu 16.04)
+ - libopencv-imgcodecs (Ubuntu 18.04/20.04) | libopencv-highgui (Ubuntu 16.04)
  - libopencv-imgproc
  - libopencv-core
  - libgdal
@@ -64,18 +64,18 @@ simple as:
 
 .. code-block:: bash
 
-    pip3 install pagexml
+    pip3 install pagexml[all]
 
 Otherwise you can install it from a github `release
-<https://github.com/omni-us/pagexml/releases>`_. Each release includes two wheel
-files. One for python 3.5 which is built for Ubuntu 16.04, and the other for
-python 3.6 built for Ubuntu 18.04. Once you have located the appropriate wheel
-file, copy the link and run as follows replacing the URL with the one you
-copied:
+<https://github.com/omni-us/pagexml/releases>`_. Each release includes multiple
+wheel files. One for python 3.5 which is built for Ubuntu 16.04, another for
+python 3.6 built for Ubuntu 18.04 and another for python 3.8 built for Ubuntu
+20.04. Once you have located the appropriate wheel file, copy the link and run
+as follows replacing the URL with the one you copied:
 
 .. code-block:: bash
 
-    pip3 install https://github.com/omni-us/pagexml/releases/download/20*/pagexml-20*-linux_x86_64.whl
+    pip3 install https://github.com/omni-us/pagexml/releases/download/20*/pagexml-20*-linux_x86_64.whl[all]
 
 
 Building the wheel file from source
@@ -87,8 +87,8 @@ the py-pagexml directory and then run:
 
 .. code-block:: bash
 
-    pip3 install -r requirements.txt
-    python3 setup.py bdist_wheel
+    pip3 install --editable .[dev,test,all]
+    ./setup.py bdist_wheel
 
 
 Simple usage examples

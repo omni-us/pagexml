@@ -1,17 +1,59 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages, Extension, Command
+from setuptools import setup, Extension, Command
 import subprocess
 import sysconfig
 import sys
 import os
 import re
+import importlib
 
+
+NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
+NAME_TESTS = next(filter(lambda x: x.startswith('test_suite = '), open('setup.cfg').readlines())).strip().split()[-1]
+CMDCLASS = {}
+
+
+## test_coverage target ##
 try:
-    from sphinx.setup_command import BuildDoc
-except ImportError:
-    BuildDoc = False
-    print('warning: sphinx not found, build_sphinx target will not be available.')
+    import coverage
+
+    class CoverageCommand(Command):
+        description = 'print test coverage report'
+        user_options = []  # type: ignore
+        def initialize_options(self): pass
+        def finalize_options(self): pass
+        def run(self):
+            cov = coverage.Coverage()
+            cov.start()
+            importlib.reload(__import__(NAME))
+            __import__(NAME_TESTS+'.__main__').__main__.run_tests()
+            cov.stop()
+            cov.save()
+            cov.report()
+            cov.html_report(directory='htmlcov')
+            print('\nSaved html report to htmlcov directory.')
+
+    CMDCLASS['test_coverage'] = CoverageCommand
+
+except Exception:
+    print('warning: coverage package not found, test_coverage target will not be available.')
+
+
+## build_sphinx target ##
+try:
+    from sphinx.setup_command import BuildDoc as _BuildDoc
+
+    class BuildDoc(_BuildDoc):
+        def run(self):
+            __import__(NAME)
+            super().run()
+
+    CMDCLASS['build_sphinx'] = BuildDoc
+
+except Exception:
+    print('warning: sphinx package not found, build_sphinx target will not be available.')
+
 
 #https://stackoverflow.com/questions/17666018/using-distutils-where-swig-interface-file-is-in-src-folder
 from distutils.command.build import build as _build
@@ -24,10 +66,30 @@ class build(_build):
                     ('build_clib',    _build.has_c_libraries),
                     ('build_scripts', _build.has_scripts)]
 
+CMDCLASS['build'] = build
+
+
+from setuptools.command.build_ext import build_ext as build_ext_orig
+class build_ext(build_ext_orig):
+    def run(self):
+        super().run()
+        subprocess.check_call(['sed', '-i', '/^# Import the low-level C.C++ module/{ N;N;N;N; s|.*\\n *import |import |; }', 'pagexml/swigPageXML.py'])
+        print('warning: applied circular import patch to pagexml/swigPageXML.py')
+
+CMDCLASS['build_ext'] = build_ext
+
 
 from setuptools import Distribution as _Distribution
 class Distribution(_Distribution):
     global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
+
+
+def pagexml_Version():
+    with open("pagexml/PageXML.h") as f:
+        for line in f:
+            if 'Version:' in line:
+                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
+                return re.sub(r'\.0', '.', line)
 
 
 def pagexml_Extension(magick):
@@ -51,7 +113,7 @@ def pagexml_Extension(magick):
     define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
     swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
     print('pagexml_Extension configured with '+defimage)
-    return Extension('_pagexml',
+    return Extension('_swigPageXML',
                      define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
@@ -69,68 +131,10 @@ def distutils_dir_name(dname):
 sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', distutils_dir_name('lib'))] + sys.path
 
 
-def pagexml_Version():
-    with open("pagexml/PageXML.h") as f:
-        for line in f:
-            if 'Version:' in line:
-                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
-                return re.sub(r'\.0', '.', line)
-
-
-NAME = 'pagexml'
-DESCRIPTION = 'Wrapper for PageXML C++ library'
-LONG_DESCRIPTION = 'Library for handling of Page XML files.'
-__version__ = pagexml_Version()
-
-
-class CoverageCommand(Command):
-    """Custom command to print test coverage report."""
-    description = 'print test coverage report'
-    user_options = []
-
-    def initialize_options(self):
-        """init options"""
-        pass
-
-    def finalize_options(self):
-        """finalize options"""
-        pass
-
-    def run(self):
-        """run commands"""
-        subprocess.check_call(['python', '-m', 'coverage', 'run', '--source', NAME, 'setup.py', 'test'])
-        #subprocess.check_call(['python', '-m', 'coverage', 'report', '-m'])
-        subprocess.check_call(['python', '-m', 'coverage', 'report'])
-
-
-CMDCLASS = {'build': build, 'test_coverage': CoverageCommand}
-if BuildDoc:
-    class BuildDocPageXML(BuildDoc):
-        def run(self):
-            import pagexml
-            super().run()
-
-    CMDCLASS['build_sphinx'] = BuildDocPageXML
-
-setup(name=NAME+('_magick' if '--magick' in sys.argv else ''),
-      version=__version__,
-      description=DESCRIPTION,
-      long_description=LONG_DESCRIPTION,
-      author='Mauricio Villegas',
-      author_email='mauricio@omnius.com',
-      url='https://github.com/omni-us/pagexml',
-      license='MIT',
-      #setup_requires=['pkgconfig'], # does not install when missing?
-      test_suite=NAME+'_tests',
-      cmdclass=CMDCLASS,
-      packages=find_packages(),
-      distclass=Distribution,
+## Run setuptools setup ##
+setup(version=pagexml_Version(),
+      name=NAME+('_magick' if '--magick' in sys.argv else ''),
       ext_modules=[pagexml_Extension(True if '--magick' in sys.argv else False)],
       package_data={NAME: ['xsd/*.xsd'], NAME+'_tests': ['examples/*.xml', 'examples/*.png']},
-      command_options={
-          'build_sphinx': {
-              'project': ('setup.py', NAME),
-              'version': ('setup.py', __version__),
-              'release': ('setup.py', __version__),
-              'build_dir': ('setup.py', 'docs/_build'),
-              'source_dir': ('setup.py', 'docs')}})
+      distclass=Distribution,
+      cmdclass=CMDCLASS)

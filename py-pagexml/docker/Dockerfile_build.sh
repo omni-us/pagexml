@@ -15,6 +15,6 @@ docker build \
 
 docker build \
   -f Dockerfile_build \
-  -t mauvilsa/pagexml:build-ubuntu20.04-py37 \
+  -t mauvilsa/pagexml:build-ubuntu20.04-py38 \
   --build-arg UBUNTU_TAG=20.04 \
   .

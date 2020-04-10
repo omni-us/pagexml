@@ -1,18 +1,31 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages, Extension, Command
-import subprocess
+from setuptools import setup, Extension, Command
 from glob import glob
 import sysconfig
 import sys
 import os
 import re
 
+
+NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
+CMDCLASS = {}
+
+
+## build_sphinx target ##
 try:
-    from sphinx.setup_command import BuildDoc
-except ImportError:
-    BuildDoc = False
-    print('warning: sphinx not found, build_sphinx target will not be available.')
+    from sphinx.setup_command import BuildDoc as _BuildDoc
+
+    class BuildDoc(_BuildDoc):
+        def run(self):
+            __import__(NAME)
+            super().run()
+
+    CMDCLASS['build_sphinx'] = BuildDoc
+
+except Exception:
+    print('warning: sphinx package not found, build_sphinx target will not be available.')
+
 
 #https://stackoverflow.com/questions/17666018/using-distutils-where-swig-interface-file-is-in-src-folder
 from distutils.command.build import build as _build
@@ -25,10 +38,20 @@ class build(_build):
                     ('build_clib',    _build.has_c_libraries),
                     ('build_scripts', _build.has_scripts)]
 
+CMDCLASS['build'] = build
+
 
 from setuptools import Distribution as _Distribution
 class Distribution(_Distribution):
     global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
+
+
+def textfeat_Version():
+    with open("textfeat/TextFeatExtractor.h") as f:
+        for line in f:
+            if 'Version:' in line:
+                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
+                return re.sub(r'\.0', '.', line)
 
 
 def textfeat_Extension(magick=False):
@@ -50,7 +73,7 @@ def textfeat_Extension(magick=False):
     define_macros = [(defimage,''),('__PAGEXML_MAGICK__','')]
     swig_opts = ['-D'+defimage,'-DPageImage='+pageimage,'-D__PAGEXML_MAGICK__']
     print('textfeat_Extension configured with '+defimage)
-    return Extension('_textfeat',
+    return Extension('_swigTextFeatExtractor',
                      define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
@@ -68,59 +91,10 @@ def distutils_dir_name(dname):
 sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', distutils_dir_name('lib'))] + sys.path
 
 
-def textfeat_Version():
-    with open("textfeat/TextFeatExtractor.h") as f:
-        for line in f:
-            if 'Version:' in line:
-                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
-                return re.sub(r'\.0', '.', line)
-
-
-NAME = 'textfeat'
-DESCRIPTION = 'Wrapper for TextFeatExtractor C++ library'
-LONG_DESCRIPTION = 'Library for extracting features for text recognition.'
-__version__ = textfeat_Version()
-
-
-CMDCLASS = {'build': build}
-if BuildDoc:
-    class BuildDocTextFeatExtractor(BuildDoc):
-        def run(self):
-            import textfeat
-            super().run()
-
-    CMDCLASS['build_sphinx'] = BuildDocTextFeatExtractor
-
-
-def get_runtime_requirements():
-    """Returns a list of required packages filtered to include only the ones necessary at runtime."""
-    with open('requirements.txt') as f:
-        requirements = [x.strip() for x in f.readlines()]
-    if '--magick' in sys.argv:
-        regex = re.compile('^pagexml>')
-        requirements = [re.sub(regex, 'pagexml-magick>', x) if regex.match(x) else x for x in requirements]
-    regex = re.compile('^(coverage|sphinx|pkgconfig)', re.IGNORECASE)
-    return [x for x in requirements if not regex.match(x)]
-
-
-setup(name=NAME+('_magick' if '--magick' in sys.argv else ''),
-      version=__version__,
-      description=DESCRIPTION,
-      long_description=LONG_DESCRIPTION,
-      author='Mauricio Villegas',
-      author_email='mauricio@omnius.com',
-      url='https://github.com/omni-us/pagexml',
-      license='MIT',
-      cmdclass=CMDCLASS,
-      packages=find_packages(),
-      scripts=[x for x in glob(NAME+'/bin/*.py') if not x.endswith('__.py')],
-      install_requires=get_runtime_requirements(),
-      distclass=Distribution,
+## Run setuptools setup ##
+setup(version=textfeat_Version(),
+      name=NAME+('_magick' if '--magick' in sys.argv else ''),
       ext_modules=[textfeat_Extension(True if '--magick' in sys.argv else False)],
-      command_options={
-          'build_sphinx': {
-              'project': ('setup.py', NAME),
-              'version': ('setup.py', __version__),
-              'release': ('setup.py', __version__),
-              'build_dir': ('setup.py', 'docs/_build'),
-              'source_dir': ('setup.py', 'docs')}})
+      scripts=[x for x in glob(NAME+'/bin/*.py') if not x.endswith('__.py')],
+      distclass=Distribution,
+      cmdclass=CMDCLASS)
