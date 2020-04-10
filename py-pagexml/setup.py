@@ -11,6 +11,7 @@ import importlib
 
 NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
 NAME_TESTS = next(filter(lambda x: x.startswith('test_suite = '), open('setup.cfg').readlines())).strip().split()[-1]
+VERSION = next(filter(lambda x: x.startswith('__version__ = '), open(NAME+'/__init__.py').readlines())).strip().replace("'","").split()[-1]
 CMDCLASS = {}
 
 
@@ -84,14 +85,6 @@ class Distribution(_Distribution):
     global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
 
 
-def pagexml_Version():
-    with open("pagexml/PageXML.h") as f:
-        for line in f:
-            if 'Version:' in line:
-                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
-                return re.sub(r'\.0', '.', line)
-
-
 def pagexml_Extension(magick):
     import pkgconfig
     libs = ['opencv','libxml-2.0','libxslt','gdal']
@@ -132,7 +125,7 @@ sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', 
 
 
 ## Run setuptools setup ##
-setup(version=pagexml_Version(),
+setup(version=VERSION,
       name=NAME+('_magick' if '--magick' in sys.argv else ''),
       ext_modules=[pagexml_Extension(True if '--magick' in sys.argv else False)],
       package_data={NAME: ['xsd/*.xsd'], NAME+'_tests': ['examples/*.xml', 'examples/*.png']},

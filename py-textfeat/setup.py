@@ -9,6 +9,7 @@ import re
 
 
 NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
+VERSION = next(filter(lambda x: x.startswith('__version__ = '), open(NAME+'/__init__.py').readlines())).strip().replace("'","").split()[-1]
 CMDCLASS = {}
 
 
@@ -44,14 +45,6 @@ CMDCLASS['build'] = build
 from setuptools import Distribution as _Distribution
 class Distribution(_Distribution):
     global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
-
-
-def textfeat_Version():
-    with open("textfeat/TextFeatExtractor.h") as f:
-        for line in f:
-            if 'Version:' in line:
-                line = re.sub(r'.*Version: (\d\d\d\d\.\d\d\.\d\d)\$.*', r'\1', line.strip())
-                return re.sub(r'\.0', '.', line)
 
 
 def textfeat_Extension(magick=False):
@@ -92,7 +85,7 @@ sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', 
 
 
 ## Run setuptools setup ##
-setup(version=textfeat_Version(),
+setup(version=VERSION,
       name=NAME+('_magick' if '--magick' in sys.argv else ''),
       ext_modules=[textfeat_Extension(True if '--magick' in sys.argv else False)],
       scripts=[x for x in glob(NAME+'/bin/*.py') if not x.endswith('__.py')],
