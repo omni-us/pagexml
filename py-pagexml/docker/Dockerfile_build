@@ -38,6 +38,7 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       zip \
       unzip \
       locales \
+      openssh-client \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-setuptools \
       python$PYTHON_VERSION-pkgconfig \
