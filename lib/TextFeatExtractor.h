@@ -1,7 +1,7 @@
 /**
  * Header file for the TextFeatExtractor class
  *
- * @version $Version: 2020.02.10$
+ * @version $Version: 2020.04.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -55,7 +55,8 @@ enum TEXTFEAT_SETTING {
   TEXTFEAT_SETTING_FPGRAM,          // "fpgram"
   TEXTFEAT_SETTING_FCONTOUR,        // "fcontour"
   TEXTFEAT_SETTING_FCONTOUR_DILATE, // "fcontour_dilate"
-  TEXTFEAT_SETTING_PADDING          // "padding"
+  TEXTFEAT_SETTING_PADDING,         // "padding"
+  TEXTFEAT_SETTING_YPADDING         // "ypadding"
   /*TEXTFEAT_SETTING_SLIDE_SHIFT,     // "slide_shift"
   TEXTFEAT_SETTING_SLIDE_SPAN,      // "slide_span"
   TEXTFEAT_SETTING_SAMPLE_WIDTH,    // "sample_width"
@@ -103,7 +104,8 @@ class TextFeatExtractor {
                        bool compute_fpgram = true,
                        bool compute_fcontour = true,
                        float fcontour_dilate = 4.0,
-                       int padding = 12 );
+                       int padding = 12,
+                       int ypadding = 0 );
 #if defined (__PAGEXML_LIBCONFIG__)
     TextFeatExtractor( const libconfig::Config& config );
     TextFeatExtractor( const char* cfgfile );
@@ -158,6 +160,7 @@ class TextFeatExtractor {
     bool compute_fcontour = true;
     float fcontour_dilate = 4.0;
     int padding = 12;
+    int ypadding = 0;
     /*float slide_shift = 2.0;
     float slide_span = 20.0;
     int sample_width = 8;

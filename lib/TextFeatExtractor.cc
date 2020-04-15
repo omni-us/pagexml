@@ -1,7 +1,7 @@
 /**
  * TextFeatExtractor class
  *
- * @version $Version: 2020.02.10$
+ * @version $Version: 2020.04.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -51,7 +51,8 @@ const char* TextFeatExtractor::settingNames[] = {
   "fpgram",
   "fcontour",
   "fcontour_dilate",
-  "padding"
+  "padding",
+  "ypadding"
   /*"slide_shift",
   "slide_span",
   "sample_width",
@@ -69,7 +70,7 @@ const Magick::Color colorBlack("black");
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2020.02.10";
+static char class_version[] = "Version: 2020.04.15";
 
 /**
  * Returns the class version.
@@ -113,7 +114,8 @@ TextFeatExtractor::TextFeatExtractor( int featype,
                                       bool compute_fpgram,
                                       bool compute_fcontour,
                                       float fcontour_dilate,
-                                      int padding ) {
+                                      int padding,
+                                      int ypadding ) {
   this->featype = featype;
   this->format = format;
   this->verbose = verbose;
@@ -146,6 +148,7 @@ TextFeatExtractor::TextFeatExtractor( int featype,
   this->compute_fcontour = compute_fcontour;
   this->fcontour_dilate = fcontour_dilate;
   this->padding = padding;
+  this->ypadding = ypadding;
 }
 
 #if defined (__PAGEXML_LIBCONFIG__)
@@ -351,6 +354,9 @@ void TextFeatExtractor::loadConf( const libconfig::Config& config ) {
       case TEXTFEAT_SETTING_PADDING:
         padding = (int)settingNumber(setting);
         break;
+      case TEXTFEAT_SETTING_YPADDING:
+        ypadding = (int)settingNumber(setting);
+        break;
       /*case TEXTFEAT_SETTING_SLIDE_SHIFT:
         slide_shift = settingNumber(setting);
         if( slide_shift <= 0.0 )
@@ -410,6 +416,7 @@ void TextFeatExtractor::printConf( FILE* file ) {
   fprintf( file, "  fcontour = %s;\n", compute_fcontour ? "true" : "false" );
   fprintf( file, "  fcontour_dilate = %g;\n", fcontour_dilate );
   fprintf( file, "  padding = %d;\n", padding );
+  fprintf( file, "  ypadding = %d;\n", ypadding );
   /*fprintf( file, "  slide_shift = %g;\n", slide_shift );
   fprintf( file, "  slide_span = %g;\n", slide_span );
   fprintf( file, "  sample_width = %d;\n", sample_width );
@@ -1936,9 +1943,9 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
   }
 
   /// Add left and right padding ///
-  if( padding ) {
+  if( padding || ypadding ) {
     feaimg.borderColor( colorWhite );
-    feaimg.border( Magick::Geometry(padding,0) );
+    feaimg.border( Magick::Geometry(padding,ypadding) );
   }
 
   /// Account for reading direction ///
@@ -1983,6 +1990,9 @@ cv::Mat TextFeatExtractor::extractFeats( PageImage& cvimg, float slope, float sl
                                cv::Point2f(pts(2,0),pts(2,1)),
                                cv::Point2f(pts(3,0),pts(3,1)) };
 
+    if( ypadding )
+      fprintf(stderr,"warning: fpgram not supported with ypadding!=0\n");
+    else
     *_fpgram = fpgram;
   }
 

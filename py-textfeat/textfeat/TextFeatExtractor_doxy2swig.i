@@ -33,6 +33,7 @@ Arguments:
     compute_fcontour (bool): 
     fcontour_dilate (float): 
     padding (int): 
+    ypadding (int): 
 
 ";
 
