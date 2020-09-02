@@ -1,38 +1,39 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; textfeat 2020.04.15 documentation</title>
+  <title>API Reference &mdash; textfeat 2020.09.02 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Welcome to textfeat’s documentation!" href="index.html" /> 
@@ -49,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> textfeat
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> textfeat
           
 
           
@@ -59,7 +60,7 @@
             
             
               <div class="version">
-                2020.04.15
+                2020.09.02
               </div>
             
           
@@ -76,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -93,6 +95,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -131,7 +134,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>API Reference</li>
     
@@ -190,9 +193,9 @@
 </tr>
 </tbody>
 </table>
-<dl class="class">
+<dl class="py class">
 <dt id="textfeat.TextFeatExtractor">
-<em class="property">class </em><code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">TextFeatExtractor</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">TextFeatExtractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Proxy of C++ TextFeatExtractor class.</p>
 <p><strong>Methods</strong></p>
@@ -274,9 +277,9 @@
 </tr>
 </tbody>
 </table>
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.estimateAngles">
-<code class="sig-name descname">estimateAngles</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cvimg</em>, <em class="sig-param">_slope</em>, <em class="sig-param">_slant</em>, <em class="sig-param">rotate=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.estimateAngles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.estimateAngles" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimateAngles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cvimg</span></em>, <em class="sig-param"><span class="n">_slope</span></em>, <em class="sig-param"><span class="n">_slant</span></em>, <em class="sig-param"><span class="n">rotate</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.estimateAngles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.estimateAngles" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -289,9 +292,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.extract">
-<code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">image</em>, <em class="sig-param">rotate=0.0</em>, <em class="sig-param">_slope=None</em>, <em class="sig-param">_slant=None</em>, <em class="sig-param">_fpgram=None</em>, <em class="sig-param">_fcontour=None</em><span class="sig-paren">)</span> &#x2192; cv::Mat<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.extract" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">rotate</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">_slope</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_slant</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_fpgram</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_fcontour</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; cv::Mat<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.extract" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -306,7 +309,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.extractFeats">
 <code class="sig-name descname">extractFeats</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">feaimg</em>, <em class="sig-param">slope=0.0</em>, <em class="sig-param">slant=0.0</em>, <em class="sig-param">xheight=0</em>, <em class="sig-param">_fpgram=None</em>, <em class="sig-param">randomize=False</em>, <em class="sig-param">rotate=0.0</em>, <em class="sig-param">direction</em><span class="sig-paren">)</span> &#x2192; cv::Mat<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.extractFeats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.extractFeats" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -325,19 +328,19 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.featTypes">
 <em class="property">property </em><code class="sig-name descname">featTypes</code><a class="headerlink" href="#textfeat.TextFeatExtractor.featTypes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.formatNames">
 <em class="property">property </em><code class="sig-name descname">formatNames</code><a class="headerlink" href="#textfeat.TextFeatExtractor.formatNames" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.isImageFormat">
-<code class="sig-name descname">isImageFormat</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.isImageFormat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.isImageFormat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">isImageFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.isImageFormat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.isImageFormat" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>self</strong> (<em>TextFeatExtractor *</em>) – </p>
@@ -345,9 +348,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.preprocess">
-<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">cvimg</em>, <em class="sig-param">_fcontour=None</em>, <em class="sig-param">randomize=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cvimg</span></em>, <em class="sig-param"><span class="n">_fcontour</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">randomize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -359,9 +362,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.printConf">
-<code class="sig-name descname">printConf</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.printConf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.printConf" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">printConf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.printConf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.printConf" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file</strong> (<em>FILE *</em>) – </p>
@@ -369,20 +372,20 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.thisown">
 <em class="property">property </em><code class="sig-name descname">thisown</code><a class="headerlink" href="#textfeat.TextFeatExtractor.thisown" title="Permalink to this definition">¶</a></dt>
 <dd><p>The membership flag</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.version">
 <em class="property">static </em><code class="sig-name descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; char *<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.TextFeatExtractor.write">
-<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">feats</em>, <em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">feats</span></em>, <em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor.write" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -398,12 +401,12 @@
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="textfeat.TextFeatExtractor_version">
 <code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">TextFeatExtractor_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; char *<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor_version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="textfeat.ptr_float">
 <em class="property">class </em><code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float</code><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
@@ -457,9 +460,9 @@
 </tr>
 </tbody>
 </table>
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.ptr_float.assign">
-<code class="sig-name descname">assign</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.assign" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">assign</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.assign" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – </p>
@@ -467,9 +470,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.ptr_float.cast">
-<code class="sig-name descname">cast</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; float *<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.cast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.cast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span> &#x2192; float *<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.cast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.cast" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>self</strong> (<em>ptr_float *</em>) – </p>
@@ -477,9 +480,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.ptr_float.frompointer">
-<em class="property">static </em><code class="sig-name descname">frompointer</code><span class="sig-paren">(</span><em class="sig-param">t</em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.frompointer" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.frompointer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>t</strong> (<em>float *</em>) – </p>
@@ -487,15 +490,15 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.ptr_float.thisown">
 <em class="property">property </em><code class="sig-name descname">thisown</code><a class="headerlink" href="#textfeat.ptr_float.thisown" title="Permalink to this definition">¶</a></dt>
 <dd><p>The membership flag</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="textfeat.ptr_float.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.value" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>self</strong> (<em>ptr_float *</em>) – </p>
@@ -505,9 +508,9 @@
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="textfeat.ptr_float_frompointer">
-<code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float_frompointer</code><span class="sig-paren">(</span><em class="sig-param">t</em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float_frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float_frompointer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float_frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float_frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float_frompointer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>t</strong> (<em>float *</em>) – </p>
@@ -536,11 +539,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2016-present, Mauricio Villegas
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -551,7 +562,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

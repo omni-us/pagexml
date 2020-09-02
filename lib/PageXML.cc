@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2020.02.10$
+ * @version $Version: 2020.09.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2020.02.10";
+static char class_version[] = "Version: 2020.09.02";
 
 /**
  * Returns the class version.
@@ -285,9 +285,11 @@ bool PageXML::isValid( xmlDocPtr xml_to_validate ) {
         + "</xsl:stylesheet>\n";
 
     xsltStylesheetPtr conv_xslt = xsltParseStylesheetDoc( xmlParseDoc( (xmlChar*)conv_str.c_str() ) );
+    xml_to_validate = xmlCopyDoc(xml_to_validate, true);  // Avoids weird issue
     xmlDocPtr conv_xml = xsltApplyStylesheet( conv_xslt, xml_to_validate, NULL );
     bool is_valid = xmlSchemaValidateDoc(valid_context, conv_xml) ? false : true;
     xmlFreeDoc(conv_xml);
+    xmlFreeDoc(xml_to_validate);
     xsltFreeStylesheet(conv_xslt);
 
     return is_valid;
@@ -323,9 +325,11 @@ int PageXML::write( const char* fname, bool indent, bool validate ) {
     throw_runtime_error( "PageXML.write: no Page XML loaded" );
   if ( process_running )
     processEnd();
-  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
+  xmlDocPtr tmpxml = xmlCopyDoc(xml, true);  // Avoids weird issue
+  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, tmpxml, NULL );
   xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, sortedElemXml, NULL );
   xmlFreeDoc(sortedElemXml);
+  xmlFreeDoc(tmpxml);
   if( validate && ! isValid(sortedXml) ) {
     xmlFreeDoc(sortedXml);
     throw_runtime_error( "PageXML.write: aborted write of invalid PageXML" );
@@ -352,9 +356,11 @@ string PageXML::toString( bool indent, bool validate ) {
   string sxml;
   xmlChar *cxml;
   int size;
-  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, xml, NULL );
+  xmlDocPtr tmpxml = xmlCopyDoc(xml, true);  // Avoids weird issue
+  xmlDocPtr sortedElemXml = xsltApplyStylesheet( sortelem, tmpxml, NULL );
   xmlDocPtr sortedXml = xsltApplyStylesheet( sortattr, sortedElemXml, NULL );
   xmlFreeDoc(sortedElemXml);
+  xmlFreeDoc(tmpxml);
   if( validate && ! isValid(sortedXml) ) {
     xmlFreeDoc(sortedXml);
     throw_runtime_error( "PageXML.toString: aborted conversion to string of invalid PageXML" );
