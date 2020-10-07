@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PAGEXML_VERSION=2020.04.10
+PAGEXML_VERSION=2020.09.02
 
 docker build \
   -f Dockerfile_runtime \

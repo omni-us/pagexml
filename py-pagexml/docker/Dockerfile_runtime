@@ -5,7 +5,7 @@
 ARG UBUNTU_TAG
 FROM ubuntu:$UBUNTU_TAG
 
-MAINTAINER Mauricio Villegas <mauricio@omnius.com>
+LABEL maintainer="Mauricio Villegas <mauricio@omnius.com>"
 
 SHELL ["/bin/bash", "-c"]
 ENV \
@@ -13,14 +13,11 @@ ENV \
  LANG=en_US.UTF-8 \
  LC_ALL=C.UTF-8
 
+
 ARG PYTHON_VERSION=3
-ARG PAGEXML_VERSION
 
 RUN if ! test -n "$PYTHON_VERSION"; then \
       echo "error: PYTHON_VERSION argument is required"; \
-      exit 1; \
-    elif ! test -n "$PAGEXML_VERSION"; then \
-      echo "error: PAGEXML_VERSION argument is required"; \
       exit 1; \
     fi \
  && . /etc/os-release \
@@ -28,24 +25,19 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       CV_VERSION=2.4v5; \
       GDAL_VERSION=1i; \
       PYTHON_VERSION=; \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp27-cp27m; \
     elif [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       CV_VERSION=2.4v5; \
       GDAL_VERSION=1i; \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp35-cp35m; \
     elif [ "$VERSION_ID" = "18.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       CV_VERSION=3.2; \
       GDAL_VERSION=20; \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
     elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       CV_VERSION=4.2; \
       GDAL_VERSION=26; \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp38-cp38m; \
     else \
       echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
       exit 1; \
     fi \
- && PAGEXML_WHEEL=/tmp/${PAGEXML_RELEASE##*/}-linux_x86_64.whl \
  && apt-get update --fix-missing \
  && apt-get dist-upgrade -y \
  && apt-get install -y --no-install-recommends \
@@ -59,17 +51,14 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       libxml2 \
       libxslt1.1 \
       libopencv-imgproc$CV_VERSION \
-      libopencv-highgui$CV_VERSION; \
+      libopencv-highgui$CV_VERSION \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
  && if [ "$VERSION_ID" != "16.04" ]; then \
       apt-get install -y --no-install-recommends \
         python$PYTHON_VERSION-distutils \
-        libsm6 \
+        libsm6; \
     fi \
- && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
- && pip3 install $PAGEXML_WHEEL[all] \
- && python3 -m pagexml_tests \
  && pip3 install --upgrade pip setuptools wheel \
  && apt-get purge -y \
       python$PYTHON_VERSION-pip \
@@ -77,3 +66,26 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
  && apt-get purge -y $(dpkg -l | awk '{if($1=="rc")print $2}') \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/*
+
+
+ARG PAGEXML_VERSION
+
+RUN if ! test -n "$PAGEXML_VERSION"; then \
+      echo "error: PAGEXML_VERSION argument is required"; \
+      exit 1; \
+    fi \
+ && . /etc/os-release \
+ && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp27-cp27m; \
+    elif [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp35-cp35m; \
+    elif [ "$VERSION_ID" = "18.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
+    elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp38-cp38; \
+    fi \
+ && PAGEXML_WHEEL=/tmp/${PAGEXML_RELEASE##*/}-linux_x86_64.whl \
+ && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
+ && pip3 install $PAGEXML_WHEEL[all] \
+ && python3 -m pagexml_tests \
+ && rm -rf /tmp/*
