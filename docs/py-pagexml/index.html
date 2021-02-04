@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>py-pagexml: Python wrapper for the PageXML C++ library &mdash; pagexml 2020.10.07 documentation</title>
+  <title>py-pagexml: Python wrapper for the PageXML C++ library &mdash; pagexml 2021.02.04 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2020.10.07
+                2021.02.04
               </div>
             
           
@@ -242,10 +242,10 @@ the py-pagexml directory and then run:</p>
 <span class="n">pxml</span> <span class="o">=</span> <span class="n">pagexml</span><span class="o">.</span><span class="n">PageXML</span><span class="p">()</span>
 
 <span class="c1"># Create a new page xml</span>
-<span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;example_image.jpg&#39;</span>
+<span class="nb">file</span> <span class="o">=</span> <span class="s1">&#39;example_image.jpg&#39;</span>
 <span class="n">width</span> <span class="o">=</span> <span class="mi">400</span>
 <span class="n">height</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">pxml</span><span class="o">.</span><span class="n">newXml</span><span class="p">(</span><span class="s1">&#39;name-and-version-of-tool&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="n">pxml</span><span class="o">.</span><span class="n">newXml</span><span class="p">(</span><span class="s1">&#39;name-and-version-of-tool&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 
 <span class="c1"># Add a text region to the Page</span>
 <span class="n">page</span> <span class="o">=</span> <span class="n">pxml</span><span class="o">.</span><span class="n">selectNth</span><span class="p">(</span><span class="s1">&#39;//_:Page&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>

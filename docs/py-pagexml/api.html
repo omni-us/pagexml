@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; pagexml 2020.10.07 documentation</title>
+  <title>API Reference &mdash; pagexml 2021.02.04 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2020.10.07
+                2021.02.04
               </div>
             
           
@@ -160,21 +160,543 @@
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pagexml">
 <span id="pagexml-module"></span><h2>pagexml module<a class="headerlink" href="#module-pagexml" title="Permalink to this headline">¶</a></h2>
-<p><strong>Functions</strong></p>
+<p><strong>Classes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_uint8_t_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_double_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_float_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_int_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_short_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec2w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_ushort_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_uint8_t_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_double_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_float_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_int_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_short_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec3w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_ushort_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_uint8_t_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_double_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_float_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_int_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_short_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec4w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_ushort_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec6d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_double_6</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec6f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_float_6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec6i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_int_6</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_Vec8i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._DataType_Vec_int_8</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_bool</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_char</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_double</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_float</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_int</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_schar</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_short</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_uchar</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_ushort</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__uchar</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__double</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__float</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__int</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__short</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat1w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__ushort</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2d</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2i</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2s</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat2w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec2w</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3d</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3i</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3s</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat3w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec3w</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4d</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4i</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4s</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat4w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Mat__Vec4w</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_uint8_t_2_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_double_2_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_float_2_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_int_2_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_short_2_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx21w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_ushort_2_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_uint8_t_3_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_double_3_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_float_3_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_int_3_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_short_3_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx31w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_ushort_3_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_uint8_t_4_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_double_4_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_float_4_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_int_4_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_short_4_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx41w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_ushort_4_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx61d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_double_6_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx61f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_float_6_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx61i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_int_6_1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx81i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Matx_int_8_1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_AddOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_DivOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MatMulOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MulOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_ScaleOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_SubOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_TOp</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImage</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImageVector</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiLineString_</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiPolygon_</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__int</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point2d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__double</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point2f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__float</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point2i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__int</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Range</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Size</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__int</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Size2d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__double</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Size2f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__float</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Size2i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__int</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwigPyIterator</span></code>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_uint8_t_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_double_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_float_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_int_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_short_2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec2w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_ushort_2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_uint8_t_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_double_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_float_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_int_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_short_3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec3w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_ushort_3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4b</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_uint8_t_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_double_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_float_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_int_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4s</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_short_4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec4w</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_ushort_4</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec6d</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_double_6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec6f</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_float_6</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec6i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_int_6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec8i</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Vec_int_8</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvPoint2fVector</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvSize2iVector</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlNodePtrVector</span></code>(*args)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Functions:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_bool_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_char_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_double_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_float_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_int_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_schar_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_short_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_uchar_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_ushort_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_AddOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_DivOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MatMulOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MulOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_ScaleOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_SubOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_TOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImageVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImage_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiLineString__swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiPolygon__swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_isBBox</span></code>(points)</p></td>
+<td><p>Determines whether a vector of points defines a bounding box.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_nodeIs</span></code>(node, name)</p></td>
+<td><p>Checks if node is of given name.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsBBox</span></code>(points)</p></td>
+<td><p>Generates a vector of 4 points that define the bounding box for a given vector of points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsLimits</span></code>(points, xmin, xmax, …)</p></td>
+<td><p>Gets the minimum and maximum coordinate values for an array of points.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsToString</span></code>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_printVersions</span></code>(*args, **kwargs)</p></td>
+<td><p>Prints the version of the PageXML library and its main dependencies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_setValidationEnabled</span></code>(val)</p></td>
+<td><p>Enables/disables schema validation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_stringToPoints</span></code>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_version</span></code>()</p></td>
+<td><p>Returns the class version.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Range_all</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Range_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwigPyIterator_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvPoint2fVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvSize2iVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.imwrite" title="pagexml.imwrite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imwrite</span></code></a>(filename, img[, params])</p></td>
 <td><p>Saves an image to a specified file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.set_omnius_schema" title="pagexml.set_omnius_schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_omnius_schema</span></code></a>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mktemp</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.set_omnius_schema" title="pagexml.set_omnius_schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_omnius_schema</span></code></a>()</p></td>
 <td><p>Sets the schema for validation to be pagecontent_omnius.xsd.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.set_searchink_schema" title="pagexml.set_searchink_schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_searchink_schema</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.set_searchink_schema" title="pagexml.set_searchink_schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_searchink_schema</span></code></a>()</p></td>
 <td><p>Sets the schema for validation to be pagecontent_searchink.xsd.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlNodePtrVector_swigregister</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -208,43 +730,148 @@
 <dd><p>Sets the schema for validation to be pagecontent_searchink.xsd.</p>
 </dd></dl>
 
-<span class="target" id="module-pagexml"></span><p><strong>Functions</strong></p>
+<span class="target" id="module-pagexml"></span><p><strong>Functions:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_isBBox" title="pagexml.PageXML_isBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_isBBox</span></code></a>(points)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_bool_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_char_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_double_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_float_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_int_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_schar_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_short_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_uchar_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataType_ushort_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mat_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_AddOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_DivOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MatMulOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_MulOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_ScaleOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_SubOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matx_TOp_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImageVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedImage_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiLineString__swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OGRMultiPolygon__swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_isBBox" title="pagexml.PageXML_isBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_isBBox</span></code></a>(points)</p></td>
 <td><p>Determines whether a vector of points defines a bounding box.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_nodeIs" title="pagexml.PageXML_nodeIs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_nodeIs</span></code></a>(node, name)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_nodeIs" title="pagexml.PageXML_nodeIs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_nodeIs</span></code></a>(node, name)</p></td>
 <td><p>Checks if node is of given name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsBBox" title="pagexml.PageXML_pointsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsBBox</span></code></a>(points)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsBBox" title="pagexml.PageXML_pointsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsBBox</span></code></a>(points)</p></td>
 <td><p>Generates a vector of 4 points that define the bounding box for a given vector of points.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsLimits" title="pagexml.PageXML_pointsLimits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsLimits</span></code></a>(points, xmin, xmax, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsLimits" title="pagexml.PageXML_pointsLimits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsLimits</span></code></a>(points, xmin, xmax, …)</p></td>
 <td><p>Gets the minimum and maximum coordinate values for an array of points.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsToString" title="pagexml.PageXML_pointsToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsToString</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_pointsToString" title="pagexml.PageXML_pointsToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_pointsToString</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_printVersions" title="pagexml.PageXML_printVersions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_printVersions</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_printVersions" title="pagexml.PageXML_printVersions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_printVersions</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Prints the version of the PageXML library and its main dependencies.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_setValidationEnabled" title="pagexml.PageXML_setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_setValidationEnabled</span></code></a>(val)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_setValidationEnabled" title="pagexml.PageXML_setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_setValidationEnabled</span></code></a>(val)</p></td>
 <td><p>Enables/disables schema validation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML_stringToPoints" title="pagexml.PageXML_stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_stringToPoints</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_stringToPoints" title="pagexml.PageXML_stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_stringToPoints</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_swigregister</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML_version" title="pagexml.PageXML_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML_version</span></code></a>()</p></td>
 <td><p>Returns the class version.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Range_all</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Range_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwigPyIterator_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvPoint2fVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvSize2iVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mktemp</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double_frompointer</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlNodePtrVector_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
-<p><strong>Classes</strong></p>
+<p><strong>Classes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -263,22 +890,31 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML" title="pagexml.PageXML"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PageXML</span></code></a>([pagexml_path, schema_path])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.cvPoint2fVector" title="pagexml.cvPoint2fVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvPoint2fVector</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Point" title="pagexml.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__int</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.Point2f" title="pagexml.Point2f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point2f</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__float</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Size2i" title="pagexml.Size2i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Size2i</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__int</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.cvPoint2fVector" title="pagexml.cvPoint2fVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvPoint2fVector</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.cvSize2iVector" title="pagexml.cvSize2iVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvSize2iVector</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.cvSize2iVector" title="pagexml.cvSize2iVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cvSize2iVector</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.ptr_cvPoint2fVector" title="pagexml.ptr_cvPoint2fVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.ptr_cvPoint2fVector" title="pagexml.ptr_cvPoint2fVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPoint2fVector</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.ptr_cvPointVector" title="pagexml.ptr_cvPointVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.ptr_cvPointVector" title="pagexml.ptr_cvPointVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_cvPointVector</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.ptr_double" title="pagexml.ptr_double"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.ptr_double" title="pagexml.ptr_double"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_double</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.xmlNodePtrVector" title="pagexml.xmlNodePtrVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlNodePtrVector</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.xmlNodePtrVector" title="pagexml.xmlNodePtrVector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlNodePtrVector</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -287,7 +923,7 @@
 <dt id="pagexml.Mat">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">Mat</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.Mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -295,25 +931,25 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Mat.AUTO_STEP" title="pagexml.Mat.AUTO_STEP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AUTO_STEP</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.Mat.CONTINUOUS_FLAG" title="pagexml.Mat.CONTINUOUS_FLAG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONTINUOUS_FLAG</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Mat.DEPTH_MASK" title="pagexml.Mat.DEPTH_MASK"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEPTH_MASK</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.Mat.MAGIC_MASK" title="pagexml.Mat.MAGIC_MASK"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAGIC_MASK</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Mat.MAGIC_VAL" title="pagexml.Mat.MAGIC_VAL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAGIC_VAL</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.Mat.SUBMATRIX_FLAG" title="pagexml.Mat.SUBMATRIX_FLAG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUBMATRIX_FLAG</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.Mat.TYPE_MASK" title="pagexml.Mat.TYPE_MASK"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TYPE_MASK</span></code></a></p></td>
-<td><p>int(x=0) -&gt; integer</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.Mat.cols" title="pagexml.Mat.cols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cols</span></code></a></p></td>
 <td><p></p></td>
@@ -344,7 +980,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -704,7 +1340,7 @@
 <dt id="pagexml.NamedImage">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">NamedImage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#NamedImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.NamedImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -792,7 +1428,7 @@
 <dt id="pagexml.NamedImageVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">NamedImageVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#NamedImageVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.NamedImageVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -867,7 +1503,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1001,7 +1637,7 @@
 <dt id="pagexml.PageXML">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">PageXML</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pagexml_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">schema_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#PageXML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1020,374 +1656,377 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addPage" title="pagexml.PageXML.addPage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addPage</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addTextLine" title="pagexml.PageXML.addTextLine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTextLine</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addTextRegion" title="pagexml.PageXML.addTextRegion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTextRegion</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addToGroup" title="pagexml.PageXML.addToGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addToGroup</span></code></a>(group, elems)</p></td>
-<td><p>Adds elements to a Group.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addWord" title="pagexml.PageXML.addWord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addWord</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.areIDsUnique" title="pagexml.PageXML.areIDsUnique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">areIDsUnique</span></code></a>()</p></td>
-<td><p>Verifies that all IDs in page are unique.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.clone" title="pagexml.PageXML.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a>()</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.closest" title="pagexml.PageXML.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(name, node)</p></td>
-<td><p>Selects closest node of a given name.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeAreas" title="pagexml.PageXML.computeAreas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeAreas</span></code></a>(polys)</p></td>
-<td><p>Computes the areas for given polygons.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeBaselineIntersectionsWeightedByArea" title="pagexml.PageXML.computeBaselineIntersectionsWeightedByArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeBaselineIntersectionsWeightedByArea</span></code></a>(…)</p></td>
-<td><p>Computes line-polygon intersections weighted by area.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeCoordsIntersectionsWeightedByArea" title="pagexml.PageXML.computeCoordsIntersectionsWeightedByArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeCoordsIntersectionsWeightedByArea</span></code></a>(…)</p></td>
-<td><p>Computes polygon-polygon intersections weighted by area.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectFactor" title="pagexml.PageXML.computeIntersectFactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectFactor</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectionPercentage" title="pagexml.PageXML.computeIntersectionPercentage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectionPercentage</span></code></a>(poly1, poly2)</p></td>
-<td><p>Computes the intersection percentage of one polygon with respect to another polygons.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectionPercentages" title="pagexml.PageXML.computeIntersectionPercentages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectionPercentages</span></code></a>(poly, polys)</p></td>
-<td><p>Computes the intersection percentage of one polygon with respect to other polygons.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIoU" title="pagexml.PageXML.computeIoU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIoU</span></code></a>(poly1, poly2)</p></td>
-<td><p>Computes the intersection over union (IoU) of two polygons.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIoUs" title="pagexml.PageXML.computeIoUs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIoUs</span></code></a>(poly, polys)</p></td>
-<td><p>Computes the intersection over unions (IoU) of polygons.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.copyElem" title="pagexml.PageXML.copyElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyElem</span></code></a>(elem, node[, itype])</p></td>
-<td><p>Clone an element and add it relative to a given node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.copyTextLinesAssignByOverlap" title="pagexml.PageXML.copyTextLinesAssignByOverlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyTextLinesAssignByOverlap</span></code></a>(pageFrom[, …])</p></td>
-<td><p>Copies TextLines from one page xml to another assigning to regions based on overlap.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.count" title="pagexml.PageXML.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.crop" title="pagexml.PageXML.crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.filter" title="pagexml.PageXML.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>(xpath, elems)</p></td>
-<td><p>Filters a vector of xml nodes given an xpath.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getAttr" title="pagexml.PageXML.getAttr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getAttr</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 3 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getBaselineOrientation" title="pagexml.PageXML.getBaselineOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getBaselineOrientation</span></code></a>(elem)</p></td>
-<td><p>Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getDocPtr" title="pagexml.PageXML.getDocPtr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getDocPtr</span></code></a>()</p></td>
-<td><p>Returns the XML document pointer.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getDominantBaselinesOrientation" title="pagexml.PageXML.getDominantBaselinesOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getDominantBaselinesOrientation</span></code></a>(elems)</p></td>
-<td><p>Gets the dominant orientation angle for a set of baselines.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getFpgram" title="pagexml.PageXML.getFpgram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getFpgram</span></code></a>(node)</p></td>
-<td><p>Retrieves the features parallelogram (Property[&#64;key=’fpgram’]/&#64;value) for a given node.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getImageBases" title="pagexml.PageXML.getImageBases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getImageBases</span></code></a>()</p></td>
-<td><p>Gets image bases for all pages in xml.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getImagesBaseDir" title="pagexml.PageXML.getImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getImagesBaseDir</span></code></a>()</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getLeftRightTextContinuationGroups" title="pagexml.PageXML.getLeftRightTextContinuationGroups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getLeftRightTextContinuationGroups</span></code></a>(elems, …)</p></td>
-<td><p>Determines groups of left-right text elem continuations (requires single segment polystripe).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getLeftRightTopBottomReadingOrder" title="pagexml.PageXML.getLeftRightTopBottomReadingOrder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getLeftRightTopBottomReadingOrder</span></code></a>(elems[, …])</p></td>
-<td><p>Gets the reading order for a set of text elems (requires single segment polystripe).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getNodeName" title="pagexml.PageXML.getNodeName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNodeName</span></code></a>(node[, base_node])</p></td>
-<td><p>Gets the name of the given node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygon" title="pagexml.PageXML.getOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygon</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Gets an element’s Coords as an OGRMultiPolygon.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygonArea" title="pagexml.PageXML.getOGRpolygonArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygonArea</span></code></a>(poly)</p></td>
-<td><p>Gets the area of a OGRMultiPolygon.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygons" title="pagexml.PageXML.getOGRpolygons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygons</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Gets elements’ Coords as OGRMultiPolygons.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolyline" title="pagexml.PageXML.getOGRpolyline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolyline</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Gets the element’s Baseline as an OGRMultiLineString.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageHeight" title="pagexml.PageXML.getPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageHeight</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImage" title="pagexml.PageXML.getPageImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImage</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImageFilename" title="pagexml.PageXML.getPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImageFilename</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImageOrientation" title="pagexml.PageXML.getPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImageOrientation</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageNumber" title="pagexml.PageXML.getPageNumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageNumber</span></code></a>(node)</p></td>
-<td><p>Gets the page number for the given node.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageWidth" title="pagexml.PageXML.getPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageWidth</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPagesSize" title="pagexml.PageXML.getPagesSize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPagesSize</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPoints" title="pagexml.PageXML.getPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPoints</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPolylineLength" title="pagexml.PageXML.getPolylineLength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPolylineLength</span></code></a>(points)</p></td>
-<td><p>Gets the baseline length.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPolylineOrientation" title="pagexml.PageXML.getPolylineOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPolylineOrientation</span></code></a>(points)</p></td>
-<td><p>Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPropertyValue" title="pagexml.PageXML.getPropertyValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPropertyValue</span></code></a>(node, key)</p></td>
-<td><p>Retrieves a Property value.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getReadingDirection" title="pagexml.PageXML.getReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getReadingDirection</span></code></a>(elem)</p></td>
-<td><p>Retrieves the reading direction for a given TextLine or TextRegion node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getRotation" title="pagexml.PageXML.getRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getRotation</span></code></a>(elem)</p></td>
-<td><p>Retrieves the rotation angle for a given TextLine or TextRegion node.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getTextEquiv" title="pagexml.PageXML.getTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextEquiv</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Retrieves the concatenated TextEquivs for a given root node and xpath.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getUnionOGRpolygon" title="pagexml.PageXML.getUnionOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUnionOGRpolygon</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Gets the union of Coords elements as a OGRMultiPolygon.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getUniqueID" title="pagexml.PageXML.getUniqueID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUniqueID</span></code></a>(prefix[, suffix, count_start, …])</p></td>
-<td><p>Gets a unique id.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getValue" title="pagexml.PageXML.getValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getValue</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getXheight" title="pagexml.PageXML.getXheight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getXheight</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getXmlFilePath" title="pagexml.PageXML.getXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getXmlFilePath</span></code></a>()</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.insertElem" title="pagexml.PageXML.insertElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insertElem</span></code></a>(elem, node, itype)</p></td>
-<td><p>Inserts an element relative to a given node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.intersection" title="pagexml.PageXML.intersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersection</span></code></a>(line1_point1, line1_point2, …)</p></td>
-<td><p>Finds the intersection point between two lines defined by pairs of points.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.isBBox" title="pagexml.PageXML.isBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isBBox</span></code></a>(points)</p></td>
-<td><p>Determines whether a vector of points defines a bounding box.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.isPageImageLoaded" title="pagexml.PageXML.isPageImageLoaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isPageImageLoaded</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.isPolystripe" title="pagexml.PageXML.isPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isPolystripe</span></code></a>(coords, baseline[, height, offset])</p></td>
-<td><p>Checks whether Coords is a poly-stripe for its corresponding baseline.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.isValid" title="pagexml.PageXML.isValid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isValid</span></code></a>([xml_to_validate])</p></td>
-<td><p>Validates the currently loaded XML.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.loadImage" title="pagexml.PageXML.loadImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadImage</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.loadImages" title="pagexml.PageXML.loadImages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadImages</span></code></a>([resize_coords, density])</p></td>
-<td><p>Loads images for all pages in the XML.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.loadSchema" title="pagexml.PageXML.loadSchema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadSchema</span></code></a>(schema_path)</p></td>
-<td><p>Loads a schema for xml validation.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.loadXml" title="pagexml.PageXML.loadXml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadXml</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.loadXmlString" title="pagexml.PageXML.loadXmlString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadXmlString</span></code></a>(xml_string[, validate])</p></td>
-<td><p>Loads a Page XML from a string.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.moveElem" title="pagexml.PageXML.moveElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moveElem</span></code></a>(elem, node[, itype, bugimpl])</p></td>
-<td><p>Unlink an element and add it relative to a given node.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.moveElems" title="pagexml.PageXML.moveElems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moveElems</span></code></a>(elems, node[, itype, bugimpl])</p></td>
-<td><p>Unlink elements and add them relative to a given node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.multiPolygonIntersection" title="pagexml.PageXML.multiPolygonIntersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiPolygonIntersection</span></code></a>(poly1, poly2)</p></td>
-<td><p>Computes the intersection of two multipolygons.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.multiPolylineIntersection" title="pagexml.PageXML.multiPolylineIntersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiPolylineIntersection</span></code></a>(poly1, poly2)</p></td>
-<td><p>Computes the intersection between a multipolylines and a multipolygon.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.newXml" title="pagexml.PageXML.newXml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newXml</span></code></a>(creator, image[, imgW, imgH, pagens])</p></td>
-<td><p>Creates a new Page XML.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.nodeIs" title="pagexml.PageXML.nodeIs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nodeIs</span></code></a>(node, name)</p></td>
-<td><p>Checks if node is of given name.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.parent" title="pagexml.PageXML.parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></a>(node)</p></td>
-<td><p>Returns the parent of a node.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsBBox" title="pagexml.PageXML.pointsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsBBox</span></code></a>(points)</p></td>
-<td><p>Generates a vector of 4 points that define the bounding box for a given vector of points.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsLimits" title="pagexml.PageXML.pointsLimits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsLimits</span></code></a>(points, xmin, xmax, ymin, ymax)</p></td>
-<td><p>Gets the minimum and maximum coordinate values for an array of points.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToOGRpolygon" title="pagexml.PageXML.pointsToOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToOGRpolygon</span></code></a>(points)</p></td>
-<td><p>Converts Coords to an OGRMultiPolygon.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToOGRpolygons" title="pagexml.PageXML.pointsToOGRpolygons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToOGRpolygons</span></code></a>(points)</p></td>
-<td><p>Converts Coords to OGRMultiPolygons.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToString" title="pagexml.PageXML.pointsToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToString</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.printVersions" title="pagexml.PageXML.printVersions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">printVersions</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Prints the version of the PageXML library and its main dependencies.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.processEnd" title="pagexml.PageXML.processEnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processEnd</span></code></a>()</p></td>
-<td><p>Ends the running process in the Page XML.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.processStart" title="pagexml.PageXML.processStart"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processStart</span></code></a>(tool[, ref])</p></td>
-<td><p>Starts a process in the Page XML.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.relabelChildIDs" title="pagexml.PageXML.relabelChildIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relabelChildIDs</span></code></a>(node[, include_self])</p></td>
-<td><p>Relabels IDs of child elements.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.relativizeImageFilename" title="pagexml.PageXML.relativizeImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relativizeImageFilename</span></code></a>(xml_path)</p></td>
-<td><p>Modifies imageFilename to be a relative path w.r.t.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.releaseImage" title="pagexml.PageXML.releaseImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">releaseImage</span></code></a>(*args)</p></td>
-<td><p>Overloaded function with 2 signatures.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.releaseImages" title="pagexml.PageXML.releaseImages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">releaseImages</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addTableRegion" title="pagexml.PageXML.addTableRegion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTableRegion</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.resize" title="pagexml.PageXML.resize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addTextLine" title="pagexml.PageXML.addTextLine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTextLine</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addTextRegion" title="pagexml.PageXML.addTextRegion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTextRegion</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addToGroup" title="pagexml.PageXML.addToGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addToGroup</span></code></a>(group, elems)</p></td>
+<td><p>Adds elements to a Group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addWord" title="pagexml.PageXML.addWord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addWord</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.areIDsUnique" title="pagexml.PageXML.areIDsUnique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">areIDsUnique</span></code></a>()</p></td>
+<td><p>Verifies that all IDs in page are unique.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.clone" title="pagexml.PageXML.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a>()</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.closest" title="pagexml.PageXML.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(name, node)</p></td>
+<td><p>Selects closest node of a given name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeAreas" title="pagexml.PageXML.computeAreas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeAreas</span></code></a>(polys)</p></td>
+<td><p>Computes the areas for given polygons.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeBaselineIntersectionsWeightedByArea" title="pagexml.PageXML.computeBaselineIntersectionsWeightedByArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeBaselineIntersectionsWeightedByArea</span></code></a>(…)</p></td>
+<td><p>Computes line-polygon intersections weighted by area.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeCoordsIntersectionsWeightedByArea" title="pagexml.PageXML.computeCoordsIntersectionsWeightedByArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeCoordsIntersectionsWeightedByArea</span></code></a>(…)</p></td>
+<td><p>Computes polygon-polygon intersections weighted by area.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectFactor" title="pagexml.PageXML.computeIntersectFactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectFactor</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectionPercentage" title="pagexml.PageXML.computeIntersectionPercentage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectionPercentage</span></code></a>(poly1, poly2)</p></td>
+<td><p>Computes the intersection percentage of one polygon with respect to another polygons.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIntersectionPercentages" title="pagexml.PageXML.computeIntersectionPercentages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIntersectionPercentages</span></code></a>(poly, polys)</p></td>
+<td><p>Computes the intersection percentage of one polygon with respect to other polygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIoU" title="pagexml.PageXML.computeIoU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIoU</span></code></a>(poly1, poly2)</p></td>
+<td><p>Computes the intersection over union (IoU) of two polygons.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.computeIoUs" title="pagexml.PageXML.computeIoUs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">computeIoUs</span></code></a>(poly, polys)</p></td>
+<td><p>Computes the intersection over unions (IoU) of polygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.copyElem" title="pagexml.PageXML.copyElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyElem</span></code></a>(elem, node[, itype])</p></td>
+<td><p>Clone an element and add it relative to a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.copyTextLinesAssignByOverlap" title="pagexml.PageXML.copyTextLinesAssignByOverlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyTextLinesAssignByOverlap</span></code></a>(pageFrom[, …])</p></td>
+<td><p>Copies TextLines from one page xml to another assigning to regions based on overlap.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.count" title="pagexml.PageXML.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.crop" title="pagexml.PageXML.crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.filter" title="pagexml.PageXML.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>(xpath, elems)</p></td>
+<td><p>Filters a vector of xml nodes given an xpath.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getAttr" title="pagexml.PageXML.getAttr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getAttr</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 3 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getBaselineOrientation" title="pagexml.PageXML.getBaselineOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getBaselineOrientation</span></code></a>(elem)</p></td>
+<td><p>Gets the baseline orientation angle (weighted average over polyline segments) of a given text line.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getDocPtr" title="pagexml.PageXML.getDocPtr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getDocPtr</span></code></a>()</p></td>
+<td><p>Returns the XML document pointer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getDominantBaselinesOrientation" title="pagexml.PageXML.getDominantBaselinesOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getDominantBaselinesOrientation</span></code></a>(elems)</p></td>
+<td><p>Gets the dominant orientation angle for a set of baselines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getFpgram" title="pagexml.PageXML.getFpgram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getFpgram</span></code></a>(node)</p></td>
+<td><p>Retrieves the features parallelogram (Property[&#64;key=’fpgram’]/&#64;value) for a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getImageBases" title="pagexml.PageXML.getImageBases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getImageBases</span></code></a>()</p></td>
+<td><p>Gets image bases for all pages in xml.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getImagesBaseDir" title="pagexml.PageXML.getImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getImagesBaseDir</span></code></a>()</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getLeftRightTextContinuationGroups" title="pagexml.PageXML.getLeftRightTextContinuationGroups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getLeftRightTextContinuationGroups</span></code></a>(elems, …)</p></td>
+<td><p>Determines groups of left-right text elem continuations (requires single segment polystripe).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getLeftRightTopBottomReadingOrder" title="pagexml.PageXML.getLeftRightTopBottomReadingOrder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getLeftRightTopBottomReadingOrder</span></code></a>(elems[, …])</p></td>
+<td><p>Gets the reading order for a set of text elems (requires single segment polystripe).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getNodeName" title="pagexml.PageXML.getNodeName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNodeName</span></code></a>(node[, base_node])</p></td>
+<td><p>Gets the name of the given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygon" title="pagexml.PageXML.getOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygon</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Gets an element’s Coords as an OGRMultiPolygon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygonArea" title="pagexml.PageXML.getOGRpolygonArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygonArea</span></code></a>(poly)</p></td>
+<td><p>Gets the area of a OGRMultiPolygon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolygons" title="pagexml.PageXML.getOGRpolygons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolygons</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Gets elements’ Coords as OGRMultiPolygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getOGRpolyline" title="pagexml.PageXML.getOGRpolyline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOGRpolyline</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Gets the element’s Baseline as an OGRMultiLineString.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageHeight" title="pagexml.PageXML.getPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageHeight</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImage" title="pagexml.PageXML.getPageImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImage</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImageFilename" title="pagexml.PageXML.getPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImageFilename</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageImageOrientation" title="pagexml.PageXML.getPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageImageOrientation</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageNumber" title="pagexml.PageXML.getPageNumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageNumber</span></code></a>(node)</p></td>
+<td><p>Gets the page number for the given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPageWidth" title="pagexml.PageXML.getPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPageWidth</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPagesSize" title="pagexml.PageXML.getPagesSize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPagesSize</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPoints" title="pagexml.PageXML.getPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPoints</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPolylineLength" title="pagexml.PageXML.getPolylineLength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPolylineLength</span></code></a>(points)</p></td>
+<td><p>Gets the baseline length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getPolylineOrientation" title="pagexml.PageXML.getPolylineOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPolylineOrientation</span></code></a>(points)</p></td>
+<td><p>Gets the baseline orientation angle (weighted average over polyline segments) in radians of a given baseline.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getPropertyValue" title="pagexml.PageXML.getPropertyValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPropertyValue</span></code></a>(node, key)</p></td>
+<td><p>Retrieves a Property value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getReadingDirection" title="pagexml.PageXML.getReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getReadingDirection</span></code></a>(elem)</p></td>
+<td><p>Retrieves the reading direction for a given TextLine or TextRegion node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getRotation" title="pagexml.PageXML.getRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getRotation</span></code></a>(elem)</p></td>
+<td><p>Retrieves the rotation angle for a given TextLine or TextRegion node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getTextEquiv" title="pagexml.PageXML.getTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextEquiv</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Retrieves the concatenated TextEquivs for a given root node and xpath.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getUnionOGRpolygon" title="pagexml.PageXML.getUnionOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUnionOGRpolygon</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Gets the union of Coords elements as a OGRMultiPolygon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getUniqueID" title="pagexml.PageXML.getUniqueID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUniqueID</span></code></a>(prefix[, suffix, count_start, …])</p></td>
+<td><p>Gets a unique id.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getValue" title="pagexml.PageXML.getValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getValue</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.getXheight" title="pagexml.PageXML.getXheight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getXheight</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.getXmlFilePath" title="pagexml.PageXML.getXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getXmlFilePath</span></code></a>()</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.insertElem" title="pagexml.PageXML.insertElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insertElem</span></code></a>(elem, node, itype)</p></td>
+<td><p>Inserts an element relative to a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.intersection" title="pagexml.PageXML.intersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersection</span></code></a>(line1_point1, line1_point2, …)</p></td>
+<td><p>Finds the intersection point between two lines defined by pairs of points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.isBBox" title="pagexml.PageXML.isBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isBBox</span></code></a>(points)</p></td>
+<td><p>Determines whether a vector of points defines a bounding box.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.isPageImageLoaded" title="pagexml.PageXML.isPageImageLoaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isPageImageLoaded</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.isPolystripe" title="pagexml.PageXML.isPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isPolystripe</span></code></a>(coords, baseline[, height, offset])</p></td>
+<td><p>Checks whether Coords is a poly-stripe for its corresponding baseline.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.isValid" title="pagexml.PageXML.isValid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isValid</span></code></a>([xml_to_validate])</p></td>
+<td><p>Validates the currently loaded XML.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.loadImage" title="pagexml.PageXML.loadImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadImage</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.loadImages" title="pagexml.PageXML.loadImages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadImages</span></code></a>([resize_coords, density])</p></td>
+<td><p>Loads images for all pages in the XML.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.loadSchema" title="pagexml.PageXML.loadSchema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadSchema</span></code></a>(schema_path)</p></td>
+<td><p>Loads a schema for xml validation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.loadXml" title="pagexml.PageXML.loadXml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadXml</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.loadXmlString" title="pagexml.PageXML.loadXmlString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadXmlString</span></code></a>(xml_string[, validate])</p></td>
+<td><p>Loads a Page XML from a string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.moveElem" title="pagexml.PageXML.moveElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moveElem</span></code></a>(elem, node[, itype, bugimpl])</p></td>
+<td><p>Unlink an element and add it relative to a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.moveElems" title="pagexml.PageXML.moveElems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moveElems</span></code></a>(elems, node[, itype, bugimpl])</p></td>
+<td><p>Unlink elements and add them relative to a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.multiPolygonIntersection" title="pagexml.PageXML.multiPolygonIntersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiPolygonIntersection</span></code></a>(poly1, poly2)</p></td>
+<td><p>Computes the intersection of two multipolygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.multiPolylineIntersection" title="pagexml.PageXML.multiPolylineIntersection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiPolylineIntersection</span></code></a>(poly1, poly2)</p></td>
+<td><p>Computes the intersection between a multipolylines and a multipolygon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.newXml" title="pagexml.PageXML.newXml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newXml</span></code></a>(creator, image[, imgW, imgH, pagens])</p></td>
+<td><p>Creates a new Page XML.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.nodeIs" title="pagexml.PageXML.nodeIs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nodeIs</span></code></a>(node, name)</p></td>
+<td><p>Checks if node is of given name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.parent" title="pagexml.PageXML.parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></a>(node)</p></td>
+<td><p>Returns the parent of a node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsBBox" title="pagexml.PageXML.pointsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsBBox</span></code></a>(points)</p></td>
+<td><p>Generates a vector of 4 points that define the bounding box for a given vector of points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsLimits" title="pagexml.PageXML.pointsLimits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsLimits</span></code></a>(points, xmin, xmax, ymin, ymax)</p></td>
+<td><p>Gets the minimum and maximum coordinate values for an array of points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToOGRpolygon" title="pagexml.PageXML.pointsToOGRpolygon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToOGRpolygon</span></code></a>(points)</p></td>
+<td><p>Converts Coords to an OGRMultiPolygon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToOGRpolygons" title="pagexml.PageXML.pointsToOGRpolygons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToOGRpolygons</span></code></a>(points)</p></td>
+<td><p>Converts Coords to OGRMultiPolygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.pointsToString" title="pagexml.PageXML.pointsToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointsToString</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.printVersions" title="pagexml.PageXML.printVersions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">printVersions</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Prints the version of the PageXML library and its main dependencies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.processEnd" title="pagexml.PageXML.processEnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processEnd</span></code></a>()</p></td>
+<td><p>Ends the running process in the Page XML.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.processStart" title="pagexml.PageXML.processStart"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processStart</span></code></a>(tool[, ref])</p></td>
+<td><p>Starts a process in the Page XML.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.relabelChildIDs" title="pagexml.PageXML.relabelChildIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relabelChildIDs</span></code></a>(node[, include_self])</p></td>
+<td><p>Relabels IDs of child elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.relativizeImageFilename" title="pagexml.PageXML.relativizeImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relativizeImageFilename</span></code></a>(xml_path)</p></td>
+<td><p>Modifies imageFilename to be a relative path w.r.t.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.releaseImage" title="pagexml.PageXML.releaseImage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">releaseImage</span></code></a>(*args)</p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.releaseImages" title="pagexml.PageXML.releaseImages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">releaseImages</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.resize" title="pagexml.PageXML.resize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.rmElem" title="pagexml.PageXML.rmElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmElem</span></code></a>(node)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.rmElem" title="pagexml.PageXML.rmElem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmElem</span></code></a>(node)</p></td>
 <td><p>Removes the given element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.rmElems" title="pagexml.PageXML.rmElems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmElems</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.rmElems" title="pagexml.PageXML.rmElems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmElems</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 3 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.rotatePage" title="pagexml.PageXML.rotatePage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotatePage</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.rotatePage" title="pagexml.PageXML.rotatePage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotatePage</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.select" title="pagexml.PageXML.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.select" title="pagexml.PageXML.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 3 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.selectByID" title="pagexml.PageXML.selectByID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectByID</span></code></a>(id[, node])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.selectByID" title="pagexml.PageXML.selectByID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectByID</span></code></a>(id[, node])</p></td>
 <td><p>Selects an element with a given ID.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.selectByOverlap" title="pagexml.PageXML.selectByOverlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectByOverlap</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.selectByOverlap" title="pagexml.PageXML.selectByOverlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectByOverlap</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.selectGroupElements" title="pagexml.PageXML.selectGroupElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectGroupElements</span></code></a>(group[, recurse])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.selectGroupElements" title="pagexml.PageXML.selectGroupElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectGroupElements</span></code></a>(group[, recurse])</p></td>
 <td><p>Selects all elements referenced by a Group.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.selectNth" title="pagexml.PageXML.selectNth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectNth</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.selectNth" title="pagexml.PageXML.selectNth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selectNth</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setAttr" title="pagexml.PageXML.setAttr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setAttr</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setAttr" title="pagexml.PageXML.setAttr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setAttr</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setBaseline" title="pagexml.PageXML.setBaseline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setBaseline</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setBaseline" title="pagexml.PageXML.setBaseline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setBaseline</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 6 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setCoords" title="pagexml.PageXML.setCoords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCoords</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setCoords" title="pagexml.PageXML.setCoords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCoords</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 6 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setCoordsBBox" title="pagexml.PageXML.setCoordsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCoordsBBox</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setCoordsBBox" title="pagexml.PageXML.setCoordsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCoordsBBox</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setImagesBaseDir" title="pagexml.PageXML.setImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setImagesBaseDir</span></code></a>(imgBaseDir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setImagesBaseDir" title="pagexml.PageXML.setImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setImagesBaseDir</span></code></a>(imgBaseDir)</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param imgBaseDir</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageHeight" title="pagexml.PageXML.setPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageHeight</span></code></a>(node, height)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageHeight" title="pagexml.PageXML.setPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageHeight</span></code></a>(node, height)</p></td>
 <td><p>Sets the height of a page (actually sets imageHeight accounting for image orientation).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageFilename" title="pagexml.PageXML.setPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageFilename</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageFilename" title="pagexml.PageXML.setPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageFilename</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageOrientation" title="pagexml.PageXML.setPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageOrientation</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageOrientation" title="pagexml.PageXML.setPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageOrientation</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageWidth" title="pagexml.PageXML.setPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageWidth</span></code></a>(node, width)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageWidth" title="pagexml.PageXML.setPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageWidth</span></code></a>(node, width)</p></td>
 <td><p>Sets the width of a page (actually sets imageWidth accounting for image orientation).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPolystripe" title="pagexml.PageXML.setPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPolystripe</span></code></a>(node, height[, offset, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPolystripe" title="pagexml.PageXML.setPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPolystripe</span></code></a>(node, height[, offset, …])</p></td>
 <td><p>Sets the Coords of a TextLine as a poly-stripe of the baseline.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setProperty" title="pagexml.PageXML.setProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setProperty</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setProperty" title="pagexml.PageXML.setProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setProperty</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setReadingDirection" title="pagexml.PageXML.setReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setReadingDirection</span></code></a>(elem, direction)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setReadingDirection" title="pagexml.PageXML.setReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setReadingDirection</span></code></a>(elem, direction)</p></td>
 <td><p>Sets the reading direction to a TextRegion node.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setRotation" title="pagexml.PageXML.setRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setRotation</span></code></a>(elem, rotation)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setRotation" title="pagexml.PageXML.setRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setRotation</span></code></a>(elem, rotation)</p></td>
 <td><p>Sets the rotation angle to a TextRegion node.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setTextEquiv" title="pagexml.PageXML.setTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setTextEquiv</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setTextEquiv" title="pagexml.PageXML.setTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setTextEquiv</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setValidationEnabled" title="pagexml.PageXML.setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValidationEnabled</span></code></a>(val)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setValidationEnabled" title="pagexml.PageXML.setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValidationEnabled</span></code></a>(val)</p></td>
 <td><p>Enables/disables schema validation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setValue" title="pagexml.PageXML.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setValue" title="pagexml.PageXML.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setXmlFilePath" title="pagexml.PageXML.setXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setXmlFilePath</span></code></a>(xmlFilePath)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setXmlFilePath" title="pagexml.PageXML.setXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setXmlFilePath</span></code></a>(xmlFilePath)</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param xmlFilePath</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.simplifyIDs" title="pagexml.PageXML.simplifyIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplifyIDs</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.simplifyIDs" title="pagexml.PageXML.simplifyIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplifyIDs</span></code></a>()</p></td>
 <td><p>Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.stringToPoints" title="pagexml.PageXML.stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stringToPoints</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.stringToPoints" title="pagexml.PageXML.stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stringToPoints</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.toString" title="pagexml.PageXML.toString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toString</span></code></a>([indent, validate])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.toString" title="pagexml.PageXML.toString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toString</span></code></a>([indent, validate])</p></td>
 <td><p>Creates a string representation of the Page XML.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.updateLastChange" title="pagexml.PageXML.updateLastChange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateLastChange</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.updateLastChange" title="pagexml.PageXML.updateLastChange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateLastChange</span></code></a>()</p></td>
 <td><p>Updates the last change time stamp.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.version" title="pagexml.PageXML.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.version" title="pagexml.PageXML.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a>()</p></td>
 <td><p>Returns the class version.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.write" title="pagexml.PageXML.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.write" title="pagexml.PageXML.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Writes the current state of the XML to a file using utf-8 encoding.</p></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1572,6 +2211,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="pagexml.PageXML.addTableRegion">
+<code class="sig-name descname">addTableRegion</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#PageXML.addTableRegion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.addTableRegion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pagexml.PageXML.addTextLine">
@@ -4854,24 +5498,8 @@
 <dl class="py attribute">
 <dt id="pagexml.Point">
 <code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">Point</code><a class="headerlink" href="#pagexml.Point" title="Permalink to this definition">¶</a></dt>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">thisown</span></code></p></td>
-<td><p>The membership flag</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Methods</strong></p>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__int</span></code>
+<strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -4889,31 +5517,31 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__int</span></code></p>
+<p><strong>Attributes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">thisown</span></code></p></td>
+<td><p>The membership flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pagexml.Point2f">
 <code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">Point2f</code><a class="headerlink" href="#pagexml.Point2f" title="Permalink to this definition">¶</a></dt>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">thisown</span></code></p></td>
-<td><p>The membership flag</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Methods</strong></p>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__float</span></code>
+<strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -4931,13 +5559,43 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Point__float</span></code></p>
+<p><strong>Attributes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">thisown</span></code></p></td>
+<td><p>The membership flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pagexml.Size2i">
 <code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">Size2i</code><a class="headerlink" href="#pagexml.Size2i" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__int</span></code>
+<strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">area</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -4955,27 +5613,13 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Methods</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">area</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Attributes</strong></p>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pagexml._Size__int</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pagexml.cvPoint2fVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">cvPoint2fVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#cvPoint2fVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.cvPoint2fVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5050,7 +5694,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5184,7 +5828,7 @@
 <dt id="pagexml.cvSize2iVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">cvSize2iVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#cvSize2iVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.cvSize2iVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5259,7 +5903,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5393,7 +6037,7 @@
 <dt id="pagexml.ptr_cvPoint2fVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">ptr_cvPoint2fVector</code><a class="reference internal" href="_modules/pagexml/swigPageXML.html#ptr_cvPoint2fVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.ptr_cvPoint2fVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5414,7 +6058,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5458,7 +6102,7 @@
 <dt id="pagexml.ptr_cvPointVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">ptr_cvPointVector</code><a class="reference internal" href="_modules/pagexml/swigPageXML.html#ptr_cvPointVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.ptr_cvPointVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5479,7 +6123,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5523,7 +6167,7 @@
 <dt id="pagexml.ptr_double">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">ptr_double</code><a class="reference internal" href="_modules/pagexml/swigPageXML.html#ptr_double"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.ptr_double" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5544,7 +6188,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5588,7 +6232,7 @@
 <dt id="pagexml.xmlNodePtrVector">
 <em class="property">class </em><code class="sig-prename descclassname">pagexml.</code><code class="sig-name descname">xmlNodePtrVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#xmlNodePtrVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.xmlNodePtrVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -5663,7 +6307,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />

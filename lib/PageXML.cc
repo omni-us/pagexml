@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2020.09.02$
+ * @version $Version: 2021.02.04$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2020.09.02";
+static char class_version[] = "Version: 2021.02.04";
 
 /**
  * Returns the class version.
@@ -3891,8 +3891,8 @@ xmlNodePt PageXML::addGlyph( const char* xpath, const char* id, const char* befo
  * @return           Pointer to created element.
  */
 xmlNodePt PageXML::addWord( xmlNodePt node, const char* id, const char* before_id ) {
-  if ( ! ( nodeIs( node, "TextLine" ) || nodeIs( node, "TextRegion" ) || nodeIs( node, "Page" ) ) ) {
-    throw_runtime_error( "PageXML.addWord: node is required to be a TextLine, TextRegion or Page" );
+  if ( ! ( nodeIs( node, "TextLine" ) || nodeIs( node, "TextRegion" ) || nodeIs( node, "TableRegion" ) || nodeIs( node, "Page" ) ) ) {
+    throw_runtime_error( "PageXML.addWord: node is required to be a TextLine, TextRegion, TableRegion or a Page" );
     return NULL;
   }
 
@@ -3966,8 +3966,8 @@ xmlNodePt PageXML::addWord( const char* xpath, const char* id, const char* befor
  * @return           Pointer to created element.
  */
 xmlNodePt PageXML::addTextLine( xmlNodePt node, const char* id, const char* before_id ) {
-  if ( ! ( nodeIs( node, "TextRegion" ) || nodeIs( node, "Page" ) ) ) {
-    throw_runtime_error( "PageXML.addTextLine: node is required to be a TextRegion or a Page" );
+  if ( ! ( nodeIs( node, "TextRegion" ) || nodeIs( node, "TableRegion" ) || nodeIs( node, "Page" ) ) ) {
+    throw_runtime_error( "PageXML.addTextLine: node is required to be a TextRegion, TableRegion or a Page" );
     return NULL;
   }
 
@@ -4042,8 +4042,8 @@ xmlNodePt PageXML::addTextLine( const char* xpath, const char* id, const char* b
  * @return           Pointer to created element.
  */
 xmlNodePt PageXML::addTextRegion( xmlNodePt node, const char* id, const char* before_id, bool prepend ) {
-  if( ! nodeIs( node, "Page" ) ) {
-    throw_runtime_error( "PageXML.addTextRegion: node is required to be a Page" );
+  if( ! ( nodeIs( node, "TableRegion" ) || nodeIs( node, "Page" ) ) ) {
+    throw_runtime_error( "PageXML.addTextRegion: node is required to be a Page or a TableRegion" );
     return NULL;
   }
 
@@ -4103,6 +4103,79 @@ xmlNodePt PageXML::addTextRegion( const char* xpath, const char* id, const char*
   }
 
   return addTextRegion( target[0], id, before_id, prepend );
+}
+
+/**
+ * Adds a TableRegion to a given node.
+ *
+ * @param node       The node of element to add the TableRegion.
+ * @param id         ID for TableRegion, if NULL it is selected automatically.
+ * @param before_id  If !=NULL inserts it before the TableRegion with this ID.
+ * @param prepend    Whether to add element before all other TableRegions.
+ * @return           Pointer to created element.
+ */
+xmlNodePt PageXML::addTableRegion( xmlNodePt node, const char* id, const char* before_id, bool prepend ) {
+  if( ! nodeIs( node, "Page" ) ) {
+    throw_runtime_error( "PageXML.addTableRegion: node is required to be a Page" );
+    return NULL;
+  }
+
+  xmlNodePt textreg;
+
+  string rid;
+  if( id != NULL )
+    rid = string(id);
+  else {
+    int n = select( "*/_:TableRegion", node->parent ).size();
+    while( true ) {
+      if( selectByID( (string("r")+to_string(++n)).c_str() ) == NULL ) {
+        rid = string("r")+to_string(n);
+        break;
+      }
+      if( n > 100000 ) {
+        throw_runtime_error( "PageXML.addTableRegion: apparently in infinite loop" );
+        return NULL;
+      }
+    }
+  }
+
+  if( before_id != NULL ) {
+    xmlNodePt sel = selectByID( before_id, node );
+    if( sel == NULL ) {
+      throw_runtime_error( "PageXML.addTableRegion: unable to find id=%s", before_id );
+      return NULL;
+    }
+    textreg = addElem( "TableRegion", rid.c_str(), sel, PAGEXML_INSERT_PREVSIB, true );
+  }
+  else {
+    vector<xmlNodePt> sel = select( prepend ? "*[local-name()='TextEquiv' or local-name()='TableRegion']" : "_:TextEquiv", node );
+    if( sel.size() > 0 )
+      textreg = addElem( "TableRegion", rid.c_str(), sel[0], PAGEXML_INSERT_PREVSIB, true );
+    else
+      textreg = addElem( "TableRegion", rid.c_str(), node, PAGEXML_INSERT_APPEND, true );
+  }
+
+  return textreg;
+}
+
+/**
+ * Adds new TableRegion to a given xpath.
+ *
+ * @param xpath      Selector for element to add the TableRegion.
+ * @param id         ID for TableRegion, if NULL it is selected automatically.
+ * @param before_id  If !=NULL inserts it before the TableRegion with this ID.
+ * @return           Pointer to created element.
+ */
+xmlNodePt PageXML::addTableRegion( const char* xpath, const char* id, const char* before_id, bool prepend ) {
+  if( xpath == NULL )
+    xpath = "//_:Page";
+  vector<xmlNodePt> target = select( xpath );
+  if( target.size() == 0 ) {
+    throw_runtime_error( "PageXML.addTableRegion: unmatched target: xpath=%s", xpath );
+    return NULL;
+  }
+
+  return addTableRegion( target[0], id, before_id, prepend );
 }
 
 /**

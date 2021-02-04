@@ -143,6 +143,41 @@ Returns:
 
 ";
 
+%feature("docstring") PageXML::addTableRegion "
+Overloaded function with 2 signatures.
+
+**Signature 1**
+
+``xmlNodePt PageXML::addTableRegion(xmlNodePt node, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``
+
+Adds a TableRegion to a given node.
+
+Arguments:
+    node (xmlNodePt): The node of element to add the TableRegion.
+    id (const char *): ID for TableRegion, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TableRegion with this ID.
+    prepend (bool): Whether to add element before all other TableRegions.
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+**Signature 2**
+
+``xmlNodePt PageXML::addTableRegion(const char *xpath, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``
+
+Adds new TableRegion to a given xpath.
+
+Arguments:
+    xpath (const char *): Selector for element to add the TableRegion.
+    id (const char *): ID for TableRegion, if NULL it is selected automatically.
+    before_id (const char *): If !=NULL inserts it before the TableRegion with this ID.
+    prepend (bool): 
+
+Returns:
+    xmlNodePt: Pointer to created element.
+
+";
+
 %feature("docstring") PageXML::addTextLine "
 Overloaded function with 2 signatures.
 

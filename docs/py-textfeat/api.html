@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; textfeat 2020.10.07 documentation</title>
+  <title>API Reference &mdash; textfeat 2021.02.04 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2020.10.07
+                2021.02.04
               </div>
             
           
@@ -159,13 +159,19 @@
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-textfeat">
 <span id="textfeat-module"></span><h2>textfeat module<a class="headerlink" href="#module-textfeat" title="Permalink to this headline">¶</a></h2>
-<p><strong>Functions</strong></p>
+<p><strong>Functions:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwigPyIterator_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextFeatExtractor_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#textfeat.TextFeatExtractor_version" title="textfeat.TextFeatExtractor_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextFeatExtractor_version</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
@@ -176,9 +182,12 @@
 </dl>
 </p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptr_float_swigregister</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
-<p><strong>Classes</strong></p>
+<p><strong>Classes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -198,7 +207,7 @@
 <em class="property">class </em><code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">TextFeatExtractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#TextFeatExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.TextFeatExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Proxy of C++ TextFeatExtractor class.</p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -259,7 +268,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -391,7 +400,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>feats</strong> (<em>cv::Mat const &amp;</em>) – </p></li>
 <li><p><strong>file</strong> (<em>FILE *</em>) – </p></li>
-<li><p><strong>feats</strong><strong>, </strong><strong>fname</strong><strong>)</strong> (<em>write</em><em>(</em><em>self</em><em>,</em>) – </p></li>
+<li><p><strong>write</strong><strong>(</strong><strong>self</strong> – </p></li>
+<li><p><strong>feats</strong> – </p></li>
+<li><p><strong>fname</strong><strong>)</strong> – </p></li>
 <li><p><strong>feats</strong> – </p></li>
 <li><p><strong>fname</strong> (<em>char const *</em>) – </p></li>
 </ul>
@@ -411,7 +422,7 @@
 <em class="property">class </em><code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float</code><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Proxy of C++ ptr_float class.</p>
-<p><strong>Methods</strong></p>
+<p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -448,7 +459,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Attributes</strong></p>
+<p><strong>Attributes:</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -482,7 +493,7 @@
 
 <dl class="py method">
 <dt id="textfeat.ptr_float.frompointer">
-<em class="property">static </em><code class="sig-name descname">frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.frompointer" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#textfeat.ptr_float" title="textfeat.ptr_float">ptr_float</a><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float.frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float.frompointer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>t</strong> (<em>float *</em>) – </p>
@@ -510,7 +521,7 @@
 
 <dl class="py function">
 <dt id="textfeat.ptr_float_frompointer">
-<code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float_frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; ptr_float<a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float_frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float_frompointer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">textfeat.</code><code class="sig-name descname">ptr_float_frompointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#textfeat.ptr_float" title="textfeat.ptr_float">ptr_float</a><a class="reference internal" href="_modules/textfeat/swigTextFeatExtractor.html#ptr_float_frompointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#textfeat.ptr_float_frompointer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>t</strong> (<em>float *</em>) – </p>
