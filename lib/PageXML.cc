@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2021.02.04$
+ * @version $Version: 2021.03.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2021.02.04";
+static char class_version[] = "Version: 2021.03.15";
 
 /**
  * Returns the class version.
@@ -596,7 +596,19 @@ void mktemp( const char* tempbase, char *tempname ) {
   }
 }
 
-#if defined (__PAGEXML_GS__)
+int execute_command( std::string command, std::string caller ) {
+  char buffer[128];
+  std::string result = "";
+  FILE* pipe = popen(command.c_str(), "r");
+  if( ! pipe ) {
+    throw_runtime_error( "%s: error: unable to run command :: %s", caller.c_str(), command.c_str() );
+  }
+  while (!feof(pipe)) {
+    if (fgets(buffer, sizeof buffer, pipe) != nullptr)
+      result += buffer;
+  }
+  return pclose(pipe);
+}
 
 /**
  * Function that uses libgs to get pdf page sizes.
@@ -636,6 +648,7 @@ InputFile (r) file runpdfbegin\n\
 } for\n\
 outfile closefile";
 
+#if defined (__PAGEXML_GS__)
   code = gsapi_new_instance(&minst, NULL);
   if( code == 0 ) {
     code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
@@ -646,6 +659,15 @@ outfile closefile";
       code = code1;
     gsapi_delete_instance(minst);
   }
+#else
+  std::string command("gs");
+  for( int n=1; n<gsargc; n++ ) {
+    const char * quote = (n == gsargc-1) ? "\"" : "";
+    command += std::string(" ") + quote + gsargv[n] + quote;
+  }
+
+  code = execute_command(command+" 2>&1", std::string("gsGetPdfPageSizes"));
+#endif
 
   std::vector< std::pair<double,double> > pdf_pages;
   if( code == 0 ) {
@@ -697,6 +719,8 @@ outfile closefile";
   }
 
   unlink(outfile_temp);
+  if( code != 0 )
+    throw_runtime_error( "gsGetPdfPageSizes: error: failed to get pdf page sizes for pdf file: %s", pdf_path.c_str() );
   return code == 0 ? pdf_pages : std::vector< std::pair<double,double> >();
 }
 
@@ -730,6 +754,7 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
   gsargv[11] = outfile_arg.c_str();
   gsargv[12] = pdf_path.c_str();
 
+#if defined (__PAGEXML_GS__)
   code = gsapi_new_instance(&minst, NULL);
   if( code == 0 ) {
     code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
@@ -741,13 +766,21 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
     gsapi_delete_instance(minst);
   }
 
+#else
+  std::string command("gs");
+  for( int n=1; n<gsargc; n++ ) {
+    command += std::string(" ") + gsargv[n];
+  }
+
+  code = execute_command(command+" 2>&1", std::string("gsRenderPdfPageToPng"));
+#endif
+
   if( code != 0 ) {
     unlink(png_path.c_str());
-    throw_runtime_error( "gsRenderPdfPageToPng: failed to convert to png page %d of pdf file: %s", page_num, pdf_path.c_str() );
+    throw_runtime_error( "gsRenderPdfPageToPng: error: failed to convert to png page %d of pdf file: %s", page_num, pdf_path.c_str() );
   }
 }
 
-#endif
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
@@ -834,10 +867,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 
   // Get image number for multipage files //
-#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_GS__) || defined (__PAGEXML_MAGICK__)
   int imgnum = 0;
-#endif
-#if defined (__PAGEXML_GS__) || defined (__PAGEXML_MAGICK__)
   fbase = string(fname);
   cmatch base_match;
   if( std::regex_match(fname,base_match,reImagePageNum) ) {
@@ -846,16 +876,21 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     fname = aux2.c_str();
     fbase = std::string(base_match[1].str().c_str());
   }
-#endif
+
+  int ldensity = density;
+  bool lresize_coords = resize_coords;
+  if( default_density ) {
+    ldensity = default_density;
+    lresize_coords = true;
+  }
 
   releaseImage(pagenum);
 #if defined (__PAGEXML_LEPT__)
   // Leptonica load pdf page //
 #if defined (__PAGEXML_GS__)
   if( std::regex_match(fname, reIsPdf) ) {
-    int ldensity = density;
-    if( ! density ) {
-      if( resize_coords )
+    if( ! ldensity ) {
+      if( lresize_coords )
         throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
       std::vector< std::pair<double,double> > page_sizes = gsGetPdfPageSizes( std::string(fname) );
       double Dw = 72.0*getPageWidth(pagenum)/page_sizes[pagenum].first;
@@ -871,9 +906,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #elif defined (__PAGEXML_MAGICK__)
   if( std::regex_match(fname, reIsPdf) ) {
-    int ldensity = density;
-    if( ! density ) {
-      if( resize_coords )
+    if( ! ldensity ) {
+      if( lresize_coords )
         throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
       Magick::Image ptmp;
       ptmp.ping(fname);
@@ -916,8 +950,8 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
 #elif defined (__PAGEXML_IMG_MAGICK__)
   // ImageMagick load image //
   try {
-    if( density )
-      pagesImage[pagenum].density(std::to_string(density).c_str());
+    if( ldensity )
+      pagesImage[pagenum].density(std::to_string(ldensity).c_str());
     pagesImage[pagenum].read(fname);
     if( std::regex_match(fname, reIsPdf) )
       listFlattenImage( pagesImage[pagenum] );
@@ -929,13 +963,12 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #elif defined (__PAGEXML_IMG_CV__)
   // OpenCV load pdf page //
-#if defined (__PAGEXML_GS__)
+#if not defined (__PAGEXML_MAGICK__)
   if( std::regex_match(fname, reIsPdf) ) {
-    int ldensity = density;
-    if( ! density ) {
-      if( resize_coords )
+    if( ! ldensity ) {
+      if( lresize_coords )
         throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
-      std::vector< std::pair<double,double> > page_sizes = gsGetPdfPageSizes( std::string(fname) );
+      std::vector< std::pair<double,double> > page_sizes = gsGetPdfPageSizes( fbase );
       double Dw = 72.0*getPageWidth(pagenum)/page_sizes[pagenum].first;
       double Dh = 72.0*getPageHeight(pagenum)/page_sizes[pagenum].second;
       ldensity = std::round(0.5*(Dw+Dh));
@@ -947,11 +980,10 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     pagesImage[pagenum] = cv::imread(tmpfname);
     unlink(tmpfname);
   }
-#elif defined (__PAGEXML_MAGICK__)
+#else
   if( std::regex_match(fname, reIsPdf) ) {
-    int ldensity = density;
-    if( ! density ) {
-      if( resize_coords )
+    if( ! ldensity ) {
+      if( lresize_coords )
         throw_runtime_error( "PageXML.loadImage: density is required when reading pdf with resize_coords option" );
       Magick::Image ptmp;
       ptmp.ping(fname);
@@ -970,13 +1002,14 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     pagesImage[pagenum] = cv::imread(tmpfname);
     unlink(tmpfname);
   }
-  else
 #endif
+  else {
   // OpenCV load other image formats //
   pagesImage[pagenum] = cv::imread(fname);
   if ( ! pagesImage[pagenum].data ) {
     throw_runtime_error( "PageXML.loadImage: problems reading image: %s", fname );
     return;
+  }
   }
 #endif
 
@@ -1001,7 +1034,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   int height = getPageHeight(pagenum);
 
   // Resize XML coords if required //
-  if( ( width != imgwidth || height != imgheight ) && resize_coords ) {
+  if( ( width != imgwidth || height != imgheight ) && lresize_coords ) {
     double ratio_diff = imgwidth < imgheight ?
       (double)imgwidth/imgheight - (double)width/height:
       (double)imgheight/imgwidth - (double)height/width;
@@ -1096,6 +1129,15 @@ void PageXML::loadImages( const bool resize_coords, const int density ) {
   int numpages = count("//_:Page");
   for( int n=0; n<numpages; n++ )
     loadImage( n, NULL, resize_coords, density );
+}
+
+/**
+ * Sets a default density when loading pdf pages and makes resize_coords=true implicit.
+ *
+ * @param density        Default density to set.
+ */
+void PageXML::setDefaultDensity( int density ) {
+  default_density = density;
 }
 
 

@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2021.02.04$
+ * @version $Version: 2021.03.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -145,6 +145,7 @@ class PageXML {
     void loadImage( int pagenum, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
     void loadImage( xmlNodePt node, const char* fname = NULL, const bool resize_coords = false, int density = 0 );
     void loadImages( const bool resize_coords = false, const int density = 0 );
+    void setDefaultDensity( int density );
 #endif
     int simplifyIDs();
     void relativizeImageFilename( const char* xml_path );
@@ -328,6 +329,7 @@ class PageXML {
     xmlSchemaPtr valid_schema = NULL;
     xmlSchemaValidCtxtPtr valid_context = NULL;
     std::string schema_namespace;
+    int default_density = 0;
     void release();
     void freeXML();
     void freeSchema();

@@ -2046,6 +2046,14 @@ Returns:
 
 ";
 
+%feature("docstring") PageXML::setDefaultDensity "
+Sets a default density when loading pdf pages and makes resize_coords=true implicit.
+
+Arguments:
+    density (int): Default density to set.
+
+";
+
 %feature("docstring") PageXML::setImagesBaseDir "
 Arguments:
     imgBaseDir (std::string): 

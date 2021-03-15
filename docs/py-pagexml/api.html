@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; pagexml 2021.02.04 documentation</title>
+  <title>API Reference &mdash; pagexml 2021.03.15 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2021.02.04
+                2021.03.15
               </div>
             
           
@@ -1657,7 +1657,7 @@
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.addTableRegion" title="pagexml.PageXML.addTableRegion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTableRegion</span></code></a>(*args)</p></td>
-<td><p></p></td>
+<td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.addTextLine" title="pagexml.PageXML.addTextLine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addTextLine</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
@@ -1959,69 +1959,72 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setCoordsBBox" title="pagexml.PageXML.setCoordsBBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCoordsBBox</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setImagesBaseDir" title="pagexml.PageXML.setImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setImagesBaseDir</span></code></a>(imgBaseDir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setDefaultDensity" title="pagexml.PageXML.setDefaultDensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setDefaultDensity</span></code></a>(density)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setImagesBaseDir" title="pagexml.PageXML.setImagesBaseDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setImagesBaseDir</span></code></a>(imgBaseDir)</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param imgBaseDir</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageHeight" title="pagexml.PageXML.setPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageHeight</span></code></a>(node, height)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageHeight" title="pagexml.PageXML.setPageHeight"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageHeight</span></code></a>(node, height)</p></td>
 <td><p>Sets the height of a page (actually sets imageHeight accounting for image orientation).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageFilename" title="pagexml.PageXML.setPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageFilename</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageFilename" title="pagexml.PageXML.setPageImageFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageFilename</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageOrientation" title="pagexml.PageXML.setPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageOrientation</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageImageOrientation" title="pagexml.PageXML.setPageImageOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageImageOrientation</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageWidth" title="pagexml.PageXML.setPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageWidth</span></code></a>(node, width)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPageWidth" title="pagexml.PageXML.setPageWidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPageWidth</span></code></a>(node, width)</p></td>
 <td><p>Sets the width of a page (actually sets imageWidth accounting for image orientation).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setPolystripe" title="pagexml.PageXML.setPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPolystripe</span></code></a>(node, height[, offset, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setPolystripe" title="pagexml.PageXML.setPolystripe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setPolystripe</span></code></a>(node, height[, offset, …])</p></td>
 <td><p>Sets the Coords of a TextLine as a poly-stripe of the baseline.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setProperty" title="pagexml.PageXML.setProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setProperty</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setProperty" title="pagexml.PageXML.setProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setProperty</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setReadingDirection" title="pagexml.PageXML.setReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setReadingDirection</span></code></a>(elem, direction)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setReadingDirection" title="pagexml.PageXML.setReadingDirection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setReadingDirection</span></code></a>(elem, direction)</p></td>
 <td><p>Sets the reading direction to a TextRegion node.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setRotation" title="pagexml.PageXML.setRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setRotation</span></code></a>(elem, rotation)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setRotation" title="pagexml.PageXML.setRotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setRotation</span></code></a>(elem, rotation)</p></td>
 <td><p>Sets the rotation angle to a TextRegion node.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setTextEquiv" title="pagexml.PageXML.setTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setTextEquiv</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setTextEquiv" title="pagexml.PageXML.setTextEquiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setTextEquiv</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 4 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setValidationEnabled" title="pagexml.PageXML.setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValidationEnabled</span></code></a>(val)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setValidationEnabled" title="pagexml.PageXML.setValidationEnabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValidationEnabled</span></code></a>(val)</p></td>
 <td><p>Enables/disables schema validation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setValue" title="pagexml.PageXML.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setValue" title="pagexml.PageXML.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.setXmlFilePath" title="pagexml.PageXML.setXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setXmlFilePath</span></code></a>(xmlFilePath)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.setXmlFilePath" title="pagexml.PageXML.setXmlFilePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setXmlFilePath</span></code></a>(xmlFilePath)</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param xmlFilePath</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.simplifyIDs" title="pagexml.PageXML.simplifyIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplifyIDs</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.simplifyIDs" title="pagexml.PageXML.simplifyIDs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplifyIDs</span></code></a>()</p></td>
 <td><p>Simplifies IDs by removing imgbase prefixes and replaces invalid characters with _.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.stringToPoints" title="pagexml.PageXML.stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stringToPoints</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.stringToPoints" title="pagexml.PageXML.stringToPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stringToPoints</span></code></a>(*args)</p></td>
 <td><p>Overloaded function with 2 signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.toString" title="pagexml.PageXML.toString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toString</span></code></a>([indent, validate])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.toString" title="pagexml.PageXML.toString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toString</span></code></a>([indent, validate])</p></td>
 <td><p>Creates a string representation of the Page XML.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.updateLastChange" title="pagexml.PageXML.updateLastChange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateLastChange</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.updateLastChange" title="pagexml.PageXML.updateLastChange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateLastChange</span></code></a>()</p></td>
 <td><p>Updates the last change time stamp.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.version" title="pagexml.PageXML.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.version" title="pagexml.PageXML.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a>()</p></td>
 <td><p>Returns the class version.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pagexml.PageXML.write" title="pagexml.PageXML.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pagexml.PageXML.write" title="pagexml.PageXML.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Writes the current state of the XML to a file using utf-8 encoding.</p></td>
 </tr>
 </tbody>
@@ -2215,7 +2218,46 @@
 <dl class="py method">
 <dt id="pagexml.PageXML.addTableRegion">
 <code class="sig-name descname">addTableRegion</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#PageXML.addTableRegion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.addTableRegion" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Overloaded function with 2 signatures.</p>
+<p><strong>Signature 1</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">xmlNodePt</span> <span class="pre">PageXML::addTableRegion(xmlNodePt</span> <span class="pre">node,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*id=NULL,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*before_id=NULL,</span> <span class="pre">bool</span> <span class="pre">prepend=false)</span></code></p>
+<p>Adds a TableRegion to a given node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<em>xmlNodePt</em>) – The node of element to add the TableRegion.</p></li>
+<li><p><strong>id</strong> (<em>const char *</em>) – ID for TableRegion, if NULL it is selected automatically.</p></li>
+<li><p><strong>before_id</strong> (<em>const char *</em>) – If !=NULL inserts it before the TableRegion with this ID.</p></li>
+<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to add element before all other TableRegions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pointer to created element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xmlNodePt</p>
+</dd>
+</dl>
+<p><strong>Signature 2</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">xmlNodePt</span> <span class="pre">PageXML::addTableRegion(const</span> <span class="pre">char</span> <span class="pre">*xpath,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*id=NULL,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*before_id=NULL,</span> <span class="pre">bool</span> <span class="pre">prepend=false)</span></code></p>
+<p>Adds new TableRegion to a given xpath.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xpath</strong> (<em>const char *</em>) – Selector for element to add the TableRegion.</p></li>
+<li><p><strong>id</strong> (<em>const char *</em>) – ID for TableRegion, if NULL it is selected automatically.</p></li>
+<li><p><strong>before_id</strong> (<em>const char *</em>) – If !=NULL inserts it before the TableRegion with this ID.</p></li>
+<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pointer to created element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xmlNodePt</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pagexml.PageXML.addTextLine">
@@ -4815,6 +4857,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="pagexml.PageXML.setDefaultDensity">
+<code class="sig-name descname">setDefaultDensity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">density</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pagexml/swigPageXML.html#PageXML.setDefaultDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pagexml.PageXML.setDefaultDensity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pagexml.PageXML.setImagesBaseDir">

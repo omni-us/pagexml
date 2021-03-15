@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pagexml &mdash; pagexml 2021.02.04 documentation</title>
+  <title>pagexml &mdash; pagexml 2021.03.15 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                2021.02.04
+                2021.03.15
               </div>
             
           
@@ -10389,6 +10389,9 @@
         <span class="k">return</span> <span class="n">_swigPageXML</span><span class="o">.</span><span class="n">PageXML_loadImages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resize_coords</span><span class="p">,</span> <span class="n">density</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="PageXML.setDefaultDensity"><a class="viewcode-back" href="../../api.html#pagexml.PageXML.setDefaultDensity">[docs]</a>    <span class="k">def</span> <span class="nf">setDefaultDensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_swigPageXML</span><span class="o">.</span><span class="n">PageXML_setDefaultDensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="PageXML.simplifyIDs"><a class="viewcode-back" href="../../api.html#pagexml.PageXML.simplifyIDs">[docs]</a>    <span class="k">def</span> <span class="nf">simplifyIDs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
@@ -12539,7 +12542,44 @@
 
 
 <div class="viewcode-block" id="PageXML.addTableRegion"><a class="viewcode-back" href="../../api.html#pagexml.PageXML.addTableRegion">[docs]</a>    <span class="k">def</span> <span class="nf">addTableRegion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Overloaded function with 2 signatures.</span>
+
+<span class="sd">        **Signature 1**</span>
+
+<span class="sd">        ``xmlNodePt PageXML::addTableRegion(xmlNodePt node, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``</span>
+
+<span class="sd">        Adds a TableRegion to a given node.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            node (xmlNodePt): The node of element to add the TableRegion.</span>
+<span class="sd">            id (const char *): ID for TableRegion, if NULL it is selected automatically.</span>
+<span class="sd">            before_id (const char *): If !=NULL inserts it before the TableRegion with this ID.</span>
+<span class="sd">            prepend (bool): Whether to add element before all other TableRegions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            xmlNodePt: Pointer to created element.</span>
+
+<span class="sd">        **Signature 2**</span>
+
+<span class="sd">        ``xmlNodePt PageXML::addTableRegion(const char *xpath, const char *id=NULL, const char *before_id=NULL, bool prepend=false)``</span>
+
+<span class="sd">        Adds new TableRegion to a given xpath.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            xpath (const char *): Selector for element to add the TableRegion.</span>
+<span class="sd">            id (const char *): ID for TableRegion, if NULL it is selected automatically.</span>
+<span class="sd">            before_id (const char *): If !=NULL inserts it before the TableRegion with this ID.</span>
+<span class="sd">            prepend (bool): </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            xmlNodePt: Pointer to created element.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_swigPageXML</span><span class="o">.</span><span class="n">PageXML_addTableRegion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="PageXML.addPage"><a class="viewcode-back" href="../../api.html#pagexml.PageXML.addPage">[docs]</a>    <span class="k">def</span> <span class="nf">addPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
