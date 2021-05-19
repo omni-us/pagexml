@@ -15,10 +15,10 @@ dockerbuild: &dockerbuild
         paths: ./py-pagexml/dist/*.whl
 
 jobs:
-  build-1604-py35:
-    docker:
-      - image: mauvilsa/pagexml:build-ubuntu16.04-py35
-    <<: *dockerbuild
+  #build-1604-py35:
+  #  docker:
+  #    - image: mauvilsa/pagexml:build-ubuntu16.04-py35
+  #  <<: *dockerbuild
   build-1804-py36:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu18.04-py36
@@ -59,8 +59,8 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-1604-py35:
-          <<: *tagfilter
+      #- build-1604-py35:
+      #    <<: *tagfilter
       - build-1804-py36:
           <<: *tagfilter
       - build-2004-py38:
@@ -76,6 +76,6 @@ workflows:
           <<: *tagfilter
           context: pagexml-context
           requires:
-            - build-1604-py35
+            #- build-1604-py35
             - build-1804-py36
             - build-2004-py38
