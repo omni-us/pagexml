@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2021.03.15$
+ * @version $Version: 2021.07.07$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -47,7 +47,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2021.03.15";
+static char class_version[] = "Version: 2021.07.07";
 
 /**
  * Returns the class version.
@@ -885,6 +885,9 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 
   releaseImage(pagenum);
+
+  try {
+
 #if defined (__PAGEXML_LEPT__)
   // Leptonica load pdf page //
 #if defined (__PAGEXML_GS__)
@@ -1012,6 +1015,12 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
   }
 #endif
+
+  }
+  catch( exception& e ) {
+    throw_runtime_error( "PageXML.loadImage: problems reading image: %s :: %s", fname, e.what() );
+    return;
+  }
 
 #if defined (__PAGEXML_LEPT__)
   int imgwidth = pixGetWidth(pagesImage[pagenum]);
