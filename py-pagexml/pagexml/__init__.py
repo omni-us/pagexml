@@ -7,7 +7,7 @@ except ImportError:
     cv2 = False
 
 
-__version__ = '2021.03.15'
+__version__ = '2021.07.07'
 
 PAGE_XSD_SEARCHINK = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
 PAGE_XSD_OMNIUS = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_omnius.xsd'
