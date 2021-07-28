@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, Extension, Command
+from setuptools import setup, Extension
 from glob import glob
+import subprocess
 import sysconfig
 import sys
 import os
-import re
+#import re
 
 
 NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
@@ -40,6 +41,16 @@ class build(_build):
                     ('build_scripts', _build.has_scripts)]
 
 CMDCLASS['build'] = build
+
+
+from setuptools.command.build_ext import build_ext as build_ext_orig
+class build_ext(build_ext_orig):
+    def run(self):
+        super().run()
+        subprocess.check_call(['sed', '-i', '/^# Import the low-level C.C++ module/{ N;N;N;N; s|.*\\n *import |import |; }', 'textfeat/swigTextFeatExtractor.py'])
+        print('warning: applied circular import patch to textfeat/swigTextFeatExtractor.py')
+
+CMDCLASS['build_ext'] = build_ext
 
 
 from setuptools import Distribution as _Distribution
