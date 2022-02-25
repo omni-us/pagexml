@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2021.07.07$
+ * @version $Version: 2022.02.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -11,13 +11,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <math.h>
 #include <stdexcept>
 #include <regex>
 #include <iomanip>
 #include <unordered_set>
 #include <cassert>
+#include <fstream>
+#include <set>
 
+#ifdef __PAGEXML_SLIM__
+#include "mock_cv.h"
+#else
 #include <opencv2/opencv.hpp>
+#endif
 #include <libxml/xpathInternals.h>
 #include <libxslt/xsltconfig.h>
 
@@ -47,7 +54,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2021.07.07";
+static char class_version[] = "Version: 2022.02.25";
 
 /**
  * Returns the class version.
@@ -65,7 +72,9 @@ void PageXML::printVersions( FILE* file ) {
   fprintf( file, "compiled against PageXML %s\n", class_version+9 );
   fprintf( file, "compiled against libxml2 %s, linked with %s\n", LIBXML_DOTTED_VERSION, xmlParserVersion );
   fprintf( file, "compiled against libxslt %s, linked with %s\n", LIBXSLT_DOTTED_VERSION, xsltEngineVersion );
+#ifndef __PAGEXML_SLIM__
   fprintf( file, "compiled against opencv %s\n", CV_VERSION );
+#endif
 }
 
 
@@ -98,8 +107,8 @@ void PageXML::freeXML() {
   xmlPath = string("");
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
   releaseImages();
-#endif
   pagesImage = std::vector<PageImage>();
+#endif
   pagesImageFilename = std::vector<std::string>();
   pagesImageBase = std::vector<std::string>();
   process_running = NULL;
@@ -567,7 +576,9 @@ void PageXML::setupXml() {
     return;
   }
 
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
   pagesImage = std::vector<PageImage>(elem_page.size());
+#endif
   pagesImageFilename = std::vector<std::string>(elem_page.size());
   pagesImageBase = std::vector<std::string>(elem_page.size());
 
@@ -616,9 +627,6 @@ int execute_command( std::string command, std::string caller ) {
  * @param pdf_path    Path to pdf file to process.
  */
 std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path ) {
-  void *minst;
-  int code, code1;
-
   char outfile_temp[FILENAME_MAX];
   mktemp( "tmp_gsGetPdfPageSizes_XXXXXXXX.txt", outfile_temp );
   std::string outfile_arg = std::string("-sOutputFile=")+outfile_temp;
@@ -648,7 +656,10 @@ InputFile (r) file runpdfbegin\n\
 } for\n\
 outfile closefile";
 
+  int code;
 #if defined (__PAGEXML_GS__)
+  int code1;
+  void *minst;
   code = gsapi_new_instance(&minst, NULL);
   if( code == 0 ) {
     code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
@@ -730,14 +741,11 @@ outfile closefile";
  * @param pdf_path    Path to pdf file to process.
  */
 void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_path, int density ) {
-  int code, code1;
-
   std::string first_page_arg = std::string("-dFirstPage=")+std::to_string(page_num);
   std::string last_page_arg = std::string("-dLastPage=")+std::to_string(page_num);
   std::string outfile_arg = std::string("-sOutputFile=")+png_path;
   std::string density_arg = std::string("-r")+std::to_string(density);
 
-  void *minst;
   int gsargc = 13;
   const char * gsargv[gsargc];
   gsargv[0] = "pdf_to_png";
@@ -754,7 +762,10 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
   gsargv[11] = outfile_arg.c_str();
   gsargv[12] = pdf_path.c_str();
 
+  int code;
 #if defined (__PAGEXML_GS__)
+  int code1;
+  void *minst;
   code = gsapi_new_instance(&minst, NULL);
   if( code == 0 ) {
     code = gsapi_set_arg_encoding(minst, GS_ARG_ENCODING_UTF8);
@@ -805,6 +816,8 @@ bool listFlattenImage( Magick::Image& image, const Magick::Color* color = NULL )
 }
 
 #endif
+
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 
 /**
  * Releases an already loaded image.
@@ -1149,6 +1162,7 @@ void PageXML::setDefaultDensity( int density ) {
   default_density = density;
 }
 
+#endif
 
 #endif
 
@@ -1300,6 +1314,8 @@ string PageXML::pointsToString( vector<cv::Point2f> points, bool rounded ) {
   return str;
 }
 
+#ifndef __PAGEXML_SLIM__
+
 /**
  * Converts a vector of points to a string in format 'x1,y1 x2,y2 ...'.
  *
@@ -1315,6 +1331,8 @@ string PageXML::pointsToString( vector<cv::Point> points ) {
   }
   return str;
 }
+
+#endif
 
 /**
  * Returns number of matched nodes for a given xpath.
@@ -2292,6 +2310,8 @@ void PageXML::setReadingDirection( const xmlNodePt node, PAGEXML_READ_DIRECTION 
   }
 }
 
+#ifndef __PAGEXML_SLIM__
+
 /**
  * Projects points onto a line defined by a direction and y-offset
  */
@@ -2302,6 +2322,8 @@ std::vector<double> static project_2d_to_1d( std::vector<cv::Point2f> points, cv
     proj[n] = points[n].x*axis.x + (points[n].y-yoffset)*axis.y;
   return proj;
 }
+
+#endif
 
 /**
  * Computes the difference between two angles [-PI,PI] accounting for the discontinuity
@@ -2982,6 +3004,8 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points,
   return setCoords( node, points, &conf );
 }
 
+#ifndef __PAGEXML_SLIM__
+
 /**
  * Adds or modifies (if already exists) the Coords for a given node.
  *
@@ -2993,6 +3017,8 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point2f>& points,
 xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, const double* _conf ) {
   std::vector<cv::Point2f> points2f;
   cv::Mat(points).convertTo(points2f, cv::Mat(points2f).type());
+  //for( int n=0; n<points.size(); n++ )
+  //  points2f.push_back((cv::Point2f)points[n]);
   return setCoords( node, points2f, _conf );
 }
 
@@ -3007,6 +3033,8 @@ xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, c
 xmlNodePt PageXML::setCoords( xmlNodePt node, const vector<cv::Point>& points, const double conf ) {
   return setCoords( node, points, &conf );
 }
+
+#endif
 
 /**
  * Adds or modifies (if already exists) the Coords for a given xpath.
@@ -3820,6 +3848,8 @@ string PageXML::getPageImageFilename( int pagenum ) {
   return getPageImageFilename( selectNth("//_:Page",pagenum) );
 }
 
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
+
 /**
  * Checks whether a page image is loaded.
  */
@@ -3857,6 +3887,8 @@ PageImage PageXML::getPageImage( int pagenum ) {
 PageImage PageXML::getPageImage( xmlNodePt node ) {
   return getPageImage( getPageNumber(node) );
 }
+
+#endif
 
 /**
  * Adds a Glyph to a given node.
@@ -4244,7 +4276,7 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
 
 #if defined (__PAGEXML_LEPT__)
   PageImage pageImage = NULL;
-#else
+#elif defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
   PageImage pageImage;
 #endif
   string imageFilename;
@@ -4260,16 +4292,22 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
     page = addElem( "Page", id, before_node, PAGEXML_INSERT_PREVSIB, true );
     page_num = getPageNumber(page);
 
-    int numpages = pagesImage.size();
+    int numpages = pagesImageFilename.size();
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     pagesImage.push_back(pagesImage[numpages-1]);
+#endif
     pagesImageFilename.push_back(pagesImageFilename[numpages-1]);
     pagesImageBase.push_back(pagesImageBase[numpages-1]);
     for( int n=numpages-1; n>page_num; n-- ) {
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
       pagesImage[n] = pagesImage[n-1];
+#endif
       pagesImageFilename[n] = pagesImageFilename[n-1];
       pagesImageBase[n] = pagesImageBase[n-1];
     }
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     pagesImage[page_num] = pageImage;
+#endif
     pagesImageFilename[page_num] = imageFilename;
     pagesImageBase[page_num] = imageBase;
   }
@@ -4282,7 +4320,9 @@ xmlNodePt PageXML::addPage( const char* image, const int imgW, const int imgH, c
     page = addElem( "Page", id, pcgts, PAGEXML_INSERT_APPEND, true );
     page_num = getPageNumber(page);
 
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     pagesImage.push_back(pageImage);
+#endif
     pagesImageFilename.push_back(imageFilename);
     pagesImageBase.push_back(imageBase);
   }
@@ -5039,6 +5079,8 @@ int PageXML::copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr
 
 #endif
 
+#ifndef __PAGEXML_SLIM__
+
 /**
  * Determines groups of left-right text elem continuations (requires single segment polystripe).
  *
@@ -5448,6 +5490,8 @@ std::pair<std::vector<int>, std::vector<int> > PageXML::getLeftRightTopBottomRea
 
   return std::pair<std::vector<int>, std::vector<int> >(reading_order, subgroup_lengths);
 }
+
+#endif
 
 /**
  * Adds a Group to the PcGts node.

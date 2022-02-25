@@ -7,6 +7,7 @@ import pagexml
 TESTSDIR = os.path.dirname(os.path.realpath(__file__))
 
 
+@unittest.skipIf(pagexml.is_slim(), 'not available in pagexml_slim')
 class OrderingTests(unittest.TestCase):
     def test_getLeftRightTopBottomReadingOrder(self):
         pxml = pagexml.PageXML(os.path.join(TESTSDIR, 'examples/lorem_tess.xml'))

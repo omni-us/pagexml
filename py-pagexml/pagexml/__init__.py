@@ -57,3 +57,7 @@ def imwrite(filename, img, params=[]):
     if not cv2:
         raise Exception('cv2 and numpy required but not available. To have optional dependencies install with `pip3 install pagexml[all]`')
     return cv2.imwrite(filename, np.asarray(img), params)
+
+
+def is_slim():
+    return not hasattr(_PageXML, 'selectByOverlap')

@@ -15,6 +15,13 @@ and the schema itself included in py-pagexml can be found at:
 
 The official online documentation of py-pagexml is available at `<https://omni-us.github.io/pagexml/py-pagexml>`_.
 
+The py-pagexml package can be built with two modes: normal and slim. As the name
+implies, the slim build is smaller but more importantly it has less library
+dependencies. This also means that there are some features which are not
+available, namely: functions related to images, e.g.
+``PageXML.crop``; and functions that perform intersections of polygons, e.g.
+``PageXML.selectByOverlap``.
+
 
 Software dependencies
 ---------------------
@@ -33,9 +40,12 @@ listed below.
 Runtime dependencies
 ~~~~~~~~~~~~~~~~~~~~
 
+Slim:
  - python3
  - libxml2
  - libxslt1.1
+
+Normal (in addition to the previous):
  - libopencv-imgcodecs (Ubuntu 18.04/20.04) | libopencv-highgui (Ubuntu 16.04)
  - libopencv-imgproc
  - libopencv-core
@@ -64,7 +74,13 @@ simple as:
 
 .. code-block:: bash
 
-    pip3 install pagexml[all]
+    pip3 install pagexml
+
+The slim build has a different name, thus the install comand would be:
+
+.. code-block:: bash
+
+    pip3 install pagexml_slim
 
 Otherwise you can install it from a github `release
 <https://github.com/omni-us/pagexml/releases>`_. Each release includes multiple
@@ -75,12 +91,11 @@ as follows replacing the URL with the one you copied:
 
 .. code-block:: bash
 
-    pip3 install https://github.com/omni-us/pagexml/releases/download/20*/pagexml-20*-linux_x86_64.whl[all]
+    pip3 install https://github.com/omni-us/pagexml/releases/download/20*/pagexml-20*-linux_x86_64.whl
 
 
 Building the wheel file from source
 -----------------------------------
-
 
 Clone the github repository `<https://github.com/omni-us/pagexml.git>`_, go to
 the py-pagexml directory and then run:
@@ -89,6 +104,13 @@ the py-pagexml directory and then run:
 
     pip3 install --editable .[dev,test,all]
     ./setup.py bdist_wheel
+
+To build the slim package, set the ``PAGEXML_SLIM`` environment variable to any
+value, e.g.:
+
+.. code-block:: bash
+
+    PAGEXML_SLIM= ./setup.py bdist_wheel
 
 
 Simple usage examples

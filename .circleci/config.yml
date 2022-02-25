@@ -10,6 +10,9 @@ dockerbuild: &dockerbuild
           cd py-pagexml
           ./setup.py bdist_wheel
           ./setup.py test
+          rm -r build
+          PAGEXML_SLIM= ./setup.py bdist_wheel
+          ./setup.py test
     - persist_to_workspace:
         root: .
         paths: ./py-pagexml/dist/*.whl

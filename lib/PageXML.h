@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2021.07.07$
+ * @version $Version: 2022.02.25$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -17,7 +17,11 @@
 #include <libxml/xpath.h>
 #include <libxml/xmlschemas.h>
 #include <libxslt/transform.h>
+#ifdef __PAGEXML_SLIM__
+#include "mock_cv.h"
+#else
 #include <opencv2/opencv.hpp>
+#endif
 
 #define xmlNodePt xmlNode*
 
@@ -75,6 +79,7 @@ enum PAGEXML_READ_DIRECTION {
   PAGEXML_READ_DIRECTION_BTT
 };
 
+#if defined (__PAGEXML_OGR__)
 enum PAGEXML_OVERLAP {
   PAGEXML_OVERLAP_COORDS_IOU = 0,
   PAGEXML_OVERLAP_COORDS_ISECT,
@@ -82,7 +87,9 @@ enum PAGEXML_OVERLAP {
   PAGEXML_OVERLAP_BASELINE_IWA,
   PAGEXML_OVERLAP_COORDS_BASELINE_IWA
 };
+#endif
 
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
 struct NamedImage {
   std::string id;
   std::string name;
@@ -113,6 +120,7 @@ struct NamedImage {
     node = _node;
   }
 };
+#endif
 
 #if defined (__PAGEXML_NOTHROW__)
 #define throw_runtime_error( fmt, ... ) fprintf( stderr, "error: " fmt "\n", ##__VA_ARGS__ )
@@ -154,12 +162,16 @@ class PageXML {
     std::vector<std::string> getImageBases();
     bool areIDsUnique();
     std::string getNodeName( xmlNodePt node, xmlNodePt base_node = NULL );
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     std::vector<NamedImage> crop( const char* xpath,                   cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
     std::vector<NamedImage> crop( std::vector<xmlNodePt> elems_coords, cv::Point2f* margin = NULL, bool opaque_coords = true, const char* transp_xpath = NULL, const char* base_xpath = NULL );
+#endif
     static std::vector<cv::Point2f> stringToPoints( const char* spoints );
     static std::vector<cv::Point2f> stringToPoints( std::string spoints );
     static std::string pointsToString( std::vector<cv::Point2f> points, bool rounded = false );
+#ifndef __PAGEXML_SLIM__
     static std::string pointsToString( std::vector<cv::Point> points );
+#endif
     static void pointsLimits( std::vector<cv::Point2f>& points, double& xmin, double& xmax, double& ymin, double& ymax );
     static std::vector<cv::Point2f> pointsBBox( std::vector<cv::Point2f> points );
     static bool isBBox( const std::vector<cv::Point2f>& points );
@@ -225,8 +237,10 @@ class PageXML {
     xmlNodePt setTextEquiv( const char* xpath, const char* text, const double conf,          const char* type = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point2f>& points, const double conf );
+#ifndef __PAGEXML_SLIM__
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,   const double* _conf = NULL );
     xmlNodePt setCoords( xmlNodePt node,   const std::vector<cv::Point>& points,    const double conf );
+#endif
     xmlNodePt setCoords( const char* xpath, const std::vector<cv::Point2f>& points, const double* _conf = NULL );
     xmlNodePt setCoords( const char* xpath, const std::vector<cv::Point2f>& points,  const double conf );
     xmlNodePt setCoordsBBox( xmlNodePt node, double xmin, double ymin, double width, double height, const double* _conf = NULL, bool subone = true );
@@ -265,10 +279,12 @@ class PageXML {
     void setPageImageFilename( int pagenum, const char* image );
     std::string getPageImageFilename( xmlNodePt node );
     std::string getPageImageFilename( int pagenum );
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     bool isPageImageLoaded( int pagenum );
     bool isPageImageLoaded( xmlNodePt node );
     PageImage getPageImage( int pagenum );
     PageImage getPageImage( xmlNodePt node );
+#endif
     xmlNodePt addGlyph( xmlNodePt node, const char* id = NULL, const char* before_id = NULL );
     xmlNodePt addGlyph( const char* xpath, const char* id = NULL, const char* before_id = NULL );
     xmlNodePt addWord( xmlNodePt node, const char* id = NULL, const char* before_id = NULL );
@@ -306,8 +322,10 @@ class PageXML {
     std::vector<xmlNodePt> selectByOverlap( std::vector<cv::Point2f> points, int pagenum, const char* xpath = ".//_:TextLine", double overlap_thr = 0.1, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IWA );
     int copyTextLinesAssignByOverlap( PageXML& pageFrom, double overlap_thr = 0.0, PAGEXML_OVERLAP overlap_type = PAGEXML_OVERLAP_COORDS_IOU, double comb_alpha = 0.5, bool verbose = false );
 #endif
+#ifndef __PAGEXML_SLIM__
     int getLeftRightTextContinuationGroups( std::vector<xmlNodePt> elems, std::vector<std::vector<int> >& _group_order, std::vector<double>& _group_score, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
     std::pair<std::vector<int>, std::vector<int> > getLeftRightTopBottomReadingOrder( std::vector<xmlNodePt> elems, double max_angle_diff = 25*M_PI/180, double max_horiz_iou = 0.1, double min_prolong_fact = 0.5, double prolong_alpha = 0.8, bool fake_baseline = false, double recurse_factor = 0.9 );
+#endif
     xmlNodePt addGroup( const char* id = NULL, std::vector<xmlNodePt> elems = std::vector<xmlNodePt>(), xmlNodePt before_node = NULL );
     int addToGroup( xmlNodePt group, std::vector<xmlNodePt> elems );
     std::vector<xmlNodePt> selectGroupElements( xmlNodePt group, bool recurse = true );
@@ -316,7 +334,9 @@ class PageXML {
     xmlNsPtr rpagens = NULL;
     std::string imgDir;
     std::string xmlPath;
+#if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)
     std::vector<PageImage> pagesImage;
+#endif
     std::vector<std::string> pagesImageFilename;
     std::vector<std::string> pagesImageBase;
     xmlDocPtr xml = NULL;

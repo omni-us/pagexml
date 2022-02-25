@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, Extension, Command
-import subprocess
-import sysconfig
-import sys
-import os
-import re
+import glob
 import importlib
+import os
+import subprocess
+import sys
+import sysconfig
+from setuptools import setup, Extension, Command
 
 
 NAME = next(filter(lambda x: x.startswith('name = '), open('setup.cfg').readlines())).strip().split()[-1]
 NAME_TESTS = next(filter(lambda x: x.startswith('test_suite = '), open('setup.cfg').readlines())).strip().split()[-1]
-VERSION = next(filter(lambda x: x.startswith('__version__ = '), open(NAME+'/__init__.py').readlines())).strip().replace("'","").split()[-1]
 CMDCLASS = {}
 
 
@@ -75,43 +74,53 @@ class build_ext(build_ext_orig):
     def run(self):
         super().run()
         subprocess.check_call(['sed', '-i', '/^# Import the low-level C.C++ module/{ N;N;N;N; s|.*\\n *import |import |; }', 'pagexml/swigPageXML.py'])
-        print('warning: applied circular import patch to pagexml/swigPageXML.py')
+        print('info: applied circular import patch to pagexml/swigPageXML.py')
+        so_file = glob.glob(self.build_lib + '/_swigPageXML*.so')
+        subprocess.check_call(['strip', '--strip-debug'] + so_file)
+        print(f'info: stripped debug symbols from extension file {so_file}')
 
 CMDCLASS['build_ext'] = build_ext
 
 
 from setuptools import Distribution as _Distribution
 class Distribution(_Distribution):
-    global_options = _Distribution.global_options + [('magick', None, 'Compile textfeat extension with __PAGEXML_IMG_MAGICK__')]
+    global_options = _Distribution.global_options + [('magick', None, 'Compile pagexml extension with __PAGEXML_IMG_MAGICK__')]
 
 
-def pagexml_Extension(magick):
+def pagexml_Extension(slim, magick):
     import pkgconfig
-    libs = ['opencv','libxml-2.0','libxslt','gdal']
-    if magick:
-        libs += ['Magick++']
+    libs = ['libxml-2.0', 'libxslt']
+    if not slim:
+        libs = ['opencv4', 'gdal'] + libs
+        if magick:
+            libs += ['Magick++']
     compile_args = ['-std=c++11']
     link_args = []
+
     for lib in libs:
         if not pkgconfig.exists(lib):
             raise FileNotFoundError('pkgconfig did not find '+lib)
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
-    #compile_args += pkgconfig.cflags('opencv').split()
-    #cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_highgui')
-    #link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
-    cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
-    defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
-    pageimage = 'Magick::Image' if magick else 'cv::Mat'
-    define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
-    swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
-    print('pagexml_Extension configured with '+defimage)
+
+    if slim:
+        define_macros = [('__PAGEXML_SLIM__','')]
+        swig_opts = ['-D__PAGEXML_SLIM__']
+    else:
+        defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
+        pageimage = 'Magick::Image' if magick else 'cv::Mat'
+        define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
+        swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
+    cvinc = pkgconfig.cflags('opencv4').split()[0].rsplit('/opencv',1)[0]
+    swig_opts += [cvinc]
+
+    print(f'pagexml_Extension configured with swig_opts={swig_opts}')
     return Extension('_swigPageXML',
                      define_macros = define_macros + [('SWIG_PYTHON_SILENT_MEMLEAK','')],
                      extra_compile_args = compile_args,
                      extra_link_args = link_args,
-                     swig_opts = swig_opts + [cvinc,'-I./opencv-swig/lib','-modern','-keyword','-w511','-c++'],
-                     sources = ['pagexml/PageXML.i','pagexml/PageXML.cc'])
+                     swig_opts = swig_opts + ['-I./opencv-swig/lib', '-keyword', '-w511', '-c++'],
+                     sources = ['pagexml/PageXML.i', 'pagexml/PageXML.cc'])
 
 
 def distutils_dir_name(dname):
@@ -124,10 +133,19 @@ def distutils_dir_name(dname):
 sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', distutils_dir_name('lib'))] + sys.path
 
 
+name = NAME
+slim = False
+magick = False
+if 'PAGEXML_SLIM' in os.environ:
+    name += '_slim'
+    slim = True
+if 'PAGEXML_IMG_MAGICK' in os.environ:
+    name += '_magick'
+    magick = True
+
+
 ## Run setuptools setup ##
-setup(version=VERSION,
-      name=NAME+('_magick' if '--magick' in sys.argv else ''),
-      ext_modules=[pagexml_Extension(True if '--magick' in sys.argv else False)],
-      package_data={NAME: ['xsd/*.xsd'], NAME+'_tests': ['examples/*.xml', 'examples/*.png']},
+setup(name=name,
+      ext_modules=[pagexml_Extension(slim=slim, magick=magick)],
       distclass=Distribution,
       cmdclass=CMDCLASS)
