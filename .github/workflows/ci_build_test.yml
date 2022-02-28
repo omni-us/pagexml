@@ -15,6 +15,7 @@ jobs:
           apt-get install -y swig
       - name: Build wheel files
         run: |
+          git submodule update --init py-pagexml/lxml
           cd py-pagexml
           for ver in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39; do
             echo "=== Building wheel for $(/opt/python/$ver/bin/python3 --version) ==="
