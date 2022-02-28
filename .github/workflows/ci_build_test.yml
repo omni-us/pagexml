@@ -24,10 +24,11 @@ jobs:
             auditwheel repair dist/*$ver-linux_x86_64.whl -w dist
             rm dist/*$ver-linux_x86_64.whl
           done
+          mv dist ../wheels
       - uses: actions/upload-artifact@v2
         with:
-          name: dist
-          path: dist
+          name: wheels
+          path: wheels
   unittest:
     needs: build
     runs-on: ubuntu-latest
@@ -42,10 +43,10 @@ jobs:
           python-version: ${{ matrix.python }}
       - uses: actions/download-artifact@v2
         with:
-          name: dist
+          name: wheels
       - name: Install package
         run:
           py=$(python3 --version | sed -r 's|Python 3\.([0-9]+)\..*|3\1|')
-          pip3 install dist/*-cp$py-*.whl
+          pip3 install wheels/*-cp$py-*.whl
       - name: Run unit tests
         run: python3 -m pagexml_tests
