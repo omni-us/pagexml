@@ -45,7 +45,7 @@ jobs:
         with:
           name: wheels
       - name: Install package
-        run:
+        run: |
           py=$(python3 --version | sed -r 's|Python 3\.([0-9]+)\..*|3\1|')
           pip3 install wheels/*-cp$py-*.whl
       - name: Run unit tests
