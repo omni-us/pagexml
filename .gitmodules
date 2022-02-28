@@ -1,6 +1,12 @@
-[submodule "py-pagexml/opencv-swig"]
-	path = py-pagexml/opencv-swig
-	url = https://github.com/renatoGarcia/opencv-swig.git
 [submodule "pageformat"]
 	path = xsd/pageformat
 	url = https://github.com/omni-us/pageformat.git
+	shallow = true
+[submodule "py-pagexml/opencv-swig"]
+	path = py-pagexml/opencv-swig
+	url = https://github.com/renatoGarcia/opencv-swig.git
+	shallow = true
+[submodule "py-pagexml/lxml"]
+	path = py-pagexml/lxml
+	url = https://github.com/lxml/lxml.git
+	shallow = true

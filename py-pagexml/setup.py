@@ -87,9 +87,29 @@ class Distribution(_Distribution):
     global_options = _Distribution.global_options + [('magick', None, 'Compile pagexml extension with __PAGEXML_IMG_MAGICK__')]
 
 
+def build_xml_deps():
+    sys.path.append(os.path.join(os.getcwd(), 'lxml'))
+    os.environ['CFLAGS'] = '-O3 -fPIC'
+
+    from buildlibxml import build_libxml2xslt  # pylint: disable=import-error
+
+    XML2_CONFIG, XSLT_CONFIG = build_libxml2xslt(
+        download_dir='download',
+        build_dir='build/lxml',
+        static_include_dirs=[],
+        static_library_dirs=[],
+        static_cflags=[],
+        static_binaries=[],
+    )
+
+    compile_args = subprocess.check_output([XSLT_CONFIG, '--cflags'])
+    link_args = subprocess.check_output([XSLT_CONFIG, '--libs'])
+    return compile_args.decode('utf-8').split(), link_args.decode('utf-8').split()
+
+
 def pagexml_Extension(slim, magick):
     import pkgconfig
-    libs = ['libxml-2.0', 'libxslt']
+    libs = []
     if not slim:
         libs = ['opencv4', 'gdal'] + libs
         if magick:
@@ -103,6 +123,10 @@ def pagexml_Extension(slim, magick):
         compile_args += pkgconfig.cflags(lib).split()
         link_args += pkgconfig.libs(lib).split()
 
+    xml_compile_args, xml_link_args = build_xml_deps()
+    compile_args += xml_compile_args
+    link_args += xml_link_args
+
     if slim:
         define_macros = [('__PAGEXML_SLIM__','')]
         swig_opts = ['-D__PAGEXML_SLIM__']
@@ -111,8 +135,8 @@ def pagexml_Extension(slim, magick):
         pageimage = 'Magick::Image' if magick else 'cv::Mat'
         define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
         swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
-    cvinc = pkgconfig.cflags('opencv4').split()[0].rsplit('/opencv',1)[0]
-    swig_opts += [cvinc]
+        cvinc = pkgconfig.cflags('opencv4').split()[0].rsplit('/opencv',1)[0]
+        swig_opts += [cvinc]
 
     print(f'pagexml_Extension configured with swig_opts={swig_opts}')
     return Extension('_swigPageXML',
@@ -136,10 +160,12 @@ sys.path = [ os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build', 
 name = NAME
 slim = False
 magick = False
-if 'PAGEXML_SLIM' in os.environ:
+if '--slim' in sys.argv:
+    sys.argv = [x for x in sys.argv if x != '--slim']
     name += '_slim'
     slim = True
-if 'PAGEXML_IMG_MAGICK' in os.environ:
+if '--magick' in sys.argv:
+    sys.argv = [x for x in sys.argv if x != '--magick']
     name += '_magick'
     magick = True
 

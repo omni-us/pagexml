@@ -42,8 +42,6 @@ Runtime dependencies
 
 Slim:
  - python3
- - libxml2
- - libxslt1.1
 
 Normal (in addition to the previous):
  - libopencv-imgcodecs (Ubuntu 18.04/20.04) | libopencv-highgui (Ubuntu 16.04)
@@ -54,13 +52,14 @@ Normal (in addition to the previous):
 Building dependencies
 ~~~~~~~~~~~~~~~~~~~~~
 
+Slim:
  - python3-setuptools
  - python3-pkgconfig
  - python3-wheel
  - python3-dev
  - swig
- - libxml2-dev
- - libxslt1-dev
+
+Normal (in addition to the previous):
  - libopencv-dev
  - libgdal-dev
  - libboost-all-dev
@@ -102,15 +101,14 @@ the py-pagexml directory and then run:
 
 .. code-block:: bash
 
-    pip3 install --editable .[dev,test,all]
+    pip3 install --editable .[dev]
     ./setup.py bdist_wheel
 
-To build the slim package, set the ``PAGEXML_SLIM`` environment variable to any
-value, e.g.:
+To build the slim package, give the ``--slim`` command line option, e.g.:
 
 .. code-block:: bash
 
-    PAGEXML_SLIM= ./setup.py bdist_wheel
+    ./setup.py bdist_wheel --slim
 
 
 Simple usage examples
