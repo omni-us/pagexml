@@ -17,7 +17,8 @@ jobs:
         run: |
           git submodule update --init py-pagexml/lxml
           cd py-pagexml
-          for ver in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39; do
+          #for ver in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39; do
+          for ver in cp38-cp38; do
             echo "=== Building wheel for $(/opt/python/$ver/bin/python3 --version) ==="
             /opt/python/$ver/bin/pip3 install pkgconfig
             /opt/python/$ver/bin/python3 setup.py bdist_wheel --slim
@@ -35,7 +36,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [3.6, 3.7, 3.8, 3.9]
+        #python: [3.6, 3.7, 3.8, 3.9]
+        python: [3.8]
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -46,7 +48,8 @@ jobs:
           name: wheels
       - name: Install package
         run: |
+          find . -type f
           py=$(python3 --version | sed -r 's|Python 3\.([0-9]+)\..*|3\1|')
-          pip3 install wheels/*-cp$py-*.whl
+          pip3 install *-cp$py-*.whl
       - name: Run unit tests
         run: python3 -m pagexml_tests
