@@ -114,7 +114,7 @@ if [ "${BUMPVERSION_NEW_VERSION+x}" != "" ]; then
     git add docs/py-pagexml;
 
     echo "## Update textfeat documentation ##"
-    [ "$?" != 0 ] && exit 1;
+    cd py-textfeat;
     ./setup.py build_sphinx --quiet --builder html --version $V --release $V &&
       rm -r ../docs/py-textfeat/{_modules,_sources} ../docs/py-textfeat/*.* &&
       mv sphinx/_build/html/{_modules,_sources} sphinx/_build/html/*.* ../docs/py-textfeat &&

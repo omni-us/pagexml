@@ -57,6 +57,7 @@ jobs:
       - name: Run unit tests
         run: python3 -m pagexml_tests
   publish-pypi:
+    needs: unittest
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
