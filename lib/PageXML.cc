@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2022.02.25$
+ * @version $Version: 2022.03.02$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -19,6 +19,7 @@
 #include <cassert>
 #include <fstream>
 #include <set>
+#include <map>
 
 #ifdef __PAGEXML_SLIM__
 #include "mock_cv.h"
@@ -54,7 +55,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2022.02.25";
+static char class_version[] = "Version: 2022.03.02";
 
 /**
  * Returns the class version.
@@ -589,6 +590,9 @@ void PageXML::setupXml() {
     imgDir = string(".");
 }
 
+
+#ifndef __PAGEXML_SLIM__
+
 /**
  * Function that creates a temporal file using the mktemp command.
  *
@@ -791,6 +795,8 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
     throw_runtime_error( "gsRenderPdfPageToPng: error: failed to convert to png page %d of pdf file: %s", page_num, pdf_path.c_str() );
   }
 }
+
+#endif
 
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)

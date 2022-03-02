@@ -75,9 +75,10 @@ class build_ext(build_ext_orig):
         super().run()
         subprocess.check_call(['sed', '-i', '/^# Import the low-level C.C++ module/{ N;N;N;N; s|.*\\n *import |import |; }', 'pagexml/swigPageXML.py'])
         print('info: applied circular import patch to pagexml/swigPageXML.py')
-        so_file = glob.glob(self.build_lib + '/_swigPageXML*.so')
-        subprocess.check_call(['strip', '--strip-debug'] + so_file)
-        print(f'info: stripped debug symbols from extension file {so_file}')
+        if sys.platform == 'linux':
+            so_file = glob.glob(self.build_lib + '/_swigPageXML*.so')
+            subprocess.check_call(['strip', '--strip-debug'] + so_file)
+            print(f'info: stripped debug symbols from extension file {so_file}')
 
 CMDCLASS['build_ext'] = build_ext
 
@@ -102,9 +103,16 @@ def build_xml_deps():
         static_binaries=[],
     )
 
-    compile_args = subprocess.check_output([XSLT_CONFIG, '--cflags'])
-    link_args = subprocess.check_output([XSLT_CONFIG, '--libs'])
-    return compile_args.decode('utf-8').split(), link_args.decode('utf-8').split()
+    compile_args = subprocess.check_output([XSLT_CONFIG, '--cflags']).decode('utf-8').split()
+    link_args = subprocess.check_output([XSLT_CONFIG, '--libs']).decode('utf-8').split()
+
+    lib_dir = 'build/lxml/libxml2/lib/'
+    libs = [x.replace(lib_dir+'lib', '').replace('.a', '') for x in glob.glob(lib_dir+'*.a')]
+    for lib in libs:
+        if '-l'+lib in link_args:
+            link_args[link_args.index('-l'+lib)] = lib_dir+'lib'+lib+'.a'
+
+    return compile_args, link_args
 
 
 def pagexml_Extension(slim, magick):
