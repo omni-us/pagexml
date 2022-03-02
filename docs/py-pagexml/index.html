@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>py-pagexml: Python wrapper for the PageXML C++ library &mdash; pagexml 2022.02.25 documentation</title>
+  <title>py-pagexml: Python wrapper for the PageXML C++ library &mdash; pagexml 2022.03.02 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <a href="#" class="icon icon-home"> pagexml
           </a>
               <div class="version">
-                2022.02.25
+                2022.03.02
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -102,8 +102,6 @@ listed below.</p>
 <dl class="simple">
 <dt>Slim:</dt><dd><ul class="simple">
 <li><p>python3</p></li>
-<li><p>libxml2</p></li>
-<li><p>libxslt1.1</p></li>
 </ul>
 </dd>
 <dt>Normal (in addition to the previous):</dt><dd><ul class="simple">
@@ -117,20 +115,22 @@ listed below.</p>
 </div>
 <div class="section" id="building-dependencies">
 <h3>Building dependencies<a class="headerlink" href="#building-dependencies" title="Permalink to this headline"></a></h3>
-<blockquote>
-<div><ul class="simple">
+<dl class="simple">
+<dt>Slim:</dt><dd><ul class="simple">
 <li><p>python3-setuptools</p></li>
 <li><p>python3-pkgconfig</p></li>
 <li><p>python3-wheel</p></li>
 <li><p>python3-dev</p></li>
 <li><p>swig</p></li>
-<li><p>libxml2-dev</p></li>
-<li><p>libxslt1-dev</p></li>
+</ul>
+</dd>
+<dt>Normal (in addition to the previous):</dt><dd><ul class="simple">
 <li><p>libopencv-dev</p></li>
 <li><p>libgdal-dev</p></li>
 <li><p>libboost-all-dev</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </div>
 </div>
 <div class="section" id="installation-from-wheel-binary-file">
@@ -157,13 +157,12 @@ as follows replacing the URL with the one you copied:</p>
 <h2>Building the wheel file from source<a class="headerlink" href="#building-the-wheel-file-from-source" title="Permalink to this headline"></a></h2>
 <p>Clone the github repository <a class="reference external" href="https://github.com/omni-us/pagexml.git">https://github.com/omni-us/pagexml.git</a>, go to
 the py-pagexml directory and then run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install --editable .<span class="o">[</span>dev,test,all<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install --editable .<span class="o">[</span>dev<span class="o">]</span>
 ./setup.py bdist_wheel
 </pre></div>
 </div>
-<p>To build the slim package, set the <code class="docutils literal notranslate"><span class="pre">PAGEXML_SLIM</span></code> environment variable to any
-value, e.g.:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PAGEXML_SLIM</span><span class="o">=</span> ./setup.py bdist_wheel
+<p>To build the slim package, give the <code class="docutils literal notranslate"><span class="pre">--slim</span></code> command line option, e.g.:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./setup.py bdist_wheel --slim
 </pre></div>
 </div>
 </div>
