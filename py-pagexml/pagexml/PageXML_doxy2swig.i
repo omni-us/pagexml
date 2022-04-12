@@ -1626,7 +1626,7 @@ Overloaded function with 2 signatures.
 Rotates a page.
 
 Arguments:
-    angle (int): Angle to rotate in degrees {0,90,180,-90}.
+    angle (int): Angle to rotate the coords in degrees {0,90,180,-90} counterclockwise.
     page (xmlNodePt): The Page node.
     update_image_orientation (bool): Whether to update the ImageOrientation element.
     conf (const double): Confidence value.
@@ -1641,9 +1641,9 @@ Returns:
 Rotates a page.
 
 Arguments:
-    angle (int): Angle to rotate in degrees {0,90,180,-90}.
+    angle (int): Angle to rotate the coords in degrees {0,90,180,-90} counterclockwise.
     page (xmlNodePt): The Page node.
-    update_image_orientation (bool): Whether to check that the aspect ratio is properly preserved.
+    update_image_orientation (bool): Whether to update the ImageOrientation element.
     _conf (const double *): Pointer to confidence value, NULL for no confidence.
 
 Returns:
