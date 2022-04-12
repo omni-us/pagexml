@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2022.03.02$
+ * @version $Version: 2022.04.12$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -55,7 +55,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2022.03.02";
+static char class_version[] = "Version: 2022.04.12";
 
 /**
  * Returns the class version.
@@ -3630,7 +3630,7 @@ std::vector<cv::Size2i> PageXML::getPagesSize( const char* xpath ) {
 /**
  * Rotates a page.
  *
- * @param angle                     Angle to rotate in degrees {0,90,180,-90}.
+ * @param angle                     Angle to rotate the coords in degrees {0,90,180,-90} counterclockwise.
  * @param page                      The Page node.
  * @param update_image_orientation  Whether to update the ImageOrientation element.
  * @param conf                      Confidence value.
@@ -3643,9 +3643,9 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
 /**
  * Rotates a page.
  *
- * @param angle                     Angle to rotate in degrees {0,90,180,-90}.
+ * @param angle                     Angle to rotate the coords  in degrees {0,90,180,-90} counterclockwise.
  * @param page                      The Page node.
- * @param update_image_orientation  Whether to check that the aspect ratio is properly preserved.
+ * @param update_image_orientation  Whether to update the ImageOrientation element.
  * @param _conf                     Pointer to confidence value, NULL for no confidence.
  * @return                          Number of elements modified.
  */
@@ -3661,8 +3661,8 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
     angle += 360;
   angle -= 90;
 
-  int pageWidth = getPageWidth(page);
-  int pageHeight = getPageHeight(page);
+  int maxX = getPageWidth(page)-1;
+  int maxY = getPageHeight(page)-1;
 
   // Set image orientation //
   int num = 0;
@@ -3684,19 +3684,19 @@ int PageXML::rotatePage( int angle, xmlNodePt page, bool update_image_orientatio
     if ( angle == -90 )
       for ( int m=(int)pts.size()-1; m>=0; m-- ) {
         double x = pts[m].x;
-        pts[m].x = pageHeight-1-pts[m].y;
+        pts[m].x = maxY-pts[m].y;
         pts[m].y = x;
       }
     else if ( angle == 90 )
       for ( int m=(int)pts.size()-1; m>=0; m-- ) {
         double x = pts[m].x;
         pts[m].x = pts[m].y;
-        pts[m].y = pageWidth-1-x;
+        pts[m].y = maxX-x;
       }
     else if ( angle == 180 )
       for ( int m=(int)pts.size()-1; m>=0; m-- ) {
-        pts[m].x = pageWidth-1-pts[m].x;
-        pts[m].y = pageHeight-1-pts[m].y;
+        pts[m].x = maxX-pts[m].x;
+        pts[m].y = maxY-pts[m].y;
       }
     setValue( points[n], pointsToString(pts).c_str() );
     num++;
