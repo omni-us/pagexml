@@ -23,3 +23,10 @@ docker build \
   --build-arg UBUNTU_TAG=20.04 \
   --build-arg PAGEXML_VERSION=$PAGEXML_VERSION \
   .
+
+docker build \
+  -f Dockerfile_runtime \
+  -t mauvilsa/pagexml:runtime-ubuntu22.04-py310 \
+  --build-arg UBUNTU_TAG=22.04 \
+  --build-arg PAGEXML_VERSION=$PAGEXML_VERSION \
+  .

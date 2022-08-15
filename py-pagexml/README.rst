@@ -44,10 +44,26 @@ Slim:
  - python3
 
 Normal (in addition to the previous):
- - libopencv-imgcodecs (Ubuntu 18.04/20.04) | libopencv-highgui (Ubuntu 16.04)
- - libopencv-imgproc
- - libopencv-core
- - libgdal
+ - Ubuntu 16.04
+   - libopencv-highgui2.4v5
+   - libopencv-imgproc2.4v5
+   - libopencv-core2.4v5
+   - libgdal1i
+ - Ubuntu 18.04
+   - libopencv-imgcodecs3.2
+   - libopencv-imgproc3.2
+   - libopencv-core3.2
+   - libgdal20
+ - Ubuntu 20.04
+   - libopencv-imgcodecs4.2
+   - libopencv-imgproc4.2
+   - libopencv-core4.2
+   - libgdal26
+ - Ubuntu 22.04
+   - libopencv-imgcodecs4.5d
+   - libopencv-imgproc4.5d
+   - libopencv-core4.5d
+   - libgdal30
 
 Building dependencies
 ~~~~~~~~~~~~~~~~~~~~~
@@ -75,7 +91,7 @@ simple as:
 
     pip3 install pagexml
 
-The slim build has a different name, thus the install comand would be:
+The slim build has a different name, thus the install command would be:
 
 .. code-block:: bash
 

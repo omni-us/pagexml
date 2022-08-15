@@ -118,8 +118,9 @@ def build_xml_deps():
 def pagexml_Extension(slim, magick):
     import pkgconfig
     libs = []
+    opencv = 'opencv' if sys.version_info[:2] == (3, 6) else 'opencv4'
     if not slim:
-        libs = ['opencv4', 'gdal'] + libs
+        libs = [opencv, 'gdal'] + libs
         if magick:
             libs += ['Magick++']
     compile_args = ['-std=c++11']
@@ -143,7 +144,9 @@ def pagexml_Extension(slim, magick):
         pageimage = 'Magick::Image' if magick else 'cv::Mat'
         define_macros = [('__PAGEXML_OGR__',''),(defimage,'')] + ( [('__PAGEXML_MAGICK__','')] if magick else [] )
         swig_opts = ['-D__PAGEXML_OGR__','-D'+defimage,'-DPageImage='+pageimage] + ( ['-D__PAGEXML_MAGICK__'] if magick else [] )
-        cvinc = pkgconfig.cflags('opencv4').split()[0].rsplit('/opencv',1)[0]
+        cvinc = pkgconfig.cflags(opencv).split()[0]
+        if sys.version_info[:2] == (3, 6):
+            cvinc = cvinc.rsplit('/opencv',1)[0]
         swig_opts += [cvinc]
 
     print(f'pagexml_Extension configured with swig_opts={swig_opts}')

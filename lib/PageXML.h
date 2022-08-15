@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2022.04.12$
+ * @version $Version: 2022.08.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -358,13 +358,10 @@ class PageXML {
     void setupXml();
 };
 
-#ifndef __PAGEXML_SLIM__
-void mktemp( const char* tempbase, char *tempname );
-
 #if defined (__PAGEXML_GS__)
+void mktemp( const char* tempbase, char *tempname );
 std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path );
 void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_path, int density = 300 );
-#endif
 #endif
 
 #endif

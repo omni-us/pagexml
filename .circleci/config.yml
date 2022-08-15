@@ -10,9 +10,6 @@ dockerbuild: &dockerbuild
           cd py-pagexml
           ./setup.py bdist_wheel
           ./setup.py test
-          rm -r build
-          PAGEXML_SLIM= ./setup.py bdist_wheel
-          ./setup.py test
     - persist_to_workspace:
         root: .
         paths: ./py-pagexml/dist/*.whl
@@ -25,6 +22,10 @@ jobs:
   build-2004-py38:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu20.04-py38
+    <<: *dockerbuild
+  build-2204-py310:
+    docker:
+      - image: mauvilsa/pagexml:build-ubuntu22.04-py310
     <<: *dockerbuild
   publish-pypi:
     docker:
@@ -62,6 +63,8 @@ workflows:
           <<: *tagfilter
       - build-2004-py38:
           <<: *tagfilter
+      - build-2204-py310:
+          <<: *tagfilter
       #- publish-pypi:
       #    <<: *tagfilter
       #    context: pagexml-context
@@ -74,3 +77,4 @@ workflows:
           requires:
             - build-1804-py36
             - build-2004-py38
+            - build-2204-py310

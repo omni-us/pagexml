@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2022.04.12$
+ * @version $Version: 2022.08.15$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <mauricio_ville@yahoo.com>
  * @license MIT License
  */
@@ -55,7 +55,7 @@ bool validation_enabled = true;
 /// Class version ///
 /////////////////////
 
-static char class_version[] = "Version: 2022.04.12";
+static char class_version[] = "Version: 2022.08.15";
 
 /**
  * Returns the class version.
@@ -591,7 +591,7 @@ void PageXML::setupXml() {
 }
 
 
-#ifndef __PAGEXML_SLIM__
+#ifdef __PAGEXML_GS__
 
 /**
  * Function that creates a temporal file using the mktemp command.
@@ -985,7 +985,7 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
   }
 #elif defined (__PAGEXML_IMG_CV__)
   // OpenCV load pdf page //
-#if not defined (__PAGEXML_MAGICK__)
+#if defined (__PAGEXML_GS__)
   if( std::regex_match(fname, reIsPdf) ) {
     if( ! ldensity ) {
       if( lresize_coords )
@@ -1001,6 +1001,10 @@ void PageXML::loadImage( int pagenum, const char* fname, const bool resize_coord
     gsRenderPdfPageToPng( fbase, imgnum+1, std::string(tmpfname), ldensity );
     pagesImage[pagenum] = cv::imread(tmpfname);
     unlink(tmpfname);
+  }
+#elif not defined (__PAGEXML_MAGICK__)
+  if( std::regex_match(fname, reIsPdf) ) {
+    throw_runtime_error( "PageXML.loadImage: not compiled with PDF support" );
   }
 #else
   if( std::regex_match(fname, reIsPdf) ) {

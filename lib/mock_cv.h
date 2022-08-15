@@ -200,6 +200,12 @@ Point_<_Tp> operator * (const Point_<_Tp>& a, double b)
     return Point_<_Tp>( saturate_cast<_Tp>(a.x*b), saturate_cast<_Tp>(a.y*b) );
 }
 
+template<typename _Tp> static inline
+Point_<_Tp> operator / (const Point_<_Tp>& a, double b)
+{
+    return Point_<_Tp>( saturate_cast<_Tp>(a.x/b), saturate_cast<_Tp>(a.y/b) );
+}
+
 //1680
 template<typename _Tp> inline
 Size_<_Tp>::Size_()

@@ -1,6 +1,6 @@
-#                     16.04-py35  18.04-py36  20.04-py38
-# ARG UBUNTU_TAG      16.04       18.04       20.04
-# ARG PYTHON_VERSION  3           3           3
+#                     16.04-py35  18.04-py36  20.04-py38  22.04-py310
+# ARG UBUNTU_TAG      16.04       18.04       20.04       22.04
+# ARG PYTHON_VERSION  3           3           3           3
 
 ARG UBUNTU_TAG
 FROM ubuntu:$UBUNTU_TAG
@@ -34,6 +34,9 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
     elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       CV_VERSION=4.2; \
       GDAL_VERSION=26; \
+    elif [ "$VERSION_ID" = "22.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      CV_VERSION=4.5d; \
+      GDAL_VERSION=30; \
     else \
       echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
       exit 1; \
@@ -48,15 +51,14 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       python$PYTHON_VERSION \
       python$PYTHON_VERSION-pip \
       virtualenv \
-      libxml2 \
-      libxslt1.1 \
       libopencv-imgproc$CV_VERSION \
-      libopencv-highgui$CV_VERSION \
+      libopencv-imgcodecs$CV_VERSION \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
  && if [ "$VERSION_ID" != "16.04" ]; then \
       apt-get install -y --no-install-recommends \
         python$PYTHON_VERSION-distutils \
+        libopencv-highgui$CV_VERSION \
         libsm6; \
     fi \
  && pip3 install --upgrade pip setuptools wheel \
@@ -83,6 +85,8 @@ RUN if ! test -n "$PAGEXML_VERSION"; then \
       PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
     elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp38-cp38; \
+    elif [ "$VERSION_ID" = "22.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp310-cp310; \
     fi \
  && PAGEXML_WHEEL=/tmp/${PAGEXML_RELEASE##*/}-linux_x86_64.whl \
  && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \

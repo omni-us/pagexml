@@ -1,11 +1,11 @@
-#                     16.04-py35  18.04-py36  20.04-py38
-# ARG UBUNTU_TAG      16.04       18.04       20.04
-# ARG PYTHON_VERSION  3           3           3
+#                     16.04-py35  18.04-py36  20.04-py38  22.04-py310
+# ARG UBUNTU_TAG      16.04       18.04       20.04       22.04
+# ARG PYTHON_VERSION  3           3           3           3
 
 ARG UBUNTU_TAG
 FROM ubuntu:$UBUNTU_TAG
 
-MAINTAINER Mauricio Villegas <mauricio@omnius.com>
+LABEL maintainer="Mauricio Villegas <mauricio@omnius.com>"
 
 SHELL ["/bin/bash", "-c"]
 ENV \
@@ -34,6 +34,7 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       ca-certificates \
       git \
       g++ \
+      make \
       swig \
       zip \
       unzip \
