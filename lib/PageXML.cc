@@ -591,17 +591,17 @@ void PageXML::setupXml() {
 }
 
 
-#ifdef __PAGEXML_GS__
+//#ifdef __PAGEXML_PDF__
 
 /**
  * Function that creates a temporal file using the mktemp command.
  *
  * @param tempbase    The mktemp template to use, including at least 3 consecutive X.
- * @param tempname    Pointer to where to store the temporal filename created.
+ * @param tempname    Pointer where to store the temporal filename created.
  */
 void mktemp( const char* tempbase, char *tempname ) {
   char cmd[FILENAME_MAX];
-  sprintf( cmd, "mktemp %s", tempbase );
+  sprintf( cmd, "mktemp --tmpdir %s", tempbase );
   FILE *p = popen( cmd, "r" );
   if( p != NULL ) {
     sprintf( cmd, "%%%ds\n", FILENAME_MAX-1 );
@@ -636,17 +636,18 @@ std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path 
   std::string outfile_arg = std::string("-sOutputFile=")+outfile_temp;
   std::string infile_arg = std::string("-sInputFile=")+pdf_path;
 
-  int gsargc = 9;
+  int n=0, gsargc = 10;
   const char * gsargv[gsargc];
-  gsargv[0] = "pdf_page_sizes";
-  gsargv[1] = "-dNOPAUSE";
-  gsargv[2] = "-dBATCH";
-  gsargv[3] = "-dQUIET";
-  gsargv[4] = "-dNODISPLAY";
-  gsargv[5] = outfile_arg.c_str();
-  gsargv[6] = infile_arg.c_str();
-  gsargv[7] = "-c";
-  gsargv[8] = "/outfile OutputFile (w) file def\n\
+  gsargv[n++] = "pdf_page_sizes";
+  gsargv[n++] = "-dNOPAUSE";
+  gsargv[n++] = "-dBATCH";
+  gsargv[n++] = "-dQUIET";
+  gsargv[n++] = "-dNODISPLAY";
+  gsargv[n++] = "-dNOSAFER";
+  gsargv[n++] = outfile_arg.c_str();
+  gsargv[n++] = infile_arg.c_str();
+  gsargv[n++] = "-c";
+  gsargv[n++] = "/outfile OutputFile (w) file def\n\
 InputFile (r) file runpdfbegin\n\
 1 1 pdfpagecount {\n\
   pdfgetpage\n\
@@ -750,21 +751,21 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
   std::string outfile_arg = std::string("-sOutputFile=")+png_path;
   std::string density_arg = std::string("-r")+std::to_string(density);
 
-  int gsargc = 13;
+  int n=0, gsargc = 13;
   const char * gsargv[gsargc];
-  gsargv[0] = "pdf_to_png";
-  gsargv[1] = "-dNOPAUSE";
-  gsargv[2] = "-dQUIET";
-  gsargv[3] = "-dBATCH";
-  gsargv[4] = "-dUseCropBox";
-  gsargv[5] = "-sDEVICE=png16m";
-  gsargv[6] = "-dTextAlphaBits=4";
-  gsargv[7] = "-dGraphicsAlphaBits=4";
-  gsargv[8] = first_page_arg.c_str();
-  gsargv[9] = last_page_arg.c_str();
-  gsargv[10] = density_arg.c_str();
-  gsargv[11] = outfile_arg.c_str();
-  gsargv[12] = pdf_path.c_str();
+  gsargv[n++] = "pdf_to_png";
+  gsargv[n++] = "-dNOPAUSE";
+  gsargv[n++] = "-dBATCH";
+  gsargv[n++] = "-dQUIET";
+  gsargv[n++] = "-dUseCropBox";
+  gsargv[n++] = "-sDEVICE=png16m";
+  gsargv[n++] = "-dTextAlphaBits=4";
+  gsargv[n++] = "-dGraphicsAlphaBits=4";
+  gsargv[n++] = first_page_arg.c_str();
+  gsargv[n++] = last_page_arg.c_str();
+  gsargv[n++] = density_arg.c_str();
+  gsargv[n++] = outfile_arg.c_str();
+  gsargv[n++] = pdf_path.c_str();
 
   int code;
 #if defined (__PAGEXML_GS__)
@@ -796,7 +797,7 @@ void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_p
   }
 }
 
-#endif
+//#endif
 
 
 #if defined (__PAGEXML_LEPT__) || defined (__PAGEXML_IMG_MAGICK__) || defined (__PAGEXML_IMG_CV__)

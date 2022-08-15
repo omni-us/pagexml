@@ -358,10 +358,10 @@ class PageXML {
     void setupXml();
 };
 
-#if defined (__PAGEXML_GS__)
+//#if defined (__PAGEXML_PDF__)
 void mktemp( const char* tempbase, char *tempname );
 std::vector< std::pair<double,double> > gsGetPdfPageSizes( std::string pdf_path );
 void gsRenderPdfPageToPng( std::string pdf_path, int page_num, std::string png_path, int density = 300 );
-#endif
+//#endif
 
 #endif
