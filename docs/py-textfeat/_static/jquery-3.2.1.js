@@ -1,1 +1,0 @@
-../../py-pagexml/_static/jquery-3.2.1.js
