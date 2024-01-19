@@ -10,20 +10,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/pypa/manylinux_2_24_x86_64:latest
+      image: quay.io/pypa/manylinux_2_28_x86_64:latest
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update
-          apt-get install -y swig
+          dnf makecache --refresh
+          dnf -y install swig
       - name: Build wheel files
         run: |
           git submodule update --init xsd/pageformat
           git submodule update --init py-pagexml/lxml
           cd py-pagexml
-          for ver in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310; do
+          for ver in cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311 cp312-cp312; do
             echo "=== Building wheel for $(/opt/python/$ver/bin/python3 --version) ==="
             /opt/python/$ver/bin/pip3 install pkgconfig
             /opt/python/$ver/bin/python3 setup.py bdist_wheel --slim
@@ -41,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2

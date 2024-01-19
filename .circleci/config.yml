@@ -15,10 +15,6 @@ dockerbuild: &dockerbuild
         paths: ./py-pagexml/dist/*.whl
 
 jobs:
-  build-1804-py36:
-    docker:
-      - image: mauvilsa/pagexml:build-ubuntu18.04-py36
-    <<: *dockerbuild
   build-2004-py38:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu20.04-py38
@@ -27,16 +23,17 @@ jobs:
     docker:
       - image: mauvilsa/pagexml:build-ubuntu22.04-py310
     <<: *dockerbuild
-  publish-pypi:
-    docker:
-      - image: mauvilsa/docker-twine:1.11.0
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: "Publish Release on PyPI"
-          command: |
-            twine upload --repository-url "${PYPI_URL}" --username "${PYPI_USER}" --password "${PYPI_PASS}" ./py-pagexml/dist/*.whl
+  #publish-pypi:
+  #  docker:
+  #    - image: cimg/python:3.10
+  #  steps:
+  #    - attach_workspace:
+  #        at: .
+  #    - run:
+  #        name: "Publish Release on PyPI"
+  #        command: |
+  #          pip3 install -U twine
+  #          twine upload --repository-url "${PYPI_URL}" --username "${PYPI_USER}" --password "${PYPI_PASS}" ./py-pagexml/dist/*.whl
   publish-github:
     docker:
       - image: cibuilds/github:0.12.0
@@ -59,8 +56,6 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-1804-py36:
-          <<: *tagfilter
       - build-2004-py38:
           <<: *tagfilter
       - build-2204-py310:
@@ -75,6 +70,5 @@ workflows:
           <<: *tagfilter
           context: pagexml-context
           requires:
-            - build-1804-py36
             - build-2004-py38
             - build-2204-py310

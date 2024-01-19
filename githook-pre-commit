@@ -66,10 +66,6 @@ while [ "$n" -lt "${#FILES[@]}" ]; do
         pylint --errors-only --extension-pkg-whitelist=cv2 "${FILES[$n]}";
         [ "$?" != 0 ] && exit 1;
         ;;
-      .circleci/config.yml )
-        echo "${0##*/}: circleci config validate -c .circleci/config.yml" 1>&2;
-        circleci config validate -c .circleci/config.yml;
-        [ "$?" != 0 ] && exit 1;
     esac
   n=$((n+2));
 done
