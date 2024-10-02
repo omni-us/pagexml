@@ -1,7 +1,3 @@
-#                     16.04-py35  18.04-py36  20.04-py38  22.04-py310
-# ARG UBUNTU_TAG      16.04       18.04       20.04       22.04
-# ARG PYTHON_VERSION  3           3           3           3
-
 ARG UBUNTU_TAG
 FROM ubuntu:$UBUNTU_TAG
 
@@ -21,17 +17,7 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       exit 1; \
     fi \
  && . /etc/os-release \
- && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
-      CV_VERSION=2.4v5; \
-      GDAL_VERSION=1i; \
-      PYTHON_VERSION=; \
-    elif [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      CV_VERSION=2.4v5; \
-      GDAL_VERSION=1i; \
-    elif [ "$VERSION_ID" = "18.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      CV_VERSION=3.2; \
-      GDAL_VERSION=20; \
-    elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+ && if [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
       CV_VERSION=4.2; \
       GDAL_VERSION=26; \
     elif [ "$VERSION_ID" = "22.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
@@ -55,12 +41,6 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       libopencv-imgcodecs$CV_VERSION \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
- && if [ "$VERSION_ID" != "16.04" ]; then \
-      apt-get install -y --no-install-recommends \
-        python$PYTHON_VERSION-distutils \
-        libopencv-highgui$CV_VERSION \
-        libsm6; \
-    fi \
  && pip3 install --upgrade pip setuptools wheel \
  && apt-get purge -y \
       python$PYTHON_VERSION-pip \
@@ -76,20 +56,13 @@ RUN if ! test -n "$PAGEXML_VERSION"; then \
       echo "error: PAGEXML_VERSION argument is required"; \
       exit 1; \
     fi \
- && . /etc/os-release \
- && if [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "2" ]; then \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp27-cp27m; \
-    elif [ "$VERSION_ID" = "16.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp35-cp35m; \
-    elif [ "$VERSION_ID" = "18.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp36-cp36m; \
-    elif [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp38-cp38; \
-    elif [ "$VERSION_ID" = "22.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
-      PAGEXML_RELEASE=$PAGEXML_VERSION/pagexml-${PAGEXML_VERSION//.0/.}-cp310-cp310; \
-    fi \
- && PAGEXML_WHEEL=/tmp/${PAGEXML_RELEASE##*/}-linux_x86_64.whl \
- && curl -L -o $PAGEXML_WHEEL https://github.com/omni-us/pagexml/releases/download/$PAGEXML_RELEASE-linux_x86_64.whl \
- && pip3 install $PAGEXML_WHEEL[all] \
+ && pip3 install \
+      --no-cache-dir \
+      --root-user-action=ignore \
+      --progress-bar=off \
+      --index-url=https://pypi.omnius.com \
+      --trusted-host=pypi.omnius.com \
+      --extra-index-url=https://pypi.org/simple \
+    pagexml[all]==$PAGEXML_VERSION \
  && python3 -m pagexml_tests \
  && rm -rf /tmp/*

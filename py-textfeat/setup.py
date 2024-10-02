@@ -60,7 +60,8 @@ class Distribution(_Distribution):
 
 def textfeat_Extension(magick=False):
     import pkgconfig
-    libs = ['opencv','libxml-2.0','Magick++']
+    opencv = 'opencv' if sys.version_info[:2] == (3, 6) else 'opencv4'
+    libs = [opencv,'libxml-2.0','Magick++']
     compile_args = ['-std=c++11']
     link_args = []
     for lib in libs:
@@ -71,7 +72,7 @@ def textfeat_Extension(magick=False):
     #compile_args += pkgconfig.cflags('opencv').split()
     #cvre = re.compile('^-L|^-lopencv_core|^-lopencv_imgproc|^-lopencv_imgcodecs|^-lopencv_flann')
     #link_args += [x for x in pkgconfig.libs('opencv').split() if cvre.match(x)]
-    cvinc = pkgconfig.cflags('opencv').split()[0].rsplit('/opencv',1)[0]
+    cvinc = pkgconfig.cflags(opencv).split()[0]
     defimage = '__PAGEXML_IMG_MAGICK__' if magick else '__PAGEXML_IMG_CV__'
     pageimage = 'Magick::Image' if magick else 'cv::Mat'
     define_macros = [(defimage,''),('__PAGEXML_MAGICK__','')]
