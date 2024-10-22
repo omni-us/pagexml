@@ -10,21 +10,18 @@ ENV \
  LC_ALL=C.UTF-8
 
 
-ARG PYTHON_VERSION=3
-
-RUN if ! test -n "$PYTHON_VERSION"; then \
-      echo "error: PYTHON_VERSION argument is required"; \
-      exit 1; \
-    fi \
- && . /etc/os-release \
- && if [ "$VERSION_ID" = "20.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+RUN . /etc/os-release \
+ && if [ "$VERSION_ID" = "20.04" ]; then \
       CV_VERSION=4.2; \
       GDAL_VERSION=26; \
-    elif [ "$VERSION_ID" = "22.04" ] && [ "$PYTHON_VERSION" = "3" ]; then \
+    elif [ "$VERSION_ID" = "22.04" ]; then \
       CV_VERSION=4.5d; \
       GDAL_VERSION=30; \
+      elif [ "$VERSION_ID" = "24.04" ]; then \
+      CV_VERSION=406t64; \
+      GDAL_VERSION=34t64; \
     else \
-      echo "error: unsupported combination UBUNTU=$VERSION_ID PYTHON=$PYTHON_VERSION"; \
+      echo "error: unsupported UBUNTU=$VERSION_ID"; \
       exit 1; \
     fi \
  && apt-get update --fix-missing \
@@ -34,16 +31,15 @@ RUN if ! test -n "$PYTHON_VERSION"; then \
       nano \
       curl \
       ca-certificates \
-      python$PYTHON_VERSION \
-      python$PYTHON_VERSION-pip \
+      python3 \
+      python3-pip \
+      python3-setuptools \
+      python3-wheel \
       virtualenv \
       libopencv-imgproc$CV_VERSION \
       libopencv-imgcodecs$CV_VERSION \
       libopencv-core$CV_VERSION \
       libgdal$GDAL_VERSION \
- && pip3 install --upgrade pip setuptools wheel \
- && apt-get purge -y \
-      python$PYTHON_VERSION-pip \
  && apt-get autoremove -y \
  && apt-get purge -y $(dpkg -l | awk '{if($1=="rc")print $2}') \
  && apt-get clean \
@@ -59,6 +55,7 @@ RUN if ! test -n "$PAGEXML_VERSION"; then \
  && pip3 install \
       --no-cache-dir \
       --root-user-action=ignore \
+      --break-system-packages \
       --progress-bar=off \
       --index-url=https://pypi.omnius.com \
       --trusted-host=pypi.omnius.com \

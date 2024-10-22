@@ -64,6 +64,11 @@ Normal (in addition to the previous):
    - libopencv-imgproc4.5d
    - libopencv-core4.5d
    - libgdal30
+ - Ubuntu 24.04
+   - libopencv-imgcodecs406t64
+   - libopencv-imgproc406t64
+   - libopencv-core406t64
+   - libgdal34t64
 
 Building dependencies
 ~~~~~~~~~~~~~~~~~~~~~

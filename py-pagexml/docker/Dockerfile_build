@@ -39,12 +39,11 @@ RUN apt-get update --fix-missing \
  && if [ -f /usr/lib/x86_64-linux-gnu/pkgconfig/opencv4.pc ]; then \
       ln -s opencv4.pc /usr/lib/x86_64-linux-gnu/pkgconfig/opencv.pc; \
     fi \
- && pip3 install --upgrade pip setuptools \
  && apt-get autoremove -y \
  && apt-get purge -y $(dpkg -l | awk '{if($1=="rc")print $2}') \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-#RUN useradd -m -u 1234 pagexml-build
-#WORKDIR /home/pagexml-build
-#USER 1234
+RUN useradd -m -u 1234 pagexml-build
+WORKDIR /home/pagexml-build
+USER 1234
