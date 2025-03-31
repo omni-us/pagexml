@@ -2,7 +2,7 @@
  * Functions for allocating memory
  *
  * @version $Version: 2018.11.13$
- * @copyright Copyright (c) 2004-present, Mauricio Villegas <mauricio_ville@yahoo.com>
+ * @copyright Copyright (c) 2004-present, Mauricio Villegas <maurovill+pagexml@gmail.com>
  * @license MIT License
  */
 
