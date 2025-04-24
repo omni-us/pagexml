@@ -1,10 +1,5 @@
 import os
 from .swigPageXML import *  # pylint: disable=import-error
-try:
-    import cv2
-    import numpy as np
-except ImportError:
-    cv2 = False
 
 
 __version__ = '2025.03.31'
@@ -54,9 +49,16 @@ def imwrite(filename, img, params=[]):
     Returns:
         Boolean indicating whether write was successful.
     """
-    if not cv2:
-        raise Exception('cv2 and numpy required but not available. To have optional dependencies install with `pip3 install pagexml[all]`')
-    return cv2.imwrite(filename, np.asarray(img), params)
+    try:
+        import cv2
+        import numpy as np
+
+        return cv2.imwrite(filename, np.asarray(img), params)
+    except ImportError:
+        raise ImportError(
+            'python-opencv-headless and numpy are required but not available. To get optional dependencies '
+            'install with `pip3 install pagexml[all]` or `pip3 install pagexml_slim[all]`'
+        )
 
 
 def is_slim():

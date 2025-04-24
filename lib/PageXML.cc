@@ -1,7 +1,7 @@
 /**
  * Class for input, output and processing of Page XML files and referenced image.
  *
- * @version $Version: 2022.08.15$
+ * @version $Version: 2025.03.31$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <maurovill+pagexml@gmail.com>
  * @license MIT License
  */
