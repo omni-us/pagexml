@@ -1,7 +1,7 @@
 /**
  * Header file for the PageXML class
  *
- * @version $Version: 2025.03.31$
+ * @version $Version: 2025.04.24$
  * @copyright Copyright (c) 2016-present, Mauricio Villegas <maurovill+pagexml@gmail.com>
  * @license MIT License
  */

@@ -2,7 +2,7 @@ import os
 from .swigPageXML import *  # pylint: disable=import-error
 
 
-__version__ = '2025.03.31'
+__version__ = '2025.04.24'
 
 PAGE_XSD_SEARCHINK = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_searchink.xsd'
 PAGE_XSD_OMNIUS = os.path.dirname(os.path.realpath(__file__))+'/xsd/pagecontent_omnius.xsd'
